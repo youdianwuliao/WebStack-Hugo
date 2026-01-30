@@ -134,15 +134,25 @@ footer.main-footer .footer-text a:hover {
     100% { transform: translateY(-200px); }
 }
 
-/* 主内容区域网格背景 */
+/* 主内容区域动态几何背景 */
 .main-content.grid-bg {
     position: relative;
     overflow: hidden;
     background: 
-        linear-gradient(rgba(200, 200, 200, 0.2) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(200, 200, 200, 0.2) 1px, transparent 1px),
+        linear-gradient(rgba(200, 200, 200, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200, 200, 200, 0.1) 1px, transparent 1px),
         linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
-    background-size: 20px 20px, 20px 20px, 100% 100%;
+    background-size: 40px 40px, 40px 40px, 100% 100%;
+    animation: bgShift 20s ease-in-out infinite alternate;
+}
+
+@keyframes bgShift {
+    0% {
+        background-position: 0 0, 0 0, 0 0;
+    }
+    100% {
+        background-position: 40px 40px, 40px 40px, 20px 20px;
+    }
 }
 
 /* 主内容区域装饰性光点 */
@@ -228,15 +238,16 @@ footer.main-footer .footer-text a:hover {
     100% { transform: translateY(-200px); }
 }
 
-/* 主内容区域网格背景 - 夜间模式 */
+/* 主内容区域动态几何背景 - 夜间模式 */
 .io-grey-mode .main-content.grid-bg {
     position: relative;
     overflow: hidden;
     background: 
-        linear-gradient(rgba(100, 149, 237, 0.15) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(100, 149, 237, 0.15) 1px, transparent 1px),
+        linear-gradient(rgba(100, 149, 237, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(100, 149, 237, 0.1) 1px, transparent 1px),
         linear-gradient(135deg, #0f2027 0%, #203a43 40%, #2c5364 100%);
-    background-size: 20px 20px, 20px 20px, 100% 100%;
+    background-size: 40px 40px, 40px 40px, 100% 100%;
+    animation: bgShift 20s ease-in-out infinite alternate;
 }
 
 /* 主内容区域装饰性光点 - 夜间模式 */
