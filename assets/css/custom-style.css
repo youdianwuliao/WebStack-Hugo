@@ -134,6 +134,68 @@ footer.main-footer .footer-text a:hover {
     100% { transform: translateY(-200px); }
 }
 
+/* 主内容区域网格背景 */
+.main-content.grid-bg {
+    position: relative;
+    overflow: hidden;
+    background: 
+        linear-gradient(rgba(200, 200, 200, 0.2) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200, 200, 200, 0.2) 1px, transparent 1px),
+        linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+    background-size: 20px 20px, 20px 20px, 100% 100%;
+}
+
+/* 主内容区域装饰性光点 */
+.main-content.grid-bg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 15% 25%, rgba(52, 152, 219, 0.1) 0%, transparent 3%),
+        radial-gradient(circle at 85% 75%, rgba(46, 204, 113, 0.1) 0%, transparent 3%),
+        radial-gradient(circle at 45% 65%, rgba(155, 89, 182, 0.08) 0%, transparent 2.5%),
+        radial-gradient(circle at 65% 35%, rgba(241, 196, 15, 0.08) 0%, transparent 2.5%);
+    z-index: -1;
+    animation: subtlePulse 30s ease-in-out infinite;
+}
+
+@keyframes subtlePulse {
+    0%, 100% {
+        opacity: 0.8;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+/* 主内容区域微动网格 */
+.main-content.grid-bg::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 200%;
+    background: 
+        linear-gradient(transparent 29px, rgba(200, 200, 200, 0.2) 29px, rgba(200, 200, 200, 0.2) 31px, transparent 31px),
+        linear-gradient(90deg, transparent 29px, rgba(200, 200, 200, 0.2) 29px, rgba(200, 200, 200, 0.2) 31px, transparent 31px);
+    background-size: 60px 60px;
+    z-index: -2;
+    animation: slideGrid 40s linear infinite;
+}
+
+@keyframes slideGrid {
+    0% {
+        transform: translate(0, 0);
+    }
+    100% {
+        transform: translate(-60px, -60px);
+    }
+}
+
 /* 酷炫动态背景 - 夜间模式 */
 .io-grey-mode .page-container .grid-bg {
     background: linear-gradient(135deg, #0f2027 0%, #203a43 40%, #2c5364 100%);
@@ -166,133 +228,95 @@ footer.main-footer .footer-text a:hover {
     100% { transform: translateY(-200px); }
 }
 
-/* 酷炫卡片样式 */
-.url-card .card {
-    border: none;
-    border-radius: 20px;
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(12px);
-    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.5);
-    box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.1),
-        inset 2px 2px 6px rgba(255, 255, 255, 0.2),
-        inset -2px -2px 6px rgba(0, 0, 0, 0.1);
+/* 主内容区域网格背景 - 夜间模式 */
+.io-grey-mode .main-content.grid-bg {
+    position: relative;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    position: relative;
-    z-index: 1;
-    transform: perspective(1000px) translateZ(0);
-    transition: all 0.5s ease;
+    background: 
+        linear-gradient(rgba(100, 149, 237, 0.15) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(100, 149, 237, 0.15) 1px, transparent 1px),
+        linear-gradient(135deg, #0f2027 0%, #203a43 40%, #2c5364 100%);
+    background-size: 20px 20px, 20px 20px, 100% 100%;
 }
 
-.url-card .card:hover {
-    transform: perspective(1000px) translateY(-15px) scale(1.05) translateZ(20px);
-    box-shadow: 
-        0 25px 50px rgba(0, 0, 0, 0.25),
-        inset 2px 2px 10px rgba(255, 255, 255, 0.4),
-        inset -2px -2px 10px rgba(0, 0, 0, 0.2),
-        0 0 30px rgba(52, 152, 219, 0.4);
-    background: rgba(255, 255, 255, 0.25);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-}
-
-/* 酷炫霓虹光晕效果 */
-.url-card {
-    position: relative;
-}
-
-.url-card::before {
-    content: '';
-    position: absolute;
-    top: -5px;
-    left: -5px;
-    right: -5px;
-    bottom: -5px;
-    background: linear-gradient(45deg, #ff00cc, #333399, #00ccff, #00ffcc, #ff00cc);
-    z-index: -1;
-    border-radius: 25px;
-    opacity: 0;
-    transition: opacity 0.5s ease, background 0.5s ease;
-    pointer-events: none;
-    animation: gradientShift 3s ease-in-out infinite;
-}
-
-.url-card:hover::before {
-    opacity: 1;
-    filter: blur(10px);
-    animation: gradientShift 1.5s ease-in-out infinite;
-}
-
-@keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
-/* 酷炫扫描线效果 */
-.url-card::after {
+/* 主内容区域装饰性光点 - 夜间模式 */
+.io-grey-mode .main-content.grid-bg::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.1), transparent);
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 15% 25%, rgba(100, 149, 237, 0.1) 0%, transparent 3%),
+        radial-gradient(circle at 85% 75%, rgba(46, 204, 113, 0.08) 0%, transparent 3%),
+        radial-gradient(circle at 45% 65%, rgba(155, 89, 182, 0.06) 0%, transparent 2.5%),
+        radial-gradient(circle at 65% 35%, rgba(241, 196, 15, 0.06) 0%, transparent 2.5%);
     z-index: -1;
-    border-radius: 20px;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-    animation: scanLine 2s linear infinite;
+    animation: subtlePulse 30s ease-in-out infinite;
 }
 
-.url-card:hover::after {
-    opacity: 1;
+/* 主内容区域微动网格 - 夜间模式 */
+.io-grey-mode .main-content.grid-bg::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 200%;
+    background: 
+        linear-gradient(transparent 29px, rgba(100, 149, 237, 0.1) 29px, rgba(100, 149, 237, 0.1) 31px, transparent 31px),
+        linear-gradient(90deg, transparent 29px, rgba(100, 149, 237, 0.1) 29px, rgba(100, 149, 237, 0.1) 31px, transparent 31px);
+    background-size: 60px 60px;
+    z-index: -2;
+    animation: slideGrid 40s linear infinite;
 }
 
-@keyframes scanLine {
-    0% { transform: translateY(-100%); }
-    100% { transform: translateY(100%); }
+/* 简洁卡片样式 */
+.url-card .card {
+    border: none;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    position: relative;
+    z-index: 1;
+}
+
+.url-card .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.7);
 }
 
 /* 日间模式卡片样式 */
 .url-card .card {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(12px);
-    box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.1),
-        inset 2px 2px 6px rgba(255, 255, 255, 0.2),
-        inset -2px -2px 6px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.75);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 .url-card .card:hover {
-    background: rgba(255, 255, 255, 0.25);
-    box-shadow: 
-        0 25px 50px rgba(0, 0, 0, 0.25),
-        inset 2px 2px 10px rgba(255, 255, 255, 0.4),
-        inset -2px -2px 10px rgba(0, 0, 0, 0.2),
-        0 0 30px rgba(52, 152, 219, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.7);
 }
 
 /* 夜间模式卡片样式 */
 .io-black-mode .url-card .card {
-    background: rgba(10, 15, 20, 0.25);
-    box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.3),
-        inset 2px 2px 6px rgba(255, 255, 255, 0.05),
-        inset -2px -2px 6px rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(100, 149, 237, 0.15);
+    background: rgba(25, 42, 50, 0.7);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(100, 149, 237, 0.2);
 }
 
 .io-black-mode .url-card .card:hover {
-    background: rgba(10, 15, 20, 0.35);
-    box-shadow: 
-        0 25px 50px rgba(0, 0, 0, 0.4),
-        inset 2px 2px 10px rgba(255, 255, 255, 0.1),
-        inset -2px -2px 10px rgba(0, 0, 0, 0.3),
-        0 0 30px rgba(100, 149, 237, 0.3);
-    border: 1px solid rgba(100, 149, 237, 0.25);
+    background: rgba(25, 42, 50, 0.8);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(100, 149, 237, 0.3);
 }
 
 /* 默认日间模式头部样式 */
