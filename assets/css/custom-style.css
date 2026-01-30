@@ -276,47 +276,47 @@ footer.main-footer .footer-text a:hover {
 .url-card .card {
     border: none;
     border-radius: 16px;
-    background: rgba(255, 255, 255, 0.75);
+    background: rgba(255, 255, 255, 0.65);
     backdrop-filter: blur(10px);
     transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     position: relative;
     z-index: 1;
 }
 
 .url-card .card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-    background: rgba(255, 255, 255, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.6);
 }
 
 /* 日间模式卡片样式 */
 .url-card .card {
-    background: rgba(255, 255, 255, 0.75);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.65);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
 .url-card .card:hover {
-    background: rgba(255, 255, 255, 0.85);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.75);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.6);
 }
 
 /* 夜间模式卡片样式 */
 .io-black-mode .url-card .card {
-    background: rgba(25, 42, 50, 0.7);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(100, 149, 237, 0.2);
+    background: rgba(25, 42, 50, 0.55);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(100, 149, 237, 0.15);
 }
 
 .io-black-mode .url-card .card:hover {
-    background: rgba(25, 42, 50, 0.8);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(100, 149, 237, 0.3);
+    background: rgba(25, 42, 50, 0.65);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(100, 149, 237, 0.25);
 }
 
 /* 默认日间模式头部样式 */
