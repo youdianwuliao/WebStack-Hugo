@@ -1,0 +1,120 @@
+/* Custom icon styles to replace heavy Font Awesome icons */
+/* Using CSS-based icons or inline SVG for most used icons */
+
+/* Star icon (replaces far fa-star) */
+.icon-star::before {
+    content: "★";
+    font-size: 1.2em;
+}
+
+/* Robot icon (replaces fas fa-robot) - using emoji as replacement */
+.icon-robot::before {
+    content: "🤖";
+    font-size: 1.2em;
+}
+
+/* Flask icon (replaces fas fa-flask) */
+.icon-flask::before {
+    content: "🧪";
+    font-size: 1.2em;
+}
+
+/* Gamepad icon (replaces fas fa-gamepad) */
+.icon-gamepad::before {
+    content: "🎮";
+    font-size: 1.2em;
+}
+
+/* Tools icon (replaces fas fa-tools) */
+.icon-tools::before {
+    content: "🛠️";
+    font-size: 1.2em;
+}
+
+/* Play circle icon (replaces fas fa-play-circle) */
+.icon-play-circle::before {
+    content: "▶️";
+    font-size: 1.2em;
+}
+
+/* Folder open icon (replaces far fa-folder-open) */
+.icon-folder-open::before {
+    content: "📂";
+    font-size: 1.2em;
+}
+
+/* Home icon (replaces fa fa-home) */
+.icon-home::before {
+    content: "🏠";
+    font-size: 1.2em;
+}
+
+/* Book icon (replaces fa fa-book) */
+.icon-book::before {
+    content: "📚";
+    font-size: 1.2em;
+}
+
+/* File upload icon (replaces fas fa-file-upload) */
+.icon-file-upload::before {
+    content: "📤";
+    font-size: 1.2em;
+}
+
+/* Info circle icon (replaces fa fa-info-circle) */
+.icon-info-circle::before {
+    content: "ℹ️";
+    font-size: 1.2em;
+}
+
+/* Search icon (already using iconfont, but could be replaced if needed) */
+.icon-search::before {
+    content: "🔍";
+    font-size: 1.2em;
+}
+
+/* Goto arrow icon (already using iconfont) */
+.icon-goto::before {
+    content: "➡️";
+    font-size: 1.2em;
+}
+
+/* Arrow right icon (already using iconfont) */
+.icon-arrow-r-m::before {
+    content: "➡️";
+    font-size: 1.2em;
+}
+
+/* Classification icon (already using iconfont) */
+.icon-classification::before {
+    content: "📋";
+    font-size: 1.2em;
+}
+
+/* Tag icon (already using iconfont) */
+.icon-tag::before {
+    content: "🏷️";
+    font-size: 1.2em;
+}
+
+/* Staylinked icon (replaces fab fa-staylinked) */
+.icon-staylinked::before {
+    content: "🔗";
+    font-size: 1.2em;
+}
+
+/* Additional fallback for common Font Awesome classes */
+.far.fa-star::before { content: "★"; }
+.fas.fa-robot::before { content: "🤖"; }
+.fas.fa-flask::before { content: "🧪"; }
+.fas.fa-gamepad::before { content: "🎮"; }
+.fas.fa-tools::before { content: "🛠️"; }
+.fas.fa-play-circle::before { content: "▶️"; }
+.far.fa-folder-open::before { content: "📂"; }
+.fa.fa-home::before { content: "🏠"; }
+.fa.fa-book::before { content: "📚"; }
+.fas.fa-file-upload::before { content: "📤"; }
+.fa.fa-info-circle::before { content: "ℹ️"; }
+.fab.fa-staylinked::before { content: "🔗"; }
+
+/* For cases where we still need Font Awesome, we'll use CDN version */
