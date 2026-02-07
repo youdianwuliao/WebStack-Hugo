@@ -68,6 +68,7 @@
     },
     {
       "category": "ai未来",
+      "sidebarIcon": "fas fa-robot",
       "items": [
         {
           "title": "抱脸",
