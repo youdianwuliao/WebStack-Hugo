@@ -7645,6 +7645,183 @@ function switchNightMode(){
         $(".mode-ico").addClass("icon-light");
     }
 }
+
+// Load navigation data from nav.json
+async function loadNavigationData() {
+    try {
+        const response = await fetch('nav.json');
+        const data = await response.json();
+        renderNavigation(data.navigation);
+    } catch (error) {
+        console.error('Error loading navigation data:', error);
+    }
+}
+
+// Render navigation based on loaded data
+function renderNavigation(categories) {
+    // Clear existing content in the sidebar and main content area
+    const sidebarMenu = document.querySelector('.sidebar-menu ul');
+    const contentSite = document.querySelector('.content-site');
+    
+    if (sidebarMenu) {
+        sidebarMenu.innerHTML = '';
+    }
+    
+    if (contentSite) {
+        contentSite.innerHTML = '';
+    }
+
+    // Process each category
+    categories.forEach((category, index) => {
+        // Add to sidebar
+        if (sidebarMenu) {
+            const sidebarItem = document.createElement('li');
+            sidebarItem.className = 'sidebar-item';
+            
+            // Determine if this category has subcategories
+            if (category.subcategories && category.subcategories.length > 0) {
+                // Category with subcategories
+                const anchorId = category.category.toLowerCase().replace(/\s+/g, '_');
+                const sidebarIcon = category.sidebarIcon || 'fas fa-folder-open';
+                sidebarItem.innerHTML = `
+                    <a href="#${anchorId}" class="smooth change-href" data-change="#${anchorId}">
+                        <i class="${sidebarIcon} fa-lg icon-fw icon-lg mr-2"></i>
+                        <span>${category.category}</span>
+                        <i class="iconfont icon-arrow-r-m sidebar-more text-sm"></i>
+                    </a>
+                    <ul>
+                        ${category.subcategories.map(sub => `
+                            <li><a href="#${anchorId}_${sub.name.toLowerCase().replace(/\s+/g, '_')}" class="smooth"><span>${sub.name}</span></a></li>
+                        `).join('')}
+                    </ul>
+                `;
+            } else {
+                // Simple category
+                const anchorId = category.category.toLowerCase().replace(/\s+/g, '_');
+                const sidebarIcon = category.sidebarIcon || 'fas fa-link';
+                sidebarItem.innerHTML = `
+                    <a href="#${anchorId}" class="smooth">
+                        <i class="${sidebarIcon} fa-lg icon-fw icon-lg mr-2"></i>
+                        <span>${category.category}</span>
+                    </a>
+                `;
+            }
+            
+            sidebarMenu.appendChild(sidebarItem);
+        }
+
+        // Add to main content
+        if (contentSite) {
+            if (category.subcategories && category.subcategories.length > 0) {
+                // Category with subcategories
+                const anchorId = category.category.toLowerCase().replace(/\s+/g, '_');
+                
+                category.subcategories.forEach((subcategory, subIndex) => {
+                    const subAnchorId = `${anchorId}_${subcategory.name.toLowerCase().replace(/\s+/g, '_')}`;
+                    
+                    const contentDiv = document.createElement('div');
+                    contentDiv.id = subAnchorId;
+                    contentDiv.innerHTML = `
+                        <div class="d-flex flex-fill">
+                            <h4 class="text-gray text-lg mb-4">
+                                <i class="site-tag iconfont icon-tag icon-lg mr-1" id="${subAnchorId}"></i>
+                                ${subcategory.name}
+                            </h4>
+                            <div class="flex-fill"></div>
+                        </div>
+                        <div class="row">
+                            ${subcategory.items.map(item => `
+                                <div class="url-card col-6 col-sm-6 col-md-4 col-xl-5a col-xxl-6a">
+                                    <div class="url-body default">
+                                        <a href="${item.url}" target="_blank" class="card no-c mb-4" data-toggle="tooltip" data-placement="bottom" data-original-title="${item.description}">
+                                            <div class="card-body">
+                                                <div class="url-content d-flex align-items-center">
+                                                    <div class="url-img mr-2 d-flex align-items-center justify-content-center">
+                                                        <img class="lazy" src="${item.icon}" data-src="${item.icon}"
+                                                            onerror="javascript:this.src='assets/images/logos/t.png'" alt="${item.title}">
+                                                    </div>
+                                                    <div class="url-info flex-fill">
+                                                        <div class="text-sm overflowClip_1">
+                                                            <strong>${item.title}</strong>
+                                                        </div>
+                                                        <p class="overflowClip_1 m-0 text-muted text-xs">${item.description}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                        <a href="${item.url}" class="togo text-center text-muted is-views" 
+                                           data-toggle="tooltip" data-placement="right" title="直达" rel="nofollow">
+                                            <i class="iconfont icon-goto"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <br />
+                    `;
+                    
+                    contentSite.appendChild(contentDiv);
+                });
+            } else {
+                // Simple category
+                const anchorId = category.category.toLowerCase().replace(/\s+/g, '_');
+                
+                const contentDiv = document.createElement('div');
+                contentDiv.id = anchorId;
+                contentDiv.innerHTML = `
+                    <div class="d-flex flex-fill">
+                        <h4 class="text-gray text-lg mb-4">
+                            <i class="site-tag iconfont icon-tag icon-lg mr-1" id="${anchorId}"></i>
+                            ${category.category}
+                        </h4>
+                        <div class="flex-fill"></div>
+                    </div>
+                    <div class="row">
+                        ${category.items.map(item => `
+                            <div class="url-card col-6 col-sm-6 col-md-4 col-xl-5a col-xxl-6a">
+                                <div class="url-body default">
+                                    <a href="${item.url}" target="_blank" class="card no-c mb-4" data-toggle="tooltip" data-placement="bottom" data-original-title="${item.description}">
+                                        <div class="card-body">
+                                            <div class="url-content d-flex align-items-center">
+                                                <div class="url-img mr-2 d-flex align-items-center justify-content-center">
+                                                    <img class="lazy" src="${item.icon}" data-src="${item.icon}"
+                                                        onerror="javascript:this.src='assets/images/logos/t.png'" alt="${item.title}">
+                                                </div>
+                                                <div class="url-info flex-fill">
+                                                    <div class="text-sm overflowClip_1">
+                                                        <strong>${item.title}</strong>
+                                                    </div>
+                                                    <p class="overflowClip_1 m-0 text-muted text-xs">${item.description}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <a href="${item.url}" class="togo text-center text-muted is-views" 
+                                       data-toggle="tooltip" data-placement="right" title="直达" rel="nofollow">
+                                        <i class="iconfont icon-goto"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <br />
+                `;
+                
+                contentSite.appendChild(contentDiv);
+            }
+        }
+    });
+
+    // Reinitialize tooltips after content is loaded
+    if (typeof $ !== 'undefined') {
+        $('[data-toggle="tooltip"]').tooltip();
+    }
+}
+
+// Load navigation data when the page loads
+document.addEventListener('DOMContentLoaded', function() {
+    loadNavigationData();
+});
 </script>
 </body>
 </html>
