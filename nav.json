@@ -231,6 +231,12 @@
           "icon": "/assets/images/logos/skills.png",
           "url": "https://skills.sh/",
           "description": "AI agents的可重用能力"
+        },
+        {
+          "title": "AI朋友",
+          "icon": "/assets/images/logos/aipyaipy.png",
+          "url": "https://www.aipyaipy.com/",
+          "description": "超级AI牛马"
         }
       ]
     },
