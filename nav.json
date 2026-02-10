@@ -774,6 +774,12 @@
           "icon": "/assets/images/logos/modyolo.png",
           "url": "https://modyolo.com/",
           "description": "游戏盒子"
+        },
+        {
+          "title": "ldzyz",
+          "icon": "/assets/images/logos/ldzyz.png",
+          "url": "https://www.ldzyz.com/",
+          "description": "游戏网站"
         }
       ]
     },
