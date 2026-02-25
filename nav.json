@@ -474,6 +474,12 @@
               "icon": "/assets/images/logos/tools.png",
               "url": "https://tools.top/",
               "description": "研发工具平台"
+            },
+            {
+              "title": "PentAGI",
+              "icon": "/assets/images/logos/pentagi.png",
+              "url": "https://pentagi.com/",
+              "description": "先进的AI驱动渗透测试平台"
             }
           ]
         },
