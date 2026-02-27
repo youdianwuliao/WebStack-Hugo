@@ -792,6 +792,12 @@
           "icon": "/assets/images/logos/ldzyz.png",
           "url": "https://www.ldzyz.com/",
           "description": "游戏网站"
+        },
+        {
+          "title": "给梨加速器",
+          "icon": "/assets/images/logos/geilijiasu.png",
+          "url": "https://www.geilijiasu.com/",
+          "description": "永久免费，专线加速。用给梨，真给力"
         }
       ]
     },
