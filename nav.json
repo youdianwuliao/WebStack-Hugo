@@ -474,6 +474,12 @@
               "icon": "/assets/images/logos/tools.png",
               "url": "https://tools.top/",
               "description": "研发工具平台"
+            },
+            {
+              "title": "夸克圈",
+              "icon": "/assets/images/logos/kuakeq.ico",
+              "url": "https://www.kuakeq.com/",
+              "description": "优质夸克网盘资源分享圈"
             }
           ]
         },
