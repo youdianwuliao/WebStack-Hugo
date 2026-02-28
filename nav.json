@@ -486,6 +486,12 @@
               "icon": "/assets/images/logos/docsmall.png",
               "url": "https://docsmall.com/",
               "description": "免费的在线图片、PDF处理工具"
+            },
+            {
+              "title": "KolibriOS git",
+              "icon": "/assets/images/logos/kolibrios.svg",
+              "url": "https://git.kolibrios.org/",
+              "description": "快速紧凑的操作系统，满足您的日常需求"
             }
           ]
         },
