@@ -237,6 +237,18 @@
           "icon": "/assets/images/logos/aipyaipy.png",
           "url": "https://www.aipyaipy.com/",
           "description": "超级AI牛马"
+        },
+        {
+          "title": "CoPaw",
+          "icon": "/assets/images/logos/copaw.svg",
+          "url": "https://copaw.agentscope.io/",
+          "description": "AI智能助手，为你工作，与你共成长"
+        },
+        {
+          "title": "OpenFang",
+          "icon": "/assets/images/logos/openfang.ico",
+          "url": "https://openfang.sh/",
+          "description": "开源AI工具平台，提供智能化解决方案"
         }
       ]
     },
