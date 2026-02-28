@@ -480,6 +480,12 @@
               "icon": "/assets/images/logos/kuakeq.ico",
               "url": "https://www.kuakeq.com/",
               "description": "优质夸克网盘资源分享圈"
+            },
+            {
+              "title": "docsmall",
+              "icon": "/assets/images/logos/docsmall.png",
+              "url": "https://docsmall.com/",
+              "description": "免费的在线图片、PDF处理工具"
             }
           ]
         },
