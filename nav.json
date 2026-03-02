@@ -822,6 +822,12 @@
           "icon": "/assets/images/logos/geilijiasu.png",
           "url": "https://www.geilijiasu.com/",
           "description": "永久免费，专线加速。用给梨，真给力"
+        },
+        {
+          "title": "EmulatorJS",
+          "icon": "/assets/images/logos/emulatorjs.png",
+          "url": "https://emulatorjs.org/",
+          "description": "在线模拟器平台，支持多种经典游戏机模拟"
         }
       ]
     },
