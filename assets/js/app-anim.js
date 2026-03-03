@@ -349,7 +349,7 @@
     // sidebar-menu-inner收缩展开
     $('.sidebar-menu-inner a').on('click',function(){//.sidebar-menu-inner a //.has-sub a  
 
-        //console.log('--->>>'+$(this).find('span').text());
+
         if (!$('.sidebar-nav').hasClass('mini-sidebar')) {//菜单栏没有最小化   
             $(this).parent("li").siblings("li.sidebar-item").children('ul').slideUp(200);
             if ($(this).next().css('display') == "none") { //展开
@@ -367,7 +367,6 @@
     });
     //菜单栏最小化
     $('#mini-button').on('click',function(){
-        console.log('start trigger_lsm_mini');
         trigger_lsm_mini(true);
 
     });
@@ -377,19 +376,15 @@
 	    //221024: 调整左导航展开时,点击图标锚定定位失效
             //$('.sidebar-nav .change-href').attr('href','javascript:;');
             $('.sidebar-menu ul ul').css("display", "none");
-	    console.log('checked=true');
             if(isNoAnim){
-		console.log('isNoAnim=true');
                 $('.sidebar-nav').removeClass('animate-nav');
                 $('.sidebar-nav').width(170);
             }
             else{
-		console.log('isNoAnim=false');
                 $('.sidebar-nav').addClass('animate-nav');
                 $('.sidebar-nav').stop().animate({width: 170},200);
             }
         }else{
-            console.log('checked=false');
             $('.sidebar-item.sidebar-show').removeClass('sidebar-show');
             $('.sidebar-menu ul').removeAttr('style');
             $('.sidebar-nav').addClass('mini-sidebar');
@@ -620,7 +615,6 @@
             sites = getItem("myLinks");
         for (var i = 0; i < sites.length; i++){
             if ( parseInt(sites[i].id) === parseInt(id)) {
-                console.log(sites[i].id, id);
                 sites.splice(i, 1);
                 break;
             }
@@ -633,7 +627,6 @@
             sites = getItem("livelists");
         for (var i = 0; i < sites.length; i++){
             if ( parseInt(sites[i].id) === parseInt(id)) {
-                console.log(sites[i].id, id);
                 sites.splice(i, 1);
                 break;
             }
@@ -1292,7 +1285,7 @@ function ioConfirm(message, btnCallBack) {
 	}
 	return popup;
 }
-console.log("\n %c WebStack-Hugo 导航主题 By ShumLab %c https://www.justgame.top/ \n", "color: #ffffff; background: #f1404b; padding:5px 0;", "background: #030307; padding:5px 0;");
+
 
 /**
  * Minified by jsDelivr using Terser v5.3.5.
