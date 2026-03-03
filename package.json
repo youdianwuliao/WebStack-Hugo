@@ -1,0 +1,32 @@
+{
+  "name": "webstack-hugo",
+  "version": "1.0.0",
+  "description": "WebStack-Hugo 导航主题 - 优化版",
+  "main": "index.js",
+  "scripts": {
+    "optimize": "npm run optimize:css && npm run optimize:js && npm run optimize:images",
+    "optimize:css": "postcss assets/css/*.css --use autoprefixer --use cssnano --dir dist/css",
+    "optimize:js": "terser assets/js/*.js -c -m -o dist/js",
+    "optimize:images": "node scripts/optimize-images.js",
+    "build": "npm run optimize",
+    "serve": "hugo server -D"
+  },
+  "keywords": [
+    "hugo",
+    "webstack",
+    "navigation",
+    "performance"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "autoprefixer": "^10.4.16",
+    "cssnano": "^6.0.1",
+    "postcss": "^8.4.32",
+    "postcss-cli": "^11.0.0",
+    "terser": "^5.24.0",
+    "imagemin": "^8.0.1",
+    "imagemin-jpegtran": "^7.0.0",
+    "imagemin-pngquant": "^10.0.0"
+  }
+}
