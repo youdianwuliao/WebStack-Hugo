@@ -510,6 +510,12 @@
               "icon": "/assets/images/logos/pdfcraft.svg",
               "url": "https://pdfcraft.devtoolcafe.com/zh/",
               "description": "免费的在线PDF工具，用于合并、分割、压缩和转换PDF文件。所有处理都在您的浏览器中进行，确保最大隐私。"
+            },
+            {
+              "title": "Yantr",
+              "icon": "/assets/images/logos/yantr.png",
+              "url": "https://yantr.org/",
+              "description": "家庭实验室应用商店，可在您自己的硬件上部署100多个自托管应用——Ollama、Nextcloud、Jellyfin等——只需一条 Docker Compose 命令。无需更换操作系统，无厂商锁定。"
             }
           ]
         },
