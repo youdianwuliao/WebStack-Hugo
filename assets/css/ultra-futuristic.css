@@ -1,0 +1,1629 @@
+/* ========================================
+   🌌 星汉灿烂 - 超级未来科技感样式
+   ======================================== */
+
+/* 全局字体优化 */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Rajdhani', 'Microsoft YaHei', sans-serif;
+    overflow-x: hidden;
+}
+
+/* ========================================
+   🌟 动态粒子星空背景
+   ======================================== */
+#particle-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1000;
+    pointer-events: none;
+}
+
+/* ========================================
+   🔮 赛博朋克网格背景
+   ======================================== */
+.cyber-grid {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -999;
+    background-image:
+        linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: gridMove 20s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes gridMove {
+    0% {
+        transform: perspective(500px) rotateX(60deg) translateY(0);
+    }
+    100% {
+        transform: perspective(500px) rotateX(60deg) translateY(50px);
+    }
+}
+
+/* ========================================
+   🌈 极光效果
+   ======================================== */
+.aurora {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -998;
+    background: linear-gradient(
+        135deg,
+        rgba(0, 255, 255, 0.1) 0%,
+        rgba(255, 0, 128, 0.1) 50%,
+        rgba(255, 215, 0, 0.1) 100%
+    );
+    filter: blur(100px);
+    animation: auroraShift 15s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes auroraShift {
+    0%, 100% {
+        transform: translateX(0) translateY(0);
+        opacity: 0.5;
+    }
+    25% {
+        transform: translateX(100px) translateY(-50px);
+        opacity: 0.7;
+    }
+    50% {
+        transform: translateX(-50px) translateY(100px);
+        opacity: 0.6;
+    }
+    75% {
+        transform: translateX(-100px) translateY(-50px);
+        opacity: 0.8;
+    }
+}
+
+/* ========================================
+   ⚡ 闪电效果
+   ======================================== */
+.lightning {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -997;
+    pointer-events: none;
+    opacity: 0;
+}
+
+.lightning.flash {
+    animation: lightningFlash 0.2s ease;
+}
+
+@keyframes lightningFlash {
+    0%, 100% {
+        opacity: 0;
+        background: transparent;
+    }
+    50% {
+        opacity: 0.3;
+        background: linear-gradient(180deg, rgba(0, 255, 255, 0.5), transparent);
+    }
+}
+
+/* ========================================
+   🎭 全息投影效果
+   ======================================== */
+.hologram {
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(5px);
+}
+
+.hologram::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent 40%,
+        rgba(0, 255, 255, 0.15) 45%,
+        rgba(255, 0, 128, 0.15) 50%,
+        rgba(0, 255, 255, 0.15) 55%,
+        transparent 60%
+    );
+    animation: hologramScan 3s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes hologramScan {
+    0% {
+        transform: translateX(-100%) rotate(45deg);
+    }
+    100% {
+        transform: translateX(100%) rotate(45deg);
+    }
+}
+
+.hologram::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 255, 255, 0.05) 2px,
+        rgba(0, 255, 255, 0.05) 4px
+    );
+    pointer-events: none;
+}
+
+/* ========================================
+   💎 超级卡片效果
+   ======================================== */
+.url-card .card {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform-style: preserve-3d;
+    perspective: 1000px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.url-card .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.4),
+        transparent
+    );
+    transition: left 0.5s ease;
+    z-index: 1;
+}
+
+.url-card .card:hover::before {
+    left: 100%;
+}
+
+.url-card .card:hover {
+    transform: translateY(-15px) rotateX(10deg) rotateY(-10deg) scale(1.05);
+    box-shadow:
+        0 20px 40px rgba(0, 0, 0, 0.3),
+        0 0 30px rgba(0, 255, 255, 0.4),
+        0 0 60px rgba(0, 255, 255, 0.2),
+        0 0 90px rgba(0, 255, 255, 0.1);
+    border-color: rgba(0, 255, 255, 0.5);
+}
+
+.url-card .card .card-body {
+    position: relative;
+    z-index: 2;
+}
+
+/* 卡片发光边框效果 */
+.url-card .card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: inherit;
+    padding: 3px;
+    background: linear-gradient(135deg, #00ffff, #ff0080, #ffff00, #00ffff);
+    background-size: 300% 300%;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    animation: borderGradient 3s ease infinite;
+    pointer-events: none;
+}
+
+.url-card .card:hover::after {
+    opacity: 1;
+}
+
+@keyframes borderGradient {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+/* ========================================
+   🚀 搜索框超级效果
+   ======================================== */
+#search-text {
+    border: 2px solid transparent;
+    background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)) padding-box,
+                linear-gradient(135deg, #00ffff, #ff0080, #ffff00) border-box;
+    transition: all 0.3s ease;
+    box-shadow:
+        0 0 20px rgba(0, 255, 255, 0.2),
+        inset 0 0 20px rgba(0, 255, 255, 0.05);
+    font-size: 1.1rem;
+    padding: 15px 20px;
+}
+
+#search-text:focus {
+    outline: none;
+    box-shadow:
+        0 0 40px rgba(0, 255, 255, 0.5),
+        0 0 80px rgba(0, 255, 255, 0.3),
+        inset 0 0 30px rgba(0, 255, 255, 0.1);
+    transform: scale(1.02);
+}
+
+#search button {
+    background: linear-gradient(135deg, #00ffff, #0080ff);
+    border: none;
+    border-radius: 0 10px 10px 0;
+    transition: all 0.3s ease;
+    box-shadow:
+        0 0 20px rgba(0, 255, 255, 0.4),
+        inset 0 0 10px rgba(255, 255, 255, 0.2);
+    padding: 0 30px;
+    font-size: 1.1rem;
+}
+
+#search button:hover {
+    background: linear-gradient(135deg, #ff0080, #ff00ff);
+    box-shadow:
+        0 0 40px rgba(255, 0, 128, 0.7),
+        0 0 80px rgba(255, 0, 128, 0.5),
+        inset 0 0 10px rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+#search button:active {
+    transform: scale(0.95);
+}
+
+#search button i {
+    color: white !important;
+    font-size: 22px !important;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+/* ========================================
+   🎪 侧边栏超级科技感
+   ======================================== */
+#sidebar {
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.98)) !important;
+    backdrop-filter: blur(30px) !important;
+    border-right: 1px solid rgba(0, 255, 255, 0.3);
+    box-shadow:
+        5px 0 40px rgba(0, 0, 0, 0.5),
+        inset -1px 0 20px rgba(0, 255, 255, 0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+#sidebar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+        180deg,
+        transparent,
+        transparent 30px,
+        rgba(0, 255, 255, 0.02) 30px,
+        rgba(0, 255, 255, 0.02) 31px
+    );
+    pointer-events: none;
+}
+
+.sidebar-item a {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin: 5px 10px;
+}
+
+.sidebar-item a::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 4px;
+    background: linear-gradient(180deg, #00ffff, #ff0080);
+    transform: scaleY(0);
+    transition: transform 0.3s ease;
+    border-radius: 0 4px 4px 0;
+}
+
+.sidebar-item a:hover::before {
+    transform: scaleY(1);
+}
+
+.sidebar-item a:hover {
+    background: linear-gradient(90deg, rgba(0, 255, 255, 0.15), rgba(0, 255, 255, 0.05));
+    color: #00ffff !important;
+    text-shadow: 0 0 15px rgba(0, 255, 255, 1);
+    box-shadow: 0 5px 20px rgba(0, 255, 255, 0.2);
+}
+
+.sidebar-item i {
+    transition: all 0.3s ease;
+}
+
+.sidebar-item a:hover i {
+    transform: scale(1.3) rotate(10deg);
+    animation: iconGlow 0.5s ease;
+    filter: drop-shadow(0 0 10px currentColor);
+}
+
+@keyframes iconGlow {
+    0%, 100% {
+        filter: drop-shadow(0 0 5px currentColor);
+    }
+    50% {
+        filter: drop-shadow(0 0 20px currentColor);
+    }
+}
+
+/* ========================================
+   🎭 顶部导航超级科技感
+   ======================================== */
+.page-header {
+    background: linear-gradient(90deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.95)) !important;
+    backdrop-filter: blur(30px) !important;
+    border-bottom: 1px solid rgba(0, 255, 255, 0.4);
+    box-shadow:
+        0 5px 40px rgba(0, 0, 0, 0.4),
+        0 0 20px rgba(0, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.page-header::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #00ffff, #ff0080, #ffff00, #00ffff, transparent);
+    animation: headerGlow 3s linear infinite;
+}
+
+@keyframes headerGlow {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.page-header .navbar-nav > li > a {
+    position: relative;
+    transition: all 0.3s ease;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.page-header .navbar-nav > li > a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #00ffff, transparent);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+    border-radius: 0 0 3px 3px;
+}
+
+.page-header .navbar-nav > li > a:hover::after {
+    width: 100%;
+}
+
+.page-header .navbar-nav > li > a:hover {
+    color: #00ffff !important;
+    text-shadow: 0 0 15px rgba(0, 255, 255, 1);
+    background: linear-gradient(90deg, rgba(0, 255, 255, 0.1), transparent);
+    box-shadow: 0 5px 20px rgba(0, 255, 255, 0.2);
+}
+
+/* ========================================
+   🌈 霓虹文字效果
+   ======================================== */
+.neon-text {
+    text-shadow:
+        0 0 5px currentColor,
+        0 0 10px currentColor,
+        0 0 20px currentColor,
+        0 0 40px currentColor,
+        0 0 80px currentColor;
+    animation: neonPulse 2s ease-in-out infinite;
+}
+
+@keyframes neonPulse {
+    0%, 100% {
+        text-shadow:
+            0 0 5px currentColor,
+            0 0 10px currentColor,
+            0 0 20px currentColor,
+            0 0 40px currentColor;
+    }
+    50% {
+        text-shadow:
+            0 0 10px currentColor,
+            0 0 20px currentColor,
+            0 0 40px currentColor,
+            0 0 80px currentColor,
+            0 0 120px currentColor,
+            0 0 160px currentColor;
+    }
+}
+
+/* ========================================
+   🎯 分类标题超级科技感
+   ======================================== */
+.text-gray {
+    font-family: 'Orbitron', sans-serif;
+    color: #00ffff !important;
+    text-shadow: 0 0 15px rgba(0, 255, 255, 1);
+    position: relative;
+    display: inline-block;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.text-gray::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 50%;
+    width: 15px;
+    height: 15px;
+    border: 2px solid #00ffff;
+    border-radius: 50%;
+    transform: translateY(-50%);
+    animation: tagPulse 2s ease-in-out infinite;
+}
+
+@keyframes tagPulse {
+    0%, 100% {
+        box-shadow: 0 0 5px #00ffff;
+    }
+    50% {
+        box-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff;
+    }
+}
+
+.text-gray::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, #00ffff, #ff0080, #ffff00);
+    animation: titleUnderline 3s ease infinite;
+    border-radius: 0 0 3px 3px;
+}
+
+@keyframes titleUnderline {
+    0%, 100% {
+        transform: scaleX(0);
+        transform-origin: left;
+    }
+    50% {
+        transform: scaleX(1);
+        transform-origin: left;
+    }
+}
+
+/* ========================================
+   🎪 底部工具栏超级科技感
+   ======================================== */
+#footer-tools .btn {
+    background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(255, 0, 128, 0.2));
+    border: 2px solid rgba(0, 255, 255, 0.4);
+    color: #00ffff;
+    box-shadow:
+        0 0 20px rgba(0, 255, 255, 0.3),
+        inset 0 0 10px rgba(0, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+#footer-tools .btn:hover {
+    background: linear-gradient(135deg, rgba(0, 255, 255, 0.4), rgba(255, 0, 128, 0.4));
+    border-color: #00ffff;
+    box-shadow:
+        0 0 30px rgba(0, 255, 255, 0.6),
+        0 0 60px rgba(0, 255, 255, 0.4),
+        inset 0 0 15px rgba(0, 255, 255, 0.2);
+    transform: translateY(-5px) scale(1.1);
+}
+
+#footer-tools .btn i {
+    color: #00ffff;
+    text-shadow: 0 0 15px rgba(0, 255, 255, 1);
+    transition: all 0.3s ease;
+}
+
+#footer-tools .btn:hover i {
+    transform: scale(1.2);
+    text-shadow: 0 0 25px rgba(0, 255, 255, 1);
+}
+
+/* ========================================
+   🔮 模态框超级科技感
+   ======================================== */
+.modal-content {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.98)) !important;
+    backdrop-filter: blur(30px) !important;
+    border: 2px solid rgba(0, 255, 255, 0.4);
+    box-shadow:
+        0 0 50px rgba(0, 255, 255, 0.3),
+        0 0 100px rgba(0, 255, 255, 0.2),
+        inset 0 0 30px rgba(0, 255, 255, 0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+.modal-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #00ffff, #ff0080, #ffff00);
+    animation: modalTopGlow 3s linear infinite;
+}
+
+@keyframes modalTopGlow {
+    0% {
+        background-position: 0% 50%;
+    }
+    100% {
+        background-position: 200% 50%;
+    }
+}
+
+.modal-header {
+    border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+    background: linear-gradient(90deg, rgba(0, 255, 255, 0.05), transparent);
+}
+
+.modal-footer {
+    border-top: 1px solid rgba(0, 255, 255, 0.3);
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.05));
+}
+
+/* ========================================
+   🎯 滚动条超级美化
+   ======================================== */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.8), rgba(30, 41, 59, 0.8));
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #00ffff, #ff0080);
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #ff0080, #ffff00);
+    box-shadow: 0 0 20px rgba(255, 0, 128, 0.7);
+}
+
+/* ========================================
+   🔥 加载动画超级版
+   ======================================== */
+#loading {
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    position: fixed;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#loading.close {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+#loading .loader {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.5rem;
+    color: #00ffff;
+    text-shadow:
+        0 0 10px #00ffff,
+        0 0 20px #00ffff,
+        0 0 30px #00ffff,
+        0 0 40px #00ffff,
+        0 0 50px #00ffff;
+    animation: loadingPulse 1.5s ease-in-out infinite;
+    position: relative;
+}
+
+#loading .loader::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100px;
+    height: 100px;
+    border: 3px solid transparent;
+    border-top-color: #00ffff;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: loadingSpin 1s linear infinite;
+}
+
+#loading .loader::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 80px;
+    height: 80px;
+    border: 3px solid transparent;
+    border-top-color: #ff0080;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: loadingSpin 0.8s linear infinite reverse;
+}
+
+@keyframes loadingPulse {
+    0%, 100% {
+        opacity: 0.7;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+}
+
+@keyframes loadingSpin {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+/* ========================================
+   🌟 夜间模式超级增强
+   ======================================== */
+.io-grey-mode .page-container .grid-bg {
+    background: linear-gradient(135deg, #0a0e1a 0%, #1a1f35 50%, #0a0e1a 100%);
+}
+
+.io-grey-mode #sidebar {
+    background: linear-gradient(180deg, rgba(5, 10, 20, 0.99), rgba(15, 20, 35, 0.99)) !important;
+    border-right: 1px solid rgba(0, 255, 255, 0.4);
+}
+
+.io-grey-mode .page-header {
+    background: linear-gradient(90deg, rgba(5, 10, 20, 0.98), rgba(15, 20, 35, 0.9), rgba(5, 10, 20, 0.98)) !important;
+    border-bottom: 1px solid rgba(0, 255, 255, 0.5);
+}
+
+.io-grey-mode .url-card .card {
+    background: linear-gradient(135deg, rgba(20, 30, 50, 0.8), rgba(30, 40, 60, 0.8)) !important;
+    border: 1px solid rgba(0, 255, 255, 0.3) !important;
+}
+
+.io-grey-mode #search-text {
+    background: linear-gradient(rgba(20, 30, 50, 0.95), rgba(20, 30, 50, 0.95)) padding-box,
+                linear-gradient(135deg, #00ffff, #ff0080, #ffff00) border-box;
+    color: #e2e8f0;
+}
+
+/* ========================================
+   🎪 按钮超级科技感
+   ======================================== */
+.btn {
+    border: none;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: all 0.5s ease;
+}
+
+.btn:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow:
+        0 10px 30px rgba(0, 255, 255, 0.5),
+        0 0 20px rgba(0, 255, 255, 0.3);
+}
+
+.btn:active {
+    transform: scale(0.95);
+}
+
+/* ========================================
+   🌈 图片悬停超级效果
+   ======================================== */
+.url-img img {
+    transition: all 0.4s ease;
+    filter: drop-shadow(0 0 8px rgba(0, 255, 255, 0.4));
+    border-radius: 8px;
+}
+
+.url-card:hover .url-img img {
+    transform: scale(1.2) rotate(10deg);
+    filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.8));
+}
+
+/* ========================================
+   🎯 链接悬停超级效果
+   ======================================== */
+a {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+a:hover {
+    color: #00ffff !important;
+    text-shadow: 0 0 15px rgba(0, 255, 255, 1);
+}
+
+/* ========================================
+   🌟 输入框聚焦超级效果
+   ======================================== */
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: #00ffff !important;
+    box-shadow:
+        0 0 0 3px rgba(0, 255, 255, 0.2),
+        0 0 30px rgba(0, 255, 255, 0.4),
+        inset 0 0 20px rgba(0, 255, 255, 0.1);
+}
+
+/* ========================================
+   🔮 焦点超级样式
+   ======================================== */
+:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 255, 255, 0.5), 0 0 20px rgba(0, 255, 255, 0.4);
+}
+
+/* ========================================
+   🎭 模态框进入超级动画
+   ======================================== */
+.modal.fade .modal-dialog {
+    animation: modalSlideIn 0.4s ease;
+}
+
+@keyframes modalSlideIn {
+    0% {
+        transform: translateY(-80px) scale(0.9);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* ========================================
+   🎪 文本选择超级样式
+   ======================================== */
+::selection {
+    background: rgba(0, 255, 255, 0.4);
+    color: #fff;
+    text-shadow: 0 0 15px rgba(0, 255, 255, 1);
+}
+
+::-moz-selection {
+    background: rgba(0, 255, 255, 0.4);
+    color: #fff;
+    text-shadow: 0 0 15px rgba(0, 255, 255, 1);
+}
+
+/* ========================================
+   🌟 响应式超级优化
+   ======================================== */
+@media (max-width: 768px) {
+    #particle-canvas {
+        opacity: 0.5;
+    }
+
+    .cyber-grid {
+        opacity: 0.3;
+    }
+
+    .aurora {
+        opacity: 0.3;
+    }
+
+    .url-card .card:hover {
+        transform: translateY(-10px) scale(1.02);
+    }
+
+    #search-text {
+        font-size: 1rem;
+        padding: 12px 15px;
+    }
+
+    #search button {
+        padding: 0 20px;
+    }
+}
+
+/* ========================================
+   🎭 能量球超级效果
+   ======================================== */
+.energy-orb {
+    position: fixed;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: -993;
+    opacity: 0.4;
+    filter: blur(80px);
+    animation: energyFloat 25s ease-in-out infinite;
+}
+
+.energy-orb.orb-1 {
+    background: radial-gradient(circle, rgba(0, 255, 255, 0.9), transparent);
+    top: 5%;
+    left: 5%;
+}
+
+.energy-orb.orb-2 {
+    background: radial-gradient(circle, rgba(255, 0, 128, 0.9), transparent);
+    top: 55%;
+    right: 5%;
+    animation-delay: -8s;
+}
+
+.energy-orb.orb-3 {
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.9), transparent);
+    bottom: 5%;
+    left: 35%;
+    animation-delay: -16s;
+}
+
+@keyframes energyFloat {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+    }
+    25% {
+        transform: translate(80px, -50px) scale(1.2);
+    }
+    50% {
+        transform: translate(-50px, 80px) scale(0.8);
+    }
+    75% {
+        transform: translate(-80px, -30px) scale(1.1);
+    }
+}
+
+/* ========================================
+   🌟 脉冲圆环超级效果
+   ======================================== */
+.pulse-ring {
+    position: relative;
+}
+
+.pulse-ring::before,
+.pulse-ring::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    border: 3px solid #00ffff;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: pulseRing 2.5s ease-out infinite;
+}
+
+.pulse-ring::after {
+    animation-delay: -1.25s;
+}
+
+@keyframes pulseRing {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(2.5);
+        opacity: 0;
+    }
+}
+
+/* ========================================
+   🎪 加载进度条超级版
+   ======================================== */
+.loading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 4px;
+    background: linear-gradient(90deg, #00ffff, #ff0080, #ffff00);
+    background-size: 200% 100%;
+    animation: loadingGradient 2s linear infinite;
+    z-index: 10001;
+    transition: width 0.3s ease;
+    box-shadow:
+        0 0 15px rgba(0, 255, 255, 1),
+        0 0 30px rgba(0, 255, 255, 0.7);
+}
+
+@keyframes loadingGradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    100% {
+        background-position: 200% 50%;
+    }
+}
+
+/* ========================================
+   🎭 搜索标签超级效果
+   ======================================== */
+#search-list-menu label {
+    transition: all 0.3s ease;
+    border-radius: 6px;
+    padding: 8px 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#search-list-menu label:hover {
+    background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(255, 0, 128, 0.2));
+    color: #00ffff !important;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+    box-shadow: 0 5px 15px rgba(0, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+#search-list-menu input[type="radio"]:checked + label {
+    background: linear-gradient(135deg, rgba(0, 255, 255, 0.3), rgba(255, 0, 128, 0.3));
+    color: #00ffff !important;
+    text-shadow: 0 0 15px rgba(0, 255, 255, 1);
+    box-shadow:
+        0 5px 20px rgba(0, 255, 255, 0.4),
+        0 0 30px rgba(0, 255, 255, 0.2);
+}
+
+/* ========================================
+   🌟 网站图标超级效果
+   ======================================== */
+.iconfont.icon-tag {
+    color: #00ffff;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+    animation: tagIconPulse 2s ease-in-out infinite;
+}
+
+@keyframes tagIconPulse {
+    0%, 100% {
+        transform: scale(1);
+        text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+    }
+    50% {
+        transform: scale(1.1);
+        text-shadow: 0 0 20px rgba(0, 255, 255, 1);
+    }
+}
+
+/* ========================================
+   🎪 直达按钮超级效果
+   ======================================== */
+.togo {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.togo::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(0, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: all 0.5s ease;
+}
+
+.togo:hover::before {
+    width: 100px;
+    height: 100px;
+}
+
+.togo:hover {
+    color: #00ffff !important;
+    text-shadow: 0 0 15px rgba(0, 255, 255, 1);
+    background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(255, 0, 128, 0.2));
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+}
+
+.togo:hover i {
+    transform: scale(1.3);
+}
+
+/* ========================================
+   🌟 天气组件超级效果
+   ======================================== */
+.rounded-circle.weather {
+    background: linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(255, 0, 128, 0.1));
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    box-shadow:
+        0 0 15px rgba(0, 255, 255, 0.2),
+        inset 0 0 10px rgba(0, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.rounded-circle.weather:hover {
+    background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(255, 0, 128, 0.2));
+    border-color: #00ffff;
+    box-shadow:
+        0 0 25px rgba(0, 255, 255, 0.4),
+        inset 0 0 15px rgba(0, 255, 255, 0.1);
+    transform: scale(1.05);
+}
+
+/* ========================================
+   🎭 一言超级效果
+   ======================================== */
+#hitokoto a {
+    color: rgba(0, 255, 255, 0.8) !important;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
+    transition: all 0.3s ease;
+    font-style: italic;
+}
+
+#hitokoto a:hover {
+    color: #00ffff !important;
+    text-shadow: 0 0 20px rgba(0, 255, 255, 1);
+    background: linear-gradient(90deg, rgba(0, 255, 255, 0.1), transparent);
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+/* ========================================
+   🌪️ 搜索引擎切换超级效果
+   ======================================== */
+.search-type label {
+    transition: all 0.3s ease;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.search-type label:hover {
+    background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(255, 0, 128, 0.2));
+    color: #00ffff !important;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+    box-shadow: 0 3px 10px rgba(0, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.search-type input[type="radio"]:checked + label {
+    background: linear-gradient(135deg, rgba(0, 255, 255, 0.3), rgba(255, 0, 128, 0.3));
+    color: #00ffff !important;
+    text-shadow: 0 0 15px rgba(0, 255, 255, 1);
+    box-shadow:
+        0 3px 15px rgba(0, 255, 255, 0.4),
+        0 0 20px rgba(0, 255, 255, 0.2);
+}
+
+/* ========================================
+   🎯 Logo超级效果
+   ======================================== */
+.logo img {
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.5));
+}
+
+.logo:hover img {
+    transform: scale(1.1) rotate(5deg);
+    filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.8));
+}
+
+/* ========================================
+   🌟 友情链接超级效果
+   ======================================== */
+.friendlink a {
+    transition: all 0.3s ease;
+    padding: 8px 15px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(255, 0, 128, 0.1));
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    color: rgba(0, 255, 255, 0.8) !important;
+    text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+}
+
+.friendlink a:hover {
+    background: linear-gradient(135deg, rgba(0, 255, 255, 0.3), rgba(255, 0, 128, 0.3));
+    border-color: #00ffff;
+    color: #00ffff !important;
+    text-shadow: 0 0 15px rgba(0, 255, 255, 1);
+    box-shadow: 0 5px 20px rgba(0, 255, 255, 0.4);
+    transform: translateY(-3px);
+}
+
+/* ========================================
+   🎪 页脚超级效果
+   ======================================== */
+.main-footer {
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.98)) !important;
+    border-top: 1px solid rgba(0, 255, 255, 0.3);
+    box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.main-footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #00ffff, #ff0080, #ffff00, #00ffff, transparent);
+    animation: footerGlow 3s linear infinite;
+}
+
+@keyframes footerGlow {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.footer-text {
+    color: rgba(0, 255, 255, 0.7) !important;
+    text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+}
+
+/* ========================================
+   🌟 移动端菜单超级效果
+   ======================================== */
+#sidebar-switch:hover {
+    color: #00ffff !important;
+    text-shadow: 0 0 15px rgba(0, 255, 255, 1);
+    transform: scale(1.1);
+}
+
+/* ========================================
+   🎭 搜索按钮超级效果
+   ======================================== */
+.nav-search a:hover {
+    color: #00ffff !important;
+    text-shadow: 0 0 20px rgba(0, 255, 255, 1);
+    transform: scale(1.1);
+}
+
+/* ========================================
+   🔮 侧边栏收起按钮超级效果
+   ======================================== */
+.header-mini-btn label:hover svg {
+    filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.8));
+}
+
+.header-mini-btn input:checked + svg {
+    filter: drop-shadow(0 0 15px rgba(0, 255, 255, 1));
+}
+
+/* ========================================
+   🎯 最小侧边栏超级效果
+   ======================================== */
+.mini-sidebar {
+    width: 60px !important;
+    transition: width 0.3s ease;
+}
+
+.mini-sidebar:hover {
+    width: 250px !important;
+}
+
+/* ========================================
+   🌟 分类卡片超级效果
+   ======================================== */
+.url-body {
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.url-body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(135deg, rgba(0, 255, 255, 0.3), rgba(255, 0, 128, 0.3));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.url-body:hover::before {
+    opacity: 1;
+}
+
+/* ========================================
+   🎪 网站描述超级效果
+   ======================================== */
+.overflowClip_1 {
+    transition: all 0.3s ease;
+}
+
+.url-card:hover .overflowClip_1 {
+    color: rgba(0, 255, 255, 0.9) !important;
+    text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+}
+
+/* ========================================
+   🌟 网站标题超级效果
+   ======================================== */
+.overflowClip_1 strong {
+    transition: all 0.3s ease;
+}
+
+.url-card:hover .overflowClip_1 strong {
+    color: #00ffff !important;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+}
+
+/* ========================================
+   🎭 卡片内容超级效果
+   ======================================== */
+.url-content {
+    transition: all 0.3s ease;
+}
+
+.url-card:hover .url-content {
+    transform: translateX(5px);
+}
+
+/* ========================================
+   🌟 图片容器超级效果
+   ======================================== */
+.url-img {
+    transition: all 0.3s ease;
+}
+
+.url-card:hover .url-img {
+    transform: scale(1.1);
+}
+
+/* ========================================
+   🎪 网站信息超级效果
+   ======================================== */
+.url-info {
+    transition: all 0.3s ease;
+}
+
+.url-card:hover .url-info {
+    transform: translateX(3px);
+}
+
+/* ========================================
+   🌟 侧边栏菜单超级效果
+   ======================================== */
+.sidebar-menu-inner ul {
+    padding: 10px 0;
+}
+
+.sidebar-menu-inner li {
+    margin: 5px 0;
+}
+
+/* ========================================
+   🎭 子菜单超级效果
+   ======================================== */
+.sidebar-item ul {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.2));
+    border-radius: 0 0 8px 8px;
+    margin-top: 5px;
+    padding: 5px 0;
+    border: 1px solid rgba(0, 255, 255, 0.1);
+}
+
+.sidebar-item ul li a {
+    padding: 8px 20px 8px 50px;
+    font-size: 0.9em;
+}
+
+.sidebar-item ul li a:hover {
+    background: linear-gradient(90deg, rgba(0, 255, 255, 0.2), transparent);
+    color: #00ffff !important;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+}
+
+/* ========================================
+   🌟 侧边栏底部超级效果
+   ======================================== */
+.sidebar-nav-inner .border-top {
+    border-top: 1px solid rgba(0, 255, 255, 0.2) !important;
+    background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.3));
+}
+
+/* ========================================
+   🎭 侧边栏Logo超级效果
+   ======================================== */
+.sidebar-logo {
+    border-bottom: 1px solid rgba(0, 255, 255, 0.2) !important;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.3), transparent);
+    padding: 15px 10px;
+}
+
+.logo-expanded,
+.logo-collapsed {
+    transition: all 0.3s ease;
+}
+
+.logo-expanded:hover,
+.logo-collapsed:hover {
+    transform: scale(1.05);
+}
+
+.logo-expanded img,
+.logo-collapsed img {
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.5));
+}
+
+.logo-expanded:hover img,
+.logo-collapsed:hover img {
+    filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.8));
+}
+
+/* ========================================
+   🌟 侧边栏滚动超级效果
+   ======================================== */
+.sidebar-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 255, 255, 0.5) rgba(0, 0, 0, 0.3);
+}
+
+.sidebar-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #00ffff, #ff0080);
+    border-radius: 3px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #ff0080, #ffff00);
+}
+
+/* ========================================
+   🎭 搜索模态框超级效果
+   ======================================== */
+.search-modal {
+    backdrop-filter: blur(10px);
+}
+
+.search-modal .modal-content {
+    border: 2px solid rgba(0, 255, 255, 0.5);
+    box-shadow:
+        0 0 100px rgba(0, 255, 255, 0.5),
+        0 0 200px rgba(0, 255, 255, 0.3);
+}
+
+/* ========================================
+   🌟 搜索输入框超级效果
+   ======================================== */
+#m_search-text {
+    border: 2px solid transparent;
+    background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)) padding-box,
+                linear-gradient(135deg, #00ffff, #ff0080, #ffff00) border-box;
+    transition: all 0.3s ease;
+    box-shadow:
+        0 0 20px rgba(0, 255, 255, 0.2),
+        inset 0 0 20px rgba(0, 255, 255, 0.05);
+    font-size: 1.1rem;
+    padding: 15px 20px;
+}
+
+#m_search-text:focus {
+    outline: none;
+    box-shadow:
+        0 0 40px rgba(0, 255, 255, 0.5),
+        0 0 80px rgba(0, 255, 255, 0.3),
+        inset 0 0 30px rgba(0, 255, 255, 0.1);
+    transform: scale(1.02);
+}
+
+/* ========================================
+   🎭 搜索类型超级效果
+   ======================================== */
+.s-type {
+    margin-bottom: 20px;
+}
+
+.s-type-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.2));
+    border-radius: 8px;
+    border: 1px solid rgba(0, 255, 255, 0.2);
+}
+
+.s-type-list label {
+    transition: all 0.3s ease;
+    border-radius: 6px;
+    padding: 8px 15px;
+    font-weight: 600;
+    cursor: pointer;
+    background: linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(255, 0, 128, 0.1));
+    border: 1px solid rgba(0, 255, 255, 0.2);
+}
+
+.s-type-list label:hover {
+    background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(255, 0, 128, 0.2));
+    color: #00ffff !important;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+    box-shadow: 0 5px 15px rgba(0, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.s-type-list input[type="radio"]:checked + label {
+    background: linear-gradient(135deg, rgba(0, 255, 255, 0.3), rgba(255, 0, 128, 0.3));
+    color: #00ffff !important;
+    text-shadow: 0 0 15px rgba(0, 255, 255, 1);
+    box-shadow:
+        0 5px 20px rgba(0, 255, 255, 0.4),
+        0 0 30px rgba(0, 255, 255, 0.2);
+    border-color: #00ffff;
+}
+
+/* ========================================
+   🌟 搜索组超级效果
+   ======================================== */
+.search-group {
+    margin-bottom: 15px;
+    padding: 15px;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.2));
+    border-radius: 8px;
+    border: 1px solid rgba(0, 255, 255, 0.2);
+}
+
+.type-text {
+    color: #00ffff !important;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+    font-weight: 700;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.search-type {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.search-type li {
+    margin: 0;
+}
+
+/* ========================================
+   🎭 最终增强：全局光效
+   ======================================== */
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* 增强所有交互元素的反馈 */
+button,
+a,
+input,
+select,
+textarea {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* 平滑滚动 */
+html {
+    scroll-behavior: smooth;
+}
+
+/* 防止文本选择干扰交互 */
+.noselect {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading测试</title>
+    <link rel="stylesheet" href="/assets/css/ultra-futuristic.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        .content {
+            padding: 20px;
+            text-align: center;
+            margin-top: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading">
+        <div class="loader">测试加载动画</div>
+    </div>
+
+    <div class="content">
+        <h1>✅ Loading测试成功！</h1>
+        <p>如果你能看到这个内容，说明loading动画已经正常消失。</p>
+        <button onclick="location.reload()">重新加载测试</button>
+    </div>
+
+    <script src="/assets/js/jquery.min-3.2.1.js"></script>
+    <script>
+        $(document).ready(function(){
+            console.log('jQuery ready - 准备隐藏loading');
+            var siteWelcome = $('#loading');
+            siteWelcome.addClass('close');
+            setTimeout(function() {
+                siteWelcome.remove();
+                console.log('Loading已移除');
+            }, 600);
+        });
+    </script>
+</body>
+</html>
