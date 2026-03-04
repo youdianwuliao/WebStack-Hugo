@@ -32,6 +32,8 @@
         type="text/css" media="all" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="/assets/css/custom-icons.css" type="text/css" />
+    <link rel="stylesheet" href="/assets/css/clean-style.css" type="text/css" />
+    <link rel="stylesheet" href="/assets/css/ultra-futuristic.css" type="text/css" />
     <script type="text/javascript" src="/assets/js/jquery.min-3.2.1.js" id="jquery-js"></script>
     <script type="text/javascript" src="/assets/js/content-search.js"  id="content-search-js"></script>
     
@@ -65,14 +67,30 @@
 
 <body>
 
-    
+    <!-- 粒子画布 -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- 赛博朋克网格背景 -->
+    <div class="cyber-grid"></div>
+
+    <!-- 极光效果 -->
+    <div class="aurora"></div>
+
+    <!-- 闪电效果 -->
+    <div class="lightning"></div>
+
+    <!-- 能量球 -->
+    <div class="energy-orb orb-1"></div>
+    <div class="energy-orb orb-2"></div>
+    <div class="energy-orb orb-3"></div>
+
     <div id="loading">
         <div class="loader">鉴亦有光 维天有汉</div>
     </div>
     
     <div class="page-container">
 	
-        <div id="sidebar" class="sticky sidebar-nav fade mini-sidebar" style="width: 60px;">
+        <div id="sidebar" class="sticky sidebar-nav fade mini-sidebar hologram" style="width: 60px;">
 	
             <div class="modal-dialog h-100 sidebar-nav-inner">
                 <div class="sidebar-logo border-bottom border-color">
@@ -98,19 +116,19 @@
                         <div class="sidebar-menu-inner">
                             <ul>
                                 <li class="sidebar-item">
-                                    <a href="#recommended" class="smooth">
+                                    <a href="#recommended" class="smooth neon-text">
                                         <i class="far fa-star fa-lg icon-fw icon-lg mr-2"></i>
                                         <span>常用推荐</span>
                                     </a>
                                 </li>
                                 <li class="sidebar-item">
-                                    <a href="#ai_future" class="smooth">
+                                    <a href="#ai_future" class="smooth neon-text">
                                         <i class="fas fa-robot fa-lg icon-fw icon-lg mr-2"></i>
                                         <span>ai未来</span>
                                     </a>
                                 </li> 
                                 <li class="sidebar-item">
-                                    <a href="#weapons_library" class="smooth change-href" data-change="#weapons_library">    
+                                    <a href="#weapons_library" class="smooth change-href neon-text" data-change="#weapons_library">    
                                         <i class="fas fa-flask fa-lg icon-fw icon-lg mr-2"></i>
                                         <span>科研办公</span>
                                         <i class="iconfont icon-arrow-r-m sidebar-more text-sm"></i>
@@ -122,13 +140,13 @@
                                     </ul>
                                 </li> 
                                 <li class="sidebar-item">
-                                    <a href="#yaya_games" class="smooth">
+                                    <a href="#yaya_games" class="smooth neon-text">
                                         <i class="fas fa-gamepad fa-lg icon-fw icon-lg mr-2"></i>
                                         <span>丫丫喜欢玩游戏</span>
                                     </a>
                                 </li> 
                                 <li class="sidebar-item">
-                                    <a href="#cloud_server" class="smooth change-href" data-change="#cloud_server">    
+                                    <a href="#cloud_server" class="smooth change-href neon-text" data-change="#cloud_server">    
                                         <i class="fas fa-tools fa-lg icon-fw icon-lg mr-2"></i>
                                         <span>开发设计</span>
                                         <i class="iconfont icon-arrow-r-m sidebar-more text-sm"></i>
@@ -140,13 +158,13 @@
                                     </ul>
                                 </li> 
                                 <li class="sidebar-item">
-                                    <a href="#video_audio" class="smooth">
+                                    <a href="#video_audio" class="smooth neon-text">
                                         <i class="fas fa-play-circle fa-lg icon-fw icon-lg mr-2"></i>
                                         <span>影音视频</span>
                                     </a>
                                 </li> 
                                 <li class="sidebar-item">
-                                    <a href="#cloud_storage" class="smooth">
+                                    <a href="#cloud_storage" class="smooth neon-text">
                                         <i class="far fa-folder-open fa-lg icon-fw icon-lg mr-2"></i>
                                         <span>网盘资源</span>
                                     </a>
@@ -301,7 +319,7 @@
     </div>
 
 
-<div class="header-big  post-top css-color mb-4" id="search-bg" style="">
+<div class="header-big  post-top css-color mb-4 hologram" id="search-bg" style="">
     <div class="s-search">
         <div id="search" class="s-search mx-auto">
             <div id="search-list-menu" class="hide-type-list">
@@ -770,6 +788,7 @@ var theme = {"ajaxurl":"","addico":"https:\/\/nav.baidu.cn\/wp-content\/themes\/
 <script type='text/javascript' src='/assets/js/fancybox.min-3.5.7.js' id='lightbox-js-js'></script>
 
 <script type='text/javascript' src='/assets/js/app-mini.js' id='appmini-js'></script>
+<script type='text/javascript' src='/assets/js/ultra-futuristic.js' id='ultra-futuristic-js'></script>
 
 <script type="text/javascript">
     $(document).ready(function(){
@@ -922,7 +941,7 @@ function renderNavigation(categories) {
                 const anchorId = category.category.toLowerCase().replace(/\s+/g, '_');
                 const sidebarIcon = category.sidebarIcon || 'fas fa-folder-open';
                 sidebarItem.innerHTML = `
-                    <a href="#${anchorId}" class="smooth change-href" data-change="#${anchorId}">
+                    <a href="#${anchorId}" class="smooth change-href neon-text" data-change="#${anchorId}">
                         <i class="${sidebarIcon} fa-lg icon-fw icon-lg mr-2"></i>
                         <span>${category.category}</span>
                         <i class="iconfont icon-arrow-r-m sidebar-more text-sm"></i>
@@ -938,7 +957,7 @@ function renderNavigation(categories) {
                 const anchorId = category.category.toLowerCase().replace(/\s+/g, '_');
                 const sidebarIcon = category.sidebarIcon || 'fas fa-link';
                 sidebarItem.innerHTML = `
-                    <a href="#${anchorId}" class="smooth">
+                    <a href="#${anchorId}" class="smooth neon-text">
                         <i class="${sidebarIcon} fa-lg icon-fw icon-lg mr-2"></i>
                         <span>${category.category}</span>
                     </a>
@@ -961,7 +980,7 @@ function renderNavigation(categories) {
                     contentDiv.id = subAnchorId;
                     contentDiv.innerHTML = `
                         <div class="d-flex flex-fill">
-                            <h4 class="text-gray text-lg mb-4">
+                            <h4 class="text-gray text-lg mb-4 neon-text">
                                 <i class="site-tag iconfont icon-tag icon-lg mr-1" id="${subAnchorId}"></i>
                                 ${subcategory.name}
                             </h4>
@@ -970,7 +989,7 @@ function renderNavigation(categories) {
                         <div class="row">
                             ${subcategory.items.map(item => `
                                 <div class="url-card col-6 col-sm-6 col-md-4 col-xl-5a col-xxl-6a">
-                                    <div class="url-body default">
+                                    <div class="url-body default hologram">
                                         <a href="${item.url}" target="_blank" class="card no-c mb-4" data-toggle="tooltip" data-placement="bottom" data-original-title="${item.description}">
                                             <div class="card-body">
                                                 <div class="url-content d-flex align-items-center">
@@ -1008,7 +1027,7 @@ function renderNavigation(categories) {
                 contentDiv.id = anchorId;
                 contentDiv.innerHTML = `
                     <div class="d-flex flex-fill">
-                        <h4 class="text-gray text-lg mb-4">
+                        <h4 class="text-gray text-lg mb-4 neon-text">
                             <i class="site-tag iconfont icon-tag icon-lg mr-1" id="${anchorId}"></i>
                             ${category.category}
                         </h4>
@@ -1017,7 +1036,7 @@ function renderNavigation(categories) {
                     <div class="row">
                         ${category.items.map(item => `
                             <div class="url-card col-6 col-sm-6 col-md-4 col-xl-5a col-xxl-6a">
-                                <div class="url-body default">
+                                <div class="url-body default hologram">
                                     <a href="${item.url}" target="_blank" class="card no-c mb-4" data-toggle="tooltip" data-placement="bottom" data-original-title="${item.description}">
                                         <div class="card-body">
                                             <div class="url-content d-flex align-items-center">

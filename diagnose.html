@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>诊断页面</title>
+    <link rel="stylesheet" href="/assets/css/ultra-futuristic.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        .content {
+            padding: 20px;
+            text-align: center;
+            margin-top: 100px;
+        }
+        .log {
+            text-align: left;
+            margin: 20px;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            font-family: monospace;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading">
+        <div class="loader">诊断加载中...</div>
+    </div>
+
+    <div class="content">
+        <h1>🔍 Loading诊断工具</h1>
+        <div class="log" id="log">
+            <div>等待页面加载...</div>
+        </div>
+        <button onclick="location.reload()">重新测试</button>
+    </div>
+
+    <script src="/assets/js/jquery.min-3.2.1.js"></script>
+    <script>
+        function addLog(message) {
+            var logDiv = document.getElementById('log');
+            var time = new Date().toLocaleTimeString();
+            logDiv.innerHTML += '<div>[' + time + '] ' + message + '</div>';
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(message);
+        }
+
+        addLog('页面开始加载');
+
+        window.addEventListener('load', function() {
+            addLog('window.load 事件触发');
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            addLog('DOMContentLoaded 事件触发');
+        });
+
+        $(document).ready(function(){
+            addLog('jQuery ready 事件触发');
+
+            var siteWelcome = $('#loading');
+            addLog('找到loading元素: ' + (siteWelcome.length > 0 ? '是' : '否'));
+
+            siteWelcome.addClass('close');
+            addLog('添加close类');
+
+            setTimeout(function() {
+                siteWelcome.remove();
+                addLog('loading元素已移除');
+            }, 600);
+        });
+    </script>
+</body>
+</html>

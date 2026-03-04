@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试页面</title>
+    <style>
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+        .close {
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading">
+        <div class="loader">加载中...</div>
+    </div>
+
+    <h1>测试页面</h1>
+    <p>如果你能看到这个内容，说明加载动画已经消失。</p>
+
+    <script src="/assets/js/jquery.min-3.2.1.js"></script>
+    <script>
+        $(document).ready(function(){
+            console.log('jQuery ready');
+            var siteWelcome = $('#loading');
+            siteWelcome.addClass('close');
+            setTimeout(function() {
+                siteWelcome.remove();
+                console.log('Loading removed');
+            }, 600);
+        });
+    </script>
+</body>
+</html>
