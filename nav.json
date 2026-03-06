@@ -249,6 +249,12 @@
           "icon": "/assets/images/logos/openfang.ico",
           "url": "https://openfang.sh/",
           "description": "开源AI工具平台，提供智能化解决方案"
+        },
+        {
+          "title": "Nanoclaw",
+          "icon": "/assets/images/logos/nanoclaw.ico",
+          "url": "https://nanoclaw.net/",
+          "description": "轻量级个人AI助手，集成WhatsApp。单一Node.js进程，容器隔离，每组记忆，定时任务。基于Claude Agent SDK构建。"
         }
       ]
     },
