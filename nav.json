@@ -77,6 +77,12 @@
           "description": "大量模型库"
         },
         {
+          "title": "openrouter",
+          "icon": "/assets/images/logos/openrouter.png",
+          "url": "https://openrouter.ai",
+          "description": "统一的AI模型接口"
+        },
+        {
           "title": "deepseek",
           "icon": "/assets/images/logos/deepseek.png",
           "url": "https://chat.deepseek.com/",
