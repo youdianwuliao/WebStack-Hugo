@@ -605,6 +605,12 @@
               "icon": "/assets/images/logos/pentagi.png",
               "url": "https://pentagi.com/",
               "description": "先进的AI驱动渗透测试平台"
+            },
+            {
+              "title": "OpenClaw",
+              "icon": "/assets/images/logos/openclaw.ico",
+              "url": "https://openclaw.allegro.earth/",
+              "description": "OpenClaw暴露监控面板，追踪公开暴露的AI代理实例"
             }
           ]
         },
