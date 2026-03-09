@@ -356,12 +356,6 @@
               "description": "多系统启动U盘"
             },
             {
-              "title": "docker hub",
-              "icon": "/assets/images/logos/docker.png",
-              "url": "https://docker.justgame.top",
-              "description": "docker"
-            },
-            {
               "title": "最好的数据库工具",
               "icon": "/assets/images/logos/dbeaver.png",
               "url": "https://dbeaver.io/",
@@ -502,7 +496,7 @@
             {
               "title": "夸克圈",
               "icon": "/assets/images/logos/kuakeq.ico",
-              "url": "https://www.kuakeq.com/",
+              "url": "https://www.quskt.com/",
               "description": "优质夸克网盘资源分享圈"
             },
             {
@@ -1045,7 +1039,7 @@
         {
           "title": "修罗影视",
           "icon": "/assets/images/logos/xlys01.png",
-          "url": "https://www.xlys.me/",
+          "url": "https://www.xlys02.com/",
           "description": "高清好看"
         },
         {
@@ -1065,12 +1059,6 @@
           "icon": "/assets/images/logos/ziliaoba.png",
           "url": "https://ziliaoba.github.io/",
           "description": "天涯神贴"
-        },
-        {
-          "title": "读书吧",
-          "icon": "/assets/images/logos/doosho.png",
-          "url": "https://doosho.com/cn/433",
-          "description": "癸酉本红楼梦"
         },
         {
           "title": "zlib图书馆",
