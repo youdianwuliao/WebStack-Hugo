@@ -5,12 +5,6 @@
       "sidebarIcon": "far fa-star",
       "items": [
         {
-          "title": "Z.ai",
-          "icon": "/assets/images/logos/z-ai.svg",
-          "url": "https://z.ai/",
-          "description": "免费AI聊天机器人，基于GLM-5和GLM-4.7的智能助手"
-        },
-        {
           "title": "小工具",
           "icon": "/assets/images/logos/t.png",
           "url": "https://tool.justgame.top",
@@ -76,6 +70,12 @@
       "category": "ai未来",
       "sidebarIcon": "fas fa-robot",
       "items": [
+        {
+          "title": "Z.ai",
+          "icon": "/assets/images/logos/z-ai.svg",
+          "url": "https://z.ai/",
+          "description": "免费AI聊天机器人，基于GLM-5和GLM-4.7的智能助手"
+        },
         {
           "title": "抱脸",
           "icon": "/assets/images/logos/huggingface.png",
