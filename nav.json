@@ -278,6 +278,12 @@
           "name": "武器库",
           "items": [
             {
+              "title": "CodeBuddy",
+              "icon": "/assets/images/logos/codebuddy.png",
+              "url": "https://www.codebuddy.cn/",
+              "description": "腾讯云代码助手，AI智能编程伙伴"
+            },
+            {
               "title": "ip查询",
               "icon": "/assets/images/logos/ip.png",
               "url": "https://ip.justgame.top/",
