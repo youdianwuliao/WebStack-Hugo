@@ -77,6 +77,12 @@
           "description": "免费AI聊天机器人，基于GLM-5和GLM-4.7的智能助手"
         },
         {
+          "title": "CodeBuddy",
+          "icon": "/assets/images/logos/codebuddy.svg",
+          "url": "https://www.codebuddy.cn/",
+          "description": "腾讯云代码助手，AI智能编程伙伴"
+        },
+        {
           "title": "抱脸",
           "icon": "/assets/images/logos/huggingface.png",
           "url": "https://hf-mirror.com/",
@@ -277,12 +283,6 @@
         {
           "name": "武器库",
           "items": [
-            {
-              "title": "CodeBuddy",
-              "icon": "/assets/images/logos/codebuddy.svg",
-              "url": "https://www.codebuddy.cn/",
-              "description": "腾讯云代码助手，AI智能编程伙伴"
-            },
             {
               "title": "ip查询",
               "icon": "/assets/images/logos/ip.png",
