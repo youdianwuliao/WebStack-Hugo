@@ -273,6 +273,12 @@
           "icon": "/assets/images/logos/nanoclaw.ico",
           "url": "https://nanoclaw.net/",
           "description": "轻量级个人AI助手，集成WhatsApp。单一Node.js进程，容器隔离，每组记忆，定时任务。基于Claude Agent SDK构建。"
+        },
+        {
+          "title": "AIBalance",
+          "icon": "/assets/images/logos/aibalance.ico",
+          "url": "https://aibalance.yaklang.com/",
+          "description": "AI网关和负载均衡器"
         }
       ]
     },
