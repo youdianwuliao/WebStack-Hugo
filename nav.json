@@ -623,6 +623,12 @@
               "icon": "/assets/images/logos/openclaw.ico",
               "url": "https://openclaw.allegro.earth/",
               "description": "OpenClaw暴露监控面板，追踪公开暴露的AI代理实例"
+            },
+            {
+              "title": "Memfit AI",
+              "icon": "/assets/images/logos/memfit.ico",
+              "url": "https://memfit.ai/",
+              "description": "AI安全工具平台"
             }
           ]
         },
