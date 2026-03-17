@@ -279,6 +279,12 @@
           "icon": "/assets/images/logos/aibalance.ico",
           "url": "https://aibalance.yaklang.com/",
           "description": "AI网关和负载均衡器"
+        },
+        {
+          "title": "SkillHub",
+          "icon": "/assets/images/logos/skillhub.png",
+          "url": "https://skillhub.tencent.com/",
+          "description": "专为中国用户优化的AI Skills社区，精选Top 50高质量AI Skills"
         }
       ]
     },
