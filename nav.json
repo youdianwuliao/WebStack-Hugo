@@ -297,6 +297,12 @@
           "icon": "/assets/images/logos/picoclaw.png",
           "url": "https://picoclaw.net/",
           "description": "超轻量级个人AI助手，Go语言构建，内存<10MB，启动<1秒，支持多平台部署"
+        },
+        {
+          "title": "OpenMAIC",
+          "icon": "/assets/images/logos/openmaic.png",
+          "url": "https://open.maic.chat/",
+          "description": "AI教学和对话平台，提供编程学习、知识讲解和互动问答服务"
         }
       ]
     },
