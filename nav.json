@@ -288,7 +288,7 @@
         },
         {
           "title": "ZeroClaw",
-          "icon": "/assets/images/logos/zeroclaw.ico",
+          "icon": "/assets/images/logos/zeroclaw.svg",
           "url": "https://zeroclaw.bot/",
           "description": "基于Rust的轻量级自主AI Agent框架，安全优先，快速启动，低内存占用"
         },
