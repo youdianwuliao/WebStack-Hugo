@@ -1092,6 +1092,13 @@ $(document).ready(function() {
             $(this).attr('title', '搜索 (Ctrl+Q)');
         }
     });
+
+    // 当搜索模态框显示时，自动聚焦到搜索输入框
+    $('#search-modal').on('shown.bs.modal', function() {
+        setTimeout(function() {
+            $('#m_search-text').focus();
+        }, 100);
+    });
 });
 </script>
 </body>
