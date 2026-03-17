@@ -285,6 +285,18 @@
           "icon": "/assets/images/logos/skillhub.png",
           "url": "https://skillhub.tencent.com/",
           "description": "专为中国用户优化的AI Skills社区，精选Top 50高质量AI Skills"
+        },
+        {
+          "title": "ZeroClaw",
+          "icon": "/assets/images/logos/zeroclaw.ico",
+          "url": "https://zeroclaw.bot/",
+          "description": "基于Rust的轻量级自主AI Agent框架，安全优先，快速启动，低内存占用"
+        },
+        {
+          "title": "PicoClaw",
+          "icon": "/assets/images/logos/picoclaw.png",
+          "url": "https://picoclaw.net/",
+          "description": "超轻量级个人AI助手，Go语言构建，内存<10MB，启动<1秒，支持多平台部署"
         }
       ]
     },
