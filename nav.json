@@ -571,6 +571,12 @@
           "name": "安全相关",
           "items": [
             {
+              "title": "OpenOcta",
+              "icon": "/assets/images/logos/openocta.ico",
+              "url": "https://openocta.com/",
+              "description": "安全工具平台"
+            },
+            {
               "title": "yakit",
               "icon": "/assets/images/logos/yakit.png",
               "url": "https://www.yaklang.io/products/intro/",
