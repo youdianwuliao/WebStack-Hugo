@@ -300,7 +300,7 @@
         },
         {
           "title": "OpenMAIC",
-          "icon": "/assets/images/logos/openmaic.png",
+          "icon": "https://open.maic.chat/favicon.ico?favicon.6b6a8546.ico",
           "url": "https://open.maic.chat/",
           "description": "AI教学和对话平台，提供编程学习、知识讲解和互动问答服务"
         }
