@@ -67,6 +67,10 @@
       ]
     },
     {
+      "category": "ai未来",
+      "sidebarIcon": "fas fa-robot",
+      "items": [
+        {
           "title": "Z.ai",
           "icon": "/assets/images/logos/z-ai.svg",
           "url": "https://z.ai/",
