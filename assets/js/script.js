@@ -110,13 +110,15 @@ class NavigationApp {
             if (!response.ok) throw new Error('Network response was not ok');
             const data = await response.json();
             this.sites = data.navigation.reduce((acc, cat) => {
-                cat.items.forEach(item => {
-                    acc.push({
-                        ...item,
-                        category: cat.category,
-                        sidebarIcon: cat.sidebarIcon
+                if (cat.items && cat.items.length > 0) {
+                    cat.items.forEach(item => {
+                        acc.push({
+                            ...item,
+                            category: cat.category,
+                            sidebarIcon: cat.sidebarIcon
+                        });
                     });
-                });
+                }
                 if (cat.subcategories) {
                     cat.subcategories.forEach(sub => {
                         sub.items.forEach(item => {
