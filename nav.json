@@ -67,10 +67,6 @@
       ]
     },
     {
-      "category": "ai未来",
-      "sidebarIcon": "fas fa-robot",
-      "items": [
-        {
           "title": "Z.ai",
           "icon": "/assets/images/logos/z-ai.svg",
           "url": "https://z.ai/",
@@ -303,6 +299,12 @@
           "icon": "https://open.maic.chat/favicon.ico?favicon.6b6a8546.ico",
           "url": "https://open.maic.chat/",
           "description": "AI教学和对话平台，提供编程学习、知识讲解和互动问答服务"
+        },
+        {
+          "title": "MonkeyCode AI",
+          "icon": "/assets/images/logos/monkeycode.png",
+          "url": "https://monkeycode-ai.com/",
+          "description": "专业的 AI 编码助手"
         }
       ]
     },
