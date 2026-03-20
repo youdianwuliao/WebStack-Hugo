@@ -309,6 +309,12 @@
           "icon": "/assets/images/logos/monkeycode.png",
           "url": "https://monkeycode-ai.com/",
           "description": "专业的 AI 编码助手"
+        },
+        {
+          "title": "OpenBMB",
+          "icon": "/assets/images/logos/openbmb.ico",
+          "url": "https://www.openbmb.cn/",
+          "description": "大模型工具平台"
         }
       ]
     },
@@ -1081,7 +1087,7 @@
         {
           "title": "3Q影视",
           "icon": "/assets/images/logos/qqqys.png",
-          "url": "https://qqqys.com/",
+          "url": "https://bubuyingshi.com/",
           "description": "影视"
         },
         {
