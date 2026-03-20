@@ -1085,12 +1085,6 @@
           "description": "影视"
         },
         {
-          "title": "观影",
-          "icon": "/assets/images/logos/gying.png",
-          "url": "https://www.gying.page/",
-          "description": "高清"
-        },
-        {
           "title": "修罗影视",
           "icon": "/assets/images/logos/xlys01.png",
           "url": "https://www.xlys02.com/",
