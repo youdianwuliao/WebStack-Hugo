@@ -275,12 +275,6 @@
           "description": "轻量级个人AI助手，集成WhatsApp。单一Node.js进程，容器隔离，每组记忆，定时任务。基于Claude Agent SDK构建"
         },
         {
-          "title": "AIBalance",
-          "icon": "/assets/images/logos/aibalance.ico",
-          "url": "https://aibalance.yaklang.com/",
-          "description": "AI网关和负载均衡器"
-        },
-        {
           "title": "SkillHub",
           "icon": "/assets/images/logos/skillhub.png",
           "url": "https://skillhub.tencent.com/",
@@ -1095,12 +1089,6 @@
           "icon": "/assets/images/logos/gying.png",
           "url": "https://www.gying.page/",
           "description": "高清"
-        },
-        {
-          "title": "BT之家",
-          "icon": "/assets/images/logos/1lou.png",
-          "url": "https://www.1lou.cc/",
-          "description": "影视下载"
         },
         {
           "title": "修罗影视",
