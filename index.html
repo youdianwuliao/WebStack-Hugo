@@ -3,69 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>星海导航 - Game Style</title>
+    <title>CYBER_NAV // 赛博导航</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Russo+One&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <canvas id="bg-canvas"></canvas>
     <div class="scanlines"></div>
+    <div class="grid-overlay"></div>
+    <div class="glitch-overlay" id="glitch-overlay"></div>
 
     <header>
-        <div class="logo">
-            <span class="logo-icon"><i class="fas fa-rocket"></i></span>
-            <span class="logo-text">星<span class="highlight">海</span>导航</span>
+        <div class="header-left">
+            <div class="logo">
+                <span class="logo-bracket">[</span>
+                <span class="logo-icon"><i class="fas fa-cube"></i></span>
+                <span class="logo-text">CYBER<span class="highlight">_</span>NAV</span>
+                <span class="logo-bracket">]</span>
+            </div>
+            <div class="logo-sub">// NEURAL_LINK_PROTOCOL v2.0</div>
         </div>
-        <div class="search-box">
-            <input type="text" id="search-input" placeholder="搜索导航..." autocomplete="off">
-            <button id="search-btn"><i class="fas fa-search"></i></button>
+        
+        <div class="search-container">
+            <div class="search-line"></div>
+            <div class="search-box">
+                <span class="search-prompt">root@cyber:~$</span>
+                <input type="text" id="search-input" placeholder="输入搜索指令..." autocomplete="off">
+                <div class="search-actions">
+                    <button class="search-engine-btn" id="search-engine-btn" title="切换搜索引擎">
+                        <i class="fab fa-edge"></i>
+                    </button>
+                    <button id="search-btn"><i class="fas fa-terminal"></i></button>
+                </div>
+                <div class="search-dropdown" id="search-dropdown">
+                    <div class="dropdown-item active" data-engine="bing" data-url="https://www.bing.com/search?q=">
+                        <i class="fab fa-edge"></i>
+                        <span>Bing</span>
+                    </div>
+                    <div class="dropdown-item" data-engine="baidu" data-url="https://www.baidu.com/s?wd=">
+                        <i class="fas fa-paw"></i>
+                        <span>Baidu</span>
+                    </div>
+                </div>
+            </div>
+            <div class="search-line"></div>
+        </div>
+
+        <div class="header-right">
+            <div class="time-display" id="time-display">00:00:00</div>
+            <div class="status-indicator">
+                <span class="status-dot"></span>
+                <span class="status-text">ONLINE</span>
+            </div>
         </div>
     </header>
 
     <nav class="category-nav">
+        <div class="nav-decoration left"></div>
         <div class="nav-scroll">
             <button class="category-btn active" data-category="all">
-                <i class="fas fa-globe"></i>
-                <span>全部</span>
+                <span class="btn-bracket">[</span>
+                <i class="fas fa-server"></i>
+                <span>全部节点</span>
+                <span class="btn-bracket">]</span>
             </button>
             <button class="category-btn" data-category="常用推荐">
+                <span class="btn-bracket">[</span>
                 <i class="far fa-star"></i>
                 <span>常用推荐</span>
+                <span class="btn-bracket">]</span>
             </button>
             <button class="category-btn" data-category="ai未来">
+                <span class="btn-bracket">[</span>
                 <i class="fas fa-robot"></i>
                 <span>AI未来</span>
+                <span class="btn-bracket">]</span>
             </button>
             <button class="category-btn" data-category="科研办公">
+                <span class="btn-bracket">[</span>
                 <i class="fas fa-flask"></i>
                 <span>科研办公</span>
+                <span class="btn-bracket">]</span>
             </button>
             <button class="category-btn" data-category="丫丫喜欢玩游戏">
+                <span class="btn-bracket">[</span>
                 <i class="fas fa-gamepad"></i>
                 <span>游戏天地</span>
+                <span class="btn-bracket">]</span>
             </button>
             <button class="category-btn" data-category="开发设计">
+                <span class="btn-bracket">[</span>
                 <i class="fas fa-tools"></i>
                 <span>开发设计</span>
+                <span class="btn-bracket">]</span>
             </button>
             <button class="category-btn" data-category="影音视频">
+                <span class="btn-bracket">[</span>
                 <i class="fas fa-play-circle"></i>
                 <span>影音视频</span>
+                <span class="btn-bracket">]</span>
             </button>
             <button class="category-btn" data-category="网盘资源">
+                <span class="btn-bracket">[</span>
                 <i class="far fa-folder-open"></i>
                 <span>网盘资源</span>
+                <span class="btn-bracket">]</span>
             </button>
         </div>
+        <div class="nav-decoration right"></div>
     </nav>
 
     <main>
+        <div class="main-header">
+            <div class="section-title">
+                <span class="title-decoration">//</span>
+                <h2 id="category-title">全部节点</h2>
+                <span class="node-count" id="node-count">[000]</span>
+            </div>
+            <div class="header-line"></div>
+        </div>
+        
         <div class="sites-grid" id="sites-container"></div>
     </main>
 
     <footer>
-        <p>Made with <i class="fas fa-heart"></i> | 星海导航 v2.0</p>
+        <div class="footer-content">
+            <div class="footer-left">
+                <span class="footer-bracket">[</span>
+                <i class="fas fa-shield-halved"></i>
+                <span>SYS_STATUS: OPERATIONAL</span>
+                <span class="footer-bracket">]</span>
+            </div>
+            <div class="footer-center">
+                <span>CYBER_NAV v2.0 // ACCESS GRANTED</span>
+            </div>
+            <div class="footer-right">
+                <span class="footer-bracket">[</span>
+                <i class="fas fa-heart"></i>
+                <span>MADE_WITH_NEURO_LINK</span>
+                <span class="footer-bracket">]</span>
+            </div>
+        </div>
     </footer>
+
+    <div class="corner-decoration top-left"></div>
+    <div class="corner-decoration top-right"></div>
+    <div class="corner-decoration bottom-left"></div>
+    <div class="corner-decoration bottom-right"></div>
 
     <script src="assets/js/script.js"></script>
 </body>
