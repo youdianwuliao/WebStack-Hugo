@@ -310,14 +310,7 @@
           "url": "https://www.openbmb.cn/",
           "description": "大模型工具平台"
         },
-        {
-          "title": "Polymarket Analytics",
-          "icon": "/assets/images/logos/polymarket.ico",
-          "url": "https://polymarketanalytics.com/",
-          "description": "Polymath 市场数据分析平台"
-        }
-      ]
-    },
+
     {
       "category": "科研办公",
       "sidebarIcon": "fas fa-flask",
