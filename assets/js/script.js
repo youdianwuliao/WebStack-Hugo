@@ -1,90 +1,54 @@
-class ParticleBackground {
+class MatrixRain {
     constructor(canvas) {
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d');
-        this.particles = [];
-        this.particleCount = 60;
-        this.mouse = { x: null, y: null };
-
-        this.resize();
+        this.drops = [];
+        this.columnWidth = 80;
+        this.texts = ['胡', '无', '人', '汉', '道', '昌', '明', '犯', '强', '汉', '者', '虽', '远', '必', '诛'];
         this.init();
         this.animate();
-
-        window.addEventListener('resize', () => this.resize());
-        window.addEventListener('mousemove', (e) => {
-            this.mouse.x = e.clientX;
-            this.mouse.y = e.clientY;
-        });
-    }
-
-    resize() {
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
+        window.addEventListener('resize', () => this.init());
     }
 
     init() {
-        this.particles = [];
-        for (let i = 0; i < this.particleCount; i++) {
-            this.particles.push({
-                x: Math.random() * this.canvas.width,
-                y: Math.random() * this.canvas.height,
-                vx: (Math.random() - 0.5) * 0.3,
-                vy: (Math.random() - 0.5) * 0.3,
-                size: Math.random() * 2 + 0.5,
-                color: Math.random() > 0.5 ? '#00ff9d' : '#00d4ff'
-            });
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+        const columns = Math.floor(this.canvas.width / this.columnWidth);
+        this.drops = [];
+        for (let i = 0; i < columns; i++) {
+            this.drops[i] = Math.random() * -100;
         }
     }
 
-    randomColor() {
-        const colors = ['#00ff9d', '#00d4ff', '#ff006e', '#ffff00'];
-        return colors[Math.floor(Math.random() * colors.length)];
-    }
-
     animate() {
-        this.ctx.fillStyle = 'rgba(13, 13, 13, 0.15)';
+        this.ctx.fillStyle = 'rgba(10, 10, 15, 0.1)';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        this.particles.forEach((p, i) => {
-            p.x += p.vx;
-            p.y += p.vy;
+        this.ctx.font = 'bold 18px Orbitron';
+        this.ctx.textAlign = 'center';
+        
+        for (let i = 0; i < this.drops.length; i++) {
+            const char = this.texts[Math.floor(Math.random() * this.texts.length)];
+            const x = i * this.columnWidth + this.columnWidth / 2;
+            const y = this.drops[i] * 30;
 
-            if (p.x < 0 || p.x > this.canvas.width) p.vx *= -1;
-            if (p.y < 0 || p.y > this.canvas.height) p.vy *= -1;
-
-            if (this.mouse.x && this.mouse.y) {
-                const dx = this.mouse.x - p.x;
-                const dy = this.mouse.y - p.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < 100) {
-                    p.x -= dx * 0.02;
-                    p.y -= dy * 0.02;
-                }
-            }
-
-            this.ctx.beginPath();
-            this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-            this.ctx.fillStyle = p.color;
+            const colors = ['#7C3AED', '#F43F5E', '#00F5FF', '#A78BFA'];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            
             this.ctx.shadowBlur = 10;
-            this.ctx.shadowColor = p.color;
-            this.ctx.fill();
+            this.ctx.shadowColor = color;
+            this.ctx.fillStyle = color;
+            this.ctx.globalAlpha = 0.5 + Math.random() * 0.3;
+            this.ctx.fillText(char, x, y);
 
-            for (let j = i + 1; j < this.particles.length; j++) {
-                const p2 = this.particles[j];
-                const dx = p.x - p2.x;
-                const dy = p.y - p2.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < 100) {
-                    this.ctx.beginPath();
-                    this.ctx.moveTo(p.x, p.y);
-                    this.ctx.lineTo(p2.x, p2.y);
-                    this.ctx.strokeStyle = `rgba(0, 255, 157, ${0.15 - dist / 700})`;
-                    this.ctx.lineWidth = 0.5;
-                    this.ctx.stroke();
-                }
+            if (y > this.canvas.height && Math.random() > 0.98) {
+                this.drops[i] = 0;
             }
-        });
+            this.drops[i] += 0.5;
+        }
 
+        this.ctx.globalAlpha = 1;
+        this.ctx.shadowBlur = 0;
         requestAnimationFrame(() => this.animate());
     }
 }
@@ -95,6 +59,20 @@ class NavigationApp {
         this.currentCategory = 'all';
         this.searchQuery = '';
         this.isLoading = true;
+        this.currentEngine = {
+            name: 'bing',
+            url: 'https://www.bing.com/search?q='
+        };
+        this.categoryNames = {
+            'all': '全部节点',
+            '常用推荐': '常用推荐',
+            'ai未来': 'AI未来',
+            '科研办公': '科研办公',
+            '丫丫喜欢玩游戏': '游戏天地',
+            '开发设计': '开发设计',
+            '影音视频': '影音视频',
+            '网盘资源': '网盘资源'
+        };
         this.init();
     }
 
@@ -102,6 +80,8 @@ class NavigationApp {
         await this.loadData();
         this.bindEvents();
         this.render();
+        this.startTimeDisplay();
+        this.triggerRandomGlitch();
     }
 
     async loadData() {
@@ -146,7 +126,9 @@ class NavigationApp {
                 document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 this.currentCategory = btn.dataset.category;
+                this.updateCategoryTitle();
                 this.render();
+                this.triggerGlitch();
             });
         });
 
@@ -160,6 +142,66 @@ class NavigationApp {
         });
 
         document.getElementById('search-btn').addEventListener('click', () => this.handleSearch());
+
+        const engineBtn = document.getElementById('search-engine-btn');
+        const dropdown = document.getElementById('search-dropdown');
+        
+        engineBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdown.classList.toggle('show');
+        });
+
+        document.querySelectorAll('.dropdown-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const engine = item.dataset.engine;
+                const url = item.dataset.url;
+                const icon = item.querySelector('i').className;
+                
+                this.currentEngine = { name: engine, url: url };
+                engineBtn.innerHTML = `<i class="${icon}"></i>`;
+                
+                document.querySelectorAll('.dropdown-item').forEach(d => d.classList.remove('active'));
+                item.classList.add('active');
+                
+                dropdown.classList.remove('show');
+            });
+        });
+
+        document.addEventListener('click', () => {
+            dropdown.classList.remove('show');
+        });
+    }
+
+    updateCategoryTitle() {
+        const titleEl = document.getElementById('category-title');
+        titleEl.textContent = this.categoryNames[this.currentCategory] || '全部节点';
+    }
+
+    startTimeDisplay() {
+        const updateTime = () => {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('time-display').textContent = `${hours}:${minutes}:${seconds}`;
+        };
+        updateTime();
+        setInterval(updateTime, 1000);
+    }
+
+    triggerGlitch() {
+        const overlay = document.getElementById('glitch-overlay');
+        overlay.classList.add('active');
+        setTimeout(() => overlay.classList.remove('active'), 300);
+    }
+
+    triggerRandomGlitch() {
+        setInterval(() => {
+            if (Math.random() > 0.97) {
+                this.triggerGlitch();
+            }
+        }, 3000);
     }
 
     handleSearch() {
@@ -173,6 +215,8 @@ class NavigationApp {
 
         if (matched && matched.url) {
             window.open(matched.url, '_blank');
+        } else {
+            window.open(this.currentEngine.url + encodeURIComponent(query), '_blank');
         }
     }
 
@@ -194,27 +238,43 @@ class NavigationApp {
         return filtered;
     }
 
+    getCategoryIcon(category) {
+        const icons = {
+            '常用推荐': 'fa-star',
+            'ai未来': 'fa-robot',
+            '科研办公': 'fa-flask',
+            '丫丫喜欢玩游戏': 'fa-gamepad',
+            '开发设计': 'fa-tools',
+            '影音视频': 'fa-play-circle',
+            '网盘资源': 'fa-folder-open'
+        };
+        return icons[category] || 'fa-server';
+    }
+
     render() {
         const container = document.getElementById('sites-container');
+        const countEl = document.getElementById('node-count');
 
         if (this.isLoading) {
             container.innerHTML = `
-                <div class="loading" style="grid-column: 1/-1;">
-                    <i class="fas fa-spinner"></i>
-                    <p style="margin-top: 15px;">加载中...</p>
+                <div class="loading">
+                    <i class="fas fa-cog"></i>
+                    <p class="loading-text">LOADING_NODES...</p>
                 </div>
             `;
+            countEl.textContent = '[---]';
             return;
         }
 
         const sites = this.getFilteredSites();
+        countEl.textContent = `[${String(sites.length).padStart(3, '0')}]`;
 
         if (sites.length === 0) {
             container.innerHTML = `
-                <div style="grid-column: 1/-1; text-align: center; padding: 80px 20px; color: var(--text-dim);">
-                    <i class="fas fa-folder-open" style="font-size: 48px; margin-bottom: 20px; opacity: 0.3;"></i>
-                    <p style="font-size: 16px;">没有找到匹配的导航</p>
-                    ${this.searchQuery ? '<p style="font-size: 13px; margin-top: 10px; opacity: 0.6;">尝试其他关键词</p>' : ''}
+                <div class="empty-state">
+                    <i class="fas fa-search"></i>
+                    <p class="empty-title">NODE_NOT_FOUND</p>
+                    <p class="empty-sub">${this.searchQuery ? '尝试其他搜索指令' : '该分类下暂无节点'}</p>
                 </div>
             `;
             return;
@@ -225,7 +285,7 @@ class NavigationApp {
                 <div class="site-card-header">
                     <div class="site-icon">
                         <img class="site-icon-img" src="${site.icon}" alt="${site.title}"
-                             onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\\'fas fa-globe\\' style=\\'font-size:20px;color:var(--primary)\\'></i>'">
+                             onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\\'fas ${this.getCategoryIcon(site.category)}\\' style=\\'font-size:20px;color:var(--primary)\\'></i>'">
                     </div>
                     <div class="site-title">${site.title}</div>
                 </div>
@@ -237,6 +297,11 @@ class NavigationApp {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    new ParticleBackground(document.getElementById('bg-canvas'));
+    const canvas = document.createElement('canvas');
+    canvas.id = 'matrix-canvas';
+    canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:-2;opacity:0.4;';
+    document.body.insertBefore(canvas, document.body.firstChild);
+    
+    new MatrixRain(canvas);
     new NavigationApp();
 });
