@@ -742,7 +742,8 @@
         {
           "title": "老男人论坛",
           "icon": "/assets/images/logos/oldman.png",
-          "url": "https://bbs.oldmantvg.net/",
+          "url": "https://www.oldmantvg.net/",
+          "comment": "https://bbs.oldmantvg.net/",
           "description": "男人的快乐"
         },
         {
