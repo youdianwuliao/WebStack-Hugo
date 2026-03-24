@@ -161,6 +161,12 @@
           "description": "办公学习好助手"
         },
         {
+          "title": "ClawPanel",
+          "icon": "/assets/images/logos/clawpanel.jpg",
+          "url": "https://clawpanel.cc/",
+          "description": "OpenClaw AI 助手可视化管理面板，支持 20+ 通道统一管理"
+        },
+        {
           "title": "anythingllm",
           "icon": "/assets/images/logos/anythingllm.png",
           "url": "https://anythingllm.com/",
