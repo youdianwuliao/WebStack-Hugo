@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClawPanel - 导航图标示例</title>
+  <link rel="icon" type="image/jpeg" href="favicon.jpg">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --primary: #3b82f6;
+      --dark: #0b1020;
+      --light: #f8fafc;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Plus Jakarta Sans', 'Noto Sans SC', sans-serif;
+      background: var(--dark);
+      color: var(--light);
+      min-height: 100vh;
+    }
+    .nav-container {
+      background: rgba(11, 16, 32, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding: 0 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .nav {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 72px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--light);
+    }
+    .brand img {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+    }
+    .brand-text strong {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+    .brand-text small {
+      display: block;
+      font-size: 0.7rem;
+      opacity: 0.6;
+    }
+    .nav-links {
+      display: flex;
+      gap: 0.5rem;
+      list-style: none;
+    }
+    .nav-links a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    .nav-links a:hover {
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--primary);
+    }
+    .nav-links i {
+      width: 18px;
+      text-align: center;
+      font-size: 0.95rem;
+    }
+    .hero {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .icons-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 2rem 4rem;
+    }
+    .icon-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 2rem;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .icon-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(59, 130, 246, 0.2);
+      border-color: var(--primary);
+    }
+    .icon-card i {
+      font-size: 3rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+    .icon-card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+    .icon-card p {
+      font-size: 0.9rem;
+      opacity: 0.7;
+    }
+    .img-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem 4rem;
+    }
+    .img-card {
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .img-card img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .img-card h4 {
+      padding: 1rem;
+      font-size: 1rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav-container">
+    <div class="nav">
+      <a href="#" class="brand">
+        <img src="favicon.jpg" alt="ClawPanel">
+        <span class="brand-text">
+          <strong>ClawPanel</strong>
+          <small>Official Site</small>
+        </span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#editions"><i class="fas fa-box"></i> 版本</a></li>
+        <li><a href="#features"><i class="fas fa-bolt"></i> 能力</a></li>
+        <li><a href="#showcase"><i class="fas fa-image"></i> 界面</a></li>
+        <li><a href="#demo"><i class="fas fa-play"></i> Demo</a></li>
+        <li><a href="#downloads"><i class="fas fa-download"></i> 下载</a></li>
+        <li><a href="#docs"><i class="fas fa-book"></i> 文档</a></li>
+        <li><a href="#changelog"><i class="fas fa-clock-rotate-left"></i> 更新</a></li>
+        <li><a href="#install"><i class="fas fa-terminal"></i> 安装</a></li>
+        <li><a href="#faq"><i class="fas fa-circle-question"></i> FAQ</a></li>
+        <li><a href="https://github.com/zhaoxinyi02/ClawPanel" target="_blank"><i class="fab fa-github"></i> GitHub</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <h1>ClawPanel 导航图标示例</h1>
+    <p>已下载的图标资源存放在 /workspace/clawpanel-icons/ 目录</p>
+  </section>
+
+  <div class="icons-grid">
+    <div class="icon-card">
+      <i class="fas fa-box"></i>
+      <h3>版本</h3>
+      <p>Lite vs Pro 版本对比</p>
+    </div>
+    <div class="icon-card">
+      <i class="fas fa-bolt"></i>
+      <h3>能力</h3>
+      <p>20+ 通道统一管理</p>
+    </div>
+    <div class="icon-card">
+      <i class="fas fa-image"></i>
+      <h3>界面</h3>
+      <p>产品界面展示</p>
+    </div>
+    <div class="icon-card">
+      <i class="fas fa-play"></i>
+      <h3>Demo</h3>
+      <p>在线体验演示站</p>
+    </div>
+    <div class="icon-card">
+      <i class="fas fa-download"></i>
+      <h3>下载</h3>
+      <p>最新版本下载</p>
+    </div>
+    <div class="icon-card">
+      <i class="fas fa-book"></i>
+      <h3>文档</h3>
+      <p>API / FAQ / 插件开发</p>
+    </div>
+    <div class="icon-card">
+      <i class="fas fa-clock-rotate-left"></i>
+      <h3>更新</h3>
+      <p>版本更新日志</p>
+    </div>
+    <div class="icon-card">
+      <i class="fas fa-terminal"></i>
+      <h3>安装</h3>
+      <p>快速安装指南</p>
+    </div>
+    <div class="icon-card">
+      <i class="fas fa-circle-question"></i>
+      <h3>FAQ</h3>
+      <p>常见问题解答</p>
+    </div>
+    <div class="icon-card">
+      <i class="fab fa-github"></i>
+      <h3>GitHub</h3>
+      <p>开源项目地址</p>
+    </div>
+  </div>
+
+  <section class="hero">
+    <h1>已下载的界面截图</h1>
+  </section>
+
+  <div class="img-gallery">
+    <div class="img-card">
+      <img src="dashboard.png" alt="仪表盘">
+      <h4>仪表盘 Dashboard</h4>
+    </div>
+    <div class="img-card">
+      <img src="channels.png" alt="通道管理">
+      <h4>通道管理 Channels</h4>
+    </div>
+    <div class="img-card">
+      <img src="activity-log.png" alt="活动日志">
+      <h4>活动日志 Activity Log</h4>
+    </div>
+    <div class="img-card">
+      <img src="agents.png" alt="智能体">
+      <h4>智能体 Agents</h4>
+    </div>
+    <div class="img-card">
+      <img src="workflows.png" alt="工作流">
+      <h4>工作流 Workflows</h4>
+    </div>
+  </div>
+</body>
+</html>
