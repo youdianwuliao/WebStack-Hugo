@@ -275,6 +275,12 @@
           "description": "轻量级个人AI助手，集成WhatsApp。单一Node.js进程，容器隔离，每组记忆，定时任务。基于Claude Agent SDK构建"
         },
         {
+          "title": "lynote",
+          "icon": "/assets/images/logos/lynote.png",
+          "url": "https://lynote.ai/",
+          "description": "AI笔记工具"
+        },
+        {
           "title": "SkillHub",
           "icon": "/assets/images/logos/skillhub.png",
           "url": "https://skillhub.tencent.com/",
