@@ -158,7 +158,7 @@
           "title": "chatboxai",
           "icon": "/assets/images/logos/chatboxai.png",
           "url": "https://chatboxai.app/",
-          "description": "办公学习好助手"
+          "description": "一站式搞定所有学习需求"
         },
         {
           "title": "ClawPanel",
@@ -274,12 +274,7 @@
           "url": "https://openfang.sh/",
           "description": "开源AI工具平台，提供智能化解决方案"
         },
-        {
-          "title": "Nanoclaw",
-          "icon": "/assets/images/logos/nanoclaw.ico",
-          "url": "https://nanoclaw.net/",
-          "description": "轻量级个人AI助手，集成WhatsApp。单一Node.js进程，容器隔离，每组记忆，定时任务。基于Claude Agent SDK构建"
-        },
+
         {
           "title": "lynote",
           "icon": "/assets/images/logos/lynote.png",
@@ -292,12 +287,7 @@
           "url": "https://skillhub.tencent.com/",
           "description": "专为中国用户优化的AI Skills社区，精选Top 50高质量AI Skills"
         },
-        {
-          "title": "ZeroClaw",
-          "icon": "/assets/images/logos/zeroclaw.svg",
-          "url": "https://zeroclaw.bot/",
-          "description": "基于Rust的轻量级自主AI Agent框架，安全优先，快速启动，低内存占用"
-        },
+
         {
           "title": "PicoClaw",
           "icon": "/assets/images/logos/picoclaw.png",
@@ -339,6 +329,12 @@
           "icon": "/assets/images/logos/youclaw.png",
           "url": "https://youclaw.dev/",
           "description": "AI 工具集合平台"
+        },
+        {
+          "title": "SiliconFlow",
+          "icon": "/assets/images/logos/siliconflow.svg",
+          "url": "https://siliconflow.cn/",
+          "description": "AI 模型 API 服务平台"
         }
       ]
     },
