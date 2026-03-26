@@ -333,6 +333,12 @@
           "icon": "/assets/images/logos/polymarket.ico",
           "url": "https://polymarketanalytics.com/",
           "description": "Polymath 市场数据分析平台"
+        },
+        {
+          "title": "YouClaw",
+          "icon": "/assets/images/logos/youclaw.png",
+          "url": "https://youclaw.dev/",
+          "description": "AI 工具集合平台"
         }
       ]
     },
