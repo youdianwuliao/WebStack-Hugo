@@ -332,7 +332,7 @@
         },
         {
           "title": "SiliconFlow",
-          "icon": "/assets/images/logos/siliconflow.svg",
+          "icon": "/assets/images/logos/siliconflow.ico",
           "url": "https://siliconflow.cn/",
           "description": "AI 模型 API 服务平台"
         }
