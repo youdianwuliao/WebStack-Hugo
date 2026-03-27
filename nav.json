@@ -341,6 +341,12 @@
           "icon": "/assets/images/logos/siliconflow.ico",
           "url": "https://siliconflow.cn/",
           "description": "AI 模型 API 服务平台"
+        },
+        {
+          "title": "LinClaw",
+          "icon": "/assets/images/logos/linclaw.png",
+          "url": "https://linclaw.qnlinking.com/",
+          "description": "七牛 OpenClaw 可视化管理面板"
         }
       ]
     },
