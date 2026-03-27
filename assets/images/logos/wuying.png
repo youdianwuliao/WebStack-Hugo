@@ -1,0 +1,122 @@
+
+
+<!doctype html>
+<html lang="zh">
+ <head> 
+  <meta charset="utf-8"> 
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+  <meta name="data-spm" content="5176"> 
+  <meta http-equiv="x-dns-prefetch-control" content="on"> 
+  <link rel="dns-prefetch" href="//g.alicdn.com"> 
+  <link rel="dns-prefetch" href="//uaction.alicdn.com"> 
+  <link rel="dns-prefetch" href="//cws.alicdn.com"> 
+  <link rel="dns-prefetch" href="//at.alicdn.com"> 
+  <link rel="dns-prefetch" href="//gj.mmstat.com"> 
+  <link rel="dns-prefetch" href="//ynuf.alipay.com"> 
+  <link rel="dns-prefetch" href="//fecs.console.aliyun.com"> 
+  <link rel="dns-prefetch" href="//help.aliyun.com"> 
+  <link rel="shortcut icon" href="https://img.alicdn.com/tfs/TB1_ZXuNcfpK1RjSZFOXXa6nFXa-32-32.ico" type="image/x-icon"> 
+  <title>无影云电脑控制台</title> 
+  <script nonce="7VWnIoiyABlXcLsLlR5G">
+    var ONE_CONSOLE_TOOL = {
+        extend: function(o,n){
+            if(!o) o = {};
+            if(!n) n = {};
+            for (var p in n){
+                o[p] = n[p];
+            }
+            return o;
+        }
+    };
+</script> 
+  <script src="https://g.alicdn.com/console/performance-reporter/index.js" nonce="7VWnIoiyABlXcLsLlR5G"></script> 
+  <script async src="https://cloud-assets.alicdn.com/console.js" nonce="7VWnIoiyABlXcLsLlR5G"></script> 
+  <!--[if lte IE 11]>
+<script src="//g.alicdn.com/aliyun/console/1.4.92/scripts/browser-not-supported.js" crossorigin="anonymous"></script>
+<![endif]--> 
+  <script nonce="7VWnIoiyABlXcLsLlR5G">
+                var ALIYUN_CONSOLE_CONFIG = {
+            APP_ID: "jarvis",
+            PRODUCT: "gws",
+            LANG: "zh",
+            LOCALE: "zh-CN",
+            portalType: 'one',
+                        MAIN_RESOURCE_CDN: 'alicdn.com'
+        }
+        </script> 
+  <script nonce="7VWnIoiyABlXcLsLlR5G">
+    var ALIYUN_CONSOLE_GLOBAL = {};
+</script> 
+  <script nonce="7VWnIoiyABlXcLsLlR5G">
+    var ALIYUN_CONSOLE_MESSAGE = {};
+    var ALIYUN_CONSOLE_CUSTOM_MESSAGE = {};
+</script> 
+  <script nonce="7VWnIoiyABlXcLsLlR5G">
+    var ALIYUN_CONSOLE_I18N_MESSAGE = {};
+</script> 
+  <meta name="description" content="全能自进化 AI 助理平台，内置成长型 Skill 体系与多 Agents 协同群聊能力，AI 可自主学习并协作处理复杂任务。平台提供云端与本地灵活部署，实现三端互通；任务执行全透明，随时可人工接管。通过自然语言调用海量技能，为您全面驱动工作流自动化。"> 
+  <meta name="keywords" content="无影JVS, JVS, JVS Claw, OpenClaw, claw, 阿里云openclaw, 多Agent, Agent协作, 手机openclaw, 手机Agent, AI群聊, 无影云电脑, 贾维斯"> 
+  <link rel="canonical" href="https://jvs.wuying.aliyun.com"> 
+  <meta property="og:locale" content="zh_CN"> 
+  <meta property="og:type" content="website"> 
+  <meta property="og:title" content="JVS Claw - 一键接入OpenClaw，智在进化，快乐养虾"> 
+  <meta property="og:description" content="全能自进化 AI 助理平台，内置成长型 Skill 体系与多 Agents 协同群聊能力。云端与本地灵活部署，三端互通，任务执行全透明，随时可人工接管。"> 
+  <meta property="og:url" content="https://jvs.wuying.aliyun.com"> 
+  <meta property="og:site_name" content="JVS Claw"> 
+  <meta name="baidu-site-verification" content="codeva-z2RsV2gDDm"> 
+  <meta name="google-site-verification" content="ZQwNBfAUQVMXI6IBN20zPkbZji4jphbey2IA1-kVtEs"> 
+  <style type="text/css">
+  #AliyunConsoleOverlay{
+    display: none;
+  }
+</style> 
+  <link rel="stylesheet" href="https://g.alicdn.com/wuying-solution/jarvis-fe/2.0.9/umi.css"> 
+  <script nonce="7VWnIoiyABlXcLsLlR5G">
+(function() {
+  if (window.location.hostname === 'jvs.wuying.com') {
+    var targetUrl = 'https://jvs.wuying.aliyun.com' + window.location.pathname + window.location.search + window.location.hash;
+    window.location.replace(targetUrl);
+  }
+})();
+</script> 
+ </head> 
+ <body data-spm=""> 
+  <div id="AliyunConsoleOverlay" style="position: fixed;top:0;left:0;width:100%;height:100%;background: #F5F6FA;color: #333;text-align: center;"> 
+   <div style="position:relative;top:38.2%;margin-top:-7px;font:italic 14px/1em Helvetica Neue,Hiragino Sans GB,STHeiti,Microsoft YaHei;">
+     Loading... 
+   </div> 
+  </div> 
+  <script src="//oneconsole.alicdn.com/one-mcms/visage/1.0.7/visage_zh-cn.js" charset="utf-8" nonce="7VWnIoiyABlXcLsLlR5G"></script> 
+  <script nonce="7VWnIoiyABlXcLsLlR5G">
+    var aliyunConsoleI18nMessage = {};
+    aliyunConsoleI18nMessage = ONE_CONSOLE_TOOL.extend(window["visage_zh-cn"], aliyunConsoleI18nMessage);
+</script> 
+  <script nonce="7VWnIoiyABlXcLsLlR5G">
+    var ALIYUN_VISAGE_MESSAGE = aliyunConsoleI18nMessage;
+</script> 
+  <div id="root"></div> 
+  <script nonce="7VWnIoiyABlXcLsLlR5G">
+window.CONSOLE_BASE_SETTINGS = {
+  TOP_NAV: false,
+  SIDE_PANEL: false,
+}; 
+</script> 
+  <script src="//fe-sdk.wuying.com/public/v1.1/openim-sdk.js" crossorigin nonce="7VWnIoiyABlXcLsLlR5G"></script> 
+  <script src="//fe-sdk.wuying.com/public/v1.1/wasm_exec.js" crossorigin nonce="7VWnIoiyABlXcLsLlR5G"></script> 
+  <script src="//fe-sdk.wuying.com/public/v1.1/sql-bridge.js" crossorigin nonce="7VWnIoiyABlXcLsLlR5G"></script> 
+  <script src="https://g.alicdn.com/wuying-solution/jarvis-fe/2.0.9/umi.js" crossorigin nonce="7VWnIoiyABlXcLsLlR5G"></script> 
+  <script src="//g.alicdn.com/aliyun/console-base-loader/index.js" crossorigin nonce="7VWnIoiyABlXcLsLlR5G"></script> 
+  <!-- @Deprecated --> 
+  <script type="text/javascript" nonce="7VWnIoiyABlXcLsLlR5G">
+    (function (d) {
+        var t=d.createElement("script");t.type="text/javascript";t.async=true;t.id="tb-beacon-aplus";
+        t.setAttribute("exparams","category=&userid=&aplus&yunid=&yunpk=&current_pk=");
+        t.setAttribute("nonce","7VWnIoiyABlXcLsLlR5G");
+        t.setAttribute("cspx","7VWnIoiyABlXcLsLlR5G");
+        t.src="//g.alicdn.com/alilog/mlog/aplus_v2.js";
+        d.getElementsByTagName("head")[0].appendChild(t);
+    })(document);
+</script> 
+  <script src="//o.alicdn.com/console/hijack-for-service/index.js" async nonce="7VWnIoiyABlXcLsLlR5G"></script>   
+ </body>
+</html>

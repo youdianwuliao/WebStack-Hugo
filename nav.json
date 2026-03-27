@@ -274,6 +274,12 @@
           "url": "https://openfang.sh/",
           "description": "Agent 操作系统"
         },
+        {
+          "title": "无影云电脑",
+          "icon": "/assets/images/logos/wuying.png",
+          "url": "https://jvsclaw.aliyun.com/",
+          "description": "智在进化，快乐养虾"
+        },
 
         {
           "title": "lynote",
