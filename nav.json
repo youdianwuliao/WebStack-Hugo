@@ -275,13 +275,6 @@
           "description": "Agent 操作系统"
         },
         {
-          "title": "无影云电脑",
-          "icon": "/assets/images/logos/wuying.png",
-          "url": "https://jvsclaw.aliyun.com/",
-          "description": "智在进化，快乐养虾"
-        },
-
-        {
           "title": "lynote",
           "icon": "/assets/images/logos/lynote.png",
           "url": "https://lynote.ai/",
@@ -347,6 +340,12 @@
           "icon": "/assets/images/logos/linclaw.png",
           "url": "https://linclaw.qnlinking.com/",
           "description": "七牛 OpenClaw 可视化管理面板"
+        },
+        {
+          "title": "cnb.cool",
+          "icon": "/assets/images/logos/cnbcool.png",
+          "url": "https://cnb.cool/",
+          "description": "CNB加速，一键起飞"
         }
       ]
     },
