@@ -346,6 +346,12 @@
           "icon": "/assets/images/logos/cnbcool.png",
           "url": "https://cnb.cool/",
           "description": "CNB加速，一键起飞"
+        },
+        {
+          "title": "LightPanda",
+          "icon": "/assets/images/logos/lightpanda.ico",
+          "url": "https://lightpanda.io/",
+          "description": "专为 AI agents 设计的快速轻量级 headless 浏览器，Zig 语言开发，性能比 Chrome 快 11 倍"
         }
       ]
     },
