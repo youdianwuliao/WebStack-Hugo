@@ -349,9 +349,15 @@
         },
         {
           "title": "LightPanda",
-          "icon": "/assets/images/logos/lightpanda.ico",
+          "icon": "/assets/images/logos/lightpanda.png",
           "url": "https://lightpanda.io/",
           "description": "专为 AI agents 设计的快速轻量级 headless 浏览器，Zig 语言开发，性能比 Chrome 快 11 倍"
+        },
+        {
+          "title": "NoCode",
+          "icon": "/assets/images/logos/nocode.ico",
+          "url": "https://nocode.cn/",
+          "description": "AI 驱动的无代码开发平台"
         }
       ]
     },
