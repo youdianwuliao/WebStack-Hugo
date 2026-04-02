@@ -1113,6 +1113,12 @@
               "icon": "/assets/images/logos/wps.png",
               "url": "https://www.kdocs.cn/",
               "description": "在线文档"
+            },
+            {
+              "title": "Webminal",
+              "icon": "/assets/images/logos/webminal.png",
+              "url": "https://webminal.org/",
+              "description": "在线Linux终端和编程学习平台"
             }
           ]
         }
