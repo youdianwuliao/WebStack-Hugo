@@ -358,6 +358,12 @@
           "icon": "/assets/images/logos/nocode.ico",
           "url": "https://nocode.cn/",
           "description": "AI 驱动的无代码开发平台"
+        },
+        {
+          "title": "ColaOS",
+          "icon": "/assets/images/logos/colaos.ico",
+          "url": "https://colaos.ai/",
+          "description": "AI 驱动的操作系统"
         }
       ]
     },
