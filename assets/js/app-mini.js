@@ -31,11 +31,18 @@
                 $(this).wrap("<a href='" + this.src + "' data-fancybox='fancybox' data-caption='" + this.alt + "'></a>")
         }
     })
-    // Enable/Disable Resizable Event
+    // Enable/Disable Resizable Event - 使用RAF优化resize
     var wid = 0;
+    var resizeRAF = null;
     $(window).resize(function() {
         clearTimeout(wid);
-        wid = setTimeout(go_resize, 200); 
+        if (resizeRAF) return;
+        wid = setTimeout(function() {
+            resizeRAF = requestAnimationFrame(function() {
+                go_resize();
+                resizeRAF = null;
+            });
+        }, 200); 
     });
     function go_resize() {
         stickFooter(); 
@@ -43,17 +50,25 @@
             trigger_resizable(false);
         //}
     }
-    // count-a数字动画
+    // count-a数字动画 - 使用CSS动画替代jQuery animate
     $('.count-a').each(function () {
-        $(this).prop('Counter', 0).animate({
-            Counter: $(this).text()
-        }, {
-            duration: 1000,
-            easing: 'swing',
-            step: function (now) {
-                $(this).text(Math.ceil(now));
+        var $this = $(this);
+        var target = parseFloat($this.text());
+        var isDecimal = target % 1 !== 0;
+        var duration = 1000;
+        var startTime = performance.now();
+        
+        function updateCount(currentTime) {
+            var elapsed = currentTime - startTime;
+            var progress = Math.min(elapsed / duration, 1);
+            var easeProgress = 1 - Math.pow(1 - progress, 3);
+            var current = target * easeProgress;
+            $this.text(isDecimal ? current.toFixed(1) : Math.ceil(current));
+            if (progress < 1) {
+                requestAnimationFrame(updateCount);
             }
-        });
+        }
+        requestAnimationFrame(updateCount);
     });
     $(document).on('click', "a[target!='_blank']", function() {
         if( theme.loading=='1' && $(this).attr('href') && $(this).attr('href').indexOf("#") != 0 && $(this).attr('href').indexOf("java") != 0 && !$(this).data('fancybox')  && !$(this).data('commentid') && !$(this).hasClass('nofx') ){
@@ -235,15 +250,20 @@
             $(".mode-ico").addClass("icon-night");
         }
     }
-    //返回顶部
+    //返回顶部 - 使用requestAnimationFrame优化scroll事件
+    var scrollRAF = null;
     $(window).scroll(function () {
-        if ($(this).scrollTop() >= 50) {
-            $('#go-to-up').fadeIn(200);
-            $('.big-header-banner').addClass('header-bg');
-        } else {
-            $('#go-to-up').fadeOut(200);
-            $('.big-header-banner').removeClass('header-bg');
-        }
+        if (scrollRAF) return;
+        scrollRAF = requestAnimationFrame(function() {
+            if ($(window).scrollTop() >= 50) {
+                $('#go-to-up').fadeIn(200);
+                $('.big-header-banner').addClass('header-bg');
+            } else {
+                $('#go-to-up').fadeOut(200);
+                $('.big-header-banner').removeClass('header-bg');
+            }
+            scrollRAF = null;
+        });
     });
     $('.go-up').click(function () {
         $('body,html').animate({
