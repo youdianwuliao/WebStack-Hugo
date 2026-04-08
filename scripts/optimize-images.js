@@ -1,7 +1,8 @@
-const imagemin = require('imagemin');
+const imagemin = require('imagemin').default;
 const imageminJpegtran = require('imagemin-jpegtran');
-const imageminPngquant = require('imagemin-pngquant');
+const imageminPngquant = require('imagemin-pngquant').default;
 const path = require('path');
+const fs = require('fs');
 
 (async () => {
     try {
@@ -20,22 +21,23 @@ const path = require('path');
         console.log(`成功优化 ${files.length} 个图片文件`);
         console.log('优化后的图片保存在: assets/images/optimized');
 
-        // 显示优化效果
         let totalOriginal = 0;
         let totalOptimized = 0;
 
         files.forEach(file => {
-            const originalSize = file.sourcePath ? require('fs').statSync(file.sourcePath).size : 0;
+            const originalSize = file.sourcePath ? fs.statSync(file.sourcePath).size : 0;
             const optimizedSize = file.data.length;
             totalOriginal += originalSize;
             totalOptimized += optimizedSize;
 
-            const savings = ((originalSize - optimizedSize) / originalSize * 100).toFixed(2);
+            const savings = originalSize > 0 ? ((originalSize - optimizedSize) / originalSize * 100).toFixed(2) : 0;
             console.log(`${path.basename(file.sourcePath || 'unknown')}: ${originalSize} -> ${optimizedSize} (节省 ${savings}%)`);
         });
 
-        const totalSavings = ((totalOriginal - totalOptimized) / totalOriginal * 100).toFixed(2);
-        console.log(`\n总计节省: ${(totalOriginal - totalOptimized) / 1024}KB (${totalSavings}%)`);
+        if (totalOriginal > 0) {
+            const totalSavings = ((totalOriginal - totalOptimized) / totalOriginal * 100).toFixed(2);
+            console.log(`\n总计节省: ${(totalOriginal - totalOptimized) / 1024}KB (${totalSavings}%)`);
+        }
 
     } catch (error) {
         console.error('图片优化失败:', error);

@@ -43,17 +43,10 @@
             trigger_resizable(false);
         //}
     }
-    // count-a数字动画
+    // count-a数字动画 - 简化为直接显示
     $('.count-a').each(function () {
-        $(this).prop('Counter', 0).animate({
-            Counter: $(this).text()
-        }, {
-            duration: 1000,
-            easing: 'swing',
-            step: function (now) {
-                $(this).text(Math.ceil(now));
-            }
-        });
+        var target = $(this).text();
+        $(this).text(target);
     });
     $(document).on('click', "a[target!='_blank']", function() {
         if( theme.loading=='1' && $(this).attr('href') && $(this).attr('href').indexOf("#") != 0 && $(this).attr('href').indexOf("java") != 0 && !$(this).data('fancybox')  && !$(this).data('commentid') && !$(this).hasClass('nofx') ){
@@ -238,17 +231,15 @@
     //返回顶部
     $(window).scroll(function () {
         if ($(this).scrollTop() >= 50) {
-            $('#go-to-up').fadeIn(200);
+            $('#go-to-up').show();
             $('.big-header-banner').addClass('header-bg');
         } else {
-            $('#go-to-up').fadeOut(200);
+            $('#go-to-up').hide();
             $('.big-header-banner').removeClass('header-bg');
         }
     });
     $('.go-up').click(function () {
-        $('body,html').animate({
-            scrollTop: 0
-        }, 500);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     return false;
     }); 
 
@@ -346,21 +337,15 @@
             isMin = false;
         }
     }
-    // sidebar-menu-inner收缩展开
-    $('.sidebar-menu-inner a').on('click',function(){//.sidebar-menu-inner a //.has-sub a  
-
-
-        if (!$('.sidebar-nav').hasClass('mini-sidebar')) {//菜单栏没有最小化   
-            $(this).parent("li").siblings("li.sidebar-item").children('ul').slideUp(200);
-            if ($(this).next().css('display') == "none") { //展开
-                //展开未展开
-                // $('.sidebar-item').children('ul').slideUp(300);
-                $(this).next('ul').slideDown(200);
+    // sidebar-menu-inner收缩展开 - 使用CSS transition替代animate
+    $('.sidebar-menu-inner a').on('click',function(){
+        if (!$('.sidebar-nav').hasClass('mini-sidebar')) {   
+            $(this).parent("li").siblings("li.sidebar-item").children('ul').hide();
+            if ($(this).next().css('display') == "none") {
+                $(this).next('ul').show();
                 $(this).parent('li').addClass('sidebar-show').siblings('li').removeClass('sidebar-show');
-            }else{ //收缩
-                //收缩已展开
-                $(this).next('ul').slideUp(200);
-                //$('.sidebar-item.sidebar-show').removeClass('sidebar-show');
+            }else{
+                $(this).next('ul').hide();
                 $(this).parent('li').removeClass('sidebar-show');
             }
         }
@@ -373,13 +358,30 @@
     function trigger_lsm_mini(isNoAnim){
         if (!$('.header-mini-btn input[type="checkbox"]').prop("checked")) {
             $('.sidebar-nav').removeClass('mini-sidebar');
-	    //221024: 调整左导航展开时,点击图标锚定定位失效
-            //$('.sidebar-nav .change-href').attr('href','javascript:;');
             $('.sidebar-menu ul ul').css("display", "none");
             if(isNoAnim){
                 $('.sidebar-nav').removeClass('animate-nav');
                 $('.sidebar-nav').width(170);
             }
+            else{
+                $('.sidebar-nav').addClass('animate-nav');
+                $('.sidebar-nav').css({width: 170});
+            }
+        }else{
+            $('.sidebar-item.sidebar-show').removeClass('sidebar-show');
+            $('.sidebar-menu ul').removeAttr('style');
+            $('.sidebar-nav').addClass('mini-sidebar');
+            $('.sidebar-nav .change-href').each(function(){$(this).attr('href',$(this).data('change'))});
+            if(isNoAnim){
+                $('.sidebar-nav').removeClass('animate-nav');
+                $('.sidebar-nav').width(60);
+            }
+            else{
+                $('.sidebar-nav').addClass('animate-nav');
+                $('.sidebar-nav').css({width: 60});
+            }
+        }
+    }
             else{
                 $('.sidebar-nav').addClass('animate-nav');
                 $('.sidebar-nav').stop().animate({width: 170},200);
@@ -413,7 +415,7 @@
         if(d - top <= 0 ){
             top  = d >= 0 ?  d - 8 : 0;
         }
-        $(".sidebar-popup.second").stop().animate({"top":top}, 50);
+        $(".sidebar-popup.second").css({"top": top});
     });
     //隐藏悬浮菜单面板
     $(document).on('mouseleave','.mini-sidebar .sidebar-menu ul:first, .mini-sidebar .slimScrollBar,.second.sidebar-popup',function(){
