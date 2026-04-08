@@ -765,3 +765,19 @@ function attrDefault($el, data_var, default_val)
 	}
 	return default_val;
 }
+
+// TweenMax polyfill - 如果不存在则用即时设置代替
+if(typeof TweenMax === 'undefined') {
+    var TweenMax = {
+        to: function(obj, duration, vars) {
+            if(vars && vars.onUpdate) {
+                vars.onUpdate.call();
+            }
+            if(vars && vars.onComplete) {
+                vars.onComplete.call();
+            }
+            return this;
+        }
+    };
+    var TweenLite = TweenMax;
+}
