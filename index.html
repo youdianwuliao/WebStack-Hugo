@@ -303,6 +303,14 @@
     
     function handlePopupSearch(e) { if (e.key === 'Enter') doPopupSearch(); }
     
+    document.addEventListener('keydown', function(e) {
+      if (e.ctrlKey && e.key === 'q') {
+        e.preventDefault();
+        showSearch();
+      }
+      if (e.key === 'Escape') hideSearch();
+    });
+    
     document.addEventListener('click', function(e) {
       const nav = document.getElementById('floatingNav');
       const toggle = document.querySelector('.floating-nav-toggle');
