@@ -8,18 +8,21 @@
   <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif; background: #f0f2f5; color: #333; line-height: 1.6; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif; background: #f0f2f5; color: #333; line-height: 1.6; }
     .container { max-width: 1200px; margin: 0 auto; padding: 0 20px 0 80px; }
     
-header { background: linear-gradient(135deg, #f8f9fa 0%, #e8eef5 100%); border-bottom: 1px solid #d0d8e4; padding: 25px 0 20px; text-align: center; position: relative; }
+    header { background: linear-gradient(135deg, #f8f9fa 0%, #e8eef5 100%); border-bottom: 1px solid #d0d8e4; padding: 15px 20px; position: relative; }
     header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #1e3a5f, #4a90d9, #1e3a5f); }
-    header h1 { font-size: 1.4rem; font-weight: 300; letter-spacing: 0.15em; background: linear-gradient(135deg, #1e3a5f, #4a90d9, #7eb3e8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 12px; }
-    .search-wrapper { max-width: 550px; margin: 0 auto; display: flex; gap: 8px; }
-    .search-wrapper select { width: 70px; padding: 10px 8px; border: 1px solid #d0d0d0; border-radius: 6px; background: #fff; color: #333; font-size: 12px; cursor: pointer; }
-    .search-wrapper input { flex: 1; padding: 10px 16px; border: 1px solid #d0d0d0; border-radius: 6px; background: #fff; color: #333; font-size: 14px; transition: border-color 0.2s; }
+    .header-content { display: flex; align-items: center; max-width: 1200px; margin: 0 auto; gap: 40px; }
+    .logo-area { flex-shrink: 0; }
+    header h1 { font-size: 1.5rem; font-weight: 300; letter-spacing: 0.1em; background: linear-gradient(135deg, #1e3a5f, #4a90d9, #7eb3e8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin: 0; white-space: nowrap; }
+    .search-area { flex: 1; display: flex; justify-content: flex-end; }
+    .search-wrapper { max-width: 500px; width: 100%; display: flex; gap: 6px; }
+    .search-wrapper select { width: 60px; padding: 8px 4px; border: 1px solid #d0d0d0; border-radius: 6px; background: #fff; color: #333; font-size: 11px; cursor: pointer; }
+    .search-wrapper input { flex: 1; padding: 8px 12px; border: 1px solid #d0d0d0; border-radius: 6px; background: #fff; color: #333; font-size: 13px; transition: border-color 0.2s; }
     .search-wrapper input:focus { outline: none; border-color: #4a90d9; }
     .search-wrapper input::placeholder { color: #999; }
-    .search-wrapper button { padding: 10px 20px; background: linear-gradient(135deg, #1e3a5f, #2d5a87); color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; transition: opacity 0.2s; }
+    .search-wrapper button { padding: 8px 16px; background: linear-gradient(135deg, #1e3a5f, #2d5a87); color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; transition: opacity 0.2s; white-space: nowrap; }
     .search-wrapper button:hover { opacity: 0.85; }
     
     main { padding: 30px 0; }
@@ -35,13 +38,12 @@ header { background: linear-gradient(135deg, #f8f9fa 0%, #e8eef5 100%); border-b
     .floating-nav-content button { display: block; width: 100%; padding: 8px 10px; border: none; background: transparent; color: #333; border-radius: 6px; cursor: pointer; font-size: 12px; text-align: left; transition: all 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .floating-nav.expanded .floating-nav-content button span { display: inline; }
     .floating-nav-content button i { width: 16px; text-align: center; color: #1e3a5f; font-size: 12px; }
-    .floating-nav-content button.sub-nav-item { padding-left: 25px; font-size: 11px; color: #888; }
-    .floating-nav.expanded .floating-nav-content button.sub-nav-item span { display: inline; }
-    .floating-nav-content button.sub-nav-item:hover, .floating-nav-content button.sub-nav-item.active { background: #dbeafe; color: #1e3a5f; }
     .floating-nav.expanded .floating-nav-content button { text-align: left; padding: 8px 12px; }
     .floating-nav:not(.expanded) .floating-nav-content button { text-align: center; padding: 10px 6px; }
     .floating-nav-content button:hover, .floating-nav-content button.active { background: #e3f2fd; color: #1e3a5f; }
-    .floating-nav-content button.active i, .floating-nav-content button:hover i { color: #1e3a5f; }
+    .floating-nav-content button.sub-nav-item { padding-left: 25px; font-size: 11px; color: #888; }
+    .floating-nav.expanded .floating-nav-content button.sub-nav-item span { display: inline; }
+    .floating-nav-content button.sub-nav-item:hover, .floating-nav-content button.sub-nav-item.active { background: #dbeafe; color: #1e3a5f; }
     
     .category { margin-bottom: 35px; }
     .category h2 { font-size: 1rem; font-weight: 500; color: #1e3a5f; margin-bottom: 18px; padding-bottom: 8px; border-bottom: 2px solid #4a90d9; display: inline-block; }
@@ -54,18 +56,42 @@ header { background: linear-gradient(135deg, #f8f9fa 0%, #e8eef5 100%); border-b
     .site-info h3 { font-size: 13px; font-weight: 500; margin-bottom: 4px; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .site-info p { font-size: 11px; color: #666; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
     .subcategory { margin-top: 25px; }
-    .subcategory h3 { font-size: 13px; font-weight: 400; color: #666; margin-bottom: 15px; }
+    .subcategory h3 { font-size: 13px; font-weight: 500; color: #1e3a5f; margin-bottom: 15px; padding-left: 10px; border-left: 3px solid #4a90d9; }
     
-footer { text-align: center; padding: 25px 0; border-top: 1px solid #e0e0e0; color: #999; font-size: 11px; background: #fff; }
-     
-    /* Night Mode */
-    .night-toggle { position: fixed; bottom: 15px; right: 15px; z-index: 200; width: 26px; height: 26px; background: #fff; border: 2px solid #e0e0e0; border-radius: 50%; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    .night-toggle:hover { transform: scale(1.1); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    footer { text-align: center; padding: 25px 0; border-top: 1px solid #e0e0e0; color: #999; font-size: 11px; background: #fff; }
+    footer a { color: #1e3a5f; text-decoration: none; }
+    footer a:hover { color: #4a90d9; }
+    
+    .action-buttons { position: fixed; top: 20px; right: 20px; z-index: 200; display: flex; gap: 8px; }
+    .action-btn { width: 32px; height: 32px; background: #fff; border: 2px solid #e0e0e0; border-radius: 50%; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .action-btn:hover { transform: scale(1.1); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
     .night-toggle::before { content: '☀️'; font-size: 10px; }
     .night-mode .night-toggle::before { content: '🌙'; }
     .night-mode .night-toggle { background: #1e3a5f; border-color: #1e3a5f; }
-    .night-mode body, .night-mode { background: #1a1a2e !important; color: #e0e0e0 !important; }
-    .night-mode header { background: #16213e !important; border-color: #2d3a4a !important; }
+    .night-mode .action-btn { background: #16213e; border-color: #2d3a4a; color: #e0e0e0; }
+    
+    .search-popup { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 300; justify-content: center; align-items: center; }
+    .search-popup.active { display: flex; }
+    .search-popup-content { background: #fff; border-radius: 12px; width: 90%; max-width: 400px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+    .search-popup-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #eee; }
+    .search-popup-header h3 { margin: 0; font-size: 16px; color: #333; }
+    .close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #999; padding: 0; line-height: 1; }
+    .close-btn:hover { color: #333; }
+    .search-popup-body { padding: 20px; }
+    .search-engine-select select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; margin-bottom: 10px; }
+    .search-popup-body input { width: 100%; padding: 10px 16px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; margin-bottom: 10px; }
+    .search-popup-body input:focus { outline: none; border-color: #4a90d9; }
+    .search-popup-body .search-btn { width: 100%; padding: 10px; background: linear-gradient(135deg, #1e3a5f, #2d5a87); color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; }
+    .search-popup-body .search-btn:hover { opacity: 0.9; }
+    
+    .night-mode .search-popup-content { background: #16213e; }
+    .night-mode .search-popup-header { border-color: #2d3a4a; }
+    .night-mode .search-popup-header h3 { color: #e0e0e0; }
+    .night-mode .close-btn { color: #888; }
+    .night-mode .search-engine-select select, .night-mode .search-popup-body input { background: #0f3460; border-color: #2d3a4a; color: #fff; }
+    
+    .night-mode body { background: #1a1a2e !important; color: #e0e0e0 !important; }
+    .night-mode header { background: linear-gradient(135deg, #16213e 0%, #1a2a4a 100%) !important; border-color: #2d3a4a !important; }
     .night-mode header h1 { background: linear-gradient(135deg, #87ceeb, #58a6ff, #87ceeb) !important; -webkit-background-clip: text !important; -webkit-text-fill-color: transparent !important; background-clip: text !important; }
     .night-mode .search-wrapper input { background: #0f3460 !important; border-color: #2d3a4a !important; color: #fff !important; }
     .night-mode .search-wrapper select { background: #0f3460 !important; border-color: #2d3a4a !important; color: #e0e0e0 !important; }
@@ -74,21 +100,25 @@ footer { text-align: center; padding: 25px 0; border-top: 1px solid #e0e0e0; col
     .night-mode .floating-nav-content button i { color: #58a6ff !important; }
     .night-mode .floating-nav-content button:hover, .night-mode .floating-nav-content button.active { background: #0f3460 !important; color: #58a6ff !important; }
     .night-mode .floating-nav-content button.sub-nav-item { color: #888 !important; }
-    .night-mode .floating-nav-content button.sub-nav-item:hover, .night-mode .floating-nav-content button.sub-nav-item.active { background: #0f3460 !important; color: #87ceeb !important; }
+    .night-mode .floating-nav-content button.sub-nav-item:hover { background: #0f3460 !important; color: #87ceeb !important; }
     .night-mode .site-card { background: #16213e !important; border-color: #2d3a4a !important; }
     .night-mode .site-card:hover { border-color: #4a90d9 !important; }
     .night-mode .site-card img { background: #0f3460 !important; }
     .night-mode .site-info h3 { color: #e0e0e0 !important; }
     .night-mode .site-info p { color: #aaa !important; }
     .night-mode .category h2 { color: #e0e0e0 !important; }
+    .night-mode .subcategory h3 { color: #87ceeb !important; }
     .night-mode footer { background: #16213e !important; border-color: #2d3a4a !important; color: #888 !important; }
-    .night-mode .night-toggle { background: #16213e !important; border-color: #2d3a4a !important; color: #e0e0e0 !important; }
+    .night-mode .night-toggle { background: #16213e !important; border-color: #2d3a4a !important; }
     
     @media (max-width: 768px) {
       .container { padding: 0 20px; }
-      header h1 { font-size: 1.8rem; }
-      .search-wrapper { flex-direction: column; }
-      .search-wrapper select { width: 100%; }
+      .header-content { flex-direction: column; gap: 12px; align-items: stretch; }
+      .logo-area { text-align: center; }
+      .search-area { justify-content: center; }
+      .search-wrapper { max-width: 100%; width: 100%; }
+      header h1 { font-size: 1.2rem; }
+      header { padding: 12px 15px; }
       .floating-nav { display: none; }
       .nav-categories { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 50px; padding-bottom: 30px; border-bottom: 1px solid #e0e0e0; }
       .nav-categories button { padding: 8px 20px; border: 1px solid #d0d0d0; background: #fff; color: #666; border-radius: 20px; cursor: pointer; font-size: 14px; transition: all 0.2s; }
@@ -99,20 +129,50 @@ footer { text-align: center; padding: 25px 0; border-top: 1px solid #e0e0e0; col
   </style>
 </head>
 <body>
-  <button class="night-toggle" onclick="toggleNight()" title="夜间模式"></button>
+  <div class="action-buttons">
+    <button class="action-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到顶部">↑</button>
+    <button class="action-btn" onclick="showSearch()" title="搜索">🔍</button>
+    <button class="action-btn night-toggle" onclick="toggleNight()" title="夜间模式"></button>
+  </div>
+  
+  <div class="search-popup" id="searchPopup">
+    <div class="search-popup-content">
+      <div class="search-popup-header">
+        <h3>搜索</h3>
+        <button class="close-btn" onclick="hideSearch()">×</button>
+      </div>
+      <div class="search-popup-body">
+        <div class="search-engine-select">
+          <select id="popupSearchEngine">
+            <option value="bing">Bing</option>
+            <option value="baidu">百度</option>
+            <option value="google">Google</option>
+            <option value="sogou">搜狗</option>
+            <option value="yandex">Yandex</option>
+          </select>
+        </div>
+        <input type="text" id="popupSearchInput" placeholder="输入关键词搜索..." onkeydown="handlePopupSearch(event)">
+        <button class="search-btn" onclick="doPopupSearch()">搜索</button>
+      </div>
+    </div>
+  </div>
   <header>
-    <div class="container">
-      <h1>星汉灿烂</h1>
-      <div class="search-wrapper">
-        <select id="searchEngine">
-          <option value="bing">Bing</option>
-          <option value="baidu">百度</option>
-          <option value="google">Google</option>
-          <option value="sogou">搜狗</option>
-          <option value="yandex">Yandex</option>
-        </select>
-        <input type="text" id="searchInput" placeholder="输入关键词搜索..." onkeydown="handleSearch(event)">
-        <button onclick="doSearch()">搜索</button>
+    <div class="header-content">
+      <div class="logo-area">
+        <h1>星汉灿烂</h1>
+      </div>
+      <div class="search-area">
+        <div class="search-wrapper">
+          <select id="searchEngine">
+            <option value="bing">Bing</option>
+            <option value="baidu">百度</option>
+            <option value="google">Google</option>
+            <option value="sogou">搜狗</option>
+            <option value="yandex">Yandex</option>
+          </select>
+          <input type="text" id="searchInput" placeholder="搜索..." onkeydown="handleSearch(event)">
+          <button onclick="doSearch()">搜索</button>
+        </div>
       </div>
     </div>
   </header>
@@ -155,11 +215,11 @@ footer { text-align: center; padding: 25px 0; border-top: 1px solid #e0e0e0; col
         html += `<button onclick="scrollToCategory('cat-${idx}')" class="${idx === 0 ? 'active' : ''}"><i class="${cat.sidebarIcon}"></i><span>${cat.category}</span></button>`;
         if (cat.subcategories) {
           cat.subcategories.forEach((sub, subIdx) => {
-            html += `<button onclick="scrollToCategory('sub-${idx}-${subIdx}')" class="sub-nav-item"><i class="far fa-caret-right"></i><span>${sub.name}</span></button>`;
+            html += `<button onclick="scrollToCategory('sub-${idx}-${subIdx}')" class="sub-nav-item"><span style="font-size:8px;color:#888;margin-right:5px;">▸</span><span>${sub.name}</span></button>`;
           });
         }
       });
-nav.innerHTML = html;
+      nav.innerHTML = html;
     }
     
     function renderSites() {
@@ -190,7 +250,7 @@ nav.innerHTML = html;
         return html;
       }).join('');
     }
-     
+    
     function toggleNav() {
       document.getElementById('floatingNav').classList.toggle('expanded');
     }
@@ -199,6 +259,7 @@ nav.innerHTML = html;
       document.querySelectorAll('.floating-nav-content button').forEach(b => b.classList.remove('active'));
       document.querySelector(`[onclick="scrollToCategory('${id}')"]`).classList.add('active');
       document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.getElementById('floatingNav').classList.remove('expanded');
     }
     
     function handleSearch(e) { if (e.key === 'Enter') doSearch(); }
@@ -223,9 +284,37 @@ nav.innerHTML = html;
       }
     }
     
+    function showSearch() {
+      document.getElementById('searchPopup').classList.add('active');
+      document.getElementById('popupSearchInput').focus();
+    }
+    
+    function hideSearch() {
+      document.getElementById('searchPopup').classList.remove('active');
+    }
+    
+    function doPopupSearch() {
+      const query = document.getElementById('popupSearchInput').value.trim();
+      if (!query) return;
+      const engine = document.getElementById('popupSearchEngine').value;
+      window.open(SEARCH_URLS[engine] + encodeURIComponent(query), '_blank');
+      hideSearch();
+    }
+    
+    function handlePopupSearch(e) { if (e.key === 'Enter') doPopupSearch(); }
+    
+    document.addEventListener('click', function(e) {
+      const nav = document.getElementById('floatingNav');
+      const toggle = document.querySelector('.floating-nav-toggle');
+      if (!nav.contains(e.target) && e.target !== toggle) {
+        nav.classList.remove('expanded');
+      }
+      if (e.target.id === 'searchPopup') hideSearch();
+    });
+    
     async function loadData() {
       try {
-        const res = await fetch(`/nav.json`);
+        const res = await fetch('/nav.json');
         navData = await res.json();
         renderNav();
         renderSites();

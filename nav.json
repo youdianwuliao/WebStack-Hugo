@@ -77,6 +77,12 @@
           "description": "免费AI聊天机器人，基于GLM-5和GLM-4.7的智能助手"
         },
         {
+          "title": "Hermes Agent",
+          "icon": "/assets/images/logos/hermes-agent.png",
+          "url": "https://hermes-agent.org/",
+          "description": "AI Agent平台"
+        },
+        {
           "title": "CodeBuddy",
           "icon": "/assets/images/logos/codebuddy.svg",
           "url": "https://www.codebuddy.cn/",
