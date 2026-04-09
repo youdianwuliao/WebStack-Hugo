@@ -70,25 +70,23 @@
     .night-mode .night-toggle { background: #1e3a5f; border-color: #1e3a5f; color: #fff; }
     .night-mode .action-btn { background: #16213e; border-color: #2d3a4a; color: #e0e0e0; }
     
-    .search-popup { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 300; justify-content: center; align-items: center; }
+.search-popup { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 300; justify-content: center; align-items: center; }
     .search-popup.active { display: flex; }
-    .search-popup-content { background: #fff; border-radius: 12px; width: 90%; max-width: 400px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
-    .search-popup-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #eee; }
-    .search-popup-header h3 { margin: 0; font-size: 16px; color: #333; }
-    .close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #999; padding: 0; line-height: 1; }
-    .close-btn:hover { color: #333; }
-    .search-popup-body { padding: 20px; }
-    .search-engine-select select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; margin-bottom: 10px; }
-    .search-popup-body input { width: 100%; padding: 10px 16px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; margin-bottom: 10px; }
-    .search-popup-body input:focus { outline: none; border-color: #4a90d9; }
-    .search-popup-body .search-btn { width: 100%; padding: 10px; background: linear-gradient(135deg, #1e3a5f, #2d5a87); color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; }
-    .search-popup-body .search-btn:hover { opacity: 0.9; }
+    .search-popup-content { background: #fff; width: 90%; max-width: 520px; box-shadow: 0 20px 60px rgba(0,0,0,0.25); border-radius: 16px; }
+    .search-popup-body { display: flex; align-items: center; padding: 16px 20px; gap: 10px; }
+    .popup-select { width: auto; min-width: 80px; padding: 10px 12px; border: 2px solid #e8e8e8; border-radius: 8px; font-size: 13px; background: #fff; transition: border-color 0.2s; flex-shrink: 0; }
+    .popup-select:focus { outline: none; border-color: #4a90d9; }
+    .popup-input { flex: 1; padding: 10px 14px; border: 2px solid #e8e8e8; border-radius: 8px; font-size: 14px; transition: border-color 0.2s; }
+    .popup-input:focus { outline: none; border-color: #4a90d9; }
+    .popup-btn { padding: 10px 20px; background: linear-gradient(135deg, #1e3a5f, #2d5a87); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; transition: opacity 0.2s; flex-shrink: 0; }
+    .popup-btn:hover { opacity: 0.88; }
+    .close-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: #999; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: all 0.2s; flex-shrink: 0; }
+    .close-btn:hover { background: #f0f0f0; color: #666; }
     
-    .night-mode .search-popup-content { background: #16213e; }
-    .night-mode .search-popup-header { border-color: #2d3a4a; }
-    .night-mode .search-popup-header h3 { color: #e0e0e0; }
+    .night-mode .search-popup-content { background: #1a2744; }
+    .night-mode .popup-select, .night-mode .popup-input { background: #0f1a2e; border-color: #2d3a4a; color: #e0e0e0; }
     .night-mode .close-btn { color: #888; }
-    .night-mode .search-engine-select select, .night-mode .search-popup-body input { background: #0f3460; border-color: #2d3a4a; color: #fff; }
+    .night-mode .close-btn:hover { background: #2d3a4a; color: #fff; }
     
     .night-mode body { background: #1a1a2e !important; color: #e0e0e0 !important; }
     .night-mode header { background: linear-gradient(135deg, #16213e 0%, #1a2a4a 100%) !important; border-color: #2d3a4a !important; }
@@ -137,22 +135,17 @@
   
   <div class="search-popup" id="searchPopup">
     <div class="search-popup-content">
-      <div class="search-popup-header">
-        <h3>搜索</h3>
-        <button class="close-btn" onclick="hideSearch()">×</button>
-      </div>
       <div class="search-popup-body">
-        <div class="search-engine-select">
-          <select id="popupSearchEngine">
-            <option value="bing">Bing</option>
-            <option value="baidu">百度</option>
-            <option value="google">Google</option>
-            <option value="sogou">搜狗</option>
-            <option value="yandex">Yandex</option>
-          </select>
-        </div>
-        <input type="text" id="popupSearchInput" placeholder="输入关键词搜索..." onkeydown="handlePopupSearch(event)">
-        <button class="search-btn" onclick="doPopupSearch()">搜索</button>
+        <select id="popupSearchEngine" class="popup-select">
+          <option value="bing">Bing</option>
+          <option value="baidu">百度</option>
+          <option value="google">Google</option>
+          <option value="sogou">搜狗</option>
+          <option value="yandex">Yandex</option>
+        </select>
+        <input type="text" id="popupSearchInput" class="popup-input" placeholder="输入关键词搜索..." onkeydown="handlePopupSearch(event)">
+        <button class="popup-btn" onclick="doPopupSearch()">搜索</button>
+        <button class="close-btn" onclick="hideSearch()">×</button>
       </div>
     </div>
   </div>
