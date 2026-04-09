@@ -35,6 +35,9 @@ header { background: linear-gradient(135deg, #f8f9fa 0%, #e8eef5 100%); border-b
     .floating-nav-content button { display: block; width: 100%; padding: 8px 10px; border: none; background: transparent; color: #333; border-radius: 6px; cursor: pointer; font-size: 12px; text-align: left; transition: all 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .floating-nav.expanded .floating-nav-content button span { display: inline; }
     .floating-nav-content button i { width: 16px; text-align: center; color: #1e3a5f; font-size: 12px; }
+    .floating-nav-content button.sub-nav-item { padding-left: 25px; font-size: 11px; color: #888; }
+    .floating-nav.expanded .floating-nav-content button.sub-nav-item span { display: inline; }
+    .floating-nav-content button.sub-nav-item:hover, .floating-nav-content button.sub-nav-item.active { background: #dbeafe; color: #1e3a5f; }
     .floating-nav.expanded .floating-nav-content button { text-align: left; padding: 8px 12px; }
     .floating-nav:not(.expanded) .floating-nav-content button { text-align: center; padding: 10px 6px; }
     .floating-nav-content button:hover, .floating-nav-content button.active { background: #e3f2fd; color: #1e3a5f; }
@@ -70,6 +73,8 @@ footer { text-align: center; padding: 25px 0; border-top: 1px solid #e0e0e0; col
     .night-mode .floating-nav-content button { color: #e0e0e0 !important; }
     .night-mode .floating-nav-content button i { color: #58a6ff !important; }
     .night-mode .floating-nav-content button:hover, .night-mode .floating-nav-content button.active { background: #0f3460 !important; color: #58a6ff !important; }
+    .night-mode .floating-nav-content button.sub-nav-item { color: #888 !important; }
+    .night-mode .floating-nav-content button.sub-nav-item:hover, .night-mode .floating-nav-content button.sub-nav-item.active { background: #0f3460 !important; color: #87ceeb !important; }
     .night-mode .site-card { background: #16213e !important; border-color: #2d3a4a !important; }
     .night-mode .site-card:hover { border-color: #4a90d9 !important; }
     .night-mode .site-card img { background: #0f3460 !important; }
@@ -145,9 +150,16 @@ footer { text-align: center; padding: 25px 0; border-top: 1px solid #e0e0e0; col
     
     function renderNav() {
       const nav = document.getElementById('navCategories');
-      nav.innerHTML = navData.navigation.map((cat, idx) => 
-        `<button onclick="scrollToCategory('cat-${idx}')" class="${idx === 0 ? 'active' : ''}"><i class="${cat.sidebarIcon}"></i><span>${cat.category}</span></button>`
-      ).join('');
+      let html = '';
+      navData.navigation.forEach((cat, idx) => {
+        html += `<button onclick="scrollToCategory('cat-${idx}')" class="${idx === 0 ? 'active' : ''}"><i class="${cat.sidebarIcon}"></i><span>${cat.category}</span></button>`;
+        if (cat.subcategories) {
+          cat.subcategories.forEach((sub, subIdx) => {
+            html += `<button onclick="scrollToCategory('sub-${idx}-${subIdx}')" class="sub-nav-item"><i class="far fa-caret-right"></i><span>${sub.name}</span></button>`;
+          });
+        }
+      });
+nav.innerHTML = html;
     }
     
     function renderSites() {
@@ -163,12 +175,12 @@ footer { text-align: center; padding: 25px 0; border-top: 1px solid #e0e0e0; col
             </a>
           `).join('')}</div>`;
         } else if (cat.subcategories) {
-          cat.subcategories.forEach(sub => {
-            html += `<div class="subcategory"><h3>${sub.name}</h3>`;
+          cat.subcategories.forEach((sub, subIdx) => {
+            html += `<div class="subcategory" id="sub-${catIdx}-${subIdx}"><h3>${sub.name}</h3>`;
             html += `<div class="site-grid">${(sub.items || []).map(item => `
               <a href="${item.url}" class="site-card" target="_blank">
                 <img src="${fixIconPath(item.icon)}" alt="${item.title}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🔗</text></svg>'">
-<div class="site-info" title="${item.description || ''}"><h3>${item.title}</h3><p>${item.description || ''}</p></div>
+                <div class="site-info" title="${item.description || ''}"><h3>${item.title}</h3><p>${item.description || ''}</p></div>
               </a>
             `).join('')}</div></div>`;
           });
@@ -178,8 +190,8 @@ footer { text-align: center; padding: 25px 0; border-top: 1px solid #e0e0e0; col
         return html;
       }).join('');
     }
-    
-function toggleNav() {
+     
+    function toggleNav() {
       document.getElementById('floatingNav').classList.toggle('expanded');
     }
     
@@ -213,7 +225,7 @@ function toggleNav() {
     
     async function loadData() {
       try {
-        const res = await fetch('/nav.json');
+        const res = await fetch(`/nav.json`);
         navData = await res.json();
         renderNav();
         renderSites();
