@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>星汉灿烂</title>
   <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif; background: #f0f2f5; color: #333; line-height: 1.6; }
@@ -40,15 +41,16 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helv
     
     .category { margin-bottom: 35px; }
     .category h2 { font-size: 1rem; font-weight: 500; color: #1e3a5f; margin-bottom: 18px; padding-bottom: 8px; border-bottom: 2px solid #4a90d9; display: inline-block; }
-    .site-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
-    .site-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 14px; text-decoration: none; color: inherit; transition: all 0.25s; display: flex; align-items: flex-start; gap: 10px; }
+    .category h2 i { margin-right: 6px; color: #4a90d9; }
+    .site-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
+    .site-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 16px; text-decoration: none; color: inherit; transition: all 0.25s; display: flex; align-items: flex-start; gap: 12px; }
     .site-card:hover { border-color: #1e3a5f; transform: translateY(-2px); box-shadow: 0 3px 10px rgba(30, 58, 95, 0.1); }
-    .site-card img { width: 28px; height: 28px; border-radius: 6px; object-fit: contain; flex-shrink: 0; background: #f0f2f5; padding: 3px; }
-    .site-info { min-width: 0; flex: 1; }
-    .site-info h3 { font-size: 12px; font-weight: 500; margin-bottom: 2px; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .site-info p { font-size: 10px; color: #666; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
-    .subcategory { margin-top: 18px; }
-    .subcategory h3 { font-size: 11px; font-weight: 400; color: #666; margin-bottom: 10px; }
+    .site-card img { width: 40px; height: 40px; border-radius: 8px; object-fit: contain; flex-shrink: 0; background: #f0f2f5; padding: 4px; }
+    .site-info { min-width: 0; flex: 1; text-align: left; padding-top: 2px; }
+    .site-info h3 { font-size: 13px; font-weight: 500; margin-bottom: 4px; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .site-info p { font-size: 11px; color: #666; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+    .subcategory { margin-top: 25px; }
+    .subcategory h3 { font-size: 13px; font-weight: 400; color: #666; margin-bottom: 15px; }
     
     footer { text-align: center; padding: 25px 0; border-top: 1px solid #e0e0e0; color: #999; font-size: 11px; background: #fff; }
     footer a { color: #1e3a5f; text-decoration: none; }
@@ -152,13 +154,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helv
     function renderSites() {
       const container = document.getElementById('siteContainer');
       container.innerHTML = navData.navigation.map((cat, catIdx) => {
-        let html = `<section class="category" id="cat-${catIdx}"><h2>${cat.category}</h2>`;
+        let html = `<section class="category" id="cat-${catIdx}"><h2><i class="${cat.sidebarIcon}"></i> ${cat.category}</h2>`;
         
         if (cat.items) {
           html += `<div class="site-grid">${cat.items.map(item => `
             <a href="${item.url}" class="site-card" target="_blank">
               <img src="${fixIconPath(item.icon)}" alt="${item.title}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🔗</text></svg>'">
-              <div class="site-info"><h3>${item.title}</h3><p>${item.description || ''}</p></div>
+              <div class="site-info" title="${item.description || ''}"><h3>${item.title}</h3><p>${item.description || ''}</p></div>
             </a>
           `).join('')}</div>`;
         } else if (cat.subcategories) {
@@ -167,7 +169,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helv
             html += `<div class="site-grid">${(sub.items || []).map(item => `
               <a href="${item.url}" class="site-card" target="_blank">
                 <img src="${fixIconPath(item.icon)}" alt="${item.title}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🔗</text></svg>'">
-                <div class="site-info"><h3>${item.title}</h3><p>${item.description || ''}</p></div>
+<div class="site-info" title="${item.description || ''}"><h3>${item.title}</h3><p>${item.description || ''}</p></div>
               </a>
             `).join('')}</div></div>`;
           });
