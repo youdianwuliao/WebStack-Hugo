@@ -11,14 +11,15 @@
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif; background: #f0f2f5; color: #333; line-height: 1.6; }
     .container { max-width: 1200px; margin: 0 auto; padding: 0 20px 0 80px; }
     
-    header { background: #fff; border-bottom: 1px solid #e0e0e0; padding: 30px 0 20px; text-align: center; }
-    header h1 { font-size: 1.6rem; font-weight: 300; letter-spacing: 0.1em; background: linear-gradient(135deg, #1e3a5f, #4a90d9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 15px; }
-    .search-wrapper { max-width: 500px; margin: 0 auto; display: flex; gap: 8px; }
-    .search-wrapper select { width: 80px; padding: 8px 10px; border: 1px solid #d0d0d0; border-radius: 6px; background: #fff; color: #333; font-size: 12px; cursor: pointer; }
-    .search-wrapper input { flex: 1; padding: 8px 14px; border: 1px solid #d0d0d0; border-radius: 6px; background: #fff; color: #333; font-size: 13px; transition: border-color 0.2s; }
+header { background: linear-gradient(135deg, #f8f9fa 0%, #e8eef5 100%); border-bottom: 1px solid #d0d8e4; padding: 25px 0 20px; text-align: center; position: relative; }
+    header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #1e3a5f, #4a90d9, #1e3a5f); }
+    header h1 { font-size: 1.4rem; font-weight: 300; letter-spacing: 0.15em; background: linear-gradient(135deg, #1e3a5f, #4a90d9, #7eb3e8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 12px; }
+    .search-wrapper { max-width: 550px; margin: 0 auto; display: flex; gap: 8px; }
+    .search-wrapper select { width: 70px; padding: 10px 8px; border: 1px solid #d0d0d0; border-radius: 6px; background: #fff; color: #333; font-size: 12px; cursor: pointer; }
+    .search-wrapper input { flex: 1; padding: 10px 16px; border: 1px solid #d0d0d0; border-radius: 6px; background: #fff; color: #333; font-size: 14px; transition: border-color 0.2s; }
     .search-wrapper input:focus { outline: none; border-color: #4a90d9; }
     .search-wrapper input::placeholder { color: #999; }
-    .search-wrapper button { padding: 8px 16px; background: linear-gradient(135deg, #1e3a5f, #2d5a87); color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; transition: opacity 0.2s; }
+    .search-wrapper button { padding: 10px 20px; background: linear-gradient(135deg, #1e3a5f, #2d5a87); color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; transition: opacity 0.2s; }
     .search-wrapper button:hover { opacity: 0.85; }
     
     main { padding: 30px 0; }
@@ -52,10 +53,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helv
     .subcategory { margin-top: 25px; }
     .subcategory h3 { font-size: 13px; font-weight: 400; color: #666; margin-bottom: 15px; }
     
-    footer { text-align: center; padding: 25px 0; border-top: 1px solid #e0e0e0; color: #999; font-size: 11px; background: #fff; }
-    footer a { color: #1e3a5f; text-decoration: none; }
-    footer a:hover { color: #4a90d9; }
-    
+footer { text-align: center; padding: 25px 0; border-top: 1px solid #e0e0e0; color: #999; font-size: 11px; background: #fff; }
+     
     /* Night Mode */
     .night-toggle { position: fixed; bottom: 15px; right: 15px; z-index: 200; width: 26px; height: 26px; background: #fff; border: 2px solid #e0e0e0; border-radius: 50%; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
     .night-toggle:hover { transform: scale(1.1); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
@@ -64,7 +63,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helv
     .night-mode .night-toggle { background: #1e3a5f; border-color: #1e3a5f; }
     .night-mode body, .night-mode { background: #1a1a2e !important; color: #e0e0e0 !important; }
     .night-mode header { background: #16213e !important; border-color: #2d3a4a !important; }
-    .night-mode header h1 { color: #e0e0e0 !important; }
+    .night-mode header h1 { background: linear-gradient(135deg, #87ceeb, #58a6ff, #87ceeb) !important; -webkit-background-clip: text !important; -webkit-text-fill-color: transparent !important; background-clip: text !important; }
     .night-mode .search-wrapper input { background: #0f3460 !important; border-color: #2d3a4a !important; color: #fff !important; }
     .night-mode .search-wrapper select { background: #0f3460 !important; border-color: #2d3a4a !important; color: #e0e0e0 !important; }
     .night-mode .floating-nav-content { background: #16213e !important; border-color: #2d3a4a !important; }
