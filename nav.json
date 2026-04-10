@@ -370,6 +370,24 @@
           "icon": "/assets/images/logos/colaos.ico",
           "url": "https://colaos.ai/",
           "description": "AI 驱动的操作系统"
+        },
+        {
+          "title": "购车",
+          "icon": "https://buycar.justgame.top/favicon.ico",
+          "url": "https://buycar.justgame.top/",
+          "description": "购车服务"
+        },
+        {
+          "title": "LM Studio",
+          "icon": "https://lmstudio.ai/favicon.ico",
+          "url": "https://lmstudio.ai/",
+          "description": "本地大模型运行平台"
+        },
+        {
+          "title": "百智",
+          "icon": "https://baizhi.cloud/favicon.ico",
+          "url": "https://baizhi.cloud/",
+          "description": "AI 服务平台"
         }
       ]
     },
