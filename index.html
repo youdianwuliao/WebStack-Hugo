@@ -326,8 +326,8 @@
     }
     
     loadData();
-    fetch('https://webstack-hugo.workers.dev/api/counter', { method: 'POST' }).catch(() => {});
-    fetch('https://webstack-hugo.workers.dev/api/counter')
+    fetch('https://counter.justgame.top/api/counter', { method: 'POST' }).catch(() => {});
+    fetch('https://counter.justgame.top/api/counter')
       .then(r => r.json())
       .then(d => document.getElementById('visitor-count').textContent = d.count)
       .catch(() => {});
