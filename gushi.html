@@ -213,7 +213,16 @@
             </div>
             
         </div>
-        
+        <div style="text-align:center;padding:15px 0 5px;font-size:12px;color:#999;">
+          访客 <span id="visitor-count">-</span>
+        </div>
     </div>
+    <script>
+    fetch('https://webstack-hugo.workers.dev/api/counter', { method: 'POST' }).catch(() => {});
+    fetch('https://webstack-hugo.workers.dev/api/counter')
+      .then(r => r.json())
+      .then(d => document.getElementById('visitor-count').textContent = d.count)
+      .catch(() => {});
+    </script>
 </body>
 </html>
