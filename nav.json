@@ -379,15 +379,21 @@
         },
         {
           "title": "LM Studio",
-          "icon": "/assets/images/logos/lmstudio.ico",
+          "icon": "/assets/images/logos/lmstudio.png",
           "url": "https://lmstudio.ai/",
           "description": "本地大模型运行平台"
         },
         {
           "title": "百智",
-          "icon": "/assets/images/logos/baizhi.ico",
+          "icon": "/assets/images/logos/baizhi.png",
           "url": "https://baizhi.cloud/",
           "description": "AI 服务平台"
+        },
+        {
+          "title": "Project Nomad",
+          "icon": "/assets/images/logos/projectnomad.png",
+          "url": "https://www.projectnomad.us/",
+          "description": "开发者工具导航"
         }
       ]
     },
