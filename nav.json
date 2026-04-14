@@ -66,337 +66,336 @@
         }
       ]
     },
-    {
-      "category": "ai未来",
-      "sidebarIcon": "fas fa-robot",
-      "items": [
         {
-          "title": "Z.ai",
-          "icon": "/assets/images/logos/z-ai.svg",
-          "url": "https://z.ai/",
-          "description": "免费AI聊天机器人，基于GLM-5和GLM-4.7的智能助手"
+          "category": "ai未来",
+          "sidebarIcon": "fas fa-robot",
+          "items": [
+            {
+              "title": "deepseek",
+              "icon": "/assets/images/logos/deepseek.png",
+              "url": "https://chat.deepseek.com/",
+              "description": "探索未知之境"
+            },
+            {
+              "title": "豆包",
+              "icon": "/assets/images/logos/doubao.png",
+              "url": "https://www.doubao.com/chat/",
+              "description": "语音通话"
+            },
+            {
+              "title": "元宝",
+              "icon": "/assets/images/logos/yuanbao2.png",
+              "url": "https://yuanbao.tencent.com/",
+              "description": "腾讯大模型"
+            },
+            {
+              "title": "智谱清言",
+              "icon": "/assets/images/logos/chatglm.png",
+              "url": "https://chatglm.cn/",
+              "description": "智谱清言"
+            },
+            {
+              "title": "Z.ai",
+              "icon": "/assets/images/logos/z-ai.svg",
+              "url": "https://z.ai/",
+              "description": "免费AI聊天机器人，基于GLM-5和GLM-4.7的智能助手"
+            },
+            {
+              "title": "AI朋友",
+              "icon": "/assets/images/logos/aipyaipy.png",
+              "url": "https://www.aipyaipy.com/",
+              "description": "超级AI牛马"
+            },
+            {
+              "title": "当贝",
+              "icon": "/assets/images/logos/dangbei.png",
+              "url": "https://ai.dangbei.com/",
+              "description": "聚合AI"
+            },
+            {
+              "title": "CoPaw",
+              "icon": "/assets/images/logos/copaw.svg",
+              "url": "https://copaw.agentscope.io/",
+              "description": "AI智能助手，为你工作，与你共成长"
+            },
+            {
+              "title": "lobehub",
+              "icon": "/assets/images/logos/lobehub.png",
+              "url": "https://lobehub.com/",
+              "description": "个人AI助手和专业团队"
+            },
+            {
+              "title": "MonkeyCode AI",
+              "icon": "/assets/images/logos/monkeycode.png",
+              "url": "https://monkeycode-ai.com/",
+              "description": "专业的 AI 编码助手"
+            },
+            {
+              "title": "OpenMAIC",
+              "icon": "https://open.maic.chat/favicon.ico?favicon.6b6a8546.ico",
+              "url": "https://open.maic.chat/",
+              "description": "AI教学和对话平台，提供编程学习、知识讲解和互动问答服务"
+            },
+            {
+              "title": "轩辕",
+              "icon": "/assets/images/logos/xuanyuancode.ico",
+              "url": "https://www.xuanyuancode.com/",
+              "description": "轩辕的编程宇宙"
+            },
+            {
+              "title": "openrouter",
+              "icon": "/assets/images/logos/openrouter.png",
+              "url": "https://openrouter.ai",
+              "description": "统一的AI模型接口"
+            },
+            {
+              "title": "Hermes Agent",
+              "icon": "/assets/images/logos/hermes-agent.png",
+              "url": "https://hermes-agent.org/",
+              "description": "AI Agent平台"
+            },
+            {
+              "title": "海豚AI",
+              "icon": "/assets/images/logos/ttson.png",
+              "url": "https://www.ttson.cn/",
+              "description": "配音复制"
+            },
+            {
+              "title": "chatboxai",
+              "icon": "/assets/images/logos/chatboxai.png",
+              "url": "https://chatboxai.app/",
+              "description": "一站式搞定所有学习需求"
+            },
+            {
+              "title": "lynote",
+              "icon": "/assets/images/logos/lynote.png",
+              "url": "https://lynote.ai/",
+              "description": "一站式搞定所有学习需求"
+            },
+            {
+              "title": "PicoClaw",
+              "icon": "/assets/images/logos/picoclaw.png",
+              "url": "https://picoclaw.net/",
+              "description": "超轻量级个人AI助手，Go语言构建，内存<10MB，启动<1秒，支持多平台部署"
+            },
+            {
+              "title": "fastgpt",
+              "icon": "/assets/images/logos/fastgpt.png",
+              "url": "https://fastgpt.cn/",
+              "description": "AI知识库构建平台"
+            },
+            {
+              "title": "ragflow",
+              "icon": "/assets/images/logos/ragflow.png",
+              "url": "https://ragflow.io/",
+              "description": "智能问答"
+            },
+            {
+              "title": "rag-web-ui",
+              "icon": "/assets/images/logos/rag-web-ui.png",
+              "url": "https://github.com/rag-web-ui/rag-web-ui",
+              "description": "智能问答系统"
+            },
+            {
+              "title": "anythingllm",
+              "icon": "/assets/images/logos/anythingllm.png",
+              "url": "https://anythingllm.com/",
+              "description": "AI in one desktop application"
+            },
+            {
+              "title": "dify",
+              "icon": "/assets/images/logos/dify.png",
+              "url": "https://dify.ai/",
+              "description": "AI 应用创新引擎"
+            },
+            {
+              "title": "openwebui",
+              "icon": "/assets/images/logos/openwebui.png",
+              "url": "https://www.openwebui.com/",
+              "description": "RAG全都有"
+            },
+            {
+              "title": "ClawPanel",
+              "icon": "/assets/images/logos/clawpanel.jpg",
+              "url": "https://clawpanel.cc/",
+              "description": "OpenClaw AI 助手可视化管理面板，支持 20+ 通道统一管理"
+            },
+            {
+              "title": "SkillHub",
+              "icon": "/assets/images/logos/skillhub.png",
+              "url": "https://skillhub.tencent.com/",
+              "description": "专为中国用户优化的AI Skills社区，精选Top 50高质量AI Skills"
+            },
+            {
+              "title": "skills",
+              "icon": "/assets/images/logos/skills.png",
+              "url": "https://skills.sh/",
+              "description": "AI agents的可重用能力"
+            },
+            {
+              "title": "OpenFang",
+              "icon": "/assets/images/logos/openfang.ico",
+              "url": "https://openfang.sh/",
+              "description": "Agent 操作系统"
+            },
+            {
+              "title": "MCP",
+              "icon": "/assets/images/logos/mcp.png",
+              "url": "https://mcp.so/",
+              "description": "探索 MCP 服务器"
+            },
+            {
+              "title": "Get笔记",
+              "icon": "/assets/images/logos/biji.png",
+              "url": "https://www.biji.com/",
+              "description": "AI笔记"
+            },
+            {
+              "title": "ai-bot",
+              "icon": "/assets/images/logos/ai-bot.png",
+              "url": "https://ai-bot.cn/",
+              "description": "ai工具集"
+            },
+            {
+              "title": "thinkinai",
+              "icon": "/assets/images/logos/thinkinai.png",
+              "url": "https://tools.thinkinai.xyz/",
+              "description": "模型兼容性检测"
+            },
+            {
+              "title": "openkg",
+              "icon": "/assets/images/logos/openspg.png",
+              "url": "https://spg.openkg.cn/",
+              "description": "企业级知识库"
+            },
+            {
+              "title": "monet",
+              "icon": "/assets/images/logos/monet.png",
+              "url": "https://monet.vision/",
+              "description": "AI创作平台"
+            },
+            {
+              "title": "美团AI",
+              "icon": "/assets/images/logos/longcat.png",
+              "url": "https://longcat.chat/",
+              "description": "免费token"
+            },
+            {
+              "title": "抱脸",
+              "icon": "/assets/images/logos/huggingface.png",
+              "url": "https://hf-mirror.com/",
+              "description": "大量模型库"
+            },
+            {
+              "title": "魔搭",
+              "icon": "/assets/images/logos/modelscope.png",
+              "url": "https://modelscope.cn/",
+              "description": "大模型仓库"
+            },
+            {
+              "title": "ollama",
+              "icon": "/assets/images/logos/ollama.png",
+              "url": "https://ollama.com/",
+              "description": "运行大模型"
+            },
+            {
+              "title": "GPUStack",
+              "icon": "/assets/images/logos/gpustack.png",
+              "url": "https://gpustack.ai/",
+              "description": "安装大模型"
+            },
+            {
+              "title": "LM Studio",
+              "icon": "/assets/images/logos/lmstudio.png",
+              "url": "https://lmstudio.ai/",
+              "description": "本地大模型运行平台"
+            },
+            {
+              "title": "ktranformers",
+              "icon": "/assets/images/logos/approaching-ai.png",
+              "url": "https://approaching-ai.com/",
+              "description": "加速到来你的AI世界"
+            },
+            {
+              "title": "百智",
+              "icon": "/assets/images/logos/baizhi.png",
+              "url": "https://baizhi.cloud/",
+              "description": "AI 服务平台"
+            },
+            {
+              "title": "SiliconFlow",
+              "icon": "/assets/images/logos/siliconflow.ico",
+              "url": "https://siliconflow.cn/",
+              "description": "AI 模型 API 服务平台"
+            },
+            {
+              "title": "OpenBMB",
+              "icon": "/assets/images/logos/openbmb.ico",
+              "url": "https://www.openbmb.cn/",
+              "description": "大模型工具平台"
+            },
+            {
+              "title": "LinClaw",
+              "icon": "/assets/images/logos/linclaw.png",
+              "url": "https://linclaw.qnlinking.com/",
+              "description": "七牛 OpenClaw 可视化管理面板"
+            },
+            {
+              "title": "YouClaw",
+              "icon": "/assets/images/logos/youclaw.png",
+              "url": "https://youclaw.dev/",
+              "description": "AI 工具集合平台"
+            },
+            {
+              "title": "cnb.cool",
+              "icon": "/assets/images/logos/cnbcool.png",
+              "url": "https://cnb.cool/",
+              "description": "CNB加速，一键起飞"
+            },
+            {
+              "title": "LightPanda",
+              "icon": "/assets/images/logos/lightpanda.png",
+              "url": "https://lightpanda.io/",
+              "description": "专为 AI agents 设计的快速轻量级 headless 浏览器，Zig 语言开发，性能比 Chrome 快 11 倍"
+            },
+            {
+              "title": "NoCode",
+              "icon": "/assets/images/logos/nocode.ico",
+              "url": "https://nocode.cn/",
+              "description": "AI 驱动的无代码开发平台"
+            },
+            {
+              "title": "ColaOS",
+              "icon": "/assets/images/logos/colaos.ico",
+              "url": "https://colaos.ai/",
+              "description": "AI 驱动的操作系统"
+            },
+            {
+              "title": "Polymarket Analytics",
+              "icon": "/assets/images/logos/polymarket.ico",
+              "url": "https://polymarketanalytics.com/",
+              "description": "Polymath 市场数据分析平台"
+            },
+            {
+              "title": "CodeBuddy",
+              "icon": "/assets/images/logos/codebuddy.svg",
+              "url": "https://www.codebuddy.cn/",
+              "description": "腾讯云代码助手，AI智能编程伙伴"
+            },
+            {
+              "title": "购车",
+              "icon": "/assets/images/logos/buycar.ico",
+              "url": "https://buycar.justgame.top/",
+              "description": "购车服务"
+            },
+            {
+              "title": "Project Nomad",
+              "icon": "/assets/images/logos/projectnomad.png",
+              "url": "https://www.projectnomad.us/",
+              "description": "离线媒体、档案和数据的节点——一个免费开源的离线服务器"
+            }
+          ]
         },
-        {
-          "title": "Hermes Agent",
-          "icon": "/assets/images/logos/hermes-agent.png",
-          "url": "https://hermes-agent.org/",
-          "description": "AI Agent平台"
-        },
-        {
-          "title": "CodeBuddy",
-          "icon": "/assets/images/logos/codebuddy.svg",
-          "url": "https://www.codebuddy.cn/",
-          "description": "腾讯云代码助手，AI智能编程伙伴"
-        },
-        {
-          "title": "抱脸",
-          "icon": "/assets/images/logos/huggingface.png",
-          "url": "https://hf-mirror.com/",
-          "description": "大量模型库"
-        },
-        {
-          "title": "openrouter",
-          "icon": "/assets/images/logos/openrouter.png",
-          "url": "https://openrouter.ai",
-          "description": "统一的AI模型接口"
-        },
-        {
-          "title": "deepseek",
-          "icon": "/assets/images/logos/deepseek.png",
-          "url": "https://chat.deepseek.com/",
-          "description": "探索未知之境"
-        },
-        {
-          "title": "当贝",
-          "icon": "/assets/images/logos/dangbei.png",
-          "url": "https://ai.dangbei.com/",
-          "description": "聚合AI"
-        },
-        {
-          "title": "豆包",
-          "icon": "/assets/images/logos/doubao.png",
-          "url": "https://www.doubao.com/chat/",
-          "description": "语音通话"
-        },
-        {
-          "title": "GPUStack",
-          "icon": "/assets/images/logos/gpustack.png",
-          "url": "https://gpustack.ai/",
-          "description": "安装大模型"
-        },
-        {
-          "title": "元宝",
-          "icon": "/assets/images/logos/yuanbao2.png",
-          "url": "https://yuanbao.tencent.com/",
-          "description": "腾讯大模型"
-        },
-        {
-          "title": "魔搭",
-          "icon": "/assets/images/logos/modelscope.png",
-          "url": "https://modelscope.cn/",
-          "description": "大模型仓库"
-        },
-        {
-          "title": "ollama",
-          "icon": "/assets/images/logos/ollama.png",
-          "url": "https://ollama.com/",
-          "description": "运行大模型"
-        },
-        {
-          "title": "ktranformers",
-          "icon": "/assets/images/logos/approaching-ai.png",
-          "url": "https://approaching-ai.com/",
-          "description": "加速到来你的AI世界"
-        },
-        {
-          "title": "ragflow",
-          "icon": "/assets/images/logos/ragflow.png",
-          "url": "https://ragflow.io/",
-          "description": "智能问答"
-        },
-        {
-          "title": "openwebui",
-          "icon": "/assets/images/logos/openwebui.png",
-          "url": "https://www.openwebui.com/",
-          "description": "RAG全都有"
-        },
-        {
-          "title": "chatboxai",
-          "icon": "/assets/images/logos/chatboxai.png",
-          "url": "https://chatboxai.app/",
-          "description": "一站式搞定所有学习需求"
-        },
-        {
-          "title": "ClawPanel",
-          "icon": "/assets/images/logos/clawpanel.jpg",
-          "url": "https://clawpanel.cc/",
-          "description": "OpenClaw AI 助手可视化管理面板，支持 20+ 通道统一管理"
-        },
-        {
-          "title": "anythingllm",
-          "icon": "/assets/images/logos/anythingllm.png",
-          "url": "https://anythingllm.com/",
-          "description": "AI in one desktop application"
-        },
-        {
-          "title": "dify",
-          "icon": "/assets/images/logos/dify.png",
-          "url": "https://dify.ai/",
-          "description": "AI 应用创新引擎"
-        },
-        {
-          "title": "Get笔记",
-          "icon": "/assets/images/logos/biji.png",
-          "url": "https://www.biji.com/",
-          "description": "AI笔记"
-        },
-        {
-          "title": "lobehub",
-          "icon": "/assets/images/logos/lobehub.png",
-          "url": "https://lobehub.com/",
-          "description": "个人AI助手和专业团队"
-        },
-        {
-          "title": "fastgpt",
-          "icon": "/assets/images/logos/fastgpt.png",
-          "url": "https://fastgpt.cn/",
-          "description": "AI知识库构建平台"
-        },
-        {
-          "title": "rag-web-ui",
-          "icon": "/assets/images/logos/rag-web-ui.png",
-          "url": "https://github.com/rag-web-ui/rag-web-ui",
-          "description": "智能问答系统"
-        },
-        {
-          "title": "海豚AI",
-          "icon": "/assets/images/logos/ttson.png",
-          "url": "https://www.ttson.cn/",
-          "description": "配音复制"
-        },
-        {
-          "title": "thinkinai",
-          "icon": "/assets/images/logos/thinkinai.png",
-          "url": "https://tools.thinkinai.xyz/",
-          "description": "模型兼容性检测"
-        },
-        {
-          "title": "ai-bot",
-          "icon": "/assets/images/logos/ai-bot.png",
-          "url": "https://ai-bot.cn/",
-          "description": "ai工具集"
-        },
-        {
-          "title": "智谱清言",
-          "icon": "/assets/images/logos/chatglm.png",
-          "url": "https://chatglm.cn/",
-          "description": "智谱清言"
-        },
-        {
-          "title": "openkg",
-          "icon": "/assets/images/logos/openspg.png",
-          "url": "https://spg.openkg.cn/",
-          "description": "企业级知识库"
-        },
-        {
-          "title": "MCP",
-          "icon": "/assets/images/logos/mcp.png",
-          "url": "https://mcp.so/",
-          "description": "探索 MCP 服务器"
-        },
-        {
-          "title": "monet",
-          "icon": "/assets/images/logos/monet.png",
-          "url": "https://monet.vision/",
-          "description": "AI创作平台"
-        },
-        {
-          "title": "美团AI",
-          "icon": "/assets/images/logos/longcat.png",
-          "url": "https://longcat.chat/",
-          "description": "免费token"
-        },
-        {
-          "title": "skills",
-          "icon": "/assets/images/logos/skills.png",
-          "url": "https://skills.sh/",
-          "description": "AI agents的可重用能力"
-        },
-        {
-          "title": "AI朋友",
-          "icon": "/assets/images/logos/aipyaipy.png",
-          "url": "https://www.aipyaipy.com/",
-          "description": "超级AI牛马"
-        },
-        {
-          "title": "CoPaw",
-          "icon": "/assets/images/logos/copaw.svg",
-          "url": "https://copaw.agentscope.io/",
-          "description": "AI智能助手，为你工作，与你共成长"
-        },
-        {
-          "title": "OpenFang",
-          "icon": "/assets/images/logos/openfang.ico",
-          "url": "https://openfang.sh/",
-          "description": "Agent 操作系统"
-        },
-        {
-          "title": "lynote",
-          "icon": "/assets/images/logos/lynote.png",
-          "url": "https://lynote.ai/",
-          "description": "一站式搞定所有学习需求"
-        },
-        {
-          "title": "SkillHub",
-          "icon": "/assets/images/logos/skillhub.png",
-          "url": "https://skillhub.tencent.com/",
-          "description": "专为中国用户优化的AI Skills社区，精选Top 50高质量AI Skills"
-        },
-
-        {
-          "title": "PicoClaw",
-          "icon": "/assets/images/logos/picoclaw.png",
-          "url": "https://picoclaw.net/",
-          "description": "超轻量级个人AI助手，Go语言构建，内存<10MB，启动<1秒，支持多平台部署"
-        },
-        {
-          "title": "OpenMAIC",
-          "icon": "https://open.maic.chat/favicon.ico?favicon.6b6a8546.ico",
-          "url": "https://open.maic.chat/",
-          "description": "AI教学和对话平台，提供编程学习、知识讲解和互动问答服务"
-        },
-        {
-          "title": "MonkeyCode AI",
-          "icon": "/assets/images/logos/monkeycode.png",
-          "url": "https://monkeycode-ai.com/",
-          "description": "专业的 AI 编码助手"
-        },
-        {
-          "title": "轩辕",
-          "icon": "/assets/images/logos/xuanyuancode.ico",
-          "url": "https://www.xuanyuancode.com/",
-          "description": "轩辕的编程宇宙"
-        },
-        {
-          "title": "OpenBMB",
-          "icon": "/assets/images/logos/openbmb.ico",
-          "url": "https://www.openbmb.cn/",
-          "description": "大模型工具平台"
-        },
-        {
-          "title": "Polymarket Analytics",
-          "icon": "/assets/images/logos/polymarket.ico",
-          "url": "https://polymarketanalytics.com/",
-          "description": "Polymath 市场数据分析平台"
-        },
-        {
-          "title": "YouClaw",
-          "icon": "/assets/images/logos/youclaw.png",
-          "url": "https://youclaw.dev/",
-          "description": "AI 工具集合平台"
-        },
-        {
-          "title": "SiliconFlow",
-          "icon": "/assets/images/logos/siliconflow.ico",
-          "url": "https://siliconflow.cn/",
-          "description": "AI 模型 API 服务平台"
-        },
-        {
-          "title": "LinClaw",
-          "icon": "/assets/images/logos/linclaw.png",
-          "url": "https://linclaw.qnlinking.com/",
-          "description": "七牛 OpenClaw 可视化管理面板"
-        },
-        {
-          "title": "cnb.cool",
-          "icon": "/assets/images/logos/cnbcool.png",
-          "url": "https://cnb.cool/",
-          "description": "CNB加速，一键起飞"
-        },
-        {
-          "title": "LightPanda",
-          "icon": "/assets/images/logos/lightpanda.png",
-          "url": "https://lightpanda.io/",
-          "description": "专为 AI agents 设计的快速轻量级 headless 浏览器，Zig 语言开发，性能比 Chrome 快 11 倍"
-        },
-        {
-          "title": "NoCode",
-          "icon": "/assets/images/logos/nocode.ico",
-          "url": "https://nocode.cn/",
-          "description": "AI 驱动的无代码开发平台"
-        },
-        {
-          "title": "ColaOS",
-          "icon": "/assets/images/logos/colaos.ico",
-          "url": "https://colaos.ai/",
-          "description": "AI 驱动的操作系统"
-        },
-        {
-          "title": "购车",
-          "icon": "/assets/images/logos/buycar.ico",
-          "url": "https://buycar.justgame.top/",
-          "description": "购车服务"
-        },
-        {
-          "title": "LM Studio",
-          "icon": "/assets/images/logos/lmstudio.png",
-          "url": "https://lmstudio.ai/",
-          "description": "本地大模型运行平台"
-        },
-        {
-          "title": "百智",
-          "icon": "/assets/images/logos/baizhi.png",
-          "url": "https://baizhi.cloud/",
-          "description": "AI 服务平台"
-        },
-        {
-          "title": "Project Nomad",
-          "icon": "/assets/images/logos/projectnomad.png",
-          "url": "https://www.projectnomad.us/",
-          "description": "离线媒体、档案和数据的节点——一个免费开源的离线服务器"
-        }
-      ]
-    },
     {
       "category": "科研办公",
       "sidebarIcon": "fas fa-flask",
