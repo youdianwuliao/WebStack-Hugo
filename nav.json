@@ -119,17 +119,22 @@
               "description": "聚合AI"
             },
             {
-              "title": "CoPaw",
-              "icon": "/assets/images/logos/copaw.svg",
-              "url": "https://copaw.agentscope.io/",
-              "description": "AI智能助手，为你工作，与你共成长"
+              "title": "meoo",
+              "icon": "/assets/images/logos/meoo.ico",
+              "url": "https://meoo.com/",
+              "description": "meoo导航"
             },
-
             {
               "title": "MonkeyCode AI",
               "icon": "/assets/images/logos/monkeycode.png",
               "url": "https://monkeycode-ai.com/",
               "description": "专业的 AI 编码助手"
+            },
+            {
+              "title": "CoPaw",
+              "icon": "/assets/images/logos/copaw.svg",
+              "url": "https://copaw.agentscope.io/",
+              "description": "AI智能助手，为你工作，与你共成长"
             },
             {
               "title": "OpenMAIC",
