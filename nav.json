@@ -59,16 +59,10 @@
           "description": "AI 知识库"
         },
         {
-          "title": "minimind",
-          "icon": "/assets/images/logos/minimind.png",
-          "url": "https://www.minimind.wiki/",
-          "description": "AI 知识库"
-        },
-        {
-          "title": "uu在线工具",
-          "icon": "/assets/images/logos/uutool.png",
-          "url": "https://uutool.cn/",
-          "description": "便捷实用"
+          "title": "139 邮箱",
+          "icon": "/assets/images/logos/139.png",
+          "url": "https://mail.139.com/",
+          "description": "139邮箱"
         }
       ]
     },
@@ -125,16 +119,130 @@
           "description": "聚合AI"
         },
         {
+          "title": "秒悟",
+          "icon": "/assets/images/logos/meoo.png",
+          "url": "https://meoo.com/",
+          "description": "思维未竟之处，秒悟已然成真"
+        },
+        {
+          "title": "MonkeyCode AI",
+          "icon": "/assets/images/logos/monkeycode.png",
+          "url": "https://monkeycode-ai.com/",
+          "description": "专业的 AI 编码助手"
+        },
+        {
+          "title": "CoPaw",
+          "icon": "/assets/images/logos/copaw.svg",
+          "url": "https://copaw.agentscope.io/",
+          "description": "AI智能助手，为你工作，与你共成长"
+        },
+        {
+          "title": "OpenMAIC",
+          "icon": "https://open.maic.chat/favicon.ico?favicon.6b6a8546.ico",
+          "url": "https://open.maic.chat/",
+          "description": "AI教学和对话平台，提供编程学习、知识讲解和互动问答服务"
+        },
+        {
+          "title": "轩辕",
+          "icon": "/assets/images/logos/xuanyuancode.ico",
+          "url": "https://www.xuanyuancode.com/",
+          "description": "轩辕的编程宇宙"
+        },
+        {
+          "title": "openrouter",
+          "icon": "/assets/images/logos/openrouter.png",
+          "url": "https://openrouter.ai",
+          "description": "统一的AI模型接口"
+        },
+        {
+          "title": "Hermes Agent",
+          "icon": "/assets/images/logos/hermes-agent.png",
+          "url": "https://hermes-agent.org/",
+          "description": "AI Agent平台"
+        },
+        {
           "title": "海豚AI",
           "icon": "/assets/images/logos/ttson.png",
           "url": "https://www.ttson.cn/",
           "description": "配音复制"
         },
         {
-          "title": "Get笔记",
-          "icon": "/assets/images/logos/biji.png",
-          "url": "https://www.biji.com/",
-          "description": "AI笔记"
+          "title": "chatboxai",
+          "icon": "/assets/images/logos/chatboxai.png",
+          "url": "https://chatboxai.app/",
+          "description": "一站式搞定所有学习需求"
+        },
+        {
+          "title": "lynote",
+          "icon": "/assets/images/logos/lynote.png",
+          "url": "https://lynote.ai/",
+          "description": "一站式搞定所有学习需求"
+        },
+        {
+          "title": "fastgpt",
+          "icon": "/assets/images/logos/fastgpt.png",
+          "url": "https://fastgpt.cn/",
+          "description": "AI知识库构建平台"
+        },
+        {
+          "title": "ragflow",
+          "icon": "/assets/images/logos/ragflow.png",
+          "url": "https://ragflow.io/",
+          "description": "智能问答"
+        },
+        {
+          "title": "rag-web-ui",
+          "icon": "/assets/images/logos/rag-web-ui.png",
+          "url": "https://github.com/rag-web-ui/rag-web-ui",
+          "description": "智能问答系统"
+        },
+        {
+          "title": "anythingllm",
+          "icon": "/assets/images/logos/anythingllm.png",
+          "url": "https://anythingllm.com/",
+          "description": "AI in one desktop application"
+        },
+        {
+          "title": "dify",
+          "icon": "/assets/images/logos/dify.png",
+          "url": "https://dify.ai/",
+          "description": "AI 应用创新引擎"
+        },
+        {
+          "title": "openwebui",
+          "icon": "/assets/images/logos/openwebui.png",
+          "url": "https://www.openwebui.com/",
+          "description": "RAG全都有"
+        },
+        {
+          "title": "ClawPanel",
+          "icon": "/assets/images/logos/clawpanel.jpg",
+          "url": "https://claw.qt.cool/",
+          "description": "OpenClaw AI 助手可视化管理面板，支持 20+ 通道统一管理"
+        },
+        {
+          "title": "SkillHub",
+          "icon": "/assets/images/logos/skillhub.png",
+          "url": "https://skillhub.tencent.com/",
+          "description": "专为中国用户优化的AI Skills社区，精选Top 50高质量AI Skills"
+        },
+        {
+          "title": "OpenFang",
+          "icon": "/assets/images/logos/openfang.ico",
+          "url": "https://openfang.sh/",
+          "description": "Agent 操作系统"
+        },
+        {
+          "title": "thinkinai",
+          "icon": "/assets/images/logos/thinkinai.png",
+          "url": "https://tools.thinkinai.xyz/",
+          "description": "模型兼容性检测"
+        },
+        {
+          "title": "openkg",
+          "icon": "/assets/images/logos/openspg.png",
+          "url": "https://spg.openkg.cn/",
+          "description": "企业级知识库"
         },
         {
           "title": "美团AI",
