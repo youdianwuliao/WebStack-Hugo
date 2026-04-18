@@ -53,6 +53,12 @@
           "description": "知乎社区"
         },
         {
+          "title": "minimind",
+          "icon": "/assets/images/logos/minimind.png",
+          "url": "https://www.minimind.wiki/",
+          "description": "AI 知识库"
+        },
+        {
           "title": "139 邮箱",
           "icon": "/assets/images/logos/139.png",
           "url": "https://mail.139.com/",
