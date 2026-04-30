@@ -113,12 +113,7 @@
           "url": "https://ai.dangbei.com/",
           "description": "聚合AI"
         },
-        {
-          "title": "秒悟",
-          "icon": "/assets/images/logos/meoo.png",
-          "url": "https://meoo.com/",
-          "description": "思维未竟之处，秒悟已然成真"
-        },
+
         {
           "title": "MonkeyCode AI",
           "icon": "/assets/images/logos/monkeycode.png",
@@ -732,12 +727,7 @@
               "url": "https://github.com/",
               "description": "最大同性交友网站"
             },
-            {
-              "title": "七牛云",
-              "icon": "/assets/images/logos/qiniu.png",
-              "url": "https://www.qiniu.com/",
-              "description": "七牛云免费空间"
-            }
+
           ]
         }
       ]
