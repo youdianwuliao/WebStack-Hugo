@@ -574,6 +574,12 @@
               "description": "优质夸克网盘资源分享圈"
             },
             {
+              "title": "夸克吧",
+              "icon": "https://www.kuakeba.com/favicon.ico",
+              "url": "https://www.kuakeba.com/",
+              "description": "夸克网盘资源分享"
+            },
+            {
               "title": "docsmall",
               "icon": "/assets/images/logos/docsmall.png",
               "url": "https://docsmall.com/",
