@@ -347,6 +347,12 @@
           "icon": "/assets/images/logos/newapi.svg",
           "url": "https://docs.newapi.pro/",
           "description": "AI 基础设施平台"
+        },
+        {
+          "title": "One API",
+          "icon": "/assets/images/logos/oneapi.png",
+          "url": "https://oneapi.justsong.cn/",
+          "description": "OpenAI 接口聚合管理"
         }
       ]
     },
