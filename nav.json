@@ -5,12 +5,6 @@
       "sidebarIcon": "far fa-star",
       "items": [
         {
-          "title": "New API",
-          "icon": "/assets/images/logos/newapi.svg",
-          "url": "https://docs.newapi.pro/",
-          "description": "AI 基础设施平台"
-        },
-        {
           "title": "小工具",
           "icon": "/assets/images/logos/t.png",
           "url": "https://tool.justgame.top",
@@ -347,6 +341,12 @@
           "icon": "/assets/images/logos/tokendance.svg",
           "url": "https://tokendance.space/",
           "description": "统一的 AI API 网关，支持多种模型"
+        },
+        {
+          "title": "New API",
+          "icon": "/assets/images/logos/newapi.svg",
+          "url": "https://docs.newapi.pro/",
+          "description": "AI 基础设施平台"
         }
       ]
     },
