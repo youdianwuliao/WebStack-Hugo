@@ -22,11 +22,22 @@
   "devDependencies": {
     "autoprefixer": "^10.4.16",
     "cssnano": "^6.0.1",
-    "postcss": "^8.4.32",
-    "postcss-cli": "^11.0.0",
-    "terser": "^5.24.0",
     "imagemin": "^8.0.1",
     "imagemin-jpegtran": "^7.0.0",
-    "imagemin-pngquant": "^10.0.0"
+    "imagemin-pngquant": "^10.0.0",
+    "postcss": "^8.4.32",
+    "postcss-cli": "^11.0.0",
+    "terser": "^5.24.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/youdianwuliao/WebStack-Hugo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/youdianwuliao/WebStack-Hugo/issues"
+  },
+  "homepage": "https://github.com/youdianwuliao/WebStack-Hugo#readme",
+  "dependencies": {
+    "sharp": "^0.34.5"
   }
 }

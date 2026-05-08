@@ -90,6 +90,12 @@
           "description": "免费AI聊天机器人，基于GLM-5和GLM-4.7的智能助手"
         },
         {
+          "title": "通义千问",
+          "icon": "/assets/images/logos/qianwen.png",
+          "url": "https://www.qianwen.com/",
+          "description": "通义千问大模型"
+        },
+        {
           "title": "Coze",
           "icon": "/assets/images/logos/coze.ico",
           "url": "https://www.coze.cn/",
@@ -363,6 +369,12 @@
         {
           "name": "武器库",
           "items": [
+            {
+              "title": "GitHubIM",
+              "icon": "/assets/images/logos/githubim.png",
+              "url": "https://githubim.com/",
+              "description": "GitHub IM 即时通讯"
+            },
             {
               "title": "ip查询",
               "icon": "/assets/images/logos/ip.png",
@@ -1067,6 +1079,12 @@
         {
           "name": "办公学习",
           "items": [
+            {
+              "title": "汉服",
+              "icon": "/assets/images/logos/han.svg",
+              "url": "https://han.justgame.top",
+              "description": "衣冠上国，三千年服饰"
+            },
             {
               "title": "爱词霸",
               "icon": "/assets/images/logos/iciba.png",
