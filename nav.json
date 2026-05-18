@@ -12,7 +12,7 @@
         },
         {
           "title": "QQ 邮箱",
-          "icon": "/assets/images/logos/qq邮箱.png",
+          "icon": "/assets/images/logos/qq 邮箱.png",
           "url": "https://mail.qq.com/",
           "description": "腾讯 QQ 邮箱"
         },
@@ -52,12 +52,11 @@
           "url": "https://www.zhihu.com/",
           "description": "知乎社区"
         },
-
         {
           "title": "139 邮箱",
           "icon": "/assets/images/logos/139.png",
           "url": "https://mail.139.com/",
-          "description": "139邮箱"
+          "description": "139 邮箱"
         }
       ]
     },
@@ -359,6 +358,12 @@
           "icon": "/assets/images/logos/oneapi.png",
           "url": "https://oneapi.justsong.cn/",
           "description": "OpenAI 接口聚合管理"
+        },
+        {
+          "title": "OpenSpec",
+          "icon": "/assets/images/logos/openspec.svg",
+          "url": "https://openspec.dev/",
+          "description": "Ai 规范"
         }
       ]
     },
