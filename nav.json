@@ -636,6 +636,12 @@
               "icon": "/assets/images/logos/yantr.png",
               "url": "https://yantr.org/",
               "description": "家庭实验室应用商店，可在您自己的硬件上部署100多个自托管应用——Ollama、Nextcloud、Jellyfin等——只需一条 Docker Compose 命令。无需更换操作系统，无厂商锁定"
+            },
+            {
+              "title": "冰狐智能辅助",
+              "icon": "/assets/images/logos/tools.png",
+              "url": "https://aznfz.com/",
+              "description": "一站式自动化脚本解决方案"
             }
           ]
         },
