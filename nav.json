@@ -363,6 +363,12 @@
           "icon": "/assets/images/logos/openspec.svg",
           "url": "https://openspec.dev/",
           "description": "Ai 规范"
+        },
+        {
+          "title": "TBox",
+          "icon": "/assets/images/logos/tbox.png",
+          "url": "https://www.tbox.cn/",
+          "description": "TBox 智能平台"
         }
       ]
     },
@@ -648,6 +654,12 @@
               "icon": "/assets/images/logos/autojs-pro.png",
               "url": "https://pro.autojs.run/",
               "description": "永久免费 AutojsPro 安卓自动化开发平台"
+            },
+            {
+              "title": "HakoVPN",
+              "icon": "/assets/images/logos/hakovpn.png",
+              "url": "https://www.hakovpn.com/",
+              "description": "HakoVPN 服务"
             }
           ]
         },
