@@ -581,7 +581,7 @@
               "title": "tailscale",
               "icon": "/assets/images/logos/tailscale.png",
               "url": "https://tailscale.com/",
-              "description": "vpn基于wireguard"
+              "description": "vnn 基于 wireguard"
             },
             {
               "title": "paywallbuster",
