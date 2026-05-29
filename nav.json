@@ -991,6 +991,12 @@
           "icon": "/assets/images/logos/emulatorjs.png",
           "url": "https://emulatorjs.org/",
           "description": "在线模拟器平台，支持多种经典游戏机模拟"
+        },
+        {
+          "title": "怀旧游戏",
+          "icon": "/assets/images/logos/old-game-site.ico",
+          "url": "https://8.147.134.144/old/",
+          "description": "经典怀旧游戏"
         }
       ]
     },
