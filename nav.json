@@ -372,7 +372,7 @@
         },
         {
           "title": "CodeWhale",
-          "icon": "/assets/images/logos/codewhale.png",
+          "icon": "/assets/images/logos/codewhale.svg",
           "url": "https://codewhale.net/",
           "description": "deepseek 终端智能体"
         }
