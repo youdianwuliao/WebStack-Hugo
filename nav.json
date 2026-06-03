@@ -11,6 +11,12 @@
           "description": "实用小工具"
         },
         {
+          "title": "飞书消息",
+          "icon": "/assets/images/logos/feishu.ico",
+          "url": "https://feishu.cn/messages",
+          "description": "飞书消息中心"
+        },
+        {
           "title": "QQ 邮箱",
           "icon": "/assets/images/logos/qq-mail.png",
           "url": "https://mail.qq.com/",
