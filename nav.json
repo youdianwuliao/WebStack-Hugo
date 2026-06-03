@@ -369,6 +369,12 @@
           "icon": "/assets/images/logos/tbox.png",
           "url": "https://www.tbox.cn/",
           "description": "TBox 智能平台"
+        },
+        {
+          "title": "CodeWhale",
+          "icon": "/assets/images/logos/codewhale.png",
+          "url": "https://codewhale.net/",
+          "description": "deepseek 终端智能体"
         }
       ]
     },
