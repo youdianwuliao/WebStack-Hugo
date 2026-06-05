@@ -1260,6 +1260,12 @@
       "sidebarIcon": "far fa-folder-open",
       "items": [
         {
+          "title": "光鸭云盘",
+          "icon": "/assets/images/logos/guangyapan.png",
+          "url": "https://www.guangyapan.com/",
+          "description": "光鸭云盘资源分享"
+        },
+        {
           "title": "百度网盘",
           "icon": "/assets/images/logos/百度网盘.jpg",
           "url": "http://pan.baidu.com/",
