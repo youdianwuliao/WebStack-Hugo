@@ -167,4 +167,83 @@ git checkout HEAD~1
 
 ---
 
+## 项目文档说明
+
+### 核心文档
+
+| 文档 | 位置 | 说明 |
+|------|------|------|
+| **导航添加规范** | `NAV_ADDITION_GUIDE.md` | 新增导航链接的标准工作流程 |
+| **用户指令记忆** | `.monkeycode/MEMORY.md` | AI 助手的行为规范和工作流记录 |
+
+---
+
+## 如何使用记忆系统
+
+本项目使用 **用户指令记忆系统** 来记录 AI 助手的工作规范和用户偏好。
+
+### 文件位置
+- `.monkeycode/MEMORY.md` - 存储行为规范和工作流
+- `NAV_ADDITION_GUIDE.md` - 导航链接添加规范（根目录显眼位置）
+
+### AI 助手如何读取记忆
+
+**方式 1：自动读取**
+- AI 助手应在每次任务开始时自动读取 `.monkeycode/MEMORY.md`
+- 作为项目级指令指导后续操作
+
+**方式 2：关键词触发**
+用户指令包含以下关键词时，AI 应关联记忆文档：
+- "新增导航" / "添加链接"
+- "按规范操作"
+- "记忆中的流程"
+
+**方式 3：显式指令**
+```
+读取 MEMORY.md 中的规范
+```
+
+### 使用示例
+
+**新增导航链接**：
+```bash
+# 1. 选择合适分类
+node -e "const nav = require('./nav.json'); nav.navigation.forEach((c, i) => console.log((i+1) + '. ' + c.category));"
+
+# 2. 下载图标并压缩（如>10KB）
+curl -sL "图标 URL" -o assets/images/logos/网站名.png
+
+# 3. 编辑 nav.json 添加条目
+
+# 4. 测试预览
+python3 -m http.server 8080
+
+# 5. 提交推送
+git add nav.json assets/images/logos/图标文件
+git commit -m "feat: 新增网站名导航链接"
+git push
+```
+
+详细流程请参考 `NAV_ADDITION_GUIDE.md`
+
+---
+
+## 项目结构概览
+
+```
+.
+├── NAV_ADDITION_GUIDE.md    # 导航添加规范（核心文档）
+├── OPTIMIZATION_README.md   # 本文档
+├── OPTIMIZATION_SUMMARY.md  # 优化总结
+├── OPTIMIZATION_REPORT.md   # 优化报告
+├── nav.json                 # 导航数据配置
+├── index.html               # 主页
+├── assets/
+│   └── images/logos/        # 网站图标目录
+└── .monkeycode/
+    └── MEMORY.md            # AI 行为记忆
+```
+
+---
+
 **优化完成!** 🚀
