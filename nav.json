@@ -381,6 +381,12 @@
           "icon": "/assets/images/logos/codewhale.svg",
           "url": "https://codewhale.net/",
           "description": "deepseek 终端智能体"
+        },
+        {
+          "title": "MuleRun",
+          "icon": "/assets/images/logos/mulerun.svg",
+          "url": "https://mulerun.com/",
+          "description": "全天候 AI 工作流自动化平台"
         }
       ]
     },
