@@ -393,6 +393,12 @@
           "icon": "/assets/images/logos/whaleops.svg",
           "url": "https://www.whaleops.com/",
           "description": "企业级 AI Agent 平台"
+        },
+        {
+          "title": "EchoBird",
+          "icon": "/assets/images/logos/echobird.jpg",
+          "url": "https://echobird.ai/",
+          "description": "AI Agent 一键部署工具，支持本地大模型"
         }
       ]
     },
