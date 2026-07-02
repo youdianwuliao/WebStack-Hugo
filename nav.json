@@ -410,6 +410,12 @@
           "name": "武器库",
           "items": [
             {
+              "title": "TrafficForge",
+              "icon": "/assets/images/logos/trafficforge.png",
+              "url": "https://sim.justgame.top/",
+              "description": "流量锻造炉 - 网站访问模拟测试工具"
+            },
+            {
               "title": "GitHubIM",
               "icon": "/assets/images/logos/githubim.png",
               "url": "https://githubim.com/",
