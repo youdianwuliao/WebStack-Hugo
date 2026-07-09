@@ -410,6 +410,12 @@
           "name": "武器库",
           "items": [
             {
+              "title": "iLovePDF",
+              "icon": "/assets/images/logos/ilovepdf.png",
+              "url": "https://www.ilovepdf.com/zh-cn",
+              "description": "在线PDF编辑处理"
+            },
+            {
               "title": "TrafficForge",
               "icon": "/assets/images/logos/trafficforge.svg",
               "url": "https://sim.justgame.top/",
@@ -600,12 +606,6 @@
               "icon": "/assets/images/logos/xdouban.png",
               "url": "https://xdouban.com/",
               "description": "温暖的音乐下载站"
-            },
-            {
-              "title": "工具匠",
-              "icon": "/assets/images/logos/toolkk.png",
-              "url": "https://www.toolkk.com/tools/pdf-to-markdown",
-              "description": "markdown"
             },
             {
               "title": "graalvm",
