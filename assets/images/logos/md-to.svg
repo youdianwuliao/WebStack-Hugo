@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <!-- Background with rounded corners - Synchronized with Logo.astro (15% primary color) -->
+  <rect width="128" height="128" rx="20" fill="#45A182" fill-opacity="0.15"/>
+  
+  <!-- "M" letter - Synchronized with Logo.astro (Solid primary color) -->
+  <path d="M24 96V32h12l16 40 16-40h12v64h-12V56l-12 32h-8l-12-32v40H24z" fill="#45A182"/>
+  
+  <!-- Arrow symbol "->" - Synchronized with Logo.astro (Solid primary color) -->
+  <path d="M88 56h24M100 44l12 12-12 12" stroke="#45A182" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>
