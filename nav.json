@@ -410,10 +410,10 @@
           "name": "武器库",
           "items": [
             {
-              "title": "iLovePDF",
-              "icon": "/assets/images/logos/ilovepdf.png",
-              "url": "https://www.ilovepdf.com/zh-cn",
-              "description": "在线PDF编辑处理"
+              "title": "markdown",
+              "icon": "/assets/images/logos/md-to.svg",
+              "url": "https://md-to.com/zh-cn/",
+              "description": "本地处理 · 隐私安全"
             },
             {
               "title": "TrafficForge",
