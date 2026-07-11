@@ -410,6 +410,12 @@
           "name": "武器库",
           "items": [
             {
+              "title": "PDF.md",
+              "icon": "/assets/images/logos/md-justgame.png",
+              "url": "https://md.justgame.top/",
+              "description": "拖拽PDF一键转Markdown，纯浏览器处理"
+            },
+            {
               "title": "markdown",
               "icon": "/assets/images/logos/md-to.svg",
               "url": "https://md-to.com/zh-cn/",
