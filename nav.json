@@ -1218,6 +1218,12 @@
       "sidebarIcon": "fas fa-play-circle",
       "items": [
         {
+          "title": "鬼书集",
+          "icon": "/assets/images/logos/guishuji.png",
+          "url": "https://m.guishuji.com/",
+          "description": "恐怖小说悬疑小说盗墓小说灵异小说在线"
+        },
+        {
           "title": "哔哩哔哩",
           "icon": "/assets/images/logos/哔哩哔哩.png",
           "url": "https://www.bilibili.com/",
