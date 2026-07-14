@@ -71,6 +71,12 @@
       "sidebarIcon": "fas fa-robot",
       "items": [
         {
+          "title": "AtomCode",
+          "icon": "/assets/images/logos/atomcode.png",
+          "url": "https://atomcode.atomgit.com/",
+          "description": "终端AI编程助手，Claude Code开源平替"
+        },
+        {
           "title": "deepseek",
           "icon": "/assets/images/logos/deepseek.png",
           "url": "https://chat.deepseek.com/",
