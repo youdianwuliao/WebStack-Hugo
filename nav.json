@@ -245,12 +245,6 @@
           "description": "企业级知识库"
         },
         {
-          "title": "美团AI",
-          "icon": "/assets/images/logos/longcat.png",
-          "url": "https://longcat.chat/",
-          "description": "免费token"
-        },
-        {
           "title": "抱脸",
           "icon": "/assets/images/logos/huggingface.png",
           "url": "https://hf-mirror.com/",
@@ -303,12 +297,6 @@
           "icon": "/assets/images/logos/cnbcool.png",
           "url": "https://cnb.cool/",
           "description": "CNB加速，一键起飞"
-        },
-        {
-          "title": "NoCode",
-          "icon": "/assets/images/logos/nocode.ico",
-          "url": "https://nocode.cn/",
-          "description": "AI 驱动的无代码开发平台"
         },
         {
           "title": "ColaOS",
