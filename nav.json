@@ -71,6 +71,12 @@
       "sidebarIcon": "fas fa-robot",
       "items": [
         {
+          "title": "WorkBuddy",
+          "icon": "/assets/images/logos/workbuddy.svg",
+          "url": "https://www.workbuddy.cn/",
+          "description": "AI Agent 办公新范式"
+        },
+        {
           "title": "deepseek",
           "icon": "/assets/images/logos/deepseek.png",
           "url": "https://chat.deepseek.com/",
