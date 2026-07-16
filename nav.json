@@ -410,6 +410,12 @@
           "name": "武器库",
           "items": [
             {
+              "title": "SnapAny",
+              "icon": "/assets/images/logos/snapany.png",
+              "url": "https://snapany.com/zh",
+              "description": "万能视频图片解析下载，支持1000+平台"
+            },
+            {
               "title": "竞彩计算器",
               "icon": "/assets/images/logos/lottery.png",
               "url": "https://www.lottery.gov.cn/jc/jsq/zqspf/",
