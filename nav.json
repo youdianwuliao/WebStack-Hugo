@@ -709,6 +709,12 @@
           "name": "安全相关",
           "items": [
             {
+              "title": "Kali Linux",
+              "icon": "/assets/images/logos/kali.png",
+              "url": "https://www.kali.org/",
+              "description": "最先进的渗透测试发行版"
+            },
+            {
               "title": "OpenOcta",
               "icon": "/assets/images/logos/openocta.ico",
               "url": "https://openocta.com/",
