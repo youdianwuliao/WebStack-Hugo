@@ -71,12 +71,6 @@
       "sidebarIcon": "fas fa-robot",
       "items": [
         {
-          "title": "agent-device",
-          "icon": "/assets/images/logos/agent-device.png",
-          "url": "https://agent-device.dev/",
-          "description": "AI Agent移动端自动化测试CLI工具"
-        },
-        {
           "title": "deepseek",
           "icon": "/assets/images/logos/deepseek.png",
           "url": "https://chat.deepseek.com/",
@@ -405,6 +399,12 @@
           "icon": "/assets/images/logos/echobird.jpg",
           "url": "https://echobird.ai/",
           "description": "AI Agent 一键部署工具，支持本地大模型"
+        },
+        {
+          "title": "agent-device",
+          "icon": "/assets/images/logos/agent-device.png",
+          "url": "https://agent-device.dev/",
+          "description": "AI Agent移动端自动化测试CLI工具"
         }
       ]
     },
