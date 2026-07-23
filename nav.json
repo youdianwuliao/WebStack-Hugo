@@ -405,6 +405,12 @@
           "icon": "/assets/images/logos/agent-device.png",
           "url": "https://agent-device.dev/",
           "description": "AI Agent移动端自动化测试CLI工具"
+        },
+        {
+          "title": "WeaveFox",
+          "icon": "/assets/images/logos/weavefox.png",
+          "url": "https://www.weavefox.cn/",
+          "description": "零门槛做应用，让创意看得见"
         }
       ]
     },
