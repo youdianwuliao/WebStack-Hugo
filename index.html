@@ -140,9 +140,7 @@
       <div class="search-popup-body">
         <select id="popupSearchEngine" class="popup-select">
           <option value="bing">Bing</option>
-          <option value="baidu">百度</option>
           <option value="google">Google</option>
-          <option value="sogou">搜狗</option>
           <option value="yandex">Yandex</option>
         </select>
         <input type="text" id="popupSearchInput" class="popup-input" placeholder="输入关键词搜索..." onkeydown="handlePopupSearch(event)">
@@ -160,9 +158,7 @@
         <div class="search-wrapper">
           <select id="searchEngine">
             <option value="bing">Bing</option>
-            <option value="baidu">百度</option>
             <option value="google">Google</option>
-            <option value="sogou">搜狗</option>
             <option value="yandex">Yandex</option>
           </select>
           <input type="text" id="searchInput" placeholder="搜索..." onkeydown="handleSearch(event)">
@@ -191,10 +187,8 @@
   <script>
     const BASE_URL = '';
     const SEARCH_URLS = {
-      baidu: 'https://www.baidu.com/s?wd=',
       google: 'https://www.google.com/search?q=',
       bing: 'https://cn.bing.com/search?form=QBLH&q=',
-      sogou: 'https://www.sogou.com/web?query=',
       yandex: 'https://yandex.ru/search/?text='
     };
     let navData = { navigation: [] };
