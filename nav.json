@@ -422,6 +422,12 @@
           "name": "武器库",
           "items": [
             {
+              "title": "千羽赛事",
+              "icon": "/assets/images/logos/qianyu-football.png",
+              "url": "https://football.justgame.top/",
+              "description": "足球赛事前瞻，统计模型每日分析"
+            },
+            {
               "title": "SQLPub",
               "icon": "/assets/images/logos/sqlpub.png",
               "url": "https://sqlpub.com/",
