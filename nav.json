@@ -423,7 +423,7 @@
           "items": [
             {
               "title": "千羽赛事",
-              "icon": "/assets/images/logos/qianyu-football.png",
+              "icon": "/assets/images/logos/qianyu-football.svg",
               "url": "https://football.justgame.top/",
               "description": "足球赛事前瞻，统计模型每日分析"
             },
