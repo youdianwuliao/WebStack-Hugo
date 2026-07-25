@@ -422,6 +422,12 @@
           "name": "武器库",
           "items": [
             {
+              "title": "CloakBrowser",
+              "icon": "/assets/images/logos/cloakbrowser.png",
+              "url": "https://cloakbrowser.dev/",
+              "description": "隐身Chromium，自动化反检测浏览器"
+            },
+            {
               "title": "千羽赛事",
               "icon": "/assets/images/logos/qianyu-football.svg",
               "url": "https://football.justgame.top/",
