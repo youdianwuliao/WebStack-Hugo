@@ -5,6 +5,18 @@
       "sidebarIcon": "far fa-star",
       "items": [
         {
+          "title": "今日头条",
+          "icon": "/assets/images/logos/toutiao.png",
+          "url": "https://www.toutiao.com/",
+          "description": "今日头条，你关心的才是头条"
+        },
+        {
+          "title": "小红书",
+          "icon": "/assets/images/logos/xiaohongshu.png",
+          "url": "https://www.xiaohongshu.com/",
+          "description": "标记我的生活"
+        },
+        {
           "title": "小工具",
           "icon": "/assets/images/logos/t.png",
           "url": "https://tool.justgame.top",
