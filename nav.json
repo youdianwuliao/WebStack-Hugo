@@ -77,18 +77,6 @@
           "description": "探索未知之境"
         },
         {
-          "title": "元宝",
-          "icon": "/assets/images/logos/yuanbao2.png",
-          "url": "https://yuanbao.tencent.com/",
-          "description": "腾讯大模型"
-        },
-        {
-          "title": "智谱清言",
-          "icon": "/assets/images/logos/chatglm.png",
-          "url": "https://chatglm.cn/",
-          "description": "智谱清言"
-        },
-        {
           "title": "Z.ai",
           "icon": "/assets/images/logos/z-ai.svg",
           "url": "https://z.ai/",
