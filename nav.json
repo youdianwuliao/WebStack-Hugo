@@ -35,12 +35,6 @@
           "description": "腾讯 QQ 邮箱"
         },
         {
-          "title": "公众号平台",
-          "icon": "/assets/images/logos/微信公众号.png",
-          "url": "https://mp.weixin.qq.com/",
-          "description": "再小的个体也有自己的品牌"
-        },
-        {
           "title": "gitee",
           "icon": "/assets/images/logos/gitee.png",
           "url": "https://gitee.com/",
@@ -57,12 +51,6 @@
           "icon": "/assets/images/logos/gitcode.png",
           "url": "https://gitcode.com/",
           "description": "华为代码托管"
-        },
-        {
-          "title": "搜狗微信",
-          "icon": "/assets/images/logos/搜狗微信.jpg",
-          "url": "https://weixin.sogou.com/",
-          "description": "搜狗微信搜索，一搜即达"
         },
         {
           "title": "知乎",
@@ -117,12 +105,6 @@
           "icon": "/assets/images/logos/workbuddy.svg",
           "url": "https://www.workbuddy.cn/",
           "description": "AI Agent 办公新范式"
-        },
-        {
-          "title": "AtomCode",
-          "icon": "/assets/images/logos/atomcode.png",
-          "url": "https://atomcode.atomgit.com/",
-          "description": "终端AI编程助手，Claude Code开源平替"
         },
         {
           "title": "Coze",
@@ -333,12 +315,6 @@
           "icon": "/assets/images/logos/polymarket.ico",
           "url": "https://polymarketanalytics.com/",
           "description": "Polymath 市场数据分析平台"
-        },
-        {
-          "title": "CodeBuddy",
-          "icon": "/assets/images/logos/codebuddy.svg",
-          "url": "https://www.codebuddy.cn/",
-          "description": "腾讯云代码助手，AI智能编程伙伴"
         },
         {
           "title": "购车",
