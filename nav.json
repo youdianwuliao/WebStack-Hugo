@@ -317,12 +317,6 @@
           "description": "离线媒体、档案和数据的节点——一个免费开源的离线服务器"
         },
         {
-          "title": "mooko AI",
-          "icon": "/assets/images/logos/mooko.png",
-          "url": "https://api.mooko.ai/",
-          "description": "AI API 服务平台"
-        },
-        {
           "title": "Swagbucks",
           "icon": "/assets/images/logos/swagbucks.svg",
           "url": "https://www.swagbucks.com/",
