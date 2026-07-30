@@ -386,7 +386,13 @@
           "title": "CloakBrowser",
           "icon": "/assets/images/logos/cloakbrowser.png",
           "url": "https://cloakbrowser.dev/",
-          "description": "隐身Chromium，自动化反检测浏览器"
+          "description": "隐身 Chromium，自动化反检测浏览器"
+        },
+        {
+          "title": "Reasonix",
+          "icon": "/assets/images/logos/reasonix.png",
+          "url": "https://reasonix.io/",
+          "description": "DeepSeek 原生终端编码 Agent，缓存优先循环"
         }
       ]
     },
