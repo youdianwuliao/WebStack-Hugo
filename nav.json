@@ -393,6 +393,12 @@
           "icon": "/assets/images/logos/reasonix.png",
           "url": "https://reasonix.io/",
           "description": "DeepSeek 原生终端编码 Agent，缓存优先循环"
+        },
+        {
+          "title": "曙光智算",
+          "icon": "/assets/images/logos/scnet.png",
+          "url": "https://www.scnet.cn/",
+          "description": "超算算力服务，AI/HPC/存储等 computing services"
         }
       ]
     },
