@@ -4,9 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>星汉灿烂</title>
-  <link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' style='stop-color:%231e3c72;stop-opacity:1' /><stop offset='100%25' style='stop-color:%232a5298;stop-opacity:1' /></linearGradient></defs><rect width='100' height='100' rx='20' fill='url(%23grad)'/><text x='50%' y='50.5%' dominant-baseline='central' text-anchor='middle' font-size='65' fill='%23ffcc00' font-family='serif, SimSun, &quot;Songti SC&quot;' style='filter: drop-shadow(0px 0px 3px rgba(255,204,0,0.4)); font-weight: bold;'>漢</text></svg>" />
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' style='stop-color:%231e3c72;stop-opacity:1' /><stop offset='100%25' style='stop-color:%232a5298;stop-opacity:1' /></linearGradient></defs><rect width='100' height='100' rx='20' fill='url(%23grad)'/><text x='50%' y='50.5%' dominant-baseline='central' text-anchor='middle' font-size='65' fill='%23ffcc00' font-family='serif, SimSun, &quot;Songti SC&quot;' style='filter: drop-shadow(0px 0px 3px rgba(255,204,0,0.4)); font-weight: bold;'>漢</text></svg>" />
-  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' style='stop-color:%231e3c72;stop-opacity:1' /><stop offset='100%25' style='stop-color:%232a5298;stop-opacity:1' /></linearGradient></defs><rect width='100' height='100' rx='20' fill='url(%23grad)'/><text x='50%' y='50.5%' dominant-baseline='central' text-anchor='middle' font-size='65' fill='%23ffcc00' font-family='serif, SimSun, &quot;Songti SC&quot;' style='filter: drop-shadow(0px 0px 3px rgba(255,204,0,0.4)); font-weight: bold;'>漢</text></svg>" />
+  <meta name="description" content="星汉灿烂 - 个人导航站，收录 AI 工具、科研办公、开发设计、影音视频、网盘资源等优质网站">
+  <meta name="keywords" content="星汉灿烂,导航,网址导航,AI工具,科研办公,开发设计,影音视频,网盘资源">
+  <meta name="author" content="我是汉人有点无聊">
+  <meta property="og:title" content="星汉灿烂">
+  <meta property="og:description" content="个人收藏导航站，收录 AI、科研、开发、影音、网盘等优质资源">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
     :root {
@@ -226,6 +230,10 @@
     };
     let navData = { navigation: [] };
     
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+    
     function fixIconPath(icon) {
       if (!icon) return 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🔗</text></svg>';
       if (icon.startsWith('http') || icon.startsWith('data:')) return icon;
@@ -236,10 +244,10 @@
       const nav = document.getElementById('navCategories');
       let html = '';
       navData.navigation.forEach((cat, idx) => {
-        html += `<button onclick="scrollToCategory('cat-${idx}')" class="${idx === 0 ? 'active' : ''}"><i class="${cat.sidebarIcon}"></i><span>${cat.category}</span></button>`;
+        html += `<button onclick="scrollToCategory('cat-${idx}')" class="${idx === 0 ? 'active' : ''}"><i class="${escapeHtml(cat.sidebarIcon)}"></i><span>${escapeHtml(cat.category)}</span></button>`;
         if (cat.subcategories) {
           cat.subcategories.forEach((sub, subIdx) => {
-            html += `<button onclick="scrollToCategory('sub-${idx}-${subIdx}')" class="sub-nav-item"><span style="font-size:8px;color:#888;margin-right:5px;">▸</span><span>${sub.name}</span></button>`;
+            html += `<button onclick="scrollToCategory('sub-${idx}-${subIdx}')" class="sub-nav-item"><span style="font-size:8px;color:#888;margin-right:5px;">▸</span><span>${escapeHtml(sub.name)}</span></button>`;
           });
         }
       });
@@ -249,22 +257,22 @@
     function renderSites() {
       const container = document.getElementById('siteContainer');
       container.innerHTML = navData.navigation.map((cat, catIdx) => {
-        let html = `<section class="category" id="cat-${catIdx}"><h2><i class="${cat.sidebarIcon}"></i> ${cat.category}</h2>`;
+        let html = `<section class="category" id="cat-${catIdx}"><h2><i class="${escapeHtml(cat.sidebarIcon)}"></i> ${escapeHtml(cat.category)}</h2>`;
         
         if (cat.items) {
           html += `<div class="site-grid">${cat.items.map(item => `
-            <a href="${item.url}" class="site-card" target="_blank">
-              <img src="${fixIconPath(item.icon)}" alt="${item.title}" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🔗</text></svg>'">
-              <div class="site-info" title="${item.description || ''}"><h3>${item.title}</h3><p>${item.description || ''}</p></div>
+            <a href="${escapeHtml(item.url)}" class="site-card" target="_blank">
+              <img src="${escapeHtml(fixIconPath(item.icon))}" alt="${escapeHtml(item.title)}" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🔗</text></svg>'">
+              <div class="site-info" title="${escapeHtml(item.description || '')}"><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.description || '')}</p></div>
             </a>
           `).join('')}</div>`;
         } else if (cat.subcategories) {
           cat.subcategories.forEach((sub, subIdx) => {
-            html += `<div class="subcategory" id="sub-${catIdx}-${subIdx}"><h3>${sub.name}</h3>`;
+            html += `<div class="subcategory" id="sub-${catIdx}-${subIdx}"><h3>${escapeHtml(sub.name)}</h3>`;
             html += `<div class="site-grid">${(sub.items || []).map(item => `
-              <a href="${item.url}" class="site-card" target="_blank">
-                <img src="${fixIconPath(item.icon)}" alt="${item.title}" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🔗</text></svg>'">
-                <div class="site-info" title="${item.description || ''}"><h3>${item.title}</h3><p>${item.description || ''}</p></div>
+              <a href="${escapeHtml(item.url)}" class="site-card" target="_blank">
+                <img src="${escapeHtml(fixIconPath(item.icon))}" alt="${escapeHtml(item.title)}" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🔗</text></svg>'">
+                <div class="site-info" title="${escapeHtml(item.description || '')}"><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.description || '')}</p></div>
               </a>
             `).join('')}</div></div>`;
           });
