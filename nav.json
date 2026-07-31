@@ -113,12 +113,6 @@
           "description": "超级AI牛马"
         },
         {
-          "title": "当贝",
-          "icon": "/assets/images/logos/dangbei.png",
-          "url": "https://ai.dangbei.com/",
-          "description": "聚合AI"
-        },
-        {
           "title": "MonkeyCode AI",
           "icon": "/assets/images/logos/monkeycode.png",
           "url": "https://monkeycode-ai.com/",
