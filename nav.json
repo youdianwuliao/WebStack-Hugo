@@ -1372,6 +1372,12 @@
           "icon": "/assets/images/logos/feijipan.png",
           "url": "https://www.feijipan.com/",
           "description": "1T空间"
+        },
+        {
+          "title": "迪粉助手资源",
+          "icon": "/assets/images/logos/vju.png",
+          "url": "https://file.vju.cc/",
+          "description": "比亚迪车机软件资源不限速下载"
         }
       ]
     }
