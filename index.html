@@ -4,14 +4,38 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>星汉灿烂</title>
-  <meta name="description" content="星汉灿烂 - 个人导航站，收录 AI 工具、科研办公、开发设计、影音视频、网盘资源等优质网站">
-  <meta name="keywords" content="星汉灿烂,导航,网址导航,AI工具,科研办公,开发设计,影音视频,网盘资源">
+  <meta name="description" content="星汉灿烂 - 精选 AI 工具、科研办公、开发设计、影音视频、网盘资源等 200+ 优质网站导航，涵盖 ChatGPT、GitHub、哔哩哔哩等实用站点，网址一键直达。">
+  <meta name="keywords" content="星汉灿烂,网址导航,网址大全,AI工具,人工智能,ChatGPT,ChatGLM,科研办公,开发设计,影音视频,网盘资源,实用网站,好用的网站">
   <meta name="author" content="我是汉人有点无聊">
   <meta property="og:title" content="星汉灿烂">
-  <meta property="og:description" content="个人收藏导航站，收录 AI、科研、开发、影音、网盘等优质资源">
+  <meta property="og:description" content="精选 AI 工具、科研办公、开发设计、影音视频、网盘资源等 200+ 优质网站导航，网址一键直达。">
   <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.justgame.top/">
+  <meta property="og:image" content="https://www.justgame.top/assets/images/og-cover.png">
+  <meta property="og:site_name" content="星汉灿烂">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="星汉灿烂">
+  <meta name="twitter:description" content="精选 AI 工具、科研办公、开发设计、影音视频、网盘资源等 200+ 优质网站导航，网址一键直达。">
+  <meta name="twitter:image" content="https://www.justgame.top/assets/images/og-cover.png">
+  <meta name="theme-color" content="#1e3a5f">
+  <link rel="canonical" href="https://www.justgame.top/">
+  <link rel="apple-touch-icon" href="assets/images/favicon22.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "星汉灿烂",
+    "alternateName": "个人导航站",
+    "url": "https://www.justgame.top/",
+    "description": "精选 AI 工具、科研办公、开发设计、影音视频、网盘资源等优质网站导航。",
+    "inLanguage": "zh-CN",
+    "publisher": { "@type": "Person", "name": "我是汉人有点无聊" }
+  }
+  </script>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="preload" href="nav.json" as="fetch" crossorigin="anonymous">
+  <link rel="preload" href="assets/favicon.svg" as="image">
   <style>
     :root {
       --bg: #f0f2f5;
@@ -43,33 +67,33 @@
       --close-hover: #f0f0f0;
     }
     .night-mode {
-      --bg: #1a1a2e;
-      --text: #e0e0e0;
-      --muted: #aaa;
-      --faint: #888;
-      --card-bg: #16213e;
-      --card-border: #2d3a4a;
+      --bg: #0d1017;
+      --text: #e6e8ee;
+      --muted: #a8b0c0;
+      --faint: #7a8296;
+      --card-bg: #202a38;
+      --card-border: #30394a;
       --primary: #87ceeb;
       --primary-2: #58a6ff;
       --accent: #58a6ff;
       --accent-light: #87ceeb;
-      --input-bg: #0f3460;
-      --input-border: #2d3a4a;
-      --header-bg1: #16213e;
-      --header-bg2: #1a2a4a;
-      --header-border: #2d3a4a;
-      --nav-bg: #16213e;
-      --nav-border: #2d3a4a;
+      --input-bg: #121826;
+      --input-border: #30394a;
+      --header-bg1: #161c29;
+      --header-bg2: #1e2838;
+      --header-border: #30394a;
+      --nav-bg: #161c29;
+      --nav-border: #30394a;
       --nav-hover: #0f3460;
       --nav-sub-hover: #0f3460;
-      --footer-bg: #16213e;
-      --btn-bg: linear-gradient(135deg, #1e3a5f, #2d5a87);
+      --footer-bg: #161c29;
+      --btn-bg: linear-gradient(135deg, #2d5a87, #4a90d9);
       --title-grad: linear-gradient(135deg, #87ceeb, #58a6ff, #87ceeb);
-      --shadow: rgba(0, 0, 0, 0.4);
-      --popup-bg: #1a2744;
-      --popup-input-bg: #0f1a2e;
-      --popup-input-border: #2d3a4a;
-      --close-hover: #2d3a4a;
+      --shadow: rgba(0, 0, 0, 0.55);
+      --popup-bg: #202a38;
+      --popup-input-bg: #121826;
+      --popup-input-border: #30394a;
+      --close-hover: #30394a;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
@@ -113,7 +137,7 @@
     
     .category { margin-bottom: 35px; }
     .category h2 { font-size: 1rem; font-weight: 500; color: var(--primary); margin-bottom: 18px; padding-bottom: 8px; border-bottom: 2px solid var(--accent); display: inline-block; }
-    .category h2 i { margin-right: 6px; color: var(--accent); }
+    .category h2 i, .category h2 svg { margin-right: 6px; color: var(--accent); width: 14px; height: 14px; vertical-align: -2px; }
     .site-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
     .site-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 10px; padding: 16px; text-decoration: none; color: inherit; transition: all 0.25s; display: flex; align-items: flex-start; gap: 12px; }
     .site-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 3px 10px var(--shadow); }
@@ -163,12 +187,125 @@
       .site-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
       .site-card { padding: 15px; flex-direction: column; align-items: center; text-align: center; }
     }
+
+    /* ===== 性能与美观优化 ===== */
+    html { scroll-behavior: smooth; }
+    body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+
+    /* 页面入场与滚动淡入动画 */
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in { opacity: 0; }
+    .fade-in.visible { animation: fadeInUp 0.55s ease forwards; }
+
+    /* 站点卡片增强 */
+    .site-card { position: relative; overflow: hidden; }
+    .site-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, var(--accent), transparent); opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+    .site-card:hover::after { opacity: 0.06; }
+    .site-card:hover { transform: translateY(-4px); box-shadow: 0 10px 24px var(--shadow); border-color: var(--accent); }
+    .site-card img { transition: transform 0.3s ease; }
+    .site-card:hover img { transform: scale(1.12) rotate(-3deg); }
+    .site-card h3 { transition: color 0.25s; }
+    .site-card:hover h3 { color: var(--accent); }
+
+    /* 夜间模式卡片层次增强 */
+    .night-mode .site-card { box-shadow: 0 2px 10px rgba(0,0,0,0.35); }
+    .night-mode .site-card:hover { box-shadow: 0 12px 26px rgba(0,0,0,0.6); border-color: var(--accent); }
+    .night-mode .site-card img { background: var(--card-border); }
+
+    /* 分类标题装饰 */
+    .category h2 { position: relative; }
+    .category h2::after { content: ''; position: absolute; left: 0; bottom: -2px; width: 0; height: 2px; background: linear-gradient(90deg, var(--primary), var(--accent)); transition: width 0.35s ease; }
+    .category:hover h2::after { width: 100%; }
+
+    /* 玻璃拟态吸顶头部 */
+    header { position: sticky; top: 0; z-index: 150; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+
+    /* 搜索框与按钮增强 */
+    .search-wrapper input, .popup-input { box-shadow: inset 0 1px 3px rgba(0,0,0,0.06); }
+    .search-wrapper button, .popup-btn { position: relative; overflow: hidden; }
+    .search-wrapper button::after, .popup-btn::after { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent); transition: left 0.4s; }
+    .search-wrapper button:hover::after, .popup-btn:hover::after { left: 100%; }
+
+    /* SVG 图标适配（替代 FontAwesome） */
+    .floating-nav-content button i, .floating-nav-content button svg { width: 16px; height: 16px; color: var(--accent); vertical-align: middle; }
+    .action-btn svg { width: 16px; height: 16px; }
+    .footer-icon { vertical-align: -1px; }
+
+    /* 站内搜索下拉 */
+    .search-wrapper { position: relative; }
+    .site-search-results {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0; right: 0;
+      background: var(--popup-bg);
+      border: 1px solid var(--popup-input-border);
+      border-radius: 12px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.18);
+      z-index: 400;
+      max-height: 380px;
+      overflow-y: auto;
+      display: none;
+      padding: 6px;
+    }
+    .site-search-results.show { display: block; }
+    .sr-header { display: flex; align-items: center; gap: 6px; padding: 5px 10px 9px; font-size: 11px; color: var(--faint); border-bottom: 1px solid var(--popup-input-border); margin-bottom: 4px; }
+    .sr-header svg { flex-shrink: 0; }
+    .sr-header b { color: var(--accent); font-weight: 600; }
+    .sr-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; cursor: pointer; text-decoration: none; color: var(--text); transition: background 0.15s; }
+    .sr-item:hover, .sr-item.active { background: var(--nav-hover); }
+    .sr-item img { width: 26px; height: 26px; border-radius: 6px; object-fit: contain; flex-shrink: 0; background: var(--card-border); padding: 2px; }
+    .sr-item-main { min-width: 0; flex: 1; }
+    .sr-item-title { font-size: 13px; font-weight: 500; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sr-item-desc { font-size: 11px; color: var(--muted); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+    .sr-item mark { background: none; color: var(--accent); font-weight: 700; }
+    .sr-item-cat { font-size: 11px; color: var(--faint); flex-shrink: 0; background: var(--nav-hover); padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+    .sr-footer { display: flex; align-items: center; gap: 6px; padding: 9px 12px; font-size: 12px; color: var(--faint); border-top: 1px solid var(--popup-input-border); margin-top: 4px; }
+    .sr-footer svg { flex-shrink: 0; }
+    .sr-footer a { color: var(--accent); text-decoration: none; font-weight: 500; }
+    .sr-footer a:hover { text-decoration: underline; }
+    .sr-empty { padding: 20px 12px; text-align: center; font-size: 12px; color: var(--faint); }
+    .search-popup-content { position: relative; }
+    .popup-results { position: absolute; top: calc(100% + 10px); left: 12px; right: 12px; }
+
+    /* 收藏按钮 */
+    .fav-btn { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.05); border: none; width: 24px; height: 24px; line-height: 22px; border-radius: 50%; font-size: 14px; color: var(--faint); cursor: pointer; opacity: 0; transition: all 0.2s; z-index: 2; }
+    .night-mode .fav-btn { background: rgba(255,255,255,0.07); }
+    .site-card:hover .fav-btn, .fav-btn.on { opacity: 1; }
+    .fav-btn:hover { background: var(--nav-hover); color: var(--accent); }
+    .fav-btn.on { color: #f5b942; }
+    .site-info { padding-right: 20px; }
+
+    /* 分享栏 */
+    .share-bar { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--card-border); flex-wrap: wrap; }
+    .share-bar span { font-size: 12px; color: var(--faint); }
+    .share-btn { display: inline-flex; align-items: center; gap: 5px; padding: 6px 16px; border-radius: 999px; border: 1px solid var(--card-border); background: var(--card-bg); color: var(--muted); font-size: 12px; cursor: pointer; transition: all 0.25s; text-decoration: none; }
+    .share-btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); box-shadow: 0 4px 12px var(--shadow); }
+    .share-btn svg { width: 13px; height: 13px; }
+
+    /* 热门站点链接（SEO + 快捷入口） */
+    .seo-links { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px 16px; margin-top: 12px; font-size: 12px; }
+    .seo-label { color: var(--faint); font-size: 12px; }
+    .seo-links a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .seo-links a:hover { color: var(--accent); }
+
+    /* 滚动条美化 */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--accent-light); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+    /* 尊重减弱动画偏好 */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      html { scroll-behavior: auto; }
+      .fade-in { opacity: 1; }
+    }
   </style>
 </head>
 <body>
   <div class="action-buttons">
-    <button class="action-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到顶部"><i class="fas fa-arrow-up"></i></button>
-    <button class="action-btn" onclick="showSearch()" title="搜索">🔍</button>
+    <button class="action-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到顶部"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg></button>
+    <button class="action-btn" onclick="showSearch()" title="搜索"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></button>
     <button class="action-btn night-toggle" onclick="toggleNight()" title="夜间模式"></button>
   </div>
   
@@ -180,10 +317,11 @@
           <option value="google">Google</option>
           <option value="yandex">Yandex</option>
         </select>
-        <input type="text" id="popupSearchInput" class="popup-input" placeholder="输入关键词搜索..." onkeydown="handlePopupSearch(event)">
+        <input type="text" id="popupSearchInput" class="popup-input" placeholder="输入关键词搜索..." autocomplete="off">
         <button class="popup-btn" onclick="doPopupSearch()">搜索</button>
         <button class="close-btn" onclick="hideSearch()">×</button>
       </div>
+      <div class="site-search-results popup-results" id="popupSiteResults"></div>
     </div>
   </div>
   <header>
@@ -198,8 +336,9 @@
             <option value="google">Google</option>
             <option value="yandex">Yandex</option>
           </select>
-          <input type="text" id="searchInput" placeholder="搜索..." onkeydown="handleSearch(event)">
+          <input type="text" id="searchInput" placeholder="搜索站点..." autocomplete="off">
           <button onclick="doSearch()">搜索</button>
+          <div class="site-search-results" id="siteResults"></div>
         </div>
       </div>
     </div>
@@ -207,7 +346,7 @@
   
   <main class="container">
     <nav class="floating-nav" id="floatingNav">
-      <button class="floating-nav-toggle" onclick="toggleNav()"><i class="fas fa-chevron-right"></i></button>
+      <button class="floating-nav-toggle" onclick="toggleNav()"></button>
       <div class="floating-nav-content" id="navCategories"></div>
     </nav>
     <div id="siteContainer"></div>
@@ -215,9 +354,30 @@
   
   <footer>
     <div class="container">
-      <p>Copyright © 2026 我是汉人有点无聊. All rights reserved. 访客 <i class="fas fa-user"></i> <span id="visitor-count">-</span></p>
+      <p>Copyright © 2026 我是汉人有点无聊. All rights reserved. 访客 <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> <span id="visitor-count">-</span></p>
       <p>本站资源全部来源于网络，仅供学习研究，请于下载后24小时内删除，如有侵犯您的权益请致邮409304201#qq.com(#替换成@)撤下.</p>
       <p><a href="https://beian.miit.gov.cn/" target="_blank">冀ICP备2021020841号-2</a></p>
+      <div class="seo-links">
+        <span class="seo-label">热门站点</span>
+        <a href="https://tool.justgame.top" target="_blank" rel="noopener">小工具</a>
+        <a href="https://chat.deepseek.com/" target="_blank" rel="noopener">DeepSeek</a>
+        <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.bilibili.com/" target="_blank" rel="noopener">哔哩哔哩</a>
+        <a href="https://mail.qq.com/" target="_blank" rel="noopener">QQ邮箱</a>
+        <a href="https://www.zhihu.com/" target="_blank" rel="noopener">知乎</a>
+        <a href="https://www.doubao.com/chat/" target="_blank" rel="noopener">豆包</a>
+        <a href="https://www.qianwen.com/" target="_blank" rel="noopener">通义千问</a>
+        <a href="https://www.xiaohongshu.com/" target="_blank" rel="noopener">小红书</a>
+        <a href="https://www.toutiao.com/" target="_blank" rel="noopener">今日头条</a>
+        <a href="./gushi.html" target="_blank" rel="noopener">古诗文集</a>
+      </div>
+      <div class="share-bar">
+        <span>分享本站</span>
+        <button class="share-btn" onclick="shareTo('weibo')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>微博</button>
+        <button class="share-btn" onclick="shareTo('qzone')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16 10 14 8 12 10 10 8 8 10"></polygon><path d="M8 14h8"></path></svg>QQ空间</button>
+        <button class="share-btn" onclick="shareTo('twitter')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M22 5.9c-.7.3-1.5.5-2.3.6.8-.5 1.4-1.3 1.7-2.2-.8.5-1.6.8-2.5 1a4 4 0 0 0-6.9 3.7A11.4 11.4 0 0 1 4.4 4.7a4 4 0 0 0 1.2 5.3c-.6 0-1.2-.2-1.8-.5v.1a4 4 0 0 0 3.2 3.9c-.6.2-1.2.2-1.9.1a4 4 0 0 0 3.7 2.8A8 8 0 0 1 2 18.6a11.3 11.3 0 0 0 6.1 1.8c7.4 0 11.4-6.1 11.4-11.4v-.5c.8-.6 1.5-1.3 2.5-1.8z"></path></svg>X</button>
+        <button class="share-btn" onclick="copyLink()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>复制链接</button>
+      </div>
     </div>
   </footer>
 
@@ -228,7 +388,22 @@
       bing: 'https://cn.bing.com/search?form=QBLH&q=',
       yandex: 'https://yandex.ru/search/?text='
     };
+    const ICONS = {
+      'far fa-folder-open': '<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>',
+      'far fa-star': '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>',
+      'fas fa-flask': '<path d="M9 3h6M10 3v6l-5.5 8.2A2.5 2.5 0 0 0 6.5 21h11a2.5 2.5 0 0 0 2-3.8L14 9V3"></path><path d="M7.5 15h9"></path>',
+      'fas fa-gamepad': '<line x1="6" y1="10" x2="10" y2="10"></line><line x1="8" y1="8" x2="8" y2="12"></line><path d="M15 12h.01M18 10h.01"></path><rect x="2" y="7" width="20" height="10" rx="5"></rect>',
+      'fas fa-play-circle': '<circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon>',
+      'fas fa-robot': '<rect x="4" y="8" width="16" height="12" rx="3"></rect><circle cx="9" cy="13" r="1.2"></circle><circle cx="15" cy="13" r="1.2"></circle><path d="M12 5V3M12 3h2M12 3h-2"></path>',
+      'fas fa-tools': '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>'
+    };
+    const DEFAULT_ICON = '<path d="M12 3a9 9 0 1 0 9 9 9 9 0 0 0-9-9zm0 2a7 7 0 1 1-7 7 7 7 0 0 1 7-7z"></path>';
     let navData = { navigation: [] };
+
+    function iconSvg(iconClass) {
+      const paths = ICONS[iconClass] || DEFAULT_ICON;
+      return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + paths + '</svg>';
+    }
     
     function escapeHtml(s) {
       return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -244,7 +419,7 @@
       const nav = document.getElementById('navCategories');
       let html = '';
       navData.navigation.forEach((cat, idx) => {
-        html += `<button onclick="scrollToCategory('cat-${idx}')" class="${idx === 0 ? 'active' : ''}"><i class="${escapeHtml(cat.sidebarIcon)}"></i><span>${escapeHtml(cat.category)}</span></button>`;
+        html += `<button onclick="scrollToCategory('cat-${idx}')" class="${idx === 0 ? 'active' : ''}">${iconSvg(cat.sidebarIcon)}<span>${escapeHtml(cat.category)}</span></button>`;
         if (cat.subcategories) {
           cat.subcategories.forEach((sub, subIdx) => {
             html += `<button onclick="scrollToCategory('sub-${idx}-${subIdx}')" class="sub-nav-item"><span style="font-size:8px;color:#888;margin-right:5px;">▸</span><span>${escapeHtml(sub.name)}</span></button>`;
@@ -254,27 +429,78 @@
       nav.innerHTML = html;
     }
     
+    const FAV_KEY = 'navFavs', RECENT_KEY = 'navRecents';
+    function getJson(key) { try { return JSON.parse(localStorage.getItem(key)) || []; } catch(e) { return []; } }
+    function isFav(url) { return getJson(FAV_KEY).includes(url); }
+
+    function cardHtml(item) {
+      return `<a href="${escapeHtml(item.url)}" class="site-card fade-in" target="_blank">
+        <img src="${escapeHtml(fixIconPath(item.icon))}" alt="${escapeHtml(item.title)}" loading="lazy" decoding="async" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🔗</text></svg>'">
+        <div class="site-info" title="${escapeHtml(item.description || '')}"><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.description || '')}</p></div>
+        <button class="fav-btn${isFav(item.url) ? ' on' : ''}" data-url="${escapeHtml(item.url)}" title="${isFav(item.url) ? '取消收藏' : '收藏'}">${isFav(item.url) ? '★' : '☆'}</button>
+      </a>`;
+    }
+
+    function quickSectionHtml(title, items, id) {
+      if (!items.length) return '';
+      const cardList = items.map(cardHtml).join('');
+      return `<section class="category quick-section" id="${id}"><h2><span>${escapeHtml(title)}</span><em style="font-style:normal;font-size:11px;color:var(--faint);margin-left:8px;font-weight:400;">${items.length}</em></h2><div class="site-grid">${cardList}</div></section>`;
+    }
+
+    function favItems() {
+      return getJson(FAV_KEY).map(u => searchIndex.find(x => x.url === u)).filter(Boolean);
+    }
+    function recentItems() {
+      return getJson(RECENT_KEY).map(u => searchIndex.find(x => x.url === u)).filter(Boolean);
+    }
+
+    function toggleFav(url) {
+      let favs = getJson(FAV_KEY);
+      const i = favs.indexOf(url);
+      if (i >= 0) favs.splice(i, 1); else favs.push(url);
+      localStorage.setItem(FAV_KEY, JSON.stringify(favs));
+      document.querySelectorAll('.fav-btn').forEach(btn => {
+        if (btn.dataset.url === url) {
+          const on = isFav(url);
+          btn.classList.toggle('on', on);
+          btn.textContent = on ? '★' : '☆';
+          btn.title = on ? '取消收藏' : '收藏';
+        }
+      });
+      rerenderQuick();
+    }
+
+    function recordVisit(url) {
+      let r = getJson(RECENT_KEY);
+      r = [url].concat(r.filter(x => x !== url)).slice(0, 10);
+      localStorage.setItem(RECENT_KEY, JSON.stringify(r));
+      rerenderQuick();
+    }
+
+    function rerenderQuick() {
+      const container = document.getElementById('siteContainer');
+      ['fav-section', 'recent-section'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.remove();
+      });
+      const favSec = quickSectionHtml('我的收藏', favItems(), 'fav-section');
+      const recentSec = quickSectionHtml('最近访问', recentItems(), 'recent-section');
+      container.insertAdjacentHTML('afterbegin', favSec + recentSec);
+      document.querySelectorAll('.fade-in').forEach(el => el.classList.add('visible'));
+    }
+
     function renderSites() {
       const container = document.getElementById('siteContainer');
-      container.innerHTML = navData.navigation.map((cat, catIdx) => {
-        let html = `<section class="category" id="cat-${catIdx}"><h2><i class="${escapeHtml(cat.sidebarIcon)}"></i> ${escapeHtml(cat.category)}</h2>`;
+      const quick = quickSectionHtml('我的收藏', favItems(), 'fav-section') + quickSectionHtml('最近访问', recentItems(), 'recent-section');
+      container.innerHTML = quick + navData.navigation.map((cat, catIdx) => {
+        let html = `<section class="category" id="cat-${catIdx}"><h2>${iconSvg(cat.sidebarIcon)} ${escapeHtml(cat.category)}</h2>`;
         
         if (cat.items) {
-          html += `<div class="site-grid">${cat.items.map(item => `
-            <a href="${escapeHtml(item.url)}" class="site-card" target="_blank">
-              <img src="${escapeHtml(fixIconPath(item.icon))}" alt="${escapeHtml(item.title)}" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🔗</text></svg>'">
-              <div class="site-info" title="${escapeHtml(item.description || '')}"><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.description || '')}</p></div>
-            </a>
-          `).join('')}</div>`;
+          html += `<div class="site-grid">${cat.items.map(item => cardHtml(item)).join('')}</div>`;
         } else if (cat.subcategories) {
           cat.subcategories.forEach((sub, subIdx) => {
             html += `<div class="subcategory" id="sub-${catIdx}-${subIdx}"><h3>${escapeHtml(sub.name)}</h3>`;
-            html += `<div class="site-grid">${(sub.items || []).map(item => `
-              <a href="${escapeHtml(item.url)}" class="site-card" target="_blank">
-                <img src="${escapeHtml(fixIconPath(item.icon))}" alt="${escapeHtml(item.title)}" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🔗</text></svg>'">
-                <div class="site-info" title="${escapeHtml(item.description || '')}"><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.description || '')}</p></div>
-              </a>
-            `).join('')}</div></div>`;
+            html += `<div class="site-grid">${(sub.items || []).map(item => cardHtml(item)).join('')}</div></div>`;
           });
         }
         
@@ -294,13 +520,115 @@
       document.getElementById('floatingNav').classList.remove('expanded');
     }
     
-    function handleSearch(e) { if (e.key === 'Enter') doSearch(); }
-    
     function doSearch() {
       const query = document.getElementById('searchInput').value.trim();
       if (!query) return;
       const engine = document.getElementById('searchEngine').value;
       window.open(SEARCH_URLS[engine] + encodeURIComponent(query), '_blank');
+    }
+
+    /* ===== 站内搜索 ===== */
+    const searchIndex = [];
+    function buildSearchIndex() {
+      searchIndex.length = 0;
+      navData.navigation.forEach(cat => {
+        const add = items => (items || []).forEach(it => {
+          searchIndex.push({ title: it.title, desc: it.description || '', url: it.url, icon: it.icon, cat: cat.category });
+        });
+        add(cat.items);
+        (cat.subcategories || []).forEach(sub => add(sub.items));
+      });
+    }
+
+    function searchLocal(q) {
+      const kw = q.toLowerCase();
+      return searchIndex.map(it => {
+        const t = it.title.toLowerCase();
+        const d = it.desc.toLowerCase();
+        const u = it.url.toLowerCase();
+        let score = 0;
+        if (t === kw) score = 100;
+        else if (t.startsWith(kw)) score = 85;
+        else if (t.includes(kw)) score = 65;
+        else if (d.includes(kw)) score = 35;
+        else if (u.includes(kw)) score = 18;
+        return score ? { it, score } : null;
+      }).filter(Boolean).sort((a, b) => b.score - a.score).slice(0, 7).map(x => x.it);
+    }
+
+    function highlight(text, q) {
+      const s = escapeHtml(String(text));
+      if (!q) return s;
+      const i = s.toLowerCase().indexOf(q.toLowerCase());
+      if (i < 0) return s;
+      return s.slice(0, i) + '<mark>' + s.slice(i, i + q.length) + '</mark>' + s.slice(i + q.length);
+    }
+
+    function renderSiteResults(items, q, resultsEl, engineId) {
+      let html = '';
+      if (items.length) {
+        html += `<div class="sr-header"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg><span>站内匹配 <b>${items.length}</b> 个站点</span></div>`;
+        html += items.map(it =>
+          `<a class="sr-item" href="${escapeHtml(it.url)}" target="_blank" rel="noopener">
+            <img src="${escapeHtml(fixIconPath(it.icon))}" loading="lazy" alt="" onerror="this.style.visibility='hidden'">
+            <span class="sr-item-main"><span class="sr-item-title">${highlight(it.title, q)}</span>${it.desc ? `<span class="sr-item-desc">${highlight(it.desc, q)}</span>` : ''}</span>
+            <span class="sr-item-cat">${escapeHtml(it.cat)}</span>
+          </a>`
+        ).join('');
+      } else {
+        html = '<div class="sr-empty">未找到匹配的站点，试试外部搜索</div>';
+      }
+      const engine = document.getElementById(engineId).value;
+      const extUrl = SEARCH_URLS[engine] + encodeURIComponent(q);
+      html += `<div class="sr-footer"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>没有找到？<a href="${extUrl}" target="_blank" rel="noopener">在 ${engine.toUpperCase()} 中搜索 “${escapeHtml(q)}”</a></div>`;
+      resultsEl.innerHTML = html;
+      resultsEl.classList.add('show');
+    }
+
+    function setupSiteSearch(inputId, resultsId, engineId, externalFn) {
+      const input = document.getElementById(inputId);
+      const results = document.getElementById(resultsId);
+      let timer = null, active = -1;
+
+      input.addEventListener('input', () => {
+        clearTimeout(timer);
+        const q = input.value.trim();
+        if (!q) { results.classList.remove('show'); active = -1; return; }
+        timer = setTimeout(() => { renderSiteResults(searchLocal(q), q, results, engineId); active = -1; }, 150);
+      });
+
+      input.addEventListener('keydown', (e) => {
+        const items = results.querySelectorAll('.sr-item');
+        const shown = results.classList.contains('show');
+        if (e.key === 'ArrowDown' && shown) {
+          e.preventDefault();
+          active = Math.min(active + 1, items.length - 1);
+          items.forEach((el, i) => el.classList.toggle('active', i === active));
+        } else if (e.key === 'ArrowUp' && shown) {
+          e.preventDefault();
+          active = Math.max(active - 1, -1);
+          items.forEach((el, i) => el.classList.toggle('active', i === active));
+        } else if (e.key === 'Enter') {
+          if (shown && active >= 0 && items[active]) {
+            e.preventDefault();
+            items[active].click();
+            results.classList.remove('show');
+          } else {
+            externalFn();
+          }
+        } else if (e.key === 'Escape') {
+          results.classList.remove('show');
+        }
+      });
+
+      input.addEventListener('focus', () => {
+        const q = input.value.trim();
+        if (q) { renderSiteResults(searchLocal(q), q, results, engineId); active = -1; }
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!results.contains(e.target) && e.target !== input) results.classList.remove('show');
+      });
     }
     
     function toggleNight() {
@@ -333,8 +661,6 @@
       hideSearch();
     }
     
-    function handlePopupSearch(e) { if (e.key === 'Enter') doPopupSearch(); }
-    
     document.addEventListener('keydown', function(e) {
       if (e.ctrlKey && e.key === 'q') {
         e.preventDefault();
@@ -350,17 +676,90 @@
         nav.classList.remove('expanded');
       }
       if (e.target.id === 'searchPopup') hideSearch();
+
+      const fav = e.target.closest('.fav-btn');
+      if (fav) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleFav(fav.dataset.url);
+        return;
+      }
+      const card = e.target.closest('.site-card');
+      if (card) {
+        recordVisit(card.getAttribute('href'));
+      }
     });
+
+    const SHARE_URLS = {
+      weibo: u => 'https://service.weibo.com/share/share.php?url=' + encodeURIComponent(u) + '&title=' + encodeURIComponent(document.title),
+      qzone: u => 'https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=' + encodeURIComponent(u) + '&title=' + encodeURIComponent(document.title),
+      twitter: u => 'https://twitter.com/intent/tweet?url=' + encodeURIComponent(u) + '&text=' + encodeURIComponent(document.title)
+    };
+
+    function shareTo(platform) {
+      const url = location.href.split('#')[0];
+      window.open(SHARE_URLS[platform](url), '_blank', 'width=640,height=540,noopener');
+    }
+
+    function copyLink() {
+      const url = location.href.split('#')[0];
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(() => toast('链接已复制，快去分享吧')).catch(() => { prompt('复制链接:', url); });
+      } else {
+        prompt('复制链接:', url);
+      }
+    }
+
+    function toast(msg) {
+      let t = document.getElementById('toast');
+      if (!t) {
+        t = document.createElement('div');
+        t.id = 'toast';
+        t.style.cssText = 'position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:rgba(30,58,95,0.92);color:#fff;padding:9px 20px;border-radius:999px;font-size:13px;z-index:999;box-shadow:0 6px 20px rgba(0,0,0,0.2);opacity:0;transition:opacity 0.3s;pointer-events:none;';
+        document.body.appendChild(t);
+      }
+      t.textContent = msg;
+      t.style.opacity = '1';
+      clearTimeout(t._timer);
+      t._timer = setTimeout(() => { t.style.opacity = '0'; }, 2000);
+    }
     
+    function observeScroll() {
+      if (!('IntersectionObserver' in window)) {
+        document.querySelectorAll('.fade-in').forEach(el => el.classList.add('visible'));
+        return;
+      }
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(en => {
+          if (en.isIntersecting) {
+            en.target.classList.add('visible');
+            io.unobserve(en.target);
+          }
+        });
+      }, { rootMargin: '0px 0px -40px 0px' });
+      document.querySelectorAll('.fade-in').forEach(el => io.observe(el));
+    }
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+      });
+    }
+
     async function loadData() {
       try {
         const res = await fetch('/nav.json');
         navData = await res.json();
         renderNav();
+        buildSearchIndex();
         renderSites();
+        observeScroll();
         initNightMode();
       } catch (e) { console.error('Failed to load:', e); }
     }
+    
+    setupSiteSearch('searchInput', 'siteResults', 'searchEngine', doSearch);
+    setupSiteSearch('popupSearchInput', 'popupSiteResults', 'popupSearchEngine', doPopupSearch);
     
     loadData();
     fetch('https://counter.justgame.top/api/counter', { method: 'POST' })

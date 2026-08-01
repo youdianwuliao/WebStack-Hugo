@@ -103,9 +103,10 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
 - Context: 项目基础信息
 - Category: 环境配置
 - Instructions:
-  - 项目类型：静态导航网站（WebStack-Hugo 主题）
-  - 技术栈：HTML/CSS/JavaScript + Bootstrap 4
+  - 项目类型：静态导航网站（纯 HTML/CSS/JS，无框架依赖）
+  - 技术栈：HTML/CSS/JavaScript + 内联 SVG 图标
   - 数据源：`nav.json` 存储所有导航链接
   - 图标目录：`assets/images/logos/`
   - 本地预览：`python3 -m http.server 8080`
+  - 离线缓存：`sw.js` Service Worker
   - 分支：`staticV4`
