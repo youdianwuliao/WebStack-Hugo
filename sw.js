@@ -1,9 +1,11 @@
-const CACHE = 'navsite-v1';
+const CACHE = 'navsite-v2';
 const CORE = [
   './',
   './index.html',
   './gushi.html',
   './nav.json',
+  './404.html',
+  './manifest.webmanifest',
   './assets/favicon.svg'
 ];
 
