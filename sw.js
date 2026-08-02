@@ -1,8 +1,9 @@
-const CACHE = 'navsite-v2';
+const CACHE = 'navsite-v3';
 const CORE = [
   './',
   './index.html',
   './gushi.html',
+  './gushi/index.html',
   './nav.json',
   './404.html',
   './manifest.webmanifest',
@@ -11,17 +12,21 @@ const CORE = [
 
 self.addEventListener('install', (e) => {
   e.waitUntil(
-    caches.open(CACHE)
-      .then((c) => c.addAll(CORE))
-      .then(() => self.skipWaiting())
+    (async () => {
+      const cache = await caches.open(CACHE);
+      await Promise.allSettled(CORE.map((u) => cache.add(u)));
+      self.skipWaiting();
+    })()
   );
 });
 
 self.addEventListener('activate', (e) => {
   e.waitUntil(
-    caches.keys()
-      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
-      .then(() => self.clients.claim())
+    (async () => {
+      const keys = await caches.keys();
+      await Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)));
+      await self.clients.claim();
+    })()
   );
 });
 
@@ -31,17 +36,30 @@ self.addEventListener('fetch', (e) => {
   if (request.url.includes('/api/counter')) return;
 
   e.respondWith(
-    caches.match(request).then((hit) => {
-      const fetchPromise = fetch(request)
-        .then((res) => {
-          if (res && res.status === 200 && res.type === 'basic') {
-            const clone = res.clone();
-            caches.open(CACHE).then((c) => c.put(request, clone));
+    (async () => {
+      let cache, cached;
+      try {
+        cache = await caches.open(CACHE);
+        cached = await cache.match(request);
+      } catch (_) {}
+
+      const fromNetwork = async () => {
+        try {
+          const res = await fetch(request);
+          if (res && res.status === 200 && res.type === 'basic' && cache) {
+            cache.put(request, res.clone()).catch(() => {});
           }
           return res;
-        })
-        .catch(() => hit);
-      return hit || fetchPromise;
-    })
+        } catch (_) {
+          return cached;
+        }
+      };
+
+      if (cached) {
+        e.waitUntil(fromNetwork().catch(() => {}));
+        return cached;
+      }
+      return fromNetwork();
+    })()
   );
 });
