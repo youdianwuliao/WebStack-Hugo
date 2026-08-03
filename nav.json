@@ -63,6 +63,12 @@
           "icon": "/assets/images/logos/xiaohongshu.png",
           "url": "https://www.xiaohongshu.com/",
           "description": "标记我的生活"
+        },
+        {
+          "title": "学法减分",
+          "icon": "/assets/images/logos/jianfen.png",
+          "url": "./jianfen/",
+          "description": "交管12123学法减分题库"
         }
       ]
     },
