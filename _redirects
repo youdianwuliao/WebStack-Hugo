@@ -1,4 +1,6 @@
 # 覆盖 Cloudflare Pages 对同名文件+目录的默认 308，统一指向 /gushi/
+# index.html 直接返回内容，避免 308 跳转到 / 造成的跳转问题
+/index.html  /  200
 /gushi.html  /gushi/  301
 /gushi  /gushi/  301
 
