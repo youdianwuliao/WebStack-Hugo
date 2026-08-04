@@ -4,6 +4,7 @@ const CORE = [
   './index.html',
   './gushi.html',
   './gushi/index.html',
+  './gushi/gushi.css',
   './jianfen/',
   './jianfen/index.html',
   './jianfen/data.js',

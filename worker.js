@@ -14,6 +14,18 @@ export default {
       }
 
       if (request.method === 'POST') {
+        const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+        const ipKey = 'rate_' + ip;
+        const now = Date.now();
+        const last = parseInt(await env.link.get(ipKey) || '0', 10);
+        if (now - last < 60000) {
+          const count = await env.link.get(kvKey) || '0';
+          return new Response(JSON.stringify({ count: parseInt(count) }), {
+            headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+          });
+        }
+        await env.link.put(ipKey, now.toString(), { expirationTtl: 120 });
+
         const count = await env.link.get(kvKey) || '0';
         const newCount = parseInt(count) + 1;
         await env.link.put(kvKey, newCount.toString());
