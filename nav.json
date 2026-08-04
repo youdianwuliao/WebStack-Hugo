@@ -1272,10 +1272,10 @@
           "description": "高清好看"
         },
         {
-          "title": "多读书",
+          "title": "毛泽东选集",
           "icon": "/assets/images/logos/maoxuan.png",
-          "url": "https://www.qstheory.cn/books/2019-07/31/c_1119448591_7.htm",
-          "description": "毛泽东选集（求是网）"
+          "url": "./maoxuan/",
+          "description": "毛泽东选集 全文在线阅读"
         },
         {
           "title": "中小学智慧平台",
