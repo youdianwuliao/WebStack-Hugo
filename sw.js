@@ -1,10 +1,11 @@
-const CACHE = 'navsite-v3';
+const CACHE = 'navsite-v4';
 const CORE = [
   './',
   './index.html',
   './gushi.html',
   './gushi/index.html',
   './gushi/gushi.css',
+  './gushi/gushi.js',
   './jianfen/',
   './jianfen/index.html',
   './jianfen/data.js',
