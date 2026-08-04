@@ -247,8 +247,9 @@ body{
 
 <div class="toast" id="toast"></div>
 
-<script src="data.js"></script>
+<script defer src="data.js"></script>
 <script>
+document.addEventListener('DOMContentLoaded', function(){
 (function(){
 'use strict';
 const D = window.JIANFEN_DATA;
@@ -561,6 +562,7 @@ function toast(msg){
 }
 init();
 })();
+});
 </script>
 </body>
 </html>
