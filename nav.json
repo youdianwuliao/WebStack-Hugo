@@ -965,8 +965,8 @@
         {
           "title": "eden",
           "icon": "/assets/images/logos/eden.png",
-          "url": "https://eden-emulator.github.io/",
-          "description": "模拟器"
+          "url": "https://git.eden-emu.dev/",
+          "description": "模拟器（自托管源码库）"
         },
         {
           "title": "pegasus",
@@ -1274,20 +1274,14 @@
         {
           "title": "多读书",
           "icon": "/assets/images/logos/maoxuan.png",
-          "url": "https://maoxuan.wang/",
-          "description": "毛泽东选集"
+          "url": "https://www.qstheory.cn/books/2019-07/31/c_1119448591_7.htm",
+          "description": "毛泽东选集（求是网）"
         },
         {
           "title": "中小学智慧平台",
           "icon": "/assets/images/logos/smartedu.png",
           "url": "https://basic.smartedu.cn/",
           "description": "国家级课程"
-        },
-        {
-          "title": "资料吧",
-          "icon": "/assets/images/logos/ziliaoba.png",
-          "url": "https://ziliaoba.github.io/",
-          "description": "天涯神贴"
         },
         {
           "title": "zlib图书馆",
