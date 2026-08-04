@@ -1,4 +1,4 @@
-const CACHE = 'navsite-v4';
+const CACHE = 'navsite-v5';
 const CORE = [
   './',
   './index.html',
@@ -6,6 +6,8 @@ const CORE = [
   './gushi/index.html',
   './gushi/gushi.css',
   './gushi/gushi.js',
+  './maoxuan/',
+  './maoxuan/index.html',
   './jianfen/',
   './jianfen/index.html',
   './jianfen/data.js',
