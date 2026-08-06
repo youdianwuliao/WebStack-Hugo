@@ -399,6 +399,12 @@
           "icon": "/assets/images/logos/scnet.png",
           "url": "https://www.scnet.cn/",
           "description": "超算算力服务，AI/HPC/存储等 computing services"
+        },
+        {
+          "title": "AiToEarn",
+          "icon": "/assets/images/logos/aitoearn.png",
+          "url": "https://aitoearn.cn/",
+          "description": "付费推广任务，用社交媒体赚钱"
         }
       ]
     },
@@ -1312,6 +1318,12 @@
           "icon": "/assets/images/logos/zlib.png",
           "url": "./gushi.html",
           "description": "点击访问古诗文集"
+        },
+        {
+          "title": "吴氏石头记",
+          "icon": "/assets/images/logos/shiji.png",
+          "url": "./shiji/",
+          "description": "癸酉本108回全本在线阅读"
         }
       ]
     },

@@ -45,7 +45,7 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
        ```bash
        node -e "const sharp = require('sharp'); sharp('input.png').resize(64, 64).jpeg({quality: 75}).toFile('output.png');"
        ```
-  4. **编辑 nav.json**：在对应分类的 `items` 数组中添加新项
+  4. **编辑 nav.json**：在对应分类的 `items` 数组**末尾**添加新项（不放到第一项）
   5. **测试预览**：
      - 启动服务器：`python3 -m http.server 8080`
      - 检查新链接是否正常显示
@@ -65,6 +65,12 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - 不要反问用户"希望如何处理"或"需要我做什么"
   - 不要先访问网页分析内容再询问
   - 直接按记忆中的流程执行：分类选择 → 图标下载 → 编辑 JSON → 测试 → 提交
+
+[新增导航位置 - 模块末尾]
+- Date: 2026-08-06
+- Context: 新增 AiToEarn 导航链接时用户明确要求
+- Instructions:
+  - 新增导航内容必须放到所属分类模块的**最后一项**，不要插入到第一项位置
 
 [图标下载老问题 - 每次必现]
 - Date: 2026-06-11
@@ -110,3 +116,15 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - 本地预览：`python3 -m http.server 8080`
   - 离线缓存：`sw.js` Service Worker
   - 分支：`staticV4`
+
+[电子书站点构建 - 毛选模式]
+- Date: 2026-08-06
+- Context: Agent 将《吴氏石头记》txt 整理成 shiji 电子书站点时发现
+- Category: 构建方法
+- Instructions:
+  - 电子书阅读站的统一模式（参考 `maoxuan/`、`shiji/`）：
+    - 独立子目录，`index.html` 目录页 + 每篇/每回一个 HTML 文件
+    - 正文页复用 `gushi/gushi.css` 和 `gushi/gushi.js`，分页导航用 `.pager`（prev/next）
+    - 目录页内联样式，引用 `../assets/favicon.svg`，并含 JSON-LD Book 结构化数据
+    - 完成后需在首页 `index.html` 的 `.seo-links` 中加入口，并在 `sitemap.xml` 追加页面
+    - 文件名规范：`maoxuan` 用 `volX-YY.html`，`shiji` 用 `hXXX.html`
