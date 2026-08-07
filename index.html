@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>星汉灿烂</title>
+  <title>汉家气象 · 星汉灿烂</title>
   <meta name="description" content="星汉灿烂 - 精选 AI 工具、科研办公、开发设计、影音视频、网盘资源等 200+ 优质网站导航，涵盖 ChatGPT、GitHub、哔哩哔哩等实用站点，网址一键直达。">
   <meta name="keywords" content="星汉灿烂,网址导航,网址大全,AI工具,人工智能,ChatGPT,ChatGLM,科研办公,开发设计,影音视频,网盘资源,实用网站,好用的网站">
   <meta name="author" content="我是汉人有点无聊">
@@ -68,37 +68,42 @@
       --close-hover: #f0f0f0;
     }
     .night-mode {
-      --bg: #0d1017;
-      --text: #e6e8ee;
-      --muted: #a8b0c0;
-      --faint: #7a8296;
-      --card-bg: #202a38;
-      --card-border: #30394a;
+      --bg: #041a30;
+      --text: #dfeaf5;
+      --muted: #a9c0d6;
+      --faint: #7b93ab;
+      --card-bg: #0b2c4a;
+      --card-border: #1a4670;
       --primary: #87ceeb;
       --primary-2: #58a6ff;
       --accent: #58a6ff;
       --accent-light: #87ceeb;
-      --input-bg: #121826;
-      --input-border: #30394a;
-      --header-bg1: #161c29;
-      --header-bg2: #1e2838;
-      --header-border: #30394a;
-      --nav-bg: #161c29;
-      --nav-border: #30394a;
-      --nav-hover: #0f3460;
-      --nav-sub-hover: #0f3460;
-      --footer-bg: #161c29;
+      --input-bg: #0b2c4a;
+      --input-border: #1a4670;
+      --header-bg1: #03152a;
+      --header-bg2: #072e52;
+      --header-border: #1a4670;
+      --nav-bg: #03152a;
+      --nav-border: #1a4670;
+      --nav-hover: #0b2c4a;
+      --nav-sub-hover: #0b2c4a;
+      --footer-bg: #03152a;
       --btn-bg: linear-gradient(135deg, #2d5a87, #4a90d9);
       --title-grad: linear-gradient(135deg, #87ceeb, #58a6ff, #87ceeb);
-      --shadow: rgba(0, 0, 0, 0.55);
-      --popup-bg: #202a38;
-      --popup-input-bg: #121826;
-      --popup-input-border: #30394a;
-      --close-hover: #30394a;
+      --shadow: rgba(0, 0, 0, 0.5);
+      --popup-bg: #0b2c4a;
+      --popup-input-bg: #0e3a60;
+      --popup-input-border: #1a4670;
+      --close-hover: #0e3a60;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
-    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px 0 80px; }
+    body::before { content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: var(--star-opacity, 0.25); background-image: radial-gradient(1px 1px at 25px 8px, rgba(255,255,255,.7), transparent 100%), radial-gradient(1px 1px at 85px 48px, rgba(255,255,255,.55), transparent 100%), radial-gradient(1.6px 1.6px at 120px 82px, rgba(255,255,255,.5), transparent 100%), radial-gradient(1px 1px at 175px 28px, rgba(255,255,255,.6), transparent 100%), radial-gradient(1px 1px at 50px 98px, rgba(255,255,255,.45), transparent 100%), radial-gradient(1.3px 1.3px at 150px 120px, rgba(255,255,255,.55), transparent 100%), radial-gradient(1px 1px at 200px 70px, rgba(255,255,255,.4), transparent 100%), radial-gradient(1.2px 1.2px at 95px 140px, rgba(255,255,255,.5), transparent 100%); background-size: 220px 220px; }
+    .night-mode { --star-opacity: 0.65; }
+    body.night-mode::before { animation: starTwinkle 5s ease-in-out infinite; }
+    @keyframes starTwinkle { 0%, 100% { opacity: 0.45; } 50% { opacity: 0.65; } }
+    .star-dust { position: fixed; border-radius: 50%; pointer-events: none; z-index: 249; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px 0 80px; position: relative; z-index: 1; }
     
     header { background: linear-gradient(135deg, var(--header-bg1) 0%, var(--header-bg2) 100%); border-bottom: 1px solid var(--header-border); padding: 15px 20px; position: relative; }
     header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--primary), var(--accent), var(--primary)); }
@@ -149,7 +154,7 @@
     .subcategory { margin-top: 25px; }
     .subcategory h3 { font-size: 13px; font-weight: 500; color: var(--primary); margin-bottom: 15px; padding-left: 10px; border-left: 3px solid var(--accent); }
     
-    footer { text-align: center; padding: 25px 0; border-top: 1px solid var(--card-border); color: var(--faint); font-size: 11px; background: var(--footer-bg); }
+    footer { text-align: center; padding: 25px 0; border-top: 1px solid var(--card-border); color: var(--faint); font-size: 11px; background: var(--footer-bg); position: relative; z-index: 1; }
     footer a { color: var(--primary); text-decoration: none; }
     footer a:hover { color: var(--accent); }
     
@@ -672,6 +677,37 @@
         document.body.classList.add('night-mode');
       }
     }
+
+    function initStarDust() {
+      const MAX = 30;
+      let count = 0, last = 0;
+      document.addEventListener('mousemove', (e) => {
+        const now = performance.now();
+        if (now - last < 50 || count >= MAX) return;
+        last = now;
+        const s = document.createElement('span');
+        s.className = 'star-dust';
+        const size = 2 + Math.random() * 3;
+        s.style.width = size + 'px';
+        s.style.height = size + 'px';
+        s.style.left = (e.clientX + (Math.random() - 0.5) * 10) + 'px';
+        s.style.top = (e.clientY + (Math.random() - 0.5) * 10) + 'px';
+        const colors = ['#ffffff', '#dbeafe', '#a5c8ff', '#f5d47a'];
+        s.style.background = colors[(Math.random() * colors.length) | 0];
+        document.body.appendChild(s);
+        count++;
+        const drift = (Math.random() - 0.5) * 50;
+        const rise = 30 + Math.random() * 45;
+        const life = 500 + Math.random() * 500;
+        try {
+          const anim = s.animate([
+            { transform: 'translate(0,0)', opacity: 1 },
+            { transform: 'translate(' + drift + 'px,-' + rise + 'px)', opacity: 0 }
+          ], { duration: life, easing: 'ease-out' });
+          anim.onfinish = () => { s.remove(); count--; };
+        } catch (err) { s.remove(); count--; }
+      }, { passive: true });
+    }
     
     function showSearch() {
       document.getElementById('searchPopup').classList.add('active');
@@ -791,6 +827,7 @@
         renderSites();
         observeScroll();
         initNightMode();
+        initStarDust();
       } catch (e) {
         console.error('Failed to load:', e);
         const sk = document.getElementById('skeleton');
@@ -800,6 +837,7 @@
           box.innerHTML = '<div style="text-align:center;padding:48px 20px;color:var(--muted)">数据加载失败，请刷新页面重试</div>';
         }
         initNightMode();
+        initStarDust();
       }
     }
     
