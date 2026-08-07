@@ -462,8 +462,11 @@
     }
     
     const FAV_KEY = 'navFavs', RECENT_KEY = 'navRecents';
+    let favCache = null, recentCache = null;
     function getJson(key) { try { return JSON.parse(localStorage.getItem(key)) || []; } catch(e) { return []; } }
-    function isFav(url) { return getJson(FAV_KEY).includes(url); }
+    function getFavs() { if (favCache === null) favCache = getJson(FAV_KEY); return favCache; }
+    function getRecents() { if (recentCache === null) recentCache = getJson(RECENT_KEY); return recentCache; }
+    function isFav(url) { return getFavs().includes(url); }
 
     function cardHtml(item) {
       return `<a href="${escapeHtml(item.url)}" class="site-card fade-in" target="_blank" rel="noopener">
@@ -480,10 +483,10 @@
     }
 
     function favItems() {
-      return getJson(FAV_KEY).map(u => searchIndex.find(x => x.url === u)).filter(Boolean);
+      return getFavs().map(u => (searchIndex.find(x => x.it.url === u) || {}).it).filter(Boolean);
     }
     function recentItems() {
-      return getJson(RECENT_KEY).map(u => searchIndex.find(x => x.url === u)).filter(Boolean);
+      return getRecents().map(u => (searchIndex.find(x => x.it.url === u) || {}).it).filter(Boolean);
     }
 
     function toggleFav(url) {
@@ -491,6 +494,7 @@
       const i = favs.indexOf(url);
       if (i >= 0) favs.splice(i, 1); else favs.push(url);
       localStorage.setItem(FAV_KEY, JSON.stringify(favs));
+      favCache = null;
       document.querySelectorAll('.fav-btn').forEach(btn => {
         if (btn.dataset.url === url) {
           const on = isFav(url);
@@ -506,6 +510,7 @@
       let r = getJson(RECENT_KEY);
       r = [url].concat(r.filter(x => x !== url)).slice(0, 10);
       localStorage.setItem(RECENT_KEY, JSON.stringify(r));
+      recentCache = null;
       rerenderQuick();
     }
 
@@ -565,7 +570,13 @@
       searchIndex.length = 0;
       navData.navigation.forEach(cat => {
         const add = items => (items || []).forEach(it => {
-          searchIndex.push({ title: it.title, desc: it.description || '', url: it.url, icon: it.icon, cat: cat.category });
+          searchIndex.push({
+            it,
+            t: (it.title || '').toLowerCase(),
+            d: (it.description || '').toLowerCase(),
+            u: (it.url || '').toLowerCase(),
+            cat: cat.category
+          });
         });
         add(cat.items);
         (cat.subcategories || []).forEach(sub => add(sub.items));
@@ -574,18 +585,15 @@
 
     function searchLocal(q) {
       const kw = q.toLowerCase();
-      return searchIndex.map(it => {
-        const t = it.title.toLowerCase();
-        const d = it.desc.toLowerCase();
-        const u = it.url.toLowerCase();
+      return searchIndex.map(e => {
         let score = 0;
-        if (t === kw) score = 100;
-        else if (t.startsWith(kw)) score = 85;
-        else if (t.includes(kw)) score = 65;
-        else if (d.includes(kw)) score = 35;
-        else if (u.includes(kw)) score = 18;
-        return score ? { it, score } : null;
-      }).filter(Boolean).sort((a, b) => b.score - a.score).slice(0, 7).map(x => x.it);
+        if (e.t === kw) score = 100;
+        else if (e.t.startsWith(kw)) score = 85;
+        else if (e.t.includes(kw)) score = 65;
+        else if (e.d.includes(kw)) score = 35;
+        else if (e.u.includes(kw)) score = 18;
+        return score ? { it: e.it, cat: e.cat, score } : null;
+      }).filter(Boolean).sort((a, b) => b.score - a.score).slice(0, 7).map(x => { x.it.cat = x.cat; return x.it; });
     }
 
     function highlight(text, q) {
