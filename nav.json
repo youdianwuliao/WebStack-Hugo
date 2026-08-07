@@ -1324,6 +1324,12 @@
           "icon": "/assets/images/logos/shiji.png",
           "url": "./shiji/",
           "description": "癸酉本108回全本在线阅读"
+        },
+        {
+          "title": "甲申三百年祭",
+          "icon": "/assets/images/logos/jiashen.png",
+          "url": "./jiashen/",
+          "description": "郭沫若《甲申三百年祭》全文在线阅读"
         }
       ]
     },
