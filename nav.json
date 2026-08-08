@@ -69,6 +69,12 @@
           "icon": "/assets/images/logos/jianfen.png",
           "url": "./jianfen/",
           "description": "交管12123学法减分题库"
+        },
+        {
+          "title": "百家号",
+          "icon": "/assets/images/logos/baijiahao.png",
+          "url": "https://baijiahao.baidu.com/",
+          "description": "百度自媒体内容平台"
         }
       ]
     },
