@@ -1336,6 +1336,12 @@
           "icon": "/assets/images/logos/jiashen.png",
           "url": "./jiashen/",
           "description": "郭沫若《甲申三百年祭》全文在线阅读"
+        },
+        {
+          "title": "南明史",
+          "icon": "/assets/images/logos/nanmingshi.png",
+          "url": "./nanmingshi/",
+          "description": "顾诚《南明史》全本在线阅读（三十二章152节）"
         }
       ]
     },
