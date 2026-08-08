@@ -117,6 +117,14 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - 离线缓存：`sw.js` Service Worker
   - 分支：`staticV4`
 
+[记忆文件持久化 - 存放在 git 仓库内]
+- Date: 2026-08-08
+- Context: 用户提示当前环境是容器（非物理机器），/workspace 数据可能随容器重置丢失
+- Instructions:
+  - 记忆文件（MEMORY.md 等）必须存放在 git 仓库内（`/workspace/.monkeycode/MEMORY.md`），并随代码一起 commit + push 到远程，保证容器重置后仍可从远程恢复
+  - 不要只依赖容器本地文件系统或 `/tmp` 等临时目录保存重要记忆/产物
+  - 每次在 MEMORY.md 新增或更新条目后，及时 `git add .monkeycode/MEMORY.md && git commit && git push` 同步到远程
+
 [电子书站点构建 - 毛选模式]
 - Date: 2026-08-06
 - Context: Agent 将《吴氏石头记》txt 整理成 shiji 电子书站点时发现
