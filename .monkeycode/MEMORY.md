@@ -136,3 +136,14 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
     - 目录页内联样式，引用 `../assets/favicon.svg`，并含 JSON-LD Book 结构化数据
     - 完成后需在首页 `index.html` 的 `.seo-links` 中加入口，并在 `sitemap.xml` 追加页面
     - 文件名规范：`maoxuan` 用 `volX-YY.html`，`shiji` 用 `hXXX.html`
+  - **共享资源**：所有子站正文页（gushi/maoxuan/shiji/jiashen/nanmingshi 共 436 页）都复用 `gushi/gushi.css` + `gushi/gushi.js`，改一处全局生效；各站目录页 `index.html` 是独立内联样式
+  - **阅读增强**（gushi.css/js 内已实现）：正文页自动带顶部阅读进度条 + 字号调节（A-/A+）+ 字体切换（宋/楷/黑），偏好存 localStorage；gushi.js 会用 `bookVisited_{子站名}` 记录访问足迹，供目录页统计已读进度
+
+[中文图标生成 - 容器字体缺失]
+- Date: 2026-08-08
+- Context: Agent 生成南明史中文图标时发现环境限制
+- Category: 环境配置
+- Instructions:
+  - 本容器无中文字体、无 ImageMagick/matplotlib、无 headless 浏览器，PIL 直接渲染中文会失败
+  - 生成含中文的图标前先下载字体：`curl -sL -o /tmp/opencode/fonts/fandol-song.otf "https://mirrors.tuna.tsinghua.edu.cn/CTAN/fonts/fandol/FandolSong-Regular.otf"`，再用 `ImageFont.truetype(路径, 字号)` 加载绘制
+  - 验证图标渲染是否成功：检查 PNG 中心区域是否有白色（文字）像素分布
