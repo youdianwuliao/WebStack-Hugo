@@ -62,6 +62,73 @@ body {
 .top-btn.show { display: flex; }
 @media (max-width: 640px) { body { padding: 12px; } .container { padding: 16px; border-radius: 16px; } .header-title { font-size: 1.5rem; } .chapter-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+
+@media (prefers-color-scheme: dark) {
+  body { background: linear-gradient(135deg, #141b2d 0%, #1a2332 50%, #232a38 100%); color: #e2e8f0; }
+  .container { background: rgba(30,41,59,0.92); border-color: rgba(100,116,139,0.25); }
+  .header-section { background: linear-gradient(135deg, rgba(30,41,59,0.95), rgba(38,50,70,0.95)); border-color: rgba(100,116,139,0.25); }
+  .header-title { background: linear-gradient(135deg, #e8eef7, #e08a2e); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+  .header-subtitle { color: #94a3b8; }
+  .vol-title { color: #e08a2e; }
+  .vol-block { background: rgba(30,41,59,0.7); border-color: rgba(100,116,139,0.2); }
+  .chapter-item { background: rgba(30,41,59,0.75); border-color: rgba(100,116,139,0.25); color: #cbd5e1; }
+  .chapter-item:hover { background: #b91c1c; color: #fff; }
+  .vol-desc, .footer-count { color: #94a3b8; }
+  .back-link { background: rgba(185,28,28,0.15); border-color: rgba(185,28,28,0.4); color: #e08a2e; }
+}
+
+  .container { background: rgba(30,41,59,0.92); border-color: rgba(100,116,139,0.25); }
+  .header-section { background: linear-gradient(135deg, rgba(30,41,59,0.95), rgba(38,50,70,0.95)); border-color: rgba(100,116,139,0.25); }
+  .header-subtitle { color: #94a3b8; }
+  .vol-block { background: rgba(30,41,59,0.7); border-color: rgba(100,116,139,0.2); }
+  .chapter-item { background: rgba(30,41,59,0.75); border-color: rgba(100,116,139,0.25); color: #cbd5e1; }
+  .chapter-item:hover { background: #b91c1c; color: #fff; }
+  .vol-desc, .footer-count { color: #94a3b8; }
+  .back-link { background: rgba(185,28,28,0.15); border-color: rgba(185,28,28,0.4); color: #e08a2e; }
+}
+
+/* ===== 书封英雄区 ===== */
+.book-hero { display: flex; gap: 24px; align-items: center; margin: 12px 0 4px; }
+.book-cover { flex-shrink: 0; width: 96px; height: 132px; border-radius: 8px;
+  background: linear-gradient(160deg, #8a1212, #b91c1c 55%, #6d0f0f);
+  box-shadow: 0 8px 20px rgba(185,28,28,0.35); border: 1px solid rgba(255,255,255,0.12);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+  position: relative; overflow: hidden; }
+.book-cover::before { content: ''; position: absolute; inset: 0;
+  background: radial-gradient(120% 90% at 30% 0%, rgba(255,255,255,0.18), transparent 60%); }
+.cover-title { writing-mode: vertical-rl; letter-spacing: 0.18em; font-size: 24px; font-weight: 700;
+  color: #f6e7c8; text-shadow: 0 1px 3px rgba(0,0,0,0.3); position: relative; }
+.cover-sub { font-size: 10px; color: rgba(246,231,200,0.8); letter-spacing: 0.3em; position: relative; }
+.book-info { flex: 1; min-width: 0; }
+.book-name { font-size: 1.9rem; font-weight: 700;
+  background: linear-gradient(135deg, #2d3748, #b91c1c);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  margin: 0 0 4px; }
+.book-author { font-size: 13px; color: #718096; margin-bottom: 8px; }
+.book-desc { font-size: 13.5px; color: #4a5568; line-height: 1.7; margin-bottom: 14px; }
+.book-stats { display: flex; gap: 18px; margin-bottom: 14px; flex-wrap: wrap; }
+.stat { display: flex; flex-direction: column; align-items: center; }
+.stat .num { font-size: 20px; font-weight: 700; color: #b91c1c; line-height: 1.1; }
+.stat .label { font-size: 11px; color: #a0aec0; }
+.read-progress-wrap { display: flex; align-items: center; gap: 10px; }
+.read-progress-bar { flex: 1; height: 6px; background: rgba(185,28,28,0.12); border-radius: 999px; overflow: hidden; max-width: 280px; }
+.read-progress-bar span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #b91c1c, #e08a2e); border-radius: 999px; transition: width .5s ease; }
+.read-progress-text { font-size: 12px; color: #718096; white-space: nowrap; }
+@media (prefers-color-scheme: dark) {
+  .book-cover { background: linear-gradient(160deg, #7a1010, #a31515 55%, #5c0d0d); box-shadow: 0 8px 20px rgba(0,0,0,0.5); }
+  .book-name { background: linear-gradient(135deg, #e8eef7, #e08a2e); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+  .book-author, .read-progress-text { color: #94a3b8; }
+  .book-desc { color: #cbd5e1; }
+  .stat .num { color: #e08a2e; }
+  .read-progress-bar { background: rgba(224,138,46,0.15); }
+}
+@media (max-width: 640px) {
+  .book-hero { flex-direction: column; align-items: center; text-align: center; }
+  .book-stats { justify-content: center; }
+  .read-progress-wrap { justify-content: center; }
+  .read-progress-bar { max-width: 200px; }
+}
 </style>
 </head>
 <body>
@@ -74,7 +141,26 @@ body {
 </div>
 <a class="back-link" href="../index.html">← 返回首页</a>
 </div>
-<div class="header-subtitle">顾诚 著 · 全本三十二章 · 共 152 节 · 附 2820 条注释</div>
+<div class="book-hero">
+<div class="book-cover"><div class="cover-title">南明史</div><div class="cover-sub">顾诚 著</div></div>
+<div class="book-info">
+<div class="book-name">南明史</div>
+<div class="book-author">顾诚 著 · 全本三十二章 · 共 152 节</div>
+<div class="book-desc">起于明亡清兴，终于夔东抗清基地覆灭，详述南明弘光、隆武、永历三朝兴亡、大西军联明抗清与郑成功收复台湾。</div>
+<div class="book-stats">
+<div class="stat"><span class="num">32</span><span class="label">章</span></div>
+<div class="stat"><span class="num">152</span><span class="label">节</span></div>
+<div class="stat"><span class="num">72万</span><span class="label">字</span></div>
+<div class="stat"><span class="num">2820</span><span class="label">注释</span></div>
+<div class="stat"><span class="num">11</span><span class="label">地图</span></div>
+</div>
+<div class="read-progress-wrap">
+<div class="read-progress-bar"><span id="readProgress"></span></div>
+<span class="read-progress-text" id="readText">阅读进度 0%</span>
+</div>
+</div>
+</div>
+<div class="header-subtitle">在线全文阅读 · 支持字号/字体调整与夜间模式</div>
 </div>
 <div class="vol-block">
 <div class="vol-head"><span class="vol-title">南明史（上）</span><span class="vol-count">卷一至卷十七 · 84 节</span></div>
@@ -89,6 +175,24 @@ body {
 <div class="footer-count">南明史 · 顾诚 · 星汉灿烂 · 共 152 节</div>
 </div>
 <button class="top-btn" id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="返回顶部">↑</button>
+<script>
+(function () {
+  var links = document.querySelectorAll('.chapter-item');
+  var total = links.length;
+  var key = 'bookVisited_nanmingshi';
+  var list = [];
+  try { list = JSON.parse(localStorage.getItem(key)) || []; } catch (e) {}
+  var read = 0;
+  for (var i = 0; i < links.length; i++) {
+    if (list.indexOf(links[i].getAttribute('href')) !== -1) read++;
+  }
+  var pct = total ? Math.round(read / total * 100) : 0;
+  var bar = document.getElementById('readProgress');
+  var txt = document.getElementById('readText');
+  if (bar) bar.style.width = pct + '%';
+  if (txt) txt.textContent = '已读 ' + read + '/' + total + ' 节';
+})();
+</script>
 <script src="../gushi/gushi.js"></script>
 </body>
 </html>

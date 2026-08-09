@@ -147,7 +147,7 @@
     .site-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
     .site-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 10px; padding: 16px; text-decoration: none; color: inherit; transition: all 0.25s; display: flex; align-items: flex-start; gap: 12px; }
     .site-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 3px 10px var(--shadow); }
-    .site-card img { width: 40px; height: 40px; border-radius: 8px; object-fit: contain; flex-shrink: 0; background: var(--bg); padding: 4px; }
+    .site-card img { width: 40px; height: 40px; border-radius: 10px; object-fit: contain; flex-shrink: 0; background: #fff; padding: 5px; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05); }
     .site-info { min-width: 0; flex: 1; text-align: left; padding-top: 2px; }
     .site-info h3 { font-size: 13px; font-weight: 500; margin-bottom: 4px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .site-info p { font-size: 11px; color: var(--muted); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
@@ -259,7 +259,7 @@
     .sr-header b { color: var(--accent); font-weight: 600; }
     .sr-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; cursor: pointer; text-decoration: none; color: var(--text); transition: background 0.15s; }
     .sr-item:hover, .sr-item.active { background: var(--nav-hover); }
-    .sr-item img { width: 26px; height: 26px; border-radius: 6px; object-fit: contain; flex-shrink: 0; background: var(--card-border); padding: 2px; }
+    .sr-item img { width: 26px; height: 26px; border-radius: 6px; object-fit: contain; flex-shrink: 0; background: #fff; padding: 2px; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05); }
     .sr-item-main { min-width: 0; flex: 1; }
     .sr-item-title { font-size: 13px; font-weight: 500; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .sr-item-desc { font-size: 11px; color: var(--muted); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
@@ -287,6 +287,19 @@
     .share-btn { display: inline-flex; align-items: center; gap: 5px; padding: 6px 16px; border-radius: 999px; border: 1px solid var(--card-border); background: var(--card-bg); color: var(--muted); font-size: 12px; cursor: pointer; transition: all 0.25s; text-decoration: none; }
     .share-btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); box-shadow: 0 4px 12px var(--shadow); }
     .share-btn svg { width: 13px; height: 13px; }
+
+    /* ===== 电子书阅读专区 ===== */
+    .reading-zone { margin-bottom: 40px; }
+    .reading-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+    .reading-card { display: flex; align-items: center; gap: 14px; padding: 14px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; text-decoration: none; color: inherit; transition: all 0.25s; }
+    .reading-card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px var(--shadow); border-color: var(--accent); }
+    .rc-cover { width: 52px; height: 70px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.22); position: relative; overflow: hidden; }
+    .rc-cover::before { content: ''; position: absolute; inset: 0; background: radial-gradient(120% 90% at 30% 0%, rgba(255,255,255,0.18), transparent 60%); }
+    .rc-title { writing-mode: vertical-rl; font-size: 15px; font-weight: 700; color: #f6e7c8; letter-spacing: 0.15em; text-shadow: 0 1px 2px rgba(0,0,0,0.35); position: relative; }
+    .rc-info { min-width: 0; }
+    .rc-info h3 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .rc-info p { font-size: 12px; color: var(--muted); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    @media (max-width: 640px) { .reading-grid { grid-template-columns: 1fr; } }
 
     /* 热门站点链接（SEO + 快捷入口） */
     .seo-links { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px 16px; margin-top: 12px; font-size: 12px; }
@@ -379,6 +392,31 @@
         <div class="skeleton-card"><div class="skeleton-icon"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
       </div>
     </div>
+    <section class="category reading-zone">
+      <h2><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg> 电子书阅读</h2>
+      <div class="reading-grid">
+        <a class="reading-card" href="./nanmingshi/">
+          <div class="rc-cover" style="background:linear-gradient(160deg,#8a1212,#b91c1c 55%,#6d0f0f)"><span class="rc-title">南明史</span></div>
+          <div class="rc-info"><h3>南明史</h3><p>顾诚 著 · 全本三十二章 152 节，附 2820 条注释与 11 幅地图</p></div>
+        </a>
+        <a class="reading-card" href="./maoxuan/">
+          <div class="rc-cover" style="background:linear-gradient(160deg,#a02717,#c0392b 55%,#7e1d10)"><span class="rc-title">毛泽东选集</span></div>
+          <div class="rc-info"><h3>毛泽东选集</h3><p>四卷全本在线阅读</p></div>
+        </a>
+        <a class="reading-card" href="./shiji/">
+          <div class="rc-cover" style="background:linear-gradient(160deg,#2d5a87,#4a90d9 55%,#1f3f60)"><span class="rc-title">石头记</span></div>
+          <div class="rc-info"><h3>吴氏石头记</h3><p>癸酉本 108 回全本 · 红楼梦探佚本</p></div>
+        </a>
+        <a class="reading-card" href="./jiashen/">
+          <div class="rc-cover" style="background:linear-gradient(160deg,#6d5210,#8b6914 55%,#4a370a)"><span class="rc-title">甲申</span></div>
+          <div class="rc-info"><h3>甲申三百年祭</h3><p>郭沫若 · 全文在线阅读</p></div>
+        </a>
+        <a class="reading-card" href="./gushi/">
+          <div class="rc-cover" style="background:linear-gradient(160deg,#2f6b4c,#3f7d5c 55%,#214d35)"><span class="rc-title">古诗文</span></div>
+          <div class="rc-info"><h3>古诗文集</h3><p>经典古诗文在线阅读</p></div>
+        </a>
+      </div>
+    </section>
   </main>
   
   <footer>
