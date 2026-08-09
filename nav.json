@@ -1296,12 +1296,6 @@
           "description": "高清好看"
         },
         {
-          "title": "毛泽东选集",
-          "icon": "/assets/images/logos/maoxuan.png",
-          "url": "./maoxuan/",
-          "description": "毛泽东选集 全文在线阅读"
-        },
-        {
           "title": "中小学智慧平台",
           "icon": "/assets/images/logos/smartedu.png",
           "url": "https://basic.smartedu.cn/",
@@ -1330,12 +1324,24 @@
           "icon": "/assets/images/logos/1000qm.png",
           "url": "https://www.1000qm.vip/",
           "description": "小说下载"
+        }
+      ]
+    },
+    {
+      "category": "电子书",
+      "sidebarIcon": "fas fa-book",
+      "items": [
+        {
+          "title": "毛泽东选集",
+          "icon": "/assets/images/logos/maoxuan.png",
+          "url": "./maoxuan/",
+          "description": "毛泽东选集 全文在线阅读"
         },
         {
           "title": "古诗文集",
-          "icon": "/assets/images/logos/zlib.png",
-          "url": "./gushi.html",
-          "description": "点击访问古诗文集"
+          "icon": "/assets/images/logos/gushi.png",
+          "url": "./gushi/",
+          "description": "经典古诗文在线阅读"
         },
         {
           "title": "吴氏石头记",
