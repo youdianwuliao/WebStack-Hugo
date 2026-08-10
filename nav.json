@@ -75,6 +75,12 @@
           "icon": "/assets/images/logos/weixin-mp.png",
           "url": "https://mp.weixin.qq.com/",
           "description": "微信公众平台，公众号管理后台"
+        },
+        {
+          "title": "HamCQ.cn",
+          "icon": "/assets/images/logos/hamcq.png",
+          "url": "https://forum.hamcq.cn/",
+          "description": "HamCQ 业余无线电爱好者社区"
         }
       ]
     },
