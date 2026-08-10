@@ -1262,6 +1262,18 @@
               "icon": "/assets/images/logos/webminal.png",
               "url": "https://webminal.org/",
               "description": "在线Linux终端和编程学习平台"
+            },
+            {
+              "title": "ClickHouse",
+              "icon": "/assets/images/logos/clickhouse.png",
+              "url": "https://clickhouse.com/",
+              "description": "开源列式数据库分析引擎"
+            },
+            {
+              "title": "Metabase",
+              "icon": "/assets/images/logos/metabase.svg",
+              "url": "https://www.metabase.com/",
+              "description": "开源 BI 数据分析可视化工具"
             }
           ]
         }
