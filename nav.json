@@ -1270,12 +1270,6 @@
               "description": "华为代码托管"
             },
             {
-              "title": "支付宝小程序云",
-              "icon": "/assets/images/logos/alipay.png",
-              "url": "https://cloud.alipay.com/",
-              "description": "支付宝小程序云，蚂蚁云原生服务端解决方案"
-            },
-            {
               "title": "HamCQ.cn",
               "icon": "/assets/images/logos/hamcq.png",
               "url": "https://forum.hamcq.cn/",
