@@ -81,6 +81,12 @@
           "icon": "/assets/images/logos/hamcq.png",
           "url": "https://forum.hamcq.cn/",
           "description": "HamCQ 业余无线电爱好者社区"
+        },
+        {
+          "title": "支付宝登录",
+          "icon": "/assets/images/logos/alipay.png",
+          "url": "https://auth.alipay.com/",
+          "description": "支付宝账户登录"
         }
       ]
     },
