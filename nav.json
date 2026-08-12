@@ -87,6 +87,12 @@
           "icon": "/assets/images/logos/alipay.png",
           "url": "https://auth.alipay.com/",
           "description": "支付宝账户登录"
+        },
+        {
+          "title": "支付宝小程序云",
+          "icon": "/assets/images/logos/alipay.png",
+          "url": "https://cloud.alipay.com/",
+          "description": "支付宝小程序云，蚂蚁云原生服务端解决方案"
         }
       ]
     },
