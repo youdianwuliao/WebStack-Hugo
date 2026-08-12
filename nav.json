@@ -11,12 +11,6 @@
           "description": "实用小工具"
         },
         {
-          "title": "飞书消息",
-          "icon": "/assets/images/logos/feishu.ico",
-          "url": "https://feishu.cn/messages",
-          "description": "飞书消息中心"
-        },
-        {
           "title": "QQ 邮箱",
           "icon": "/assets/images/logos/qq-mail.png",
           "url": "https://mail.qq.com/",
@@ -33,12 +27,6 @@
           "icon": "/assets/images/logos/github.jpg",
           "url": "https://github.com/",
           "description": "GitHub 开源社区"
-        },
-        {
-          "title": "gitcode",
-          "icon": "/assets/images/logos/gitcode.png",
-          "url": "https://gitcode.com/",
-          "description": "华为代码托管"
         },
         {
           "title": "知乎",
@@ -87,12 +75,6 @@
           "icon": "/assets/images/logos/alipay.png",
           "url": "https://auth.alipay.com/",
           "description": "支付宝账户登录"
-        },
-        {
-          "title": "支付宝小程序云",
-          "icon": "/assets/images/logos/alipay.png",
-          "url": "https://cloud.alipay.com/",
-          "description": "支付宝小程序云，蚂蚁云原生服务端解决方案"
         }
       ]
     },
@@ -1286,6 +1268,24 @@
               "icon": "/assets/images/logos/metabase.svg",
               "url": "https://www.metabase.com/",
               "description": "开源 BI 数据分析可视化工具"
+            },
+            {
+              "title": "飞书消息",
+              "icon": "/assets/images/logos/feishu.ico",
+              "url": "https://feishu.cn/messages",
+              "description": "飞书消息中心"
+            },
+            {
+              "title": "gitcode",
+              "icon": "/assets/images/logos/gitcode.png",
+              "url": "https://gitcode.com/",
+              "description": "华为代码托管"
+            },
+            {
+              "title": "支付宝小程序云",
+              "icon": "/assets/images/logos/alipay.png",
+              "url": "https://cloud.alipay.com/",
+              "description": "支付宝小程序云，蚂蚁云原生服务端解决方案"
             }
           ]
         }
