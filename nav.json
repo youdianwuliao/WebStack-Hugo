@@ -1274,6 +1274,12 @@
               "icon": "/assets/images/logos/hamcq.png",
               "url": "https://forum.hamcq.cn/",
               "description": "HamCQ 业余无线电爱好者社区"
+            },
+            {
+              "title": "支付宝开放平台",
+              "icon": "/assets/images/logos/alipay.png",
+              "url": "https://open.alipay.com/",
+              "description": "支付宝开放平台，支付营销数据能力开放接口"
             }
           ]
         }
