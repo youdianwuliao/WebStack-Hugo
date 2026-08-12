@@ -1108,6 +1108,12 @@
               "icon": "/assets/images/logos/justhost.png",
               "url": "https://justhost.asia/?ref=165244",
               "description": "俄罗斯便宜vps"
+            },
+            {
+              "title": "支付宝小程序云",
+              "icon": "/assets/images/logos/alipay.png",
+              "url": "https://cloud.alipay.com/",
+              "description": "支付宝小程序云，蚂蚁云原生服务端解决方案"
             }
           ]
         },
