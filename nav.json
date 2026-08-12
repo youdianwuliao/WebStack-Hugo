@@ -53,22 +53,10 @@
           "description": "标记我的生活"
         },
         {
-          "title": "学法减分",
-          "icon": "/assets/images/logos/jianfen.png",
-          "url": "./jianfen/",
-          "description": "交管12123学法减分题库"
-        },
-        {
           "title": "微信公众号",
           "icon": "/assets/images/logos/weixin-mp.png",
           "url": "https://mp.weixin.qq.com/",
           "description": "微信公众平台，公众号管理后台"
-        },
-        {
-          "title": "HamCQ.cn",
-          "icon": "/assets/images/logos/hamcq.png",
-          "url": "https://forum.hamcq.cn/",
-          "description": "HamCQ 业余无线电爱好者社区"
         },
         {
           "title": "支付宝登录",
@@ -1286,6 +1274,12 @@
               "icon": "/assets/images/logos/alipay.png",
               "url": "https://cloud.alipay.com/",
               "description": "支付宝小程序云，蚂蚁云原生服务端解决方案"
+            },
+            {
+              "title": "HamCQ.cn",
+              "icon": "/assets/images/logos/hamcq.png",
+              "url": "https://forum.hamcq.cn/",
+              "description": "HamCQ 业余无线电爱好者社区"
             }
           ]
         }
@@ -1384,6 +1378,12 @@
           "icon": "/assets/images/logos/nanmingshi.png",
           "url": "./nanmingshi/",
           "description": "顾诚《南明史》全本在线阅读（三十二章152节）"
+        },
+        {
+          "title": "学法减分",
+          "icon": "/assets/images/logos/jianfen.png",
+          "url": "./jianfen/",
+          "description": "交管12123学法减分题库"
         }
       ]
     },
