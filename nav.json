@@ -57,12 +57,6 @@
           "icon": "/assets/images/logos/weixin-mp.png",
           "url": "https://mp.weixin.qq.com/",
           "description": "微信公众平台，公众号管理后台"
-        },
-        {
-          "title": "支付宝登录",
-          "icon": "/assets/images/logos/alipay.png",
-          "url": "https://auth.alipay.com/",
-          "description": "支付宝账户登录"
         }
       ]
     },
