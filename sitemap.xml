@@ -444,4 +444,7 @@
   <url><loc>https://www.justgame.top/nanmingshi/h150.html</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://www.justgame.top/nanmingshi/h151.html</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://www.justgame.top/nanmingshi/h152.html</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://www.justgame.top/json/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.justgame.top/qrcode/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.justgame.top/markdown/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
 </urlset>

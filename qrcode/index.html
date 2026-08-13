@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>二维码工具 - 生成 / 解析查看</title>
+<meta name="description" content="在线二维码工具：文本/网址生成二维码（可选大小、纠错级别、颜色），支持上传图片解析查看二维码内容。全程浏览器本地处理，隐私安全。">
+<meta property="og:title" content="二维码工具 - 生成 / 解析查看">
+<meta property="og:description" content="在线二维码生成与解析查看工具，浏览器本地处理，隐私安全。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.justgame.top/qrcode/">
+<meta property="og:site_name" content="星汉灿烂">
+<meta name="theme-color" content="#10b981">
+<link rel="canonical" href="https://www.justgame.top/qrcode/">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/images/icon-192.png">
+<style>
+:root{
+  --bg1:#0b1020; --bg2:#141a33; --bg3:#0d1b2a;
+  --card:rgba(255,255,255,.055);
+  --card-border:rgba(255,255,255,.1);
+  --card-hover:rgba(255,255,255,.09);
+  --text:#e8ecf4; --muted:#9aa4c0; --faint:#6b7390;
+  --accent:#10b981; --accent2:#818cf8; --gold:#fbbf24;
+  --green:#34d399; --red:#f87171; --orange:#fb923c;
+  --grad:linear-gradient(135deg,#10b981,#34d399);
+  --shadow:0 10px 40px rgba(0,0,0,.35);
+  --chip-bg:rgba(255,255,255,.06);
+  --chip-bg-active:linear-gradient(135deg,rgba(16,185,129,.2),rgba(129,140,248,.2));
+  --code-bg:#0e1526;
+}
+.light{
+  --bg1:#eef2fb; --bg2:#ffffff; --bg3:#e2e9f8;
+  --card:#ffffff; --card-border:#e2e8f0; --card-hover:#f1f5ff;
+  --text:#1e2a44; --muted:#5b6574; --faint:#8a93ab;
+  --chip-bg:#eef2fb;
+  --chip-bg-active:linear-gradient(135deg,#d1fae5,#e0e7ff);
+  --shadow:0 10px 30px rgba(30,58,95,.08);
+  --code-bg:#f6f8fa;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;
+  background:linear-gradient(160deg,var(--bg1),var(--bg2) 45%,var(--bg3));
+  background-attachment:fixed;
+  color:var(--text); min-height:100vh; line-height:1.65;
+  transition:background .3s,color .3s;
+}
+.wrap{max-width:1080px;margin:0 auto;padding:18px 16px 60px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-logo{
+  width:42px;height:42px;border-radius:12px;background:var(--grad);
+  display:flex;align-items:center;justify-content:center;color:#fff;
+  font-weight:800;font-size:19px;box-shadow:0 6px 18px rgba(16,185,129,.35);flex-shrink:0;
+}
+.brand h1{font-size:19px;font-weight:700;letter-spacing:.5px}
+.brand .sub{font-size:12px;color:var(--faint);margin-top:2px}
+.top-actions{display:flex;gap:8px}
+.icon-btn{
+  width:38px;height:38px;border-radius:10px;border:1px solid var(--card-border);
+  background:var(--card);color:var(--muted);cursor:pointer;font-size:16px;
+  display:flex;align-items:center;justify-content:center;transition:.2s;
+}
+.icon-btn:hover{background:var(--card-hover);color:var(--text)}
+.tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.tab{
+  flex:1;min-width:150px;padding:11px 8px;border-radius:12px;border:1px solid var(--card-border);
+  background:var(--card);color:var(--muted);font-size:14px;cursor:pointer;transition:.2s;
+  text-align:center;font-weight:600;
+}
+.tab:hover{color:var(--text)}
+.tab.active{background:var(--chip-bg-active);color:var(--text);border-color:transparent;box-shadow:inset 0 0 0 1px rgba(16,185,129,.35)}
+.panel{display:none}
+.panel.active{display:block}
+.card{
+  background:var(--card);border:1px solid var(--card-border);border-radius:18px;
+  padding:18px;box-shadow:var(--shadow);backdrop-filter:blur(6px);margin-bottom:16px;
+}
+.card-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.card-title h3{font-size:14px;font-weight:600}
+.card-title h3 .badge{font-size:11px;padding:2px 8px;border-radius:99px;background:var(--chip-bg);color:var(--faint);margin-left:6px;font-weight:400}
+.btn-group{display:flex;gap:8px;flex-wrap:wrap}
+.btn{
+  padding:8px 16px;border-radius:10px;border:1px solid var(--card-border);
+  background:var(--chip-bg);color:var(--muted);font-size:13px;cursor:pointer;transition:.2s;font-weight:500;
+}
+.btn:hover{color:var(--text);border-color:var(--accent);background:var(--card-hover)}
+.btn.primary{background:var(--grad);color:#fff;border-color:transparent}
+.btn.primary:hover{opacity:.88;color:#fff}
+.btn.red{background:linear-gradient(135deg,#ef4444,#f87171);color:#fff;border-color:transparent}
+.btn.red:hover{opacity:.88;color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+textarea{
+  width:100%;min-height:150px;resize:vertical;border-radius:12px;
+  border:1px solid var(--card-border);background:var(--code-bg);color:var(--text);
+  padding:14px;font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  line-height:1.6;transition:border-color .2s;
+}
+textarea:focus{outline:none;border-color:var(--accent)}
+.lbl{font-size:12px;color:var(--faint);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.gen-layout{display:grid;grid-template-columns:320px 1fr;gap:18px;align-items:start}
+@media(max-width:760px){.gen-layout{grid-template-columns:1fr}}
+.preview-box{
+  background:#fff;border-radius:14px;padding:22px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;min-height:340px;
+  border:1px solid var(--card-border);position:sticky;top:16px;
+}
+.preview-box canvas{max-width:100%;height:auto;border-radius:4px;image-rendering:pixelated}
+.preview-box svg{max-width:100%;height:auto;display:block}
+.preview-actions{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;justify-content:center}
+.empty-preview{color:#bbb;font-size:13px;text-align:center;padding:60px 10px}
+.opts-list{display:flex;flex-direction:column;gap:14px}
+.opt-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.opt-row .olabel{width:90px;font-size:13px;color:var(--muted);flex-shrink:0}
+.opt-row input[type=text],.opt-row input[type=number],.opt-row select{
+  flex:1;min-width:120px;padding:8px 11px;border-radius:9px;border:1px solid var(--card-border);
+  background:var(--code-bg);color:var(--text);font-size:13px;
+}
+.opt-row input[type=text]:focus,.opt-row input[type=number]:focus,.opt-row select:focus{outline:none;border-color:var(--accent)}
+.opt-row input[type=color]{width:48px;height:34px;border-radius:8px;border:1px solid var(--card-border);background:var(--code-bg);cursor:pointer;padding:2px}
+.opt-row input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:pointer}
+.opt-row input[type=range]{flex:1;accent-color:var(--accent)}
+.status{display:flex;align-items:center;gap:8px;padding:11px 14px;border-radius:12px;font-size:13px;margin-bottom:12px;flex-wrap:wrap}
+.status.ok{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.4);color:var(--green)}
+.status.err{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.4);color:var(--red)}
+.status.info{background:rgba(74,144,217,.12);border:1px solid rgba(74,144,217,.4);color:var(--accent)}
+.file-drop{
+  border:2px dashed var(--card-border);border-radius:12px;padding:26px 16px;text-align:center;
+  color:var(--faint);font-size:13px;cursor:pointer;transition:.2s;
+}
+.file-drop:hover,.file-drop.over{border-color:var(--accent);color:var(--accent);background:var(--chip-bg)}
+.file-drop .big{font-size:30px;display:block;margin-bottom:8px}
+.scan-result{margin-top:14px}
+.scan-content{
+  padding:14px;border-radius:12px;background:var(--code-bg);border:1px solid var(--card-border);
+  font-size:13px;word-break:break-all;white-space:pre-wrap;max-height:260px;overflow:auto;margin-top:10px;
+}
+.scan-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px;margin-top:12px}
+.scan-meta .stat{background:var(--chip-bg);border-radius:10px;padding:9px 12px;text-align:center}
+.scan-meta .v{font-size:15px;font-weight:700;color:var(--accent)}
+.scan-meta .n{font-size:11px;color:var(--faint);margin-top:1px}
+.scan-img{max-width:180px;border-radius:10px;border:1px solid var(--card-border);margin-top:10px}
+.hint{font-size:12px;color:var(--faint);margin-top:8px;line-height:1.6}
+.toast{
+  position:fixed;left:50%;bottom:80px;transform:translateX(-50%);
+  background:rgba(30,58,95,.92);color:#fff;padding:9px 20px;border-radius:999px;
+  font-size:13px;z-index:999;box-shadow:0 6px 20px rgba(0,0,0,.2);
+  opacity:0;transition:opacity .3s;pointer-events:none;
+}
+.footer{text-align:center;font-size:11px;color:var(--faint);margin-top:24px}
+.footer a{color:var(--accent);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-logo">▦</div>
+      <div>
+        <h1>二维码工具</h1>
+        <div class="sub">生成 · 解析查看 · 纯本地处理</div>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button class="icon-btn" onclick="window.open('../','_self')" title="返回导航">↩</button>
+      <button class="icon-btn" onclick="toggleTheme()" title="切换主题">◐</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="gen" onclick="switchTab('gen')"><span class="ic">✨</span>生成</button>
+    <button class="tab" data-tab="scan" onclick="switchTab('scan')"><span class="ic">📷</span>解析查看</button>
+  </div>
+
+  <!-- 生成 -->
+  <div class="panel active" id="panel-gen">
+    <div class="card">
+      <div class="gen-layout">
+        <div class="preview-box">
+          <div id="qrCanvasWrap" class="empty-preview">输入内容后自动生成二维码</div>
+          <div class="preview-actions" id="previewActions" style="display:none">
+            <button class="btn primary" onclick="downloadQR('png')">下载 PNG</button>
+            <button class="btn" onclick="downloadQR('svg')">下载 SVG</button>
+            <button class="btn" onclick="copyQR()">复制图片</button>
+          </div>
+        </div>
+        <div>
+          <div class="card-title"><h3>生成设置</h3></div>
+          <textarea id="qrText" spellcheck="false" placeholder="输入文本或网址，例如：&#10;https://www.justgame.top/"></textarea>
+          <div class="opts-list" style="margin-top:16px">
+            <div class="opt-row"><span class="olabel">内容类型</span>
+              <select id="qrType" onchange="presetType()">
+                <option value="text">文本</option>
+                <option value="url">网址</option>
+                <option value="tel">电话号码</option>
+                <option value="sms">短信</option>
+                <option value="email">电子邮件</option>
+                <option value="wifi">Wi-Fi</option>
+                <option value="vc">电子名片 vCard</option>
+              </select>
+            </div>
+            <div class="opt-row"><span class="olabel">尺寸</span>
+              <input type="range" id="qrSize" min="128" max="1024" step="32" value="320" oninput="$('qrSizeVal').textContent=this.value+' px'">
+              <b id="qrSizeVal" style="font-size:12px;color:var(--muted)">320 px</b>
+            </div>
+            <div class="opt-row"><span class="olabel">容错级别</span>
+              <select id="qrEcc">
+                <option value="L">L · 低 (7%)</option>
+                <option value="M" selected>M · 中 (15%)</option>
+                <option value="Q">Q · 较高 (25%)</option>
+                <option value="H">H · 高 (30%)</option>
+              </select>
+            </div>
+            <div class="opt-row"><span class="olabel">边距</span>
+              <input type="range" id="qrMargin" min="0" max="8" step="1" value="4" oninput="$('qrMarginVal').textContent=this.value">
+              <b id="qrMarginVal" style="font-size:12px;color:var(--muted)">4</b>
+            </div>
+            <div class="opt-row"><span class="olabel">前景色</span><input type="color" id="qrFg" value="#000000"></div>
+            <div class="opt-row"><span class="olabel">背景色</span><input type="color" id="qrBg" value="#ffffff"></div>
+            <div class="opt-row"><span class="olabel">选项</span>
+              <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)"><input type="checkbox" id="qrLogo" checked> 居中 Logo（字体图标）</label>
+            </div>
+            <div class="opt-row"><span class="olabel">Logo 颜色</span><input type="color" id="qrLogoColor" value="#10b981"></div>
+          </div>
+          <div class="btn-group" style="margin-top:16px">
+            <button class="btn primary" onclick="generateQR()">生成二维码</button>
+            <button class="btn" onclick="loadPreset()">载入示例</button>
+            <button class="btn" onclick="$('qrText').value='';updatePreview()">清空</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><h3>常用预设</h3></div>
+      <div class="btn-group">
+        <button class="btn" onclick="quickPreset('text','星汉灿烂 导航站')">文本</button>
+        <button class="btn" onclick="quickPreset('url','https://www.justgame.top/')">本站网址</button>
+        <button class="btn" onclick="quickPreset('wifi','WIFI:T:WPA;S:MyHome;P:12345678;;')">Wi-Fi</button>
+        <button class="btn" onclick="quickPreset('email','mailto:hi@justgame.top?subject=你好')">邮箱</button>
+        <button class="btn" onclick="quickPreset('tel','tel:+8613800138000')">电话</button>
+      </div>
+      <div class="hint">提示：生成二维码完全在本地浏览器完成，内容不会上传到任何服务器。</div>
+    </div>
+  </div>
+
+  <!-- 解析查看 -->
+  <div class="panel" id="panel-scan">
+    <div class="card">
+      <div class="card-title"><h3>上传二维码图片 <span class="badge">支持 PNG / JPG / WebP</span></h3></div>
+      <div class="file-drop" id="scanDrop" onclick="$('scanFile').click()">
+        <span class="big">📷</span>
+        点击选择图片，或将二维码图片拖拽到此处
+      </div>
+      <input type="file" id="scanFile" accept="image/*" style="display:none">
+      <div class="btn-group" style="margin-top:12px">
+        <button class="btn" onclick="pasteScan()">从剪贴板粘贴</button>
+        <button class="btn red" onclick="clearScan()">清空结果</button>
+      </div>
+      <div class="hint">图片解析同样在本地浏览器完成，不上传服务器。截图、照片均可识别。</div>
+    </div>
+    <div class="card">
+      <div class="card-title"><h3>解析结果</h3></div>
+      <div id="scanStatus" class="status info" style="display:none"></div>
+      <div class="scan-result" id="scanResult"></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a href="https://www.justgame.top" target="_blank" rel="noopener">星汉灿烂</a> · 二维码工具 · 基于 qrcode-generator / jsQR 开源库
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="qrcode-generator.js"></script>
+<script src="jsqr.js"></script>
+<script>
+(function(){
+  var THEME_KEY='qrToolTheme';
+  function applyTheme(t){document.body.classList.toggle('light',t==='light')}
+  function initTheme(){
+    var s=localStorage.getItem(THEME_KEY);
+    if(s!==null)applyTheme(s);
+    else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)applyTheme('dark');
+  }
+  window.toggleTheme=function(){
+    var isLight=document.body.classList.contains('light');
+    applyTheme(isLight?'dark':'light');
+    localStorage.setItem(THEME_KEY,isLight?'dark':'light');
+  };
+  initTheme();
+})();
+function $(id){return document.getElementById(id)}
+function toast(msg){
+  var t=$('toast');
+  t.textContent=msg;t.style.opacity='1';
+  clearTimeout(t._t);t._t=setTimeout(function(){t.style.opacity='0'},2000);
+}
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(function(b){b.classList.toggle('active',b.dataset.tab===name)});
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('active',p.id==='panel-'+name)});
+}
+
+/* ---------- 生成 ---------- */
+var currentQRData=null, currentSVG=null;
+var PRESETS={
+  text:{name:'文本',build:function(v){return v}},
+  url:{name:'网址',build:function(v){if(!/^https?:\/\//i.test(v))return 'https://'+v;return v}},
+  tel:{name:'电话',build:function(v){return 'tel:'+v}},
+  sms:{name:'短信',build:function(v){return 'SMSTO:'+v}},
+  email:{name:'邮件',build:function(v){return 'mailto:'+v}},
+  wifi:{name:'Wi-Fi',build:function(v){return 'WIFI:T:WPA;S:'+v.split(':')[0]+';P:'+(v.split(':')[1]||'')+';;'}},
+  vc:{name:'名片',build:function(v){return 'BEGIN:VCARD\nVERSION:3.0\nFN:'+v+'\nEND:VCARD'}}
+};
+function presetType(){
+  var t=$('qrType').value;
+  var cur=$('qrText').value;
+  // 切换时若有内置前缀则剥离
+  if(t==='tel'&&cur.startsWith('tel:'))$('qrText').value=cur.slice(4);
+  else if(t==='email'&&cur.startsWith('mailto:'))$('qrText').value=cur.slice(7);
+  else if(t==='sms'&&cur.startsWith('SMSTO:'))$('qrText').value=cur.slice(6);
+  else if(t==='url'&&cur.startsWith('https://'))$('qrText').value=cur.slice(8);
+}
+function loadPreset(){
+  quickPreset('url','https://www.justgame.top/');
+}
+function quickPreset(type,value){
+  $('qrType').value=type;
+  $('qrText').value=value;
+  generateQR();
+}
+function buildPayload(){
+  var type=$('qrType').value;
+  var v=$('qrText').value.trim();
+  if(!v){toast('请输入内容');return null}
+  return PRESETS[type]?PRESETS[type].build(v):v;
+}
+function updatePreview(){
+  currentQRData=null;
+  $('qrCanvasWrap').innerHTML='<div class="empty-preview">输入内容后自动生成二维码</div>';
+  $('previewActions').style.display='none';
+}
+function generateQR(){
+  var payload=buildPayload();
+  if(payload===null)return;
+  var size=+$('qrSize').value;
+  var ecc=$('qrEcc').value;
+  var margin=+$('qrMargin').value;
+  var fg=$('qrFg').value;
+  var bg=$('qrBg').value;
+  var typeNumber=0;
+  try{
+    var qr=qrcode(typeNumber,ecc);
+    qr.addData(payload,'Byte');
+    qr.make();
+    currentQRData={qr:qr,margin:margin,fg:fg,bg:bg,size:size};
+    renderQR();
+    toast('二维码已生成');
+  }catch(e){
+    $('qrCanvasWrap').innerHTML='<div class="empty-preview" style="color:var(--red)">生成失败：'+escapeHtml(e.message)+'<br><span style="font-size:11px">内容过长请缩短，或提高容错级别</span></div>';
+  }
+}
+function renderQR(){
+  if(!currentQRData)return;
+  var q=currentQRData.qr,margin=currentQRData.margin,fg=currentQRData.fg,bg=currentQRData.bg,size=currentQRData.size;
+  var count=q.getModuleCount();
+  var canvas=document.createElement('canvas');
+  canvas.width=canvas.height=size;
+  var ctx=canvas.getContext('2d');
+  var ms=Math.floor(size/count);
+  var offset=Math.floor((size-count*ms)/2);
+  ctx.fillStyle=bg;
+  ctx.fillRect(0,0,size,size);
+  // 留白
+  var cell=ms;
+  ctx.fillStyle=fg;
+  for(var r=0;r<count;r++){
+    for(var c=0;c<count;c++){
+      if(q.isDark(r,c)){
+        ctx.fillRect(offset+c*cell,offset+r*cell,cell,cell);
+      }
+    }
+  }
+  // Logo
+  if($('qrLogo').checked){
+    var logoSize=Math.floor(size*0.22);
+    var lx=Math.floor((size-logoSize)/2),ly=lx;
+    ctx.fillStyle=bg;
+    ctx.fillRect(lx-3,ly-3,logoSize+6,logoSize+6);
+    ctx.fillStyle=$('qrLogoColor').value;
+    ctx.fillRect(lx,ly,logoSize,logoSize);
+    // 绘制简单图标（三横，象征二维码/站点）
+    ctx.fillStyle='#fff';
+    var w=Math.floor(logoSize*0.6),h=Math.floor(logoSize*0.6);
+    var ox=lx+Math.floor((logoSize-w)/2),oy=ly+Math.floor((logoSize-h)/2);
+    ctx.fillRect(ox,oy+Math.floor(h*0.12),w,Math.floor(h*0.2));
+    ctx.fillRect(ox,oy+Math.floor(h*0.42),w,Math.floor(h*0.2));
+    ctx.fillRect(ox,oy+Math.floor(h*0.72),w,Math.floor(h*0.2));
+  }
+  var wrap=$('qrCanvasWrap');
+  wrap.innerHTML='';
+  wrap.appendChild(canvas);
+  $('previewActions').style.display='';
+  // 同步生成 SVG
+  currentSVG=buildSVG(count,margin,fg,bg,size);
+}
+function buildSVG(count,margin,fg,bg,size){
+  var q=currentQRData.qr;
+  var cells=[];
+  for(var r=0;r<count;r++){
+    for(var c=0;c<count;c++){
+      if(q.isDark(r,c))cells.push(r+' '+c);
+    }
+  }
+  var total=size;
+  var cell=total/count;
+  var off=(size-count*Math.floor(size/count))/2;
+  var rects=cells.map(function(p){
+    var xy=p.split(' ');
+    return '<rect x="'+(off+xy[1]*cell).toFixed(2)+'" y="'+(off+xy[0]*cell).toFixed(2)+'" width="'+Math.ceil(cell).toFixed(2)+'" height="'+Math.ceil(cell).toFixed(2)+'"/>';
+  }).join('');
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+size+' '+size+'" width="'+size+'" height="'+size+'"><rect width="100%" height="100%" fill="'+bg+'"/>'+rects+'</svg>';
+}
+function downloadQR(fmt){
+  if(!currentQRData){toast('请先生成二维码');return}
+  var size=currentQRData.size;
+  var name='qrcode-'+Date.now()+'.'+fmt;
+  if(fmt==='svg'){
+    var blob=new Blob([currentSVG],{type:'image/svg+xml;charset=utf-8'});
+    var a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);a.download=name;
+    document.body.appendChild(a);a.click();
+    setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500);
+    toast('SVG 已下载');
+    return;
+  }
+  var canvas=$('qrCanvasWrap').querySelector('canvas');
+  if(!canvas){toast('请先生成二维码');return}
+  var a=document.createElement('a');
+  a.href=canvas.toDataURL('image/png');a.download=name;
+  document.body.appendChild(a);a.click();
+  setTimeout(function(){a.remove()},500);
+  toast('PNG 已下载');
+}
+function copyQR(){
+  var canvas=$('qrCanvasWrap').querySelector('canvas');
+  if(!canvas){toast('请先生成二维码');return}
+  canvas.toBlob(function(blob){
+    if(navigator.clipboard&&navigator.clipboard.write){
+      var item=new ClipboardItem({'image/png':blob});
+      navigator.clipboard.write([item]).then(function(){toast('图片已复制到剪贴板')}).catch(function(){toast('复制失败，请用下载按钮')});
+    }else toast('当前浏览器不支持复制图片，请使用下载');
+  });
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])})}
+
+/* 自动预览 */
+var debounceTimer=null;
+$('qrText').addEventListener('input',function(){
+  clearTimeout(debounceTimer);
+  debounceTimer=setTimeout(function(){
+    if($('qrText').value.trim())generateQR();
+  },400);
+});
+$('qrSize').addEventListener('input',function(){if(currentQRData)generateQR()});
+$('qrEcc').addEventListener('change',function(){if($('qrText').value.trim())generateQR()});
+$('qrMargin').addEventListener('change',function(){if($('qrText').value.trim())generateQR()});
+$('qrFg').addEventListener('input',function(){if($('qrText').value.trim())generateQR()});
+$('qrBg').addEventListener('input',function(){if($('qrText').value.trim())generateQR()});
+$('qrLogo').addEventListener('change',function(){if($('qrText').value.trim())generateQR()});
+$('qrLogoColor').addEventListener('input',function(){if($('qrText').value.trim())generateQR()});
+document.addEventListener('keydown',function(e){
+  if((e.ctrlKey||e.metaKey)&&e.key==='Enter'&&$('panel-gen').classList.contains('active'))generateQR();
+});
+
+/* ---------- 解析查看 ---------- */
+var scanCanvas=null;
+function scanImageFromCanvas(canvas){
+  var w=canvas.width,h=canvas.height;
+  var maxDim=1200;
+  var scale=1;
+  if(Math.max(w,h)>maxDim)scale=maxDim/Math.max(w,h);
+  var c=document.createElement('canvas');
+  c.width=Math.round(w*scale);c.height=Math.round(h*scale);
+  var ctx=c.getContext('2d');
+  ctx.imageSmoothingEnabled=true;
+  ctx.drawImage(canvas,0,0,c.width,c.height);
+  scanCanvas=c;
+  try{
+    var imgData=ctx.getImageData(0,0,c.width,c.height);
+    var code=jsQR(imgData.data,c.width,c.height);
+    return code;
+  }catch(e){return null}
+}
+function showScanStatus(ok,html){
+  var s=$('scanStatus');
+  s.className='status '+(ok?'ok':'err');
+  s.innerHTML=html;
+  s.style.display='';
+}
+function processImageFile(file){
+  if(!file)return;
+  if(!/^image\//.test(file.type)){
+    showScanStatus(false,'<b>错误：</b>请选择图片文件');
+    return;
+  }
+  var url=URL.createObjectURL(file);
+  var img=new Image();
+  img.onload=function(){
+    scanCanvas=img;
+    var code=scanImageFromCanvas(img);
+    URL.revokeObjectURL(url);
+    if(code&&code.data){
+      showScanStatus(true,'<b>✓ 识别成功</b>，共 <b>'+code.binaryData.length+'</b> 个模块');
+      renderScanResult(code.data,img);
+    }else{
+      showScanStatus(false,'<b>✗ 未识别到二维码</b>，请尝试：旋转图片、放大二维码区域、提高清晰度');
+      renderScanResult(null,img);
+    }
+  };
+  img.onerror=function(){
+    URL.revokeObjectURL(url);
+    showScanStatus(false,'<b>错误：</b>图片加载失败');
+  };
+  img.src=url;
+}
+function renderScanResult(content,img){
+  var box=$('scanResult');
+  var html='';
+  if(img&&img.src){
+    html+='<img class="scan-img" src="'+img.src+'" alt="扫描图片" style="max-width:180px">';
+  }
+  if(content!==null){
+    html+='<div class="scan-content">'+escapeHtml(content)+'</div>';
+    html+='<div class="scan-meta">'+
+      '<div class="stat"><div class="v">'+(content.length>1024?formatKB(content.length):content.length)+'</div><div class="n">字符数</div></div>'+
+      '<div class="stat"><div class="v">'+detectType(content)+'</div><div class="n">内容类型</div></div>'+
+      '</div>';
+    html+='<div class="btn-group" style="margin-top:12px">';
+    if(/^https?:\/\//i.test(content)){
+      html+='<a class="btn primary" href="'+escapeHtml(content)+'" target="_blank" rel="noopener">打开链接</a>';
+    }
+    html+='<button class="btn" onclick="copyScan(\''+escapeHtml(content).replace(/'/g,'&#39;')+'\')">复制内容</button>';
+    if(/^WIFI:/i.test(content)){
+      var m=content.match(/S:([^;]*);/);
+      if(m)html+='<button class="btn" onclick="connectWifi(\''+escapeHtml(m[1])+'\')">连接 Wi-Fi</button>';
+    }
+    html+='</div>';
+  }else{
+    html+='<div class="empty-hint" style="padding:20px;color:var(--faint);text-align:center">暂未识别到二维码内容</div>';
+  }
+  box.innerHTML=html;
+}
+function formatKB(n){
+  if(n>=1000)return (n/1000).toFixed(1)+'K';
+  return String(n);
+}
+function detectType(c){
+  if(/^https?:\/\//i.test(c))return '链接';
+  if(/^WIFI:/i.test(c))return 'Wi-Fi';
+  if(/^BEGIN:VCARD/i.test(c))return '名片';
+  if(/^mailto:/i.test(c))return '邮件';
+  if(/^tel:/i.test(c))return '电话';
+  return '文本';
+}
+window.copyScan=function(c){
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(c).then(function(){toast('已复制')}).catch(function(){prompt('手动复制：',c)});
+  }else prompt('手动复制：',c);
+};
+window.connectWifi=function(ssid){
+  toast('请在系统 Wi-Fi 设置中手动连接：'+ssid);
+};
+
+/* 上传/拖拽 */
+$('scanFile').addEventListener('change',function(){
+  if(this.files[0])processImageFile(this.files[0]);
+  this.value='';
+});
+var scanDrop=$('scanDrop');
+scanDrop.addEventListener('dragover',function(e){e.preventDefault();scanDrop.classList.add('over')});
+scanDrop.addEventListener('dragleave',function(){scanDrop.classList.remove('over')});
+scanDrop.addEventListener('drop',function(e){
+  e.preventDefault();scanDrop.classList.remove('over');
+  var f=e.dataTransfer.files[0];
+  if(f)processImageFile(f);
+});
+window.pasteScan=function(){
+  if(!navigator.clipboard||!navigator.clipboard.read){
+    showScanStatus(false,'<b>提示：</b>当前浏览器不支持剪贴板读取，请改用上传图片');
+    return;
+  }
+  navigator.clipboard.read().then(function(items){
+    for(var i=0;i<items.length;i++){
+      var it=items[i];
+      if(it.types.indexOf('image/png')>=0||it.types.indexOf('image/jpeg')>=0){
+        it.getType(it.types[0]).then(function(blob){
+          processImageFile(blob);
+        });
+        return;
+      }
+    }
+    showScanStatus(false,'<b>提示：</b>剪贴板中没有图片');
+  }).catch(function(){
+    showScanStatus(false,'<b>提示：</b>读取剪贴板失败（可能需要 HTTPS 或授权），请改用上传图片');
+  });
+};
+window.clearScan=function(){
+  $('scanResult').innerHTML='';
+  $('scanStatus').style.display='none';
+  toast('已清空');
+};
+</script>
+</body>
+</html>
