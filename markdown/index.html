@@ -228,12 +228,12 @@ body{
   </div>
 
   <div class="footer">
-    <a href="https://www.justgame.top" target="_blank" rel="noopener">星汉灿烂</a> · Markdown 编辑器 · 基于 marked.js 开源库，内容仅在本地处理
+    <a href="https://www.justgame.top" target="_blank" rel="noopener">星汉灿烂</a> · Markdown 编辑器 · 自研渲染器，内容仅在本地处理
   </div>
 </div>
 <div class="toast" id="toast"></div>
 
-<script src="marked.min.js"></script>
+
 <script>
 (function(){
   var THEME_KEY='mdToolTheme';
@@ -257,15 +257,6 @@ function toast(msg){
   clearTimeout(t._t);t._t=setTimeout(function(){t.style.opacity='0'},2000);
 }
 
-/* marked 配置 */
-marked.setOptions({
-  gfm:true,
-  breaks:true,
-  tables:true,
-  smartLists:true,
-  highlight:function(code){return code}
-});
-
 /* 渲染 */
 function render(){
   var src=$('mdInput').value;
@@ -273,7 +264,7 @@ function render(){
   if(!src.trim()){
     preview.innerHTML='<div class="empty-preview">等待输入…</div>';
   }else{
-    preview.innerHTML=marked.parse(src);
+    preview.innerHTML=window.markdownParse(src);
     postProcess(preview);
   }
   updateCount();
@@ -390,7 +381,7 @@ function fullHTML(body){
 function getRenderedHTML(){
   var src=$('mdInput').value;
   if(!src.trim()){toast('内容为空');return null}
-  return marked.parse(src);
+  return window.markdownParse(src);
 }
 function exportMarkdown(){
   var src=$('mdInput').value;
@@ -454,6 +445,344 @@ var SAMPLE='# 欢迎使用 Markdown 编辑器\n\n这里支持 **完整 Markdown 
 /* 初始化 */
 $('mdInput').addEventListener('input',updateCount);
 render();
+</script>
+</body>
+
+<script>
+// 自研轻量 Markdown 渲染器（替换 marked.min.js，支持 GFM：标题/粗斜体/列表/表格/代码块/引用/任务列表/链接）
+// 自研 Markdown 渲染器（替换 marked.min.js）
+// 支持：标题/粗斜体/删除线/行内代码/链接/图片/自动链接/无序有序列表/嵌套列表/任务列表/引用/围栏代码块/表格/水平线/换行(breaks)
+function markdownEscapeHtml(s){
+  return String(s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
+
+function safeUrl(url){
+  url=String(url||'').trim();
+  if(!url) return '';
+  var lower=url.toLowerCase();
+  if(/^(https?|mailto|tel):/i.test(lower)) return url;
+  if(/^#/.test(url)||/^\//.test(url)) return url;
+  if(/^(data:image\/(png|jpe?g|gif|webp);)/i.test(lower)) return url;
+  return '';
+}
+
+// 行内解析：代码、图片、链接、自动链接、粗体、斜体、删除线
+function markdownInline(src){
+  src=src||'';
+  var out='';
+  var i=0;
+  var codeRe=/`{1,3}([^`]*)`/;
+  // 先保护行内代码
+  var codeSpans=[];
+  src=src.replace(/`{1,3}([^`]+?)`{1,3}/g,function(m,code){
+    codeSpans.push('<code>'+markdownEscapeHtml(code)+'</code>');
+    return '\u0000C'+(codeSpans.length-1)+'\u0000';
+  });
+  // 图片 ![alt](url "title")
+  src=src.replace(/!\[([^\]]*)\]\(([^)]*)\)/g,function(m,alt,rest){
+    var parts=splitLink(rest);
+    var url=safeUrl(parts[0]);
+    var title=parts[1]?' title="'+markdownEscapeHtml(parts[1])+'"':'';
+    return url?('<img src="'+markdownEscapeHtml(url)+'" alt="'+markdownEscapeHtml(alt)+'"'+title+'/>'):m;
+  });
+  // 链接 [text](url "title")
+  src=src.replace(/\[([^\]]*)\]\(([^)]*)\)/g,function(m,text,rest){
+    var parts=splitLink(rest);
+    var url=safeUrl(parts[0]);
+    if(!url) return m;
+    var title=parts[1]?' title="'+markdownEscapeHtml(parts[1])+'"':'';
+    return '<a href="'+markdownEscapeHtml(url)+'"'+title+'>'+markdownInline(text)+'</a>';
+  });
+  // 自动链接 http/https
+  src=src.replace(/(^|[\s(])(https?:\/\/[^\s<>()]+)/g,function(m,pre,url){
+    var clean=url.replace(/[.,;:!?]+$/,'');
+    return pre+'<a href="'+markdownEscapeHtml(clean)+'" target="_blank" rel="noopener">'+markdownEscapeHtml(clean)+'</a>';
+  });
+  // 粗体 **text**
+  src=src.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+  // 删除线 ~~text~~
+  src=src.replace(/~~([^~]+)~~/g,'<del>$1</del>');
+  // 斜体 *text* 或 _text_
+  src=src.replace(/(^|[^*\w])\*([^*\s][^*]*?)\*(?!\*)/g,'$1<em>$2</em>');
+  src=src.replace(/(^|[\s_(])\_([^_\s][^_]*?)\_(?=[\s_.)]|$)/g,'$1<em>$2</em>');
+  // 还原代码 spans
+  src=src.replace(/\u0000C(\d+)\u0000/g,function(m,d){return codeSpans[+d]||m;});
+  return src;
+}
+
+function splitLink(rest){
+  rest=rest||'';
+  var m=rest.match(/^\s*(\S+?)\s+(?:"([^"]*)"|'([^']*)'|\(([^)]*)\))\s*$/);
+  if(m) return [m[1],m[2]||m[3]||m[4]||''];
+  return [rest.trim(),''];
+}
+
+function leadingSpaces(line){
+  var n=0;
+  while(n<line.length&&line.charAt(n)===' ') n++;
+  return n;
+}
+
+var listItemRe=/^([-*+]|\d+\.)\s+/;
+
+// 块级解析（多行输入）
+function markdownBlocks(src){
+  src=String(src||'').replace(/\r\n?/g,'\n');
+  var lines=src.split('\n');
+  var out=[];
+  var i=0;
+  while(i<lines.length){
+    var line=lines[i];
+    var trimmed=line.trim();
+
+    // 围栏代码块
+    var fm=trimmed.match(/^```(\S*)\s*$/);
+    if(fm){
+      var lang=fm[1];
+      var code=[];
+      i++;
+      while(i<lines.length&&!/^\s*```\s*$/.test(lines[i])){
+        code.push(lines[i]); i++;
+      }
+      if(i<lines.length) i++; // skip closing
+      var cls=lang?(' class="language-'+markdownEscapeHtml(lang)+'"'):'';
+      out.push('<pre class="code-block"><code'+cls+'>'+markdownEscapeHtml(code.join('\n'))+'</code></pre>');
+      continue;
+    }
+
+    // 标题
+    var hm=trimmed.match(/^(#{1,6})\s+(.*)$/);
+    if(hm){
+      var level=hm[1].length;
+      out.push('<h'+level+'>'+markdownInline(hm[2])+'</h'+level+'>');
+      i++;
+      continue;
+    }
+
+    // 水平线
+    if(/^(\s*)(-{3,}|\*{3,}|_{3,})(\s*)$/.test(trimmed)){
+      out.push('<hr>'); i++; continue;
+    }
+
+    // 引用块
+    if(trimmed.startsWith('>')){
+      var quote=[];
+      while(i<lines.length){
+        var t=lines[i];
+        var tt=t.trim();
+        if(tt.startsWith('>')){
+          quote.push(tt.replace(/^>\s?/,''));
+          i++;
+        }else if(tt===''){
+          // 空行：若后一行还是引用则跳过
+          if(i+1<lines.length&&lines[i+1].trim().startsWith('>')){
+            i++;
+          }else break;
+        }else break;
+      }
+      out.push('<blockquote>'+markdownBlocks(quote.join('\n'))+'</blockquote>');
+      continue;
+    }
+
+    // 表格：当前行含 | 且下一行为分隔行
+    if(trimmed.indexOf('|')>=0&&i+1<lines.length){
+      var sepLine=lines[i+1].trim();
+      var sepRe=/^\s*\|?[\s:|-]*\|[\s:|-]*\s*$/;
+      if(sepRe.test(sepLine)&&/-{1,}/.test(sepLine)&&!/^[-:|\s]+$/.test(trimmed)){
+        var headerCells=splitTableRow(trimmed);
+        var aligns=splitTableRow(sepLine).map(function(c){
+          c=c.trim();
+          if(/^:.*:$/.test(c)) return 'center';
+          if(/^:/.test(c)) return 'left';
+          if(/:$/.test(c)) return 'right';
+          return '';
+        });
+        var rows=[];
+        i+=2;
+        while(i<lines.length&&lines[i].trim()!==''&&lines[i].trim().indexOf('|')>=0){
+          rows.push(splitTableRow(lines[i].trim()));
+          i++;
+        }
+        var h='<table><thead><tr>';
+        for(var ci=0;ci<headerCells.length;ci++){
+          var al=aligns[ci]?(' style="text-align:'+aligns[ci]+'"'):'';
+          h+='<th'+al+'>'+markdownInline(headerCells[ci].trim())+'</th>';
+        }
+        h+='</tr></thead><tbody>';
+        for(var ri=0;ri<rows.length;ri++){
+          h+='<tr>';
+          for(ci=0;ci<rows[ri].length;ci++){
+            var al2=aligns[ci]?(' style="text-align:'+aligns[ci]+'"'):'';
+            h+='<td'+al2+'>'+markdownInline(rows[ri][ci].trim())+'</td>';
+          }
+          h+='</tr>';
+        }
+        h+='</tbody></table>';
+        out.push(h);
+        continue;
+      }
+    }
+
+    // 列表
+    if(listItemRe.test(trimmed)){
+      var listHtml=parseList(lines,i,0);
+      out.push(listHtml.html);
+      i=listHtml.next;
+      continue;
+    }
+
+    // 空行
+    if(trimmed===''){ i++; continue; }
+
+    // 段落（收集连续非空行，breaks 模式换行变 <br>）
+    var para=[];
+    while(i<lines.length){
+      var pl=lines[i];
+      var pt=pl.trim();
+      if(pt==='') break;
+      if(/^(#{1,6})\s+/.test(pt)) break;
+      if(listItemRe.test(pt)) break;
+      if(/^```/.test(pt)) break;
+      if(/^>/.test(pt)) break;
+      if(/^(\s*)(-{3,}|\*{3,}|_{3,})(\s*)$/.test(pt)) break;
+      if(/^```/.test(pt)) break;
+      if(pt.indexOf('|')>=0&&i+1<lines.length){
+        var sl=lines[i+1].trim();
+        if(/^\s*\|?[\s:|-]*\|[\s:|-]*\s*$/.test(sl)&&/-{1,}/.test(sl)) break;
+      }
+      para.push(pl);
+      i++;
+    }
+    var paraHtml=para.map(function(p){return markdownInline(p)}).join('<br>');
+    out.push('<p>'+paraHtml+'</p>');
+  }
+  return out.join('\n');
+}
+
+function splitTableRow(row){
+  row=row.trim();
+  if(row.charAt(0)==='|') row=row.slice(1);
+  if(row.charAt(row.length-1)==='|') row=row.slice(0,-1);
+  var cells=[],cur='',esc=false;
+  for(var i=0;i<row.length;i++){
+    var ch=row.charAt(i);
+    if(esc){cur+=ch;esc=false;continue;}
+    if(ch==='\\'){esc=true;continue;}
+    if(ch==='|'){cells.push(cur);cur='';continue;}
+    cur+=ch;
+  }
+  cells.push(cur);
+  return cells;
+}
+
+// 解析列表（支持嵌套）
+function parseList(lines, idx, minIndent){
+  var i=idx;
+  var listStack=[]; // {type, items, indent}
+  var html='';
+  function closeList(stack){
+    var s='';
+    for(var k=stack.length-1;k>=0;k--){
+      var t=stack[k].type==='ol'?'<ol>':'<ul>';
+      s=t+stack[k].items.join('')+(stack[k].type==='ol'?'</ol>':'</ul>')+s;
+    }
+    return s;
+  }
+  while(i<lines.length){
+    var line=lines[i];
+    var indent=leadingSpaces(line);
+    var trimmed=line.trim();
+    if(trimmed===''){
+      // 空行：若后行是更深缩进列表内容则继续，否则结束当前层级
+      if(i+1<lines.length){
+        var nxt=lines[i+1];
+        var nIndent=leadingSpaces(nxt);
+        var nTrim=nxt.trim();
+        if(nTrim!==''&&nIndent>indent){
+          i++;
+          continue;
+        }
+      }
+      break;
+    }
+    var lm=trimmed.match(listItemRe);
+    if(lm&&indent>=minIndent){
+      var type=lm[1].length===1?'ul':'ol';
+      var contentAfter=trimmed.slice(lm[0].length);
+      // 对齐列表栈
+      while(listStack.length&&listStack[listStack.length-1].indent>indent){
+        listStack.pop();
+      }
+      if(!listStack.length||listStack[listStack.length-1].indent<indent||listStack[listStack.length-1].type!==type){
+        listStack.push({type:type,indent:indent,items:[]});
+      }
+      // 收集该项的子内容（续行或嵌套列表，所有缩进更深的行都归入）
+      var itemLines=[contentAfter];
+      i++;
+      while(i<lines.length){
+        var l2=lines[i];
+        var t2=l2.trim();
+        if(t2===''){
+          if(i+1<lines.length){
+            var n2=lines[i+1];
+            var n2i=leadingSpaces(n2);
+            if(n2.trim()!==''&&n2i>indent){
+              itemLines.push('');
+              i++;
+              continue;
+            }
+          }
+          break;
+        }
+        var i2=leadingSpaces(l2);
+        if(i2>indent){
+          itemLines.push(l2.slice(Math.min(i2, indent+lm[0].length)));
+          i++;
+        }else{
+          break; // 同级或更浅缩进：结束该项
+        }
+      }
+      // 渲染项内容：可能含嵌套列表
+      var hasNested=false;
+      for(var ni=1;ni<itemLines.length;ni++){
+        if(itemLines[ni].trim()!==''){ hasNested=true; break; }
+      }
+      var itemHtml, liHtml;
+      var taskMatch=itemLines[0].match(/^\[([ xX])\]\s+(.*)$/);
+      if(!hasNested){
+        // 单行项：直接行内渲染，任务列表特殊处理
+        if(taskMatch){
+          var checked=taskMatch[1].toLowerCase()==='x';
+          var taskContent=markdownInline(taskMatch[2]);
+          liHtml='<li class="task-list-item"><input type="checkbox" disabled'+(checked?' checked':'')+'> '+taskContent+'</li>';
+        }else{
+          liHtml='<li>'+markdownInline(itemLines[0])+'</li>';
+        }
+      }else{
+        // 主体单行文本 + 嵌套内容：主体行内渲染，嵌套内容块级渲染
+        var restLines=itemLines.slice(1);
+        var restHtml=markdownBlocks(restLines.join('\n')).trim();
+        var bodyHtml=markdownInline(itemLines[0]);
+        if(taskMatch){
+          var checked2=taskMatch[1].toLowerCase()==='x';
+          liHtml='<li class="task-list-item"><input type="checkbox" disabled'+(checked2?' checked':'')+'> '+bodyHtml+' '+restHtml+'</li>';
+        }else{
+          liHtml='<li>'+bodyHtml+' '+restHtml+'</li>';
+        }
+      }
+      listStack[listStack.length-1].items.push(liHtml);
+      continue;
+    }
+    break;
+  }
+  html+=closeList(listStack);
+  return {html:html,next:i};
+}
+
+window.markdownParse=function(src){return markdownBlocks(src)};
+
 </script>
 </body>
 </html>
