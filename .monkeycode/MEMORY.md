@@ -156,5 +156,7 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - 工具子站独立目录（`json/`、`qrcode/`、`markdown/`），单文件 `index.html`，自包含内联 CSS/JS + 主题切换（dark/light 存 localStorage）
   - 新增工具子站后必须同步修改：`nav.json`（新分类或分类 items）、`sw.js`（CORE 缓存列表 + 升级 CACHE 版本号）、首页 `index.html` 的 `.seo-links`、`sitemap.xml`
   - **CSP 关键限制**：站点 `_headers` 的 CSP 为 `script-src 'self' 'unsafe-inline'`（无 `unsafe-eval`），工具代码禁止使用 `eval`/`new Function`/`Function()`，否则部署到 Cloudflare Pages 后会被 CSP 拦截
-  - 第三方 JS 库必须下载到本地子站目录（CDN 会被 CSP `'self'` 拦截）：二维码用 `qrcode-generator.js` + `jsqr.js`（unpkg），Markdown 用 `marked.min.js`（jsdelivr）
+  - 第三方 JS 库必须下载到本地子站目录（CDN 会被 CSP `'self'` 拦截）
+  - **去依赖策略（2026-08-13 定稿）**：允许使用三方库但注意版权合规；三方库必须本地化（不能引 CDN），若上游变化本地文件仍可继续使用。已用自研替换并删除：`qrcode-generator.js`（自研 `qr-encoder.js` 兼容 `window.qrcode()` API）、`marked.min.js`（自研渲染器暴露 `window.markdownParse()`）；仅保留 `jsqr.js`（图像解码，自研不现实，footer 已注明来源）
   - 内联 JS 语法验证方法：`node -e "new Function(script)"`；函数引用完整性检查：提取所有 `onclick/onchange/oninput` 引用的函数名，与文件内函数声明比对
+  - **嵌入自研脚本陷阱**：`python .replace('</body>', ...)` 会误替换 JS 字符串字面量里的 `</body>`（如导出模板 `'...'+body+'\n</body>\n</html>'`），破坏字符串；正确做法是锚定文件末尾真实的 `</script>\n</body>\n</html>`，先剥离末尾 `</html>` 再拼接，且自研脚本内不得含 `</script>` 字面量
