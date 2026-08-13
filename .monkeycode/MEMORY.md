@@ -147,3 +147,14 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - 本容器无中文字体、无 ImageMagick/matplotlib、无 headless 浏览器，PIL 直接渲染中文会失败
   - 生成含中文的图标前先下载字体：`curl -sL -o /tmp/opencode/fonts/fandol-song.otf "https://mirrors.tuna.tsinghua.edu.cn/CTAN/fonts/fandol/FandolSong-Regular.otf"`，再用 `ImageFont.truetype(路径, 字号)` 加载绘制
   - 验证图标渲染是否成功：检查 PNG 中心区域是否有白色（文字）像素分布
+
+[本地工具子站构建模式]
+- Date: 2026-08-13
+- Context: Agent 新增 JSON/二维码/Markdown 三个本地工具子站时发现
+- Category: 构建方法
+- Instructions:
+  - 工具子站独立目录（`json/`、`qrcode/`、`markdown/`），单文件 `index.html`，自包含内联 CSS/JS + 主题切换（dark/light 存 localStorage）
+  - 新增工具子站后必须同步修改：`nav.json`（新分类或分类 items）、`sw.js`（CORE 缓存列表 + 升级 CACHE 版本号）、首页 `index.html` 的 `.seo-links`、`sitemap.xml`
+  - **CSP 关键限制**：站点 `_headers` 的 CSP 为 `script-src 'self' 'unsafe-inline'`（无 `unsafe-eval`），工具代码禁止使用 `eval`/`new Function`/`Function()`，否则部署到 Cloudflare Pages 后会被 CSP 拦截
+  - 第三方 JS 库必须下载到本地子站目录（CDN 会被 CSP `'self'` 拦截）：二维码用 `qrcode-generator.js` + `jsqr.js`（unpkg），Markdown 用 `marked.min.js`（jsdelivr）
+  - 内联 JS 语法验证方法：`node -e "new Function(script)"`；函数引用完整性检查：提取所有 `onclick/onchange/oninput` 引用的函数名，与文件内函数声明比对

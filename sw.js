@@ -1,4 +1,4 @@
-const CACHE = 'navsite-v5';
+const CACHE = 'navsite-v6';
 const CORE = [
   './',
   './index.html',
@@ -11,6 +11,15 @@ const CORE = [
   './jianfen/',
   './jianfen/index.html',
   './jianfen/data.js',
+  './json/',
+  './json/index.html',
+  './qrcode/',
+  './qrcode/index.html',
+  './qrcode/qrcode-generator.js',
+  './qrcode/jsqr.js',
+  './markdown/',
+  './markdown/index.html',
+  './markdown/marked.min.js',
   './nav.json',
   './404.html',
   './manifest.webmanifest',

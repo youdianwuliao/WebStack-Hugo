@@ -1,6 +1,30 @@
 {
   "navigation": [
     {
+      "category": "实用工具",
+      "sidebarIcon": "far fa-star",
+      "items": [
+        {
+          "title": "JSON 工具箱",
+          "icon": "/assets/images/logos/json.svg",
+          "url": "./json/",
+          "description": "JSON 格式化、校验、对比、路径解析，纯本地处理"
+        },
+        {
+          "title": "二维码工具",
+          "icon": "/assets/images/logos/qrcode.svg",
+          "url": "./qrcode/",
+          "description": "二维码生成与解析查看，支持自定义颜色和 Logo"
+        },
+        {
+          "title": "Markdown 编辑器",
+          "icon": "/assets/images/logos/markdown.svg",
+          "url": "./markdown/",
+          "description": "Markdown 实时预览编辑，一键导出 HTML / MD"
+        }
+      ]
+    },
+    {
       "category": "常用推荐",
       "sidebarIcon": "far fa-star",
       "items": [
