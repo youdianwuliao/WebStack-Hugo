@@ -160,4 +160,14 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - **去依赖策略（2026-08-13 定稿）**：允许使用三方库但注意版权合规；三方库必须本地化（不能引 CDN），若上游变化本地文件仍可继续使用。已用自研替换并删除：`qrcode-generator.js`（自研 `qr-encoder.js` 兼容 `window.qrcode()` API）、`marked.min.js`（自研渲染器暴露 `window.markdownParse()`）；仅保留 `jsqr.js`（图像解码，自研不现实，footer 已注明来源）
   - **新站技术选型**：`encode/` 用 Web Crypto 原生实现 RSA-OAEP（PEM 编解码自写）+ 自研 MD5（Web Crypto 无 MD5）；`image/` 全 canvas 处理，证件照用四角取色 + 颜色距离阈值做背景替换
   - 内联 JS 语法验证方法：`node -e "new Function(script)"`；函数引用完整性检查：提取所有 `onclick/onchange/oninput` 引用的函数名，与文件内 `window.xxx=` 声明比对（旧站用 IIFE 内 `function xxx(){}`，新站统一 `window.xxx=`）
-  - **嵌入自研脚本陷阱**：`python .replace('</body>', ...)` 会误替换 JS 字符串字面量里的 `</body>`（如导出模板 `'...'+body+'\n</body>\n</html>'`），破坏字符串；正确做法是锚定文件末尾真实的 `</script>\n</body>\n</html>`，先剥离末尾 `</html>` 再拼接，且自研脚本内不得含 `</script>` 字面量
+   - **嵌入自研脚本陷阱**：`python .replace('</body>', ...)` 会误替换 JS 字符串字面量里的 `</body>`（如导出模板 `'...'+body+'\n</body>\n</html>'`），破坏字符串；正确做法是锚定文件末尾真实的 `</script>\n</body>\n</html>`，先剥离末尾 `</html>` 再拼接，且自研脚本内不得含 `</script>` 字面量
+
+[canvas 大图处理边界 - 排错知识]
+- Date: 2026-08-14
+- Context: Agent 修复图片水印"生成结果裂开 + 下载无效果"反馈时发现
+- Category: 排错调试
+- Instructions:
+  - **canvas 超限根因**：`canvas.toBlob` 在 canvas 尺寸超过浏览器限制（Chrome 面积上限约 16384×16384，经验阈值 3200 万像素内安全）时回调返回 `null`；对 `null` 调 `URL.createObjectURL(null)` 会抛 TypeError，中断后续代码 → 结果图 src 设置失败（显示裂开）、下载按钮逻辑卡死
+  - **统一解法**：`image/` 站新增 `makeCanvas(img)` 工厂，按 `MAX_PIXELS=32000000` 等比缩放后再绘制（`scale=Math.min(1,Math.sqrt(MAX_PIXELS/(w*h)))`），缩放时 toast 提示；`finishWatermark` 对 null blob 做兜底提示"图片尺寸超出浏览器处理上限"
+  - **扩展名剥除陷阱**：`wmData.fileName=f.name.replace(/\.[^.]+$/,'')` 已去掉扩展名，后续再 `.match(/\.(jpg|jpeg)$/i)` 判断格式恒为 false；需另存 `wmData.origName=f.name` 用于格式判断，`fileName` 只作下载前缀
+  - **验证方法**：puppeteer + `http://localhost` 实测（file:// 亦可）；下载验证用 CDP `Browser.setDownloadBehavior` 指定下载目录后点按钮，再对下载文件与原始输入做像素差分（>40 阈值计数）确认水印已绘制
