@@ -862,16 +862,25 @@ body{
     var canvas=makeCanvas(wmData.img);
     var ctx=canvas.getContext('2d');
     ctx.drawImage(wmData.img,0,0);
+    var font='bold '+size+'px -apple-system,"PingFang SC","Microsoft YaHei",sans-serif';
+    var tw=ctx.measureText(text).width;
+    var gap=size*1.4;
+    var cw=Math.ceil(tw+gap),ch=Math.ceil(size+gap);
+    var cell=document.createElement('canvas');
+    cell.width=cw;cell.height=ch;
+    var t=cell.getContext('2d');
+    t.font=font;
+    t.fillStyle=color;
+    t.textBaseline='middle';
+    t.textAlign='center';
+    t.translate(cw/2,ch/2);
+    if(rotate)t.rotate(rotate*Math.PI/180);
+    t.fillText(text,0,0);
     ctx.save();
     ctx.globalAlpha=opacity;
-    ctx.fillStyle=color;
-    ctx.font='bold '+size+'px -apple-system,"PingFang SC","Microsoft YaHei",sans-serif';
-    ctx.textBaseline='middle';
-    if(rotate)ctx.rotate(rotate*Math.PI/180);
-    var spacing=size*3.2;
-    for(var y=0;y<canvas.height;y+=spacing){
-      for(var x=0;x<canvas.width;x+=spacing){
-        ctx.fillText(text,x,y);
+    for(var y=0;y<canvas.height;y+=ch){
+      for(var x=0;x<canvas.width;x+=cw){
+        ctx.drawImage(cell,x,y);
       }
     }
     ctx.restore();
