@@ -435,6 +435,12 @@
           "icon": "/assets/images/logos/opencode.svg",
           "url": "https://opencode.ai/",
           "description": "开源AI编码助手，支持75+模型，终端/IDE/桌面端使用"
+        },
+        {
+          "title": "MongoDB",
+          "icon": "/assets/images/logos/mongodb.png",
+          "url": "https://www.mongodb.com/zh-cn",
+          "description": "开源文档型数据库，提供 Atlas 云服务，支持向量搜索与 AI 应用开发"
         }
       ]
     },
