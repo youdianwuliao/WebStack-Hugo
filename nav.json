@@ -21,6 +21,18 @@
           "icon": "/assets/images/logos/markdown.svg",
           "url": "./markdown/",
           "description": "Markdown 实时预览编辑，一键导出 HTML / MD"
+        },
+        {
+          "title": "编码加密工具",
+          "description": "Base64 编解码、MD5/SHA 哈希、RSA 加解密，纯本地处理",
+          "icon": "/assets/images/logos/encode.svg",
+          "url": "./encode/"
+        },
+        {
+          "title": "图片工具",
+          "description": "图片压缩、裁剪、证件照制作，纯本地处理",
+          "icon": "/assets/images/logos/image.svg",
+          "url": "./image/"
         }
       ]
     },
