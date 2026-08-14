@@ -863,9 +863,14 @@ body{
     var ctx=canvas.getContext('2d');
     ctx.drawImage(wmData.img,0,0);
     var font='bold '+size+'px -apple-system,"PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.font=font;
     var tw=ctx.measureText(text).width;
-    var gap=size*1.4;
-    var cw=Math.ceil(tw+gap),ch=Math.ceil(size+gap);
+    var th=size;
+    var rad=rotate*Math.PI/180;
+    var rw=Math.abs(tw*Math.cos(rad))+Math.abs(th*Math.sin(rad));
+    var rh=Math.abs(tw*Math.sin(rad))+Math.abs(th*Math.cos(rad));
+    var gap=size*2;
+    var cw=Math.ceil(rw+gap),ch=Math.ceil(rh+gap);
     var cell=document.createElement('canvas');
     cell.width=cw;cell.height=ch;
     var t=cell.getContext('2d');
