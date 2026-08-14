@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>编码加密工具 - Base64 / 哈希 / RSA</title>
+<meta name="description" content="在线编码加密工具箱：Base64 编解码（含文件互转）、哈希计算（MD5/SHA-1/SHA-256/SHA-512，文本与文件）、RSA 密钥对生成与加解密（PEM 格式）。全程浏览器本地处理，隐私安全。">
+<meta property="og:title" content="编码加密工具 - Base64 / 哈希 / RSA">
+<meta property="og:description" content="在线 Base64、哈希、RSA 加解密工具，浏览器本地处理，隐私安全。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.justgame.top/encode/">
+<meta property="og:site_name" content="星汉灿烂">
+<meta name="theme-color" content="#4a90d9">
+<link rel="canonical" href="https://www.justgame.top/encode/">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/images/icon-192.png">
+<style>
+:root{
+  --bg1:#0b1020; --bg2:#141a33; --bg3:#0d1b2a;
+  --card:rgba(255,255,255,.055);
+  --card-border:rgba(255,255,255,.1);
+  --card-hover:rgba(255,255,255,.09);
+  --text:#e8ecf4; --muted:#9aa4c0; --faint:#6b7390;
+  --accent:#4a90d9; --accent2:#818cf8; --gold:#fbbf24;
+  --green:#34d399; --red:#f87171; --orange:#fb923c;
+  --grad:linear-gradient(135deg,#4a90d9,#818cf8);
+  --shadow:0 10px 40px rgba(0,0,0,.35);
+  --chip-bg:rgba(255,255,255,.06);
+  --chip-bg-active:linear-gradient(135deg,rgba(74,144,217,.2),rgba(129,140,248,.2));
+  --code-bg:#0e1526;
+}
+.light{
+  --bg1:#eef2fb; --bg2:#ffffff; --bg3:#e2e9f8;
+  --card:#ffffff; --card-border:#e2e8f0; --card-hover:#f1f5ff;
+  --text:#1e2a44; --muted:#5b6574; --faint:#8a93ab;
+  --chip-bg:#eef2fb;
+  --chip-bg-active:linear-gradient(135deg,#dbeafe,#e0e7ff);
+  --shadow:0 10px 30px rgba(30,58,95,.08);
+  --code-bg:#f6f8fa;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',monospace,sans-serif;
+  background:linear-gradient(160deg,var(--bg1),var(--bg2) 45%,var(--bg3));
+  background-attachment:fixed;
+  color:var(--text); min-height:100vh; line-height:1.65;
+  transition:background .3s,color .3s;
+}
+.wrap{max-width:1180px;margin:0 auto;padding:18px 16px 60px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-logo{
+  width:42px;height:42px;border-radius:12px;background:var(--grad);
+  display:flex;align-items:center;justify-content:center;color:#fff;
+  font-weight:800;font-size:19px;box-shadow:0 6px 18px rgba(74,144,217,.35);flex-shrink:0;
+}
+.brand h1{font-size:19px;font-weight:700;letter-spacing:.5px}
+.brand .sub{font-size:12px;color:var(--faint);margin-top:2px}
+.top-actions{display:flex;gap:8px}
+.icon-btn{
+  width:38px;height:38px;border-radius:10px;border:1px solid var(--card-border);
+  background:var(--card);color:var(--muted);cursor:pointer;font-size:16px;
+  display:flex;align-items:center;justify-content:center;transition:.2s;
+}
+.icon-btn:hover{background:var(--card-hover);color:var(--text)}
+.tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.tab{
+  flex:1;min-width:150px;padding:11px 8px;border-radius:12px;border:1px solid var(--card-border);
+  background:var(--card);color:var(--muted);font-size:14px;cursor:pointer;transition:.2s;
+  text-align:center;font-weight:600;
+}
+.tab:hover{color:var(--text)}
+.tab.active{background:var(--chip-bg-active);color:var(--text);border-color:transparent;box-shadow:inset 0 0 0 1px rgba(74,144,217,.35)}
+.tab .ic{font-size:15px;margin-right:6px}
+.panel{display:none}
+.panel.active{display:block}
+.card{
+  background:var(--card);border:1px solid var(--card-border);border-radius:18px;
+  padding:18px;box-shadow:var(--shadow);backdrop-filter:blur(6px);margin-bottom:16px;
+}
+.card-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.card-title h3{font-size:14px;font-weight:600}
+.card-title h3 .badge{font-size:11px;padding:2px 8px;border-radius:99px;background:var(--chip-bg);color:var(--faint);margin-left:6px;font-weight:400}
+.btn-group{display:flex;gap:8px;flex-wrap:wrap}
+.btn{
+  padding:8px 16px;border-radius:10px;border:1px solid var(--card-border);
+  background:var(--chip-bg);color:var(--muted);font-size:13px;cursor:pointer;transition:.2s;font-weight:500;
+}
+.btn:hover{color:var(--text);border-color:var(--accent);background:var(--card-hover)}
+.btn.primary{background:var(--grad);color:#fff;border-color:transparent}
+.btn.primary:hover{opacity:.88;color:#fff}
+.btn.green{background:linear-gradient(135deg,#10b981,#34d399);color:#fff;border-color:transparent}
+.btn.green:hover{opacity:.88;color:#fff}
+.btn.red{background:linear-gradient(135deg,#ef4444,#f87171);color:#fff;border-color:transparent}
+.btn.red:hover{opacity:.88;color:#fff}
+.btn.orange{background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#1e2a44;border-color:transparent}
+.btn.orange:hover{opacity:.88;color:#1e2a44}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+textarea{
+  width:100%;min-height:200px;resize:vertical;border-radius:12px;
+  border:1px solid var(--card-border);background:var(--code-bg);color:var(--text);
+  padding:14px;font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  line-height:1.6;transition:border-color .2s;
+}
+textarea:focus{outline:none;border-color:var(--accent)}
+textarea.small{min-height:130px}
+.lbl{font-size:12px;color:var(--faint);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.lbl .req{color:var(--red)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:760px){.row2{grid-template-columns:1fr}}
+.opts{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.opts label{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer}
+.opts input[type=number]{width:70px;padding:6px 8px;border-radius:8px;border:1px solid var(--card-border);background:var(--code-bg);color:var(--text);font-size:13px}
+.opts input[type=checkbox],.opts input[type=radio]{accent-color:var(--accent);width:15px;height:15px;cursor:pointer}
+.opts select{padding:7px 10px;border-radius:8px;border:1px solid var(--card-border);background:var(--code-bg);color:var(--text);font-size:13px}
+.status{display:flex;align-items:center;gap:8px;padding:11px 14px;border-radius:12px;font-size:13px;margin-bottom:12px;flex-wrap:wrap}
+.status.ok{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.4);color:var(--green)}
+.status.err{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.4);color:var(--red)}
+.status.info{background:rgba(74,144,217,.12);border:1px solid rgba(74,144,217,.4);color:var(--accent)}
+.status b{font-weight:700}
+.file-drop{
+  border:2px dashed var(--card-border);border-radius:12px;padding:16px;text-align:center;
+  color:var(--faint);font-size:13px;cursor:pointer;transition:.2s;margin-bottom:10px;
+}
+.file-drop:hover,.file-drop.over{border-color:var(--accent);color:var(--accent);background:var(--chip-bg)}
+.file-meta{font-size:12px;color:var(--muted);margin-top:8px}
+.toast{
+  position:fixed;left:50%;bottom:80px;transform:translateX(-50%);
+  background:rgba(30,58,95,.92);color:#fff;padding:9px 20px;border-radius:999px;
+  font-size:13px;z-index:999;box-shadow:0 6px 20px rgba(0,0,0,.2);
+  opacity:0;transition:opacity .3s;pointer-events:none;
+}
+.footer{text-align:center;font-size:11px;color:var(--faint);margin-top:24px}
+.footer a{color:var(--accent);text-decoration:none}
+.hash-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.hash-item{background:var(--chip-bg);border-radius:12px;padding:12px 14px}
+.hash-item .hname{font-size:12px;color:var(--faint);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
+.hash-item .hval{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;word-break:break-all;color:var(--text);line-height:1.5;min-height:20px}
+.hash-item .hcopy{font-size:11px;color:var(--accent);cursor:pointer;border:none;background:none;padding:2px 6px;border-radius:6px}
+.hash-item .hcopy:hover{background:var(--card-hover)}
+.key-box{
+  width:100%;min-height:120px;resize:vertical;border-radius:12px;
+  border:1px solid var(--card-border);background:var(--code-bg);color:var(--text);
+  padding:14px;font-size:11.5px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  line-height:1.5;transition:border-color .2s;white-space:pre;
+}
+.key-box:focus{outline:none;border-color:var(--accent)}
+.key-box.pub{min-height:80px}
+.rsa-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:760px){.rsa-grid{grid-template-columns:1fr}}
+.rsa-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.pem-tabs{display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap}
+.pem-tab{font-size:12px;padding:4px 12px;border-radius:8px;border:1px solid var(--card-border);background:var(--chip-bg);color:var(--muted);cursor:pointer}
+.pem-tab.active{background:var(--chip-bg-active);color:var(--text)}
+.key-status{font-size:12px;color:var(--faint);margin-top:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-logo">#_</div>
+      <div>
+        <h1>编码加密工具</h1>
+        <div class="sub">Base64 · 哈希 · RSA · 纯本地处理</div>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button class="icon-btn" onclick="window.open('../','_self')" title="返回导航">↩</button>
+      <button class="icon-btn" onclick="toggleTheme()" title="切换主题">◐</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="b64" onclick="switchTab('b64')"><span class="ic">🔡</span>Base64</button>
+    <button class="tab" data-tab="hash" onclick="switchTab('hash')"><span class="ic">#</span>哈希计算</button>
+    <button class="tab" data-tab="rsa" onclick="switchTab('rsa')"><span class="ic">🔑</span>RSA 加解密</button>
+  </div>
+
+  <!-- Base64 -->
+  <div class="panel active" id="panel-b64">
+    <div class="card">
+      <div class="card-title"><h3>Base64 编解码 <span class="badge">UTF-8 安全</span></h3></div>
+      <div class="row2">
+        <div>
+          <div class="lbl">输入文本</div>
+          <textarea id="b64Input" placeholder="输入要编码或解码的文本…"></textarea>
+        </div>
+        <div>
+          <div class="lbl">输出结果</div>
+          <textarea id="b64Output" readonly placeholder="结果将显示在这里…"></textarea>
+        </div>
+      </div>
+      <div class="opts">
+        <button class="btn primary" onclick="b64Encode()">编码 →</button>
+        <button class="btn green" onclick="b64Decode()">← 解码</button>
+        <button class="btn" onclick="swapB64()">⇄ 交换</button>
+        <button class="btn" onclick="copyEl('b64Output')">复制结果</button>
+        <button class="btn" onclick="clearEl('b64Input','b64Output')">清空</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><h3>文件转 Base64 <span class="badge">不经过服务器</span></h3></div>
+      <div class="file-drop" id="b64FileDrop">点击或拖拽文件到此处（图片 / PDF / 任意文件）</div>
+      <div class="file-meta" id="b64FileMeta"></div>
+      <textarea class="small" id="b64FileOut" readonly placeholder="文件的 Base64 数据将显示在这里…"></textarea>
+      <div class="opts">
+        <button class="btn primary" onclick="b64FileToText()">读取文件转 Base64</button>
+        <button class="btn green" onclick="b64TextToFile()">Base64 转回文件</button>
+        <button class="btn" onclick="copyEl('b64FileOut')">复制</button>
+        <button class="btn" onclick="clearEl('b64FileOut')">清空</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 哈希 -->
+  <div class="panel" id="panel-hash">
+    <div class="card">
+      <div class="card-title"><h3>文本哈希 <span class="badge">MD5 自研 · SHA 浏览器原生</span></h3></div>
+      <div class="lbl">输入文本</div>
+      <textarea id="hashInput" placeholder="输入要计算哈希的文本…"></textarea>
+      <div class="opts">
+        <button class="btn primary" onclick="hashText()">计算哈希</button>
+        <button class="btn" onclick="clearEl('hashInput')">清空</button>
+      </div>
+      <div class="hash-row" id="hashResults" style="margin-top:14px"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><h3>文件哈希 <span class="badge">校验完整性</span></h3></div>
+      <div class="file-drop" id="hashFileDrop">点击或拖拽文件到此处计算哈希</div>
+      <div class="file-meta" id="hashFileMeta"></div>
+      <div class="hash-row" id="hashFileResults" style="margin-top:14px"></div>
+    </div>
+  </div>
+
+  <!-- RSA -->
+  <div class="panel" id="panel-rsa">
+    <div class="card">
+      <div class="card-title"><h3>密钥对生成 <span class="badge">Web Crypto · RSA-OAEP</span></h3></div>
+      <div class="opts">
+        <button class="btn primary" onclick="genRsa()">生成 2048 位密钥对</button>
+        <button class="btn" onclick="copyEl('rsaPriv')">复制私钥</button>
+        <button class="btn" onclick="copyEl('rsaPub')">复制公钥</button>
+      </div>
+      <div class="lbl" style="margin-top:14px">私钥（PKCS#8 PEM，仅保存在本地）</div>
+      <textarea class="key-box" id="rsaPriv" readonly placeholder="生成后显示私钥…"></textarea>
+      <div class="lbl" style="margin-top:12px">公钥（SubjectPublicKeyInfo PEM）</div>
+      <textarea class="key-box pub" id="rsaPub" readonly placeholder="生成后显示公钥…"></textarea>
+      <div class="key-status" id="rsaKeyStatus">未生成密钥对</div>
+    </div>
+    <div class="card">
+      <div class="card-title"><h3>加密 / 解密 <span class="badge">OAEP SHA-256</span></h3></div>
+      <div class="rsa-toolbar">
+        <span class="lbl" style="margin-bottom:0">导入公钥：</span>
+        <div class="pem-tabs" id="pubPemTabs">
+          <button class="pem-tab active" onclick="selectPemTab('pub','fromGen')">使用生成的对</button>
+          <button class="pem-tab" onclick="selectPemTab('pub','pem')">粘贴 PEM</button>
+        </div>
+        <button class="btn green" onclick="importPub()">导入公钥</button>
+        <span class="key-status" id="pubStatus" style="margin-top:0">未导入</span>
+      </div>
+      <div class="key-box pub" id="pubPemBox" style="display:none;margin-top:10px" placeholder="粘贴公钥 PEM…"></div>
+      <div class="row2" style="margin-top:14px">
+        <div>
+          <div class="lbl">明文</div>
+          <textarea class="small" id="rsaPlain" placeholder="输入要加密的明文…"></textarea>
+          <div class="opts"><button class="btn primary" onclick="rsaEncrypt()">加密</button></div>
+        </div>
+        <div>
+          <div class="lbl">密文（Base64）</div>
+          <textarea class="small" id="rsaCipher" placeholder="加密结果（Base64）…"></textarea>
+          <div class="opts"><button class="btn orange" onclick="rsaDecrypt()">解密</button></div>
+        </div>
+      </div>
+      <div class="rsa-toolbar" style="margin-top:14px">
+        <span class="lbl" style="margin-bottom:0">解密用私钥：</span>
+        <div class="pem-tabs" id="privPemTabs">
+          <button class="pem-tab active" onclick="selectPemTab('priv','fromGen')">使用生成的对</button>
+          <button class="pem-tab" onclick="selectPemTab('priv','pem')">粘贴 PEM</button>
+        </div>
+        <button class="btn green" onclick="importPriv()">导入私钥</button>
+        <span class="key-status" id="privStatus" style="margin-top:0">未导入</span>
+      </div>
+      <div class="key-box pub" id="privPemBox" style="display:none;margin-top:10px" placeholder="粘贴私钥 PEM…"></div>
+      <div class="status info" style="margin-top:14px" id="rsaStatus">RSA 密钥与消息仅在本机处理，不会上传。2048 位 RSA-OAEP 每次加密的密文长度固定为 256 字节 Base64。明文长度受限于密钥长度（2048 位 OAEP 约 190 字符）。</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a href="https://www.justgame.top" target="_blank" rel="noopener">星汉灿烂</a> · 编码加密工具 · 数据仅在本地浏览器处理，不上传服务器
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  var THEME_KEY='encodeToolTheme';
+  function applyTheme(t){document.body.classList.toggle('light',t==='light')}
+  function initTheme(){
+    var s=localStorage.getItem(THEME_KEY);
+    if(s!==null){applyTheme(s)}
+    else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){applyTheme('dark')}
+  }
+  window.toggleTheme=function(){
+    var isLight=document.body.classList.contains('light');
+    applyTheme(isLight?'dark':'light');
+    localStorage.setItem(THEME_KEY,isLight?'dark':'light');
+  };
+  window.switchTab=function(name){
+    document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('active',t.dataset.tab===name)});
+    document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('active',p.id==='panel-'+name)});
+  };
+  var toastTimer;
+  window.toast=function(msg){
+    var el=document.getElementById('toast');
+    el.textContent=msg;el.style.opacity=1;
+    clearTimeout(toastTimer);
+    toastTimer=setTimeout(function(){el.style.opacity=0},1800);
+  };
+  window.copyEl=function(id){
+    var el=document.getElementById(id);
+    if(!el.value){window.toast('无内容可复制');return}
+    var ta=document.createElement('textarea');
+    ta.value=el.value;document.body.appendChild(ta);ta.select();
+    try{document.execCommand('copy')}catch(e){}
+    document.body.removeChild(ta);
+    window.toast('已复制');
+  };
+  window.clearEl=function(){
+    for(var i=0;i<arguments.length;i++){var el=document.getElementById(arguments[i]);if(el)el.value=''}
+  };
+  function fileToDataURL(file,onDone){
+    var r=new FileReader();
+    r.onload=function(){onDone(r.result.split(',')[1])};
+    r.onerror=function(){window.toast('读取文件失败')};
+    r.readAsDataURL(file);
+  }
+  function setupDrop(dropId,onFile){
+    var el=document.getElementById(dropId);
+    el.addEventListener('click',function(){
+      var inp=document.createElement('input');
+      inp.type='file';
+      inp.onchange=function(){if(inp.files&&inp.files[0])onFile(inp.files[0])};
+      inp.click();
+    });
+    ['dragenter','dragover'].forEach(function(ev){el.addEventListener(ev,function(e){e.preventDefault();el.classList.add('over')})});
+    ['dragleave','drop'].forEach(function(ev){el.addEventListener(ev,function(e){e.preventDefault();el.classList.remove('over')})});
+    el.addEventListener('drop',function(e){if(e.dataTransfer.files&&e.dataTransfer.files[0])onFile(e.dataTransfer.files[0])});
+  }
+  function fmtSize(n){
+    if(n<1024)return n+' B';
+    if(n<1048576)return (n/1024).toFixed(1)+' KB';
+    return (n/1048576).toFixed(2)+' MB';
+  }
+
+  /* ===== Base64 ===== */
+  window.b64Encode=function(){
+    var v=document.getElementById('b64Input').value;
+    if(!v){window.toast('请输入内容');return}
+    var bytes=new TextEncoder().encode(v);
+    var bin='';
+    for(var i=0;i<bytes.length;i++)bin+=String.fromCharCode(bytes[i]);
+    document.getElementById('b64Output').value=btoa(bin);
+  };
+  window.b64Decode=function(){
+    var v=document.getElementById('b64Input').value.trim();
+    if(!v){window.toast('请输入内容');return}
+    try{
+      var bin=atob(v);
+      var bytes=new Uint8Array(bin.length);
+      for(var i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+      document.getElementById('b64Output').value=new TextDecoder('utf-8',{fatal:false}).decode(bytes);
+    }catch(e){window.toast('Base64 解码失败：输入不是有效的 Base64')}
+  };
+  window.swapB64=function(){
+    var a=document.getElementById('b64Input'),b=document.getElementById('b64Output');
+    var t=a.value;a.value=b.value;b.value=t;
+  };
+  var b64FileName='file.bin',b64FileType='application/octet-stream';
+  window.b64FileToText=function(){
+    if(!window._b64File){window.toast('请先选择文件');return}
+    fileToDataURL(window._b64File,function(b64){
+      document.getElementById('b64FileOut').value=b64;
+      window.toast('已转 Base64');
+    });
+  };
+  window.b64TextToFile=function(){
+    var v=document.getElementById('b64FileOut').value.replace(/\s+/g,'');
+    if(!v){window.toast('请先粘贴 Base64 数据');return}
+    try{
+      var bin=atob(v);
+      var bytes=new Uint8Array(bin.length);
+      for(var i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+      var blob=new Blob([bytes],{type:b64FileType});
+      var a=document.createElement('a');
+      a.href=URL.createObjectURL(blob);
+      a.download=b64FileName;
+      document.body.appendChild(a);a.click();
+      setTimeout(function(){URL.revokeObjectURL(a.href);document.body.removeChild(a)},100);
+      window.toast('已下载文件');
+    }catch(e){window.toast('Base64 解码失败：数据无效')}
+  };
+  setupDrop('b64FileDrop',function(f){
+    window._b64File=f;
+    b64FileName=f.name;b64FileType=f.type||'application/octet-stream';
+    document.getElementById('b64FileMeta').textContent='已选择：'+f.name+'（'+fmtSize(f.size)+'）';
+    window.b64FileToText();
+  });
+
+  /* ===== 哈希 ===== */
+  function md5(str){
+    function rl(v,n){return ((v<<n)|(v>>>(32-n)))>>>0}
+    function utf8(s){
+      var b=[],c;
+      for(var i=0;i<s.length;i++){
+        c=s.charCodeAt(i);
+        if(c<0x80)b.push(c);
+        else if(c<0x800)b.push(0xC0|(c>>6),0x80|(c&63));
+        else if(c>=0xD800&&c<=0xDBFF&&i+1<s.length){
+          var lo=s.charCodeAt(i+1);
+          if(lo>=0xDC00&&lo<=0xDFFF){i++;c=0x10000+(((c-0xD800)<<10)|(lo-0xDC00));b.push(0xF0|(c>>18),0x80|((c>>12)&63),0x80|((c>>6)&63),0x80|(c&63))}
+          else b.push(0xE0|(c>>12),0x80|((c>>6)&63),0x80|(c&63));
+        }
+        else b.push(0xE0|(c>>12),0x80|((c>>6)&63),0x80|(c&63));
+      }
+      return b;
+    }
+    var s=utf8(str),len=s.length;
+    s.push(0x80);
+    while(s.length%64!==56)s.push(0);
+    var bit=len*8;
+    s.push(bit&0xFF,(bit>>8)&0xFF,(bit>>16)&0xFF,(bit>>24)&0xFF,0,0,0,0);
+    var a0=0x67452301,b0=0xefcdab89,c0=0x98badcfe,d0=0x10325476;
+    var S=[7,12,17,22,7,12,17,22,7,12,17,22,7,12,17,22,5,9,14,20,5,9,14,20,5,9,14,20,5,9,14,20,4,11,16,23,4,11,16,23,4,11,16,23,4,11,16,23,6,10,15,21,6,10,15,21,6,10,15,21,6,10,15,21];
+    var K=[];
+    for(var i=0;i<64;i++)K[i]=Math.floor(Math.abs(Math.sin(i+1))*4294967296)>>>0;
+    for(var off=0;off<s.length;off+=64){
+      var w=[];
+      for(var j=0;j<16;j++)w[j]=s[off+j*4]|(s[off+j*4+1]<<8)|(s[off+j*4+2]<<16)|(s[off+j*4+3]<<24);
+      var A=a0,B=b0,C=c0,D=d0;
+      for(var k=0;k<64;k++){
+        var F,g;
+        if(k<16){F=(B&C)|(~B&D);g=k}
+        else if(k<32){F=(D&B)|(~D&C);g=(5*k+1)%16}
+        else if(k<48){F=B^C^D;g=(3*k+5)%16}
+        else{F=C^(B|~D);g=(7*k)%16}
+        var tmp=D;D=C;C=B;
+        B=(B+rl((A+F+K[k]+w[g])>>>0,S[k]))>>>0;
+        A=tmp;
+      }
+      a0=(a0+A)>>>0;b0=(b0+B)>>>0;c0=(c0+C)>>>0;d0=(d0+D)>>>0;
+    }
+    function hex(n){var h='';for(var i=0;i<4;i++){h+=('0'+((n>>>(i*8))&0xFF).toString(16)).slice(-2)}return h}
+    return hex(a0)+hex(b0)+hex(c0)+hex(d0);
+  }
+  function renderHashResults(containerId,hashes){
+    var el=document.getElementById(containerId);
+    var order=[['MD5','md5'],['SHA-1','sha1'],['SHA-256','sha256'],['SHA-512','sha512']];
+    el.innerHTML='';
+    order.forEach(function(o){
+      var item=document.createElement('div');item.className='hash-item';
+      var name=document.createElement('div');name.className='hname';
+      name.innerHTML='<span>'+o[0]+'</span><button class="hcopy" onclick="copyText(this)">复制</button>';
+      var val=document.createElement('div');val.className='hval';
+      val.textContent=hashes[o[1]]||'…';
+      item.appendChild(name);item.appendChild(val);
+      el.appendChild(item);
+    });
+  }
+  window.copyText=function(btn){
+    var val=btn.parentNode.nextSibling.textContent;
+    if(!val||val==='…')return;
+    var ta=document.createElement('textarea');
+    ta.value=val;document.body.appendChild(ta);ta.select();
+    try{document.execCommand('copy')}catch(e){}
+    document.body.removeChild(ta);
+    window.toast('已复制');
+  };
+  window.hashText=function(){
+    var v=document.getElementById('hashInput').value;
+    if(!v){window.toast('请输入文本');return}
+    renderHashResults('hashResults',{md5:md5(v)});
+    window.hashBytes(new TextEncoder().encode(v),'hashResults',true);
+  };
+  window.hashBytes=function(bytes,containerId,isText){
+    if(isText===undefined)isText=false;
+    if(!window.crypto||!window.crypto.subtle){return}
+    var names={sha1:'SHA-1',sha256:'SHA-256',sha512:'SHA-512'};
+    var el=document.getElementById(containerId);
+    Promise.all(Object.keys(names).map(function(k){
+      return crypto.subtle.digest(names[k],bytes).then(function(buf){
+        return {key:k,hex:window.bufToHex(buf)};
+      });
+    })).then(function(results){
+      var obj={};
+      results.forEach(function(r){obj[r.key]=r.hex});
+      var current=document.getElementById(containerId);
+      var children=current.children;
+      for(var i=0;i<children.length;i++){
+        var cn=children[i].querySelector('.hname').textContent.trim().split(' ')[0];
+        if(cn==='MD5'){children[i].querySelector('.hval').textContent=obj.md5!==undefined?obj.md5:'…';continue}
+        if(cn==='SHA-1'){children[i].querySelector('.hval').textContent=obj.sha1||'…';continue}
+        if(cn==='SHA-256'){children[i].querySelector('.hval').textContent=obj.sha256||'…';continue}
+        if(cn==='SHA-512'){children[i].querySelector('.hval').textContent=obj.sha512||'…';continue}
+      }
+    });
+  };
+  window.bufToHex=function(buf){
+    var bytes=new Uint8Array(buf),h='';
+    for(var i=0;i<bytes.length;i++)h+=('0'+bytes[i].toString(16)).slice(-2);
+    return h;
+  };
+  setupDrop('hashFileDrop',function(f){
+    document.getElementById('hashFileMeta').textContent='已选择：'+f.name+'（'+fmtSize(f.size)+'）';
+    renderHashResults('hashFileResults',{});
+    var r=new FileReader();
+    r.onload=function(){
+      var bytes=new Uint8Array(r.result);
+      var obj={md5:md5Bytes(bytes)};
+      var container='hashFileResults';
+      var el=document.getElementById(container);
+      el.querySelectorAll('.hash-item').forEach(function(item){
+        var cn=item.querySelector('.hname').textContent.trim().split(' ')[0];
+        if(cn==='MD5')item.querySelector('.hval').textContent=obj.md5;
+      });
+      window.hashBytes(bytes,container);
+    };
+    r.readAsArrayBuffer(f);
+  });
+  function md5Bytes(bytes){
+    function rl(v,n){return ((v<<n)|(v>>>(32-n)))>>>0}
+    var s=Array.from(bytes),len=s.length;
+    s.push(0x80);
+    while(s.length%64!==56)s.push(0);
+    var bit=len*8;
+    s.push(bit&0xFF,(bit>>8)&0xFF,(bit>>16)&0xFF,(bit>>24)&0xFF,0,0,0,0);
+    var a0=0x67452301,b0=0xefcdab89,c0=0x98badcfe,d0=0x10325476;
+    var S=[7,12,17,22,7,12,17,22,7,12,17,22,7,12,17,22,5,9,14,20,5,9,14,20,5,9,14,20,5,9,14,20,4,11,16,23,4,11,16,23,4,11,16,23,4,11,16,23,6,10,15,21,6,10,15,21,6,10,15,21,6,10,15,21];
+    var K=[];
+    for(var i=0;i<64;i++)K[i]=Math.floor(Math.abs(Math.sin(i+1))*4294967296)>>>0;
+    for(var off=0;off<s.length;off+=64){
+      var w=[];
+      for(var j=0;j<16;j++)w[j]=s[off+j*4]|(s[off+j*4+1]<<8)|(s[off+j*4+2]<<16)|(s[off+j*4+3]<<24);
+      var A=a0,B=b0,C=c0,D=d0;
+      for(var k=0;k<64;k++){
+        var F,g;
+        if(k<16){F=(B&C)|(~B&D);g=k}
+        else if(k<32){F=(D&B)|(~D&C);g=(5*k+1)%16}
+        else if(k<48){F=B^C^D;g=(3*k+5)%16}
+        else{F=C^(B|~D);g=(7*k)%16}
+        var tmp=D;D=C;C=B;
+        B=(B+rl((A+F+K[k]+w[g])>>>0,S[k]))>>>0;
+        A=tmp;
+      }
+      a0=(a0+A)>>>0;b0=(b0+B)>>>0;c0=(c0+C)>>>0;d0=(d0+D)>>>0;
+    }
+    function hex(n){var h='';for(var i=0;i<4;i++){h+=('0'+((n>>>(i*8))&0xFF).toString(16)).slice(-2)}return h}
+    return hex(a0)+hex(b0)+hex(c0)+hex(d0);
+  }
+
+  /* ===== RSA ===== */
+  var rsa={pub:null,priv:null,pubMode:'fromGen',privMode:'fromGen'};
+  function pemHeaderFor(kind){
+    return kind==='pub'?'-----BEGIN PUBLIC KEY-----':'-----BEGIN PRIVATE KEY-----';
+  }
+  function pemFooterFor(kind){
+    return kind==='pub'?'-----END PUBLIC KEY-----':'-----END PRIVATE KEY-----';
+  }
+  function bufferToPem(buf,kind){
+    var b64=btoa(Array.from(new Uint8Array(buf)).map(function(b){return String.fromCharCode(b)}).join(''));
+    var lines='';
+    for(var i=0;i<b64.length;i+=64)lines+=b64.slice(i,i+64)+'\n';
+    return pemHeaderFor(kind)+'\n'+lines+pemFooterFor(kind);
+  }
+  function pemToArrayBuffer(pem,kind){
+    var body=pem.replace(/-----BEGIN [^-]+-----/g,'').replace(/-----END [^-]+-----/g,'').replace(/\s+/g,'');
+    var bin=atob(body);
+    var bytes=new Uint8Array(bin.length);
+    for(var i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+    return bytes.buffer;
+  }
+  window.genRsa=function(){
+    var status=document.getElementById('rsaKeyStatus');
+    status.textContent='正在生成…（约 1-3 秒）';
+    crypto.subtle.generateKey(
+      {name:'RSA-OAEP',modulusLength:2048,publicExponent:new Uint8Array([1,0,1]),hash:'SHA-256'},
+      true,['encrypt','decrypt']
+    ).then(function(kp){
+      rsa.pub=kp.publicKey;rsa.priv=kp.privateKey;
+      return Promise.all([
+        crypto.subtle.exportKey('spki',kp.publicKey),
+        crypto.subtle.exportKey('pkcs8',kp.privateKey)
+      ]);
+    }).then(function(arr){
+      document.getElementById('rsaPub').value=bufferToPem(arr[0],'pub');
+      document.getElementById('rsaPriv').value=bufferToPem(arr[1],'priv');
+      status.textContent='已生成 2048 位密钥对（RSA-OAEP SHA-256）';
+      window.toast('密钥对已生成');
+    }).catch(function(e){status.textContent='生成失败：'+e.message});
+  };
+  window.selectPemTab=function(kind,mode){
+    var tabs=kind==='pub'?document.getElementById('pubPemTabs'):document.getElementById('privPemTabs');
+    tabs.querySelectorAll('.pem-tab').forEach(function(t){
+      t.classList.toggle('active',(t.textContent==='使用生成的对'&&mode==='fromGen')||(t.textContent==='粘贴 PEM'&&mode==='pem'));
+    });
+    if(kind==='pub'){rsa.pubMode=mode;document.getElementById('pubPemBox').style.display=mode==='pem'?'block':'none'}
+    else{rsa.privMode=mode;document.getElementById('privPemBox').style.display=mode==='pem'?'block':'none'}
+  };
+  window.importPub=function(){
+    var kind='pub';
+    if(rsa.pubMode==='pem'){
+      var v=document.getElementById('pubPemBox').value.trim();
+      if(!v){window.toast('请先粘贴公钥 PEM');return}
+      try{
+        crypto.subtle.importKey('spki',pemToArrayBuffer(v),{name:'RSA-OAEP',hash:'SHA-256'},true,['encrypt'])
+          .then(function(k){
+            rsa.pub=k;
+            document.getElementById('pubStatus').textContent='已导入公钥';
+            window.toast('公钥已导入');
+          }).catch(function(e){window.toast('公钥无效：'+e.message)});
+      }catch(e){window.toast('PEM 格式错误')}
+    }else{
+      if(!rsa.pub){window.toast('请先生成密钥对');return}
+      document.getElementById('pubStatus').textContent='已使用生成对的公钥';
+      window.toast('已使用生成对的公钥');
+    }
+  };
+  window.importPriv=function(){
+    var kind='priv';
+    if(rsa.privMode==='pem'){
+      var v=document.getElementById('privPemBox').value.trim();
+      if(!v){window.toast('请先粘贴私钥 PEM');return}
+      try{
+        crypto.subtle.importKey('pkcs8',pemToArrayBuffer(v),{name:'RSA-OAEP',hash:'SHA-256'},true,['decrypt'])
+          .then(function(k){
+            rsa.priv=k;
+            document.getElementById('privStatus').textContent='已导入私钥';
+            window.toast('私钥已导入');
+          }).catch(function(e){window.toast('私钥无效：'+e.message)});
+      }catch(e){window.toast('PEM 格式错误')}
+    }else{
+      if(!rsa.priv){window.toast('请先生成密钥对');return}
+      document.getElementById('privStatus').textContent='已使用生成对的私钥';
+      window.toast('已使用生成对的私钥');
+    }
+  };
+  window.rsaEncrypt=function(){
+    var v=document.getElementById('rsaPlain').value;
+    if(!v){window.toast('请输入明文');return}
+    if(!rsa.pub){window.toast('请先导入公钥');return}
+    var enc=new TextEncoder().encode(v);
+    if(enc.length>190){window.toast('明文过长：RSA-OAEP 2048 位最多加密约 190 字节');return}
+    crypto.subtle.encrypt({name:'RSA-OAEP'},rsa.pub,enc).then(function(ct){
+      document.getElementById('rsaCipher').value=btoa(Array.from(new Uint8Array(ct)).map(function(b){return String.fromCharCode(b)}).join(''));
+      window.toast('加密完成');
+    }).catch(function(e){window.toast('加密失败：'+e.message)});
+  };
+  window.rsaDecrypt=function(){
+    var v=document.getElementById('rsaCipher').value.trim();
+    if(!v){window.toast('请输入密文');return}
+    if(!rsa.priv){window.toast('请先导入私钥');return}
+    var bin;
+    try{bin=atob(v)}catch(e){window.toast('密文不是有效的 Base64');return}
+    var bytes=new Uint8Array(bin.length);
+    for(var i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+    crypto.subtle.decrypt({name:'RSA-OAEP'},rsa.priv,bytes).then(function(pt){
+      document.getElementById('rsaPlain').value=new TextDecoder('utf-8',{fatal:false}).decode(pt);
+      window.toast('解密完成');
+    }).catch(function(e){window.toast('解密失败：密钥不匹配或密文损坏')});
+  };
+
+  initTheme();
+})();
+</script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-const CACHE = 'navsite-v7';
+const CACHE = 'navsite-v8';
 const CORE = [
   './',
   './index.html',
@@ -18,6 +18,10 @@ const CORE = [
   './qrcode/jsqr.js',
   './markdown/',
   './markdown/index.html',
+  './encode/',
+  './encode/index.html',
+  './image/',
+  './image/index.html',
   './nav.json',
   './404.html',
   './manifest.webmanifest',
