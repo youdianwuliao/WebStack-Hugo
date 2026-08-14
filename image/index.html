@@ -736,8 +736,9 @@ body{
   };
 
   /* ===== 图片水印 ===== */
-  var wmData={img:null,logo:null,blob:null,fileName:'image'};
+  var wmData={img:null,logo:null,blob:null,fileName:'image',origName:'image.png'};
   setupDrop('wmDrop',function(f){
+    wmData.origName=f.name;
     wmData.fileName=f.name.replace(/\.[^.]+$/,'')||'image';
     loadImage(f,function(img){
       wmData.img=img;
@@ -784,9 +785,7 @@ body{
     var pos=document.getElementById('wmPos').value;
     if(type==='image'&&!wmData.logo){toast('请先上传水印图片');return}
     if(type==='text'&&pos==='tile'){doTileText();return}
-    var canvas=document.createElement('canvas');
-    canvas.width=wmData.img.naturalWidth;
-    canvas.height=wmData.img.naturalHeight;
+    var canvas=makeCanvas(wmData.img);
     var ctx=canvas.getContext('2d');
     ctx.drawImage(wmData.img,0,0);
     if(type==='text'){
@@ -796,6 +795,19 @@ body{
     }
     finishWatermark(canvas);
   };
+  function makeCanvas(img){
+    var MAX_PIXELS=32000000;
+    var w=img.naturalWidth,h=img.naturalHeight;
+    var scale=Math.min(1,Math.sqrt(MAX_PIXELS/(w*h)));
+    if(scale<1){
+      w=Math.max(1,Math.floor(w*scale));
+      h=Math.max(1,Math.floor(h*scale));
+      window.toast('图片尺寸较大，已按比例缩放至 '+w+'×'+h+' 处理');
+    }
+    var canvas=document.createElement('canvas');
+    canvas.width=w;canvas.height=h;
+    return canvas;
+  }
   function drawTextWatermark(ctx,W,H,pos){
     var text=document.getElementById('wmText').value||'水印';
     var size=parseInt(document.getElementById('wmSize').value);
@@ -847,9 +859,7 @@ body{
     var opacity=parseInt(document.getElementById('wmOpacity').value)/100;
     var rotate=parseInt(document.getElementById('wmRotate').value);
     var color=document.getElementById('wmColor').value;
-    var canvas=document.createElement('canvas');
-    canvas.width=wmData.img.naturalWidth;
-    canvas.height=wmData.img.naturalHeight;
+    var canvas=makeCanvas(wmData.img);
     var ctx=canvas.getContext('2d');
     ctx.drawImage(wmData.img,0,0);
     ctx.save();
@@ -869,9 +879,13 @@ body{
   }
   function finishWatermark(canvas){
     var fmt='image/png';
-    var isJpg=wmData.fileName.match(/\.(jpg|jpeg)$/i);
+    var isJpg=wmData.origName.match(/\.(jpg|jpeg)$/i);
     if(isJpg)fmt='image/jpeg';
     canvasToBlob(canvas,fmt,0.95).then(function(blob){
+      if(!blob){
+        window.toast('生成失败：图片尺寸超出浏览器处理上限，请尝试更小的图片');
+        return;
+      }
       wmData.blob=blob;
       document.getElementById('wmResultImg').src=URL.createObjectURL(blob);
       var ext=fmt==='image/jpeg'?'jpg':'png';
