@@ -145,6 +145,11 @@ body{
 .result-box{text-align:center}
 .result-box img{max-width:100%;max-height:340px;border-radius:10px;border:1px solid var(--card-border)}
 .result-info{font-size:12px;color:var(--faint);margin-top:8px;line-height:1.6}
+.batch-list{display:flex;gap:8px;overflow-x:auto;margin-bottom:12px;padding:4px 2px}
+.batch-list .batch-item{flex:0 0 76px;text-align:center;cursor:pointer;border-radius:8px;border:1px solid var(--card-border);padding:4px;background:var(--code-bg);transition:.15s}
+.batch-list .batch-item.active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.batch-list .batch-item img{width:100%;height:64px;object-fit:cover;border-radius:6px;display:block;background:#fff}
+.batch-list .batch-item span{display:block;font-size:10px;color:var(--muted);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:76px}
 .compare{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media(max-width:760px){.compare{grid-template-columns:1fr}}
 .color-swatch{width:26px;height:26px;border-radius:8px;border:1px solid var(--card-border);display:inline-block;vertical-align:middle;cursor:pointer;transition:.15s;box-sizing:border-box}
@@ -183,6 +188,7 @@ body{
       <div class="card-title"><h3>上传图片</h3></div>
       <div class="file-drop" id="compressDrop">点击或拖拽图片到此处（JPG / PNG / WebP），可一次多选批量压缩</div>
       <div class="file-meta" id="compressMeta"></div>
+      <div class="batch-list" id="compressBatchList"></div>
       <div class="stage" id="compressStage"><div class="stage-box" id="compressBox"></div></div>
       <div class="compare" id="compressCompare" style="display:none">
         <div class="result-box">
@@ -217,6 +223,7 @@ body{
       <div class="card-title"><h3>上传图片并设置目标尺寸</h3></div>
       <div class="file-drop" id="resizeDrop">点击或拖拽图片到此处（JPG / PNG / WebP），可一次多选批量缩放</div>
       <div class="file-meta" id="resizeMeta"></div>
+      <div class="batch-list" id="resizeBatchList"></div>
       <div class="stage" id="resizeStage"><div class="stage-box" id="resizeBox"></div></div>
       <div class="opts">
         <label>模式 <select id="resizeMode" onchange="resizeModeChanged()">
@@ -482,6 +489,27 @@ body{
       else{onFile(e.dataTransfer.files[0])}
     });
   }
+  function renderBatchList(containerId,files,onPick){
+    var el=document.getElementById(containerId);
+    el.innerHTML='';
+    files.forEach(function(f,i){
+      var item=document.createElement('div');
+      item.className='batch-item';
+      var img=document.createElement('img');
+      var sp=document.createElement('span');
+      sp.textContent=(i+1)+'. '+f.name;
+      item.appendChild(img);item.appendChild(sp);
+      item.onclick=function(){
+        onPick(i);
+        var items=el.children;
+        for(var k=0;k<items.length;k++)items[k].classList.toggle('active',k===i);
+      };
+      el.appendChild(item);
+      var r=new FileReader();
+      r.onload=function(){img.src=r.result};
+      r.readAsDataURL(f);
+    });
+  }
   function loadImage(file,onOk,onErr){
     if(!file.type.match(/^image\//)){toast('请选择图片文件');if(onErr)onErr();return}
     var r=new FileReader();
@@ -685,11 +713,15 @@ body{
   }
   setupDrop('compressDrop',function(f){
     compressBatch=[];
+    document.getElementById('compressBatchList').innerHTML='';
     loadImage(f,function(img){showCompressPreview(f,img)});
   },function(files){
     compressBatch=pickBatch(files);
-    document.getElementById('compressMeta').textContent='已选择 '+compressBatch.length+' 张图片，可点击"批量压缩"';
+    document.getElementById('compressMeta').textContent='已选择 '+compressBatch.length+' 张图片，点击缩略图可预览，或直接"批量压缩"';
     document.getElementById('compressBatchInfo').textContent='';
+    renderBatchList('compressBatchList',compressBatch,function(i){
+      loadImage(compressBatch[i],function(img){showCompressPreview(compressBatch[i],img)});
+    });
     loadImage(compressBatch[0],function(img){showCompressPreview(compressBatch[0],img)});
     document.getElementById('compressBatchBtn').disabled=false;
   });
@@ -875,11 +907,15 @@ body{
   }
   setupDrop('resizeDrop',function(f){
     resizeBatch=[];
+    document.getElementById('resizeBatchList').innerHTML='';
     loadImage(f,function(img){showResizePreview(f,img)});
   },function(files){
     resizeBatch=pickBatch(files);
-    document.getElementById('resizeMeta').textContent='已选择 '+resizeBatch.length+' 张图片，可点击"批量缩放"';
+    document.getElementById('resizeMeta').textContent='已选择 '+resizeBatch.length+' 张图片，点击缩略图可预览，或直接"批量缩放"';
     document.getElementById('resizeBatchInfo').textContent='';
+    renderBatchList('resizeBatchList',resizeBatch,function(i){
+      loadImage(resizeBatch[i],function(img){showResizePreview(resizeBatch[i],img)});
+    });
     loadImage(resizeBatch[0],function(img){showResizePreview(resizeBatch[0],img)});
     document.getElementById('resizeBatchBtn').disabled=false;
   });
