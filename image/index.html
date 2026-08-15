@@ -203,10 +203,10 @@ body{
         </div>
       </div>
       <div class="opts">
-        <label>质量 <input type="range" id="compressQuality" min="1" max="100" value="80" oninput="compressSlider()"></label>
+        <label>质量 <input type="range" id="compressQuality" min="1" max="100" value="80" oninput="compressSlider();autoCompress()"></label>
         <span class="range-val" id="compressQualityVal">80%</span>
-        <label>最大边 <select id="compressMax"><option value="0">不缩放</option><option value="1920">1920px</option><option value="1280" selected>1280px</option><option value="800">800px</option><option value="400">400px</option></select></label>
-        <label>格式 <select id="compressFmt"><option value="image/jpeg" selected>JPG</option><option value="image/png">PNG</option><option value="image/webp">WebP</option></select></label>
+        <label>最大边 <select id="compressMax" onchange="autoCompress()"><option value="0">不缩放</option><option value="1920">1920px</option><option value="1280" selected>1280px</option><option value="800">800px</option><option value="400">400px</option></select></label>
+        <label>格式 <select id="compressFmt" onchange="fmtChanged()"><option value="image/jpeg" selected>JPG</option><option value="image/png">PNG</option><option value="image/webp">WebP</option></select></label>
       </div>
       <div class="opts">
         <button class="btn primary" onclick="doCompress()">开始压缩</button>
@@ -242,7 +242,7 @@ body{
         <span class="range-val" id="resizePercentVal">50%</span>
       </div>
       <div class="opts">
-        <label>格式 <select id="resizeFmt"><option value="image/png" selected>PNG</option><option value="image/jpeg">JPG</option><option value="image/webp">WebP</option></select></label>
+        <label>格式 <select id="resizeFmt" onchange="resizeFmtChanged()"><option value="image/png" selected>PNG</option><option value="image/jpeg">JPG</option><option value="image/webp">WebP</option></select></label>
         <label>质量 <input type="range" id="resizeQuality" min="1" max="100" value="90" oninput="resizeSlider()" style="max-width:160px"></label>
         <span class="range-val" id="resizeQualityVal">90%</span>
       </div>
@@ -726,9 +726,27 @@ body{
     document.getElementById('compressBatchBtn').disabled=false;
   });
   window.compressSlider=function(){
-    document.getElementById('compressQualityVal').textContent=document.getElementById('compressQuality').value+'%';
+    var q=document.getElementById('compressQuality');
+    var v=document.getElementById('compressQualityVal');
+    if(q.disabled){v.textContent='无损';return}
+    v.textContent=q.value+'%';
   };
-  window.doCompress=function(){
+  window.fmtChanged=function(){
+    var fmt=document.getElementById('compressFmt').value;
+    var q=document.getElementById('compressQuality');
+    q.disabled=(fmt==='image/png');
+    document.getElementById('compressQualityVal').style.color=(fmt==='image/png')?'var(--faint)':'';
+    compressSlider();
+    autoCompress();
+  };
+  var compressAutoTimer;
+  window.autoCompress=function(){
+    if(!compressData.img)return;
+    if(document.getElementById('compressFmt').value==='image/png')return;
+    clearTimeout(compressAutoTimer);
+    compressAutoTimer=setTimeout(function(){doCompress(true)},250);
+  };
+  window.doCompress=function(silent){
     if(!compressData.img){toast('请先上传图片');return}
     var quality=parseInt(document.getElementById('compressQuality').value)/100;
     var maxSide=parseInt(document.getElementById('compressMax').value);
@@ -739,12 +757,14 @@ body{
       var url=URL.createObjectURL(r.blob);
       document.getElementById('compressNew').src=url;
       var ext=fmt==='image/png'?'png':fmt==='image/webp'?'webp':'jpg';
-      document.getElementById('compressNewInfo').textContent=r.cw+'×'+r.ch+' · '+fmtSize(r.blob.size)+' · 质量 '+Math.round(quality*100)+'%';
+      var info=document.getElementById('compressNewInfo');
+      info.textContent=r.cw+'×'+r.ch+' · '+fmtSize(r.blob.size)+(fmt==='image/png'?' · PNG 无损':' · 质量 '+Math.round(quality*100)+'%');
       document.getElementById('compressCompare').style.display='grid';
       document.getElementById('compressDownloadBtn').disabled=false;
-      window.toast('压缩完成，大小 '+fmtSize(r.blob.size));
+      if(!silent)window.toast('压缩完成，大小 '+fmtSize(r.blob.size));
     });
   };
+  fmtChanged();
   window.doCompressBatch=function(){
     if(!compressBatch.length){toast('请先选择多张图片');return}
     var quality=parseInt(document.getElementById('compressQuality').value)/100;
@@ -928,8 +948,19 @@ body{
     document.getElementById('resizePercentVal').textContent=document.getElementById('resizePercent').value+'%';
   };
   window.resizeSlider=function(){
-    document.getElementById('resizeQualityVal').textContent=document.getElementById('resizeQuality').value+'%';
+    var q=document.getElementById('resizeQuality');
+    var v=document.getElementById('resizeQualityVal');
+    if(q.disabled){v.textContent='无损';return}
+    v.textContent=q.value+'%';
   };
+  window.resizeFmtChanged=function(){
+    var fmt=document.getElementById('resizeFmt').value;
+    var q=document.getElementById('resizeQuality');
+    q.disabled=(fmt==='image/png');
+    document.getElementById('resizeQualityVal').style.color=(fmt==='image/png')?'var(--faint)':'';
+    resizeSlider();
+  };
+  resizeFmtChanged();
   function computeResizeSize(img){
     var iw=img.naturalWidth,ih=img.naturalHeight;
     var r=iw/ih;
@@ -996,7 +1027,7 @@ body{
         if(shown)return;
         shown=true;
         document.getElementById('resizeCompare').style.display='grid';
-        info.textContent=canvas.width+'×'+canvas.height+' px · '+ext.toUpperCase()+' · '+fmtSize(blob.size)+(thumb?'（预览为缩略图，下载为全尺寸）':'');
+        info.textContent=canvas.width+'×'+canvas.height+' px · '+ext.toUpperCase()+(fmt==='image/png'?' · 无损':' · 质量 '+Math.round(quality*100)+'%')+' · '+fmtSize(blob.size)+(thumb?'（预览为缩略图，下载为全尺寸）':'');
         document.getElementById('resizeDownloadBtn').disabled=false;
         var box=document.getElementById('resizeBox');
         box.innerHTML='';
