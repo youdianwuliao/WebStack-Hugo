@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>图片工具 - 压缩 / 缩放 / 裁剪 / 证件照</title>
-<meta name="description" content="在线图片处理工具箱：图片压缩与缩放支持批量（一次最多 50 张，ZIP 打包下载）、图片裁剪（自由/固定比例/指定像素尺寸）、证件照制作、图片加水印。全程浏览器本地处理，图片不上传，隐私安全。">
+<meta name="description" content="在线图片处理工具箱：图片压缩与缩放支持批量（一次最多 50 张，处理完自动逐张下载）、图片裁剪（自由/固定比例/指定像素尺寸）、证件照制作、图片加水印。全程浏览器本地处理，图片不上传，隐私安全。">
 <meta property="og:title" content="图片工具 - 压缩 / 缩放 / 裁剪 / 证件照">
 <meta property="og:description" content="在线图片压缩、缩放（像素/百分比）、裁剪（含指定像素尺寸）、证件照制作工具，浏览器本地处理，隐私安全。">
 <meta property="og:type" content="website">
@@ -206,9 +206,8 @@ body{
         <button class="btn primary" onclick="doCompress()">开始压缩</button>
         <button class="btn green" id="compressDownloadBtn" onclick="downloadCompress()" disabled>下载压缩图</button>
         <button class="btn orange" id="compressBatchBtn" onclick="doCompressBatch()" disabled>批量压缩</button>
-        <button class="btn green" id="compressBatchDownloadBtn" onclick="downloadCompressBatch()" disabled>下载批量结果(ZIP)</button>
       </div>
-      <div class="opts"><span class="range-val" id="compressBatchInfo" style="min-width:auto;text-align:left">批量最多 50 张，逐张自动处理</span></div>
+      <div class="opts"><span class="range-val" id="compressBatchInfo" style="min-width:auto;text-align:left">批量最多 50 张，处理后自动逐张下载</span></div>
     </div>
   </div>
 
@@ -244,9 +243,8 @@ body{
         <button class="btn primary" onclick="doResize()">开始缩放</button>
         <button class="btn green" id="resizeDownloadBtn" onclick="downloadResize()" disabled>下载缩放图</button>
         <button class="btn orange" id="resizeBatchBtn" onclick="doResizeBatch()" disabled>批量缩放</button>
-        <button class="btn green" id="resizeBatchDownloadBtn" onclick="downloadResizeBatch()" disabled>下载批量结果(ZIP)</button>
       </div>
-      <div class="opts"><span class="range-val" id="resizeBatchInfo" style="min-width:auto;text-align:left">批量最多 50 张，逐张自动处理</span></div>
+      <div class="opts"><span class="range-val" id="resizeBatchInfo" style="min-width:auto;text-align:left">批量最多 50 张，处理后自动逐张下载</span></div>
       <div class="compare" id="resizeCompare" style="display:none">
         <div class="result-box">
           <div class="lbl">缩放前</div>
@@ -509,7 +507,7 @@ body{
     setTimeout(function(){URL.revokeObjectURL(a.href);document.body.removeChild(a)},100);
   }
 
-  /* ===== 批量处理 + ZIP 打包 ===== */
+  /* ===== 批量处理 ===== */
   var MAX_BATCH=50,TOTAL_BATCH_SIZE=200*1024*1024;
   function runBatch(list,handler,progress,onDone){
     var results=[],i=0;
@@ -526,80 +524,6 @@ body{
       },tick);
     }
     next();
-  }
-  var CRC_TABLE=(function(){var t=[];for(var n=0;n<256;n++){var c=n;for(var k=0;k<8;k++){c=(c&1)?(0xEDB88320^(c>>>1)):(c>>>1)}t[n]=c>>>0}return t})();
-  function crc32(u8){var c=0xFFFFFFFF;for(var i=0;i<u8.length;i++){c=CRC_TABLE[(c^u8[i])&0xFF]^(c>>>8)}return (c^0xFFFFFFFF)>>>0}
-  function blobToBytes(blob){
-    return new Promise(function(resolve){
-      var r=new FileReader();
-      r.onload=function(){resolve(new Uint8Array(r.result))};
-      r.readAsArrayBuffer(blob);
-    });
-  }
-  function buildZip(entries){
-    var enc=new TextEncoder();
-    var local=[],central=[],offset=0;
-    entries.forEach(function(e){
-      var name=enc.encode(e.name);
-      var crc=crc32(e.bytes);
-      var lh=new Uint8Array(30+name.length);
-      var dv=new DataView(lh.buffer);
-      dv.setUint32(0,0x04034b50,true);
-      dv.setUint16(4,20,true);dv.setUint16(6,0x0800,true);dv.setUint16(8,0,true);
-      dv.setUint16(10,0,true);dv.setUint16(12,0,true);
-      dv.setUint32(14,crc,true);
-      dv.setUint32(18,e.bytes.length,true);
-      dv.setUint32(22,e.bytes.length,true);
-      dv.setUint16(26,name.length,true);
-      dv.setUint16(28,0,true);
-      lh.set(name,30);
-      local.push(lh);local.push(e.bytes);
-      central.push({name:name,crc:crc,size:e.bytes.length,offset:offset});
-      offset+=lh.length+e.bytes.length;
-    });
-    var cd=[],cdOff=offset;
-    central.forEach(function(c){
-    var lh=new Uint8Array(46+c.name.length);
-    var dv=new DataView(lh.buffer);
-    dv.setUint32(0,0x02014b50,true);
-    dv.setUint16(4,20,true);dv.setUint16(6,20,true);dv.setUint16(8,0x0800,true);
-    dv.setUint16(10,0,true);dv.setUint16(12,0,true);dv.setUint16(14,0,true);
-    dv.setUint32(16,c.crc,true);
-    dv.setUint32(20,c.size,true);
-    dv.setUint32(24,c.size,true);
-    dv.setUint16(28,c.name.length,true);
-    dv.setUint16(30,0,true);dv.setUint16(32,0,true);dv.setUint16(34,0,true);
-    dv.setUint16(36,0,true);
-    dv.setUint32(38,0,true);
-    dv.setUint32(42,c.offset,true);
-      lh.set(c.name,46);
-      cd.push(lh);
-    });
-    var cdLen=0;cd.forEach(function(c){cdLen+=c.length});
-    var eocd=new Uint8Array(22);
-    var dv=new DataView(eocd.buffer);
-    dv.setUint32(0,0x06054b50,true);
-    dv.setUint16(8,central.length,true);
-    dv.setUint16(10,central.length,true);
-    dv.setUint32(12,cdLen,true);
-    dv.setUint32(16,cdOff,true);
-    var all=local.concat(cd,eocd);
-    var total=0;all.forEach(function(c){total+=c.length});
-    var merged=new Uint8Array(total);
-    var p=0;all.forEach(function(c){merged.set(c,p);p+=c.length});
-    return new Blob([merged],{type:'application/zip'});
-  }
-  function downloadBatchZip(entries,prefix,infoId){
-    var info=document.getElementById(infoId);
-    if(info)info.textContent='正在打包 ZIP…';
-    var tasks=entries.map(function(e){
-      return blobToBytes(e.blob).then(function(b){return {name:e.name,bytes:b}});
-    });
-    Promise.all(tasks).then(function(items){
-      var zip=buildZip(items);
-      triggerDownload(zip,prefix+'_'+Date.now()+'.zip');
-      if(info)info.textContent='完成 '+entries.length+' 张，已开始下载';
-    });
   }
   function pickBatch(files){
     var list=files.slice(0,MAX_BATCH);
@@ -723,7 +647,7 @@ body{
 
   /* ===== 压缩 ===== */
   var compressData={img:null,blob:null,fileName:''};
-  var compressBatch=[],compressBatchData=null;
+  var compressBatch=[];
   function compressOne(img,quality,maxSide,fmt){
     return new Promise(function(resolve){
       var scale=1;
@@ -765,7 +689,6 @@ body{
   },function(files){
     compressBatch=pickBatch(files);
     document.getElementById('compressMeta').textContent='已选择 '+compressBatch.length+' 张图片，可点击"批量压缩"';
-    document.getElementById('compressBatchDownloadBtn').disabled=true;
     document.getElementById('compressBatchInfo').textContent='';
     loadImage(compressBatch[0],function(img){showCompressPreview(compressBatch[0],img)});
     document.getElementById('compressBatchBtn').disabled=false;
@@ -799,25 +722,22 @@ body{
     var btn=document.getElementById('compressBatchBtn');
     var info=document.getElementById('compressBatchInfo');
     btn.disabled=true;
-    document.getElementById('compressBatchDownloadBtn').disabled=true;
-    var out=[];
+    var doneCount=0;
     runBatch(compressBatch,function(file,img,done){
       compressOne(img,quality,maxSide,fmt).then(function(r){
         if(r.blob){
-          out.push({name:(file.name.replace(/\.[^.]+$/,'')||'image')+'-compressed.'+ext,blob:r.blob});
+          var name=(file.name.replace(/\.[^.]+$/,'')||'image')+'-compressed.'+ext;
+          triggerDownload(r.blob,name);
+          doneCount++;
         }
         done();
       });
     },function(i,total){
       info.textContent='处理中 '+i+'/'+total;
     },function(){
-      compressBatchData=out;
-      info.textContent=out.length?('完成 '+out.length+' 张'):'处理失败';
+      info.textContent=doneCount?('完成 '+doneCount+' 张，已逐张开始下载'):'处理失败';
       btn.disabled=false;
-      if(out.length){
-        document.getElementById('compressBatchDownloadBtn').disabled=false;
-        window.toast('批量压缩完成 '+out.length+' 张');
-      }
+      if(doneCount)window.toast('批量压缩完成 '+doneCount+' 张');
     });
   };
   window.downloadCompress=function(){
@@ -825,10 +745,6 @@ body{
     var fmt=document.getElementById('compressFmt').value;
     var ext=fmt==='image/png'?'png':fmt==='image/webp'?'webp':'jpg';
     triggerDownload(compressData.blob,compressData.fileName+'-compressed.'+ext);
-  };
-  window.downloadCompressBatch=function(){
-    if(!compressBatchData||!compressBatchData.length)return;
-    downloadBatchZip(compressBatchData,'批量压缩','compressBatchInfo');
   };
 
   /* ===== 裁剪 ===== */
@@ -925,7 +841,7 @@ body{
 
   /* ===== 缩放 ===== */
   var resizeData={img:null,blob:null,fileName:''};
-  var resizeBatch=[],resizeBatchData=null;
+  var resizeBatch=[];
   function resizeOne(img,size,fmt,quality){
     return new Promise(function(resolve){
       var fit=fitCanvas(size.w,size.h);
@@ -963,7 +879,6 @@ body{
   },function(files){
     resizeBatch=pickBatch(files);
     document.getElementById('resizeMeta').textContent='已选择 '+resizeBatch.length+' 张图片，可点击"批量缩放"';
-    document.getElementById('resizeBatchDownloadBtn').disabled=true;
     document.getElementById('resizeBatchInfo').textContent='';
     loadImage(resizeBatch[0],function(img){showResizePreview(resizeBatch[0],img)});
     document.getElementById('resizeBatchBtn').disabled=false;
@@ -1040,26 +955,23 @@ body{
     var btn=document.getElementById('resizeBatchBtn');
     var info=document.getElementById('resizeBatchInfo');
     btn.disabled=true;
-    document.getElementById('resizeBatchDownloadBtn').disabled=true;
-    var out=[];
+    var doneCount=0;
     runBatch(resizeBatch,function(file,img,done){
       var size=computeResizeSize(img);
       resizeOne(img,size,fmt,quality).then(function(r){
         if(r.blob){
-          out.push({name:(file.name.replace(/\.[^.]+$/,'')||'image')+'-resized.'+ext,blob:r.blob});
+          var name=(file.name.replace(/\.[^.]+$/,'')||'image')+'-resized.'+ext;
+          triggerDownload(r.blob,name);
+          doneCount++;
         }
         done();
       });
     },function(i,total){
       info.textContent='处理中 '+i+'/'+total;
     },function(){
-      resizeBatchData=out;
-      info.textContent=out.length?('完成 '+out.length+' 张'):'处理失败';
+      info.textContent=doneCount?('完成 '+doneCount+' 张，已逐张开始下载'):'处理失败';
       btn.disabled=false;
-      if(out.length){
-        document.getElementById('resizeBatchDownloadBtn').disabled=false;
-        window.toast('批量缩放完成 '+out.length+' 张');
-      }
+      if(doneCount)window.toast('批量缩放完成 '+doneCount+' 张');
     });
   };
   window.downloadResize=function(){
@@ -1067,10 +979,6 @@ body{
     var fmt=document.getElementById('resizeFmt').value;
     var ext=fmt==='image/png'?'png':fmt==='image/webp'?'webp':'jpg';
     triggerDownload(resizeData.blob,resizeData.fileName+'-resized.'+ext);
-  };
-  window.downloadResizeBatch=function(){
-    if(!resizeBatchData||!resizeBatchData.length)return;
-    downloadBatchZip(resizeBatchData,'批量缩放','resizeBatchInfo');
   };
 
   /* ===== 证件照 ===== */
