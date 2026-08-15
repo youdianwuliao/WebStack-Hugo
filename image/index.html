@@ -125,7 +125,7 @@ body{
   position:relative;overflow:hidden;border-radius:12px;border:1px solid var(--card-border);
   background:var(--code-bg);margin-bottom:12px;text-align:center;line-height:0;display:none;
 }
-.stage img{max-width:100%;max-height:460px;display:inline-block}
+.stage img,.stage canvas{max-width:100%;max-height:460px;display:inline-block}
 .stage-box{position:relative;display:inline-block;line-height:0}
 .crop-box{
   position:absolute;border:2px solid #4a90d9;box-sizing:border-box;cursor:move;
@@ -143,7 +143,7 @@ body{
 .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media(max-width:760px){.result-grid{grid-template-columns:1fr}}
 .result-box{text-align:center}
-.result-box img{max-width:100%;max-height:340px;border-radius:10px;border:1px solid var(--card-border)}
+.result-box img,.result-box canvas{max-width:100%;max-height:340px;border-radius:10px;border:1px solid var(--card-border);display:inline-block}
 .result-info{font-size:12px;color:var(--faint);margin-top:8px;line-height:1.6}
 .batch-list{display:flex;gap:8px;overflow-x:auto;margin-bottom:12px;padding:4px 2px}
 .batch-list .batch-item{flex:0 0 76px;text-align:center;cursor:pointer;border-radius:8px;border:1px solid var(--card-border);padding:4px;background:var(--code-bg);transition:.15s}
@@ -198,7 +198,7 @@ body{
         </div>
         <div class="result-box">
           <div class="lbl">压缩后</div>
-          <img id="compressNew" alt="压缩后">
+          <canvas id="compressNew" width="0" height="0"></canvas>
           <div class="result-info" id="compressNewInfo"></div>
         </div>
       </div>
@@ -260,7 +260,7 @@ body{
         </div>
         <div class="result-box">
           <div class="lbl">缩放后</div>
-          <img id="resizeNew" alt="缩放后">
+          <canvas id="resizeNew" width="0" height="0"></canvas>
           <div class="result-info" id="resizeNewInfo"></div>
         </div>
       </div>
@@ -271,8 +271,9 @@ body{
   <div class="panel" id="panel-crop">
     <div class="card">
       <div class="card-title"><h3>上传图片并调整裁剪框</h3></div>
-      <div class="file-drop" id="cropDrop">点击或拖拽图片到此处（JPG / PNG / WebP）</div>
+      <div class="file-drop" id="cropDrop">点击或拖拽图片到此处（JPG / PNG / WebP），可一次多选批量裁剪</div>
       <div class="file-meta" id="cropMeta"></div>
+      <div class="batch-list" id="cropBatchList"></div>
       <div class="stage" id="cropStage"><div class="stage-box" id="cropBox"></div></div>
       <div class="opts">
         <label>比例 <select id="cropRatio" onchange="cropRatioChanged()">
@@ -291,11 +292,13 @@ body{
       <div class="opts">
         <button class="btn primary" onclick="doCrop()">裁剪</button>
         <button class="btn green" id="cropDownloadBtn" onclick="downloadCrop()" disabled>下载裁剪图</button>
+        <button class="btn orange" id="cropBatchBtn" onclick="doCropBatch()" disabled>批量裁剪</button>
       </div>
+      <div class="opts"><span class="range-val" id="cropBatchInfo" style="min-width:auto;text-align:left">批量最多 50 张，按当前裁剪框的相对位置应用到全部图片，处理完自动逐张下载</span></div>
       <div class="result-grid" id="cropResult" style="display:none">
         <div class="result-box">
           <div class="lbl">裁剪结果</div>
-          <img id="cropResultImg" alt="裁剪结果">
+          <canvas id="cropResultImg" width="0" height="0"></canvas>
           <div class="result-info" id="cropResultInfo"></div>
         </div>
       </div>
@@ -692,7 +695,7 @@ body{
       if(fmt==='image/jpeg'){ctx.fillStyle='#fff';ctx.fillRect(0,0,cw,ch)}
       ctx.drawImage(src.img,0,0,cw,ch);
       canvasToBlob(canvas,fmt,quality).then(function(blob){
-        resolve({blob:blob,cw:cw,ch:ch});
+        resolve({blob:blob,cw:cw,ch:ch,canvas:canvas});
       });
     });
   }
@@ -754,13 +757,22 @@ body{
     compressOne(compressData.img,quality,maxSide,fmt).then(function(r){
       if(!r.blob){toast('压缩失败：图片尺寸超出浏览器处理上限');return}
       compressData.blob=r.blob;
-      var url=URL.createObjectURL(r.blob);
-      document.getElementById('compressNew').src=url;
+      var cvs=document.getElementById('compressNew');
+      var ps=Math.min(1,Math.sqrt(2000000/(r.cw*r.ch)));
+      cvs.width=Math.max(1,Math.round(r.cw*ps));
+      cvs.height=Math.max(1,Math.round(r.ch*ps));
+      cvs.getContext('2d').drawImage(r.canvas,0,0,cvs.width,cvs.height);
       var ext=fmt==='image/png'?'png':fmt==='image/webp'?'webp':'jpg';
       var info=document.getElementById('compressNewInfo');
-      info.textContent=r.cw+'×'+r.ch+' · '+fmtSize(r.blob.size)+(fmt==='image/png'?' · PNG 无损':' · 质量 '+Math.round(quality*100)+'%');
+      info.textContent=r.cw+'×'+r.ch+' · '+fmtSize(r.blob.size)+(fmt==='image/png'?' · PNG 无损':' · 质量 '+Math.round(quality*100)+'%')+(ps<1?'（预览为缩略图，下载为全尺寸）':'');
       document.getElementById('compressCompare').style.display='grid';
       document.getElementById('compressDownloadBtn').disabled=false;
+      var box=document.getElementById('compressBox');
+      box.innerHTML='';
+      var outCvs=document.createElement('canvas');
+      outCvs.width=cvs.width;outCvs.height=cvs.height;
+      outCvs.getContext('2d').drawImage(cvs,0,0);
+      box.appendChild(outCvs);
       if(!silent)window.toast('压缩完成，大小 '+fmtSize(r.blob.size));
     });
   };
@@ -801,16 +813,29 @@ body{
 
   /* ===== 裁剪 ===== */
   var cropData={img:null,blob:null,fileName:''};
-  setupDrop('cropDrop',function(f){
+  var cropBatch=[];
+  function showCropPreview(f,img){
     cropData.fileName=f.name.replace(/\.[^.]+$/,'')||'image';
-    loadImage(f,function(img){
-      cropData.img=img;
-      document.getElementById('cropMeta').textContent='已选择：'+f.name+'（'+img.naturalWidth+'×'+img.naturalHeight+'）';
-      document.getElementById('cropResult').style.display='none';
-      document.getElementById('cropDownloadBtn').disabled=true;
-      initCrop('cropStage','cropBox',img,getCropRatio());
-      window.toast('拖动裁剪框调整区域');
+    cropData.img=img;
+    document.getElementById('cropMeta').textContent='已选择：'+f.name+'（'+img.naturalWidth+'×'+img.naturalHeight+'）';
+    document.getElementById('cropResult').style.display='none';
+    document.getElementById('cropDownloadBtn').disabled=true;
+    initCrop('cropStage','cropBox',img,getCropRatio());
+    window.toast('拖动裁剪框调整区域');
+  }
+  setupDrop('cropDrop',function(f){
+    cropBatch=[];
+    document.getElementById('cropBatchList').innerHTML='';
+    loadImage(f,function(img){showCropPreview(f,img)});
+  },function(files){
+    cropBatch=pickBatch(files);
+    document.getElementById('cropMeta').textContent='已选择 '+cropBatch.length+' 张图片，点击缩略图切换，拖好裁剪框后点"批量裁剪"';
+    document.getElementById('cropBatchInfo').textContent='';
+    renderBatchList('cropBatchList',cropBatch,function(i){
+      loadImage(cropBatch[i],function(img){showCropPreview(cropBatch[i],img)});
     });
+    loadImage(cropBatch[0],function(img){showCropPreview(cropBatch[0],img)});
+    document.getElementById('cropBatchBtn').disabled=false;
   });
   function getCropRatio(){return document.getElementById('cropRatio').value}
   window.cropRatioChanged=function(){
@@ -879,11 +904,58 @@ body{
         return;
       }
       cropData.blob=blob;
-      document.getElementById('cropResultImg').src=URL.createObjectURL(blob);
-      document.getElementById('cropResultInfo').textContent=canvas.width+'×'+canvas.height+' px · PNG · '+fmtSize(blob.size);
+      var cvs=document.getElementById('cropResultImg');
+      var ps=Math.min(1,Math.sqrt(2000000/(canvas.width*canvas.height)));
+      cvs.width=Math.max(1,Math.round(canvas.width*ps));
+      cvs.height=Math.max(1,Math.round(canvas.height*ps));
+      cvs.getContext('2d').drawImage(canvas,0,0,cvs.width,cvs.height);
+      document.getElementById('cropResultInfo').textContent=canvas.width+'×'+canvas.height+' px · PNG · '+fmtSize(blob.size)+(ps<1?'（预览为缩略图，下载为全尺寸）':'');
       document.getElementById('cropResult').style.display='grid';
       document.getElementById('cropDownloadBtn').disabled=false;
       window.toast('裁剪完成');
+    });
+  };
+  window.doCropBatch=function(){
+    if(!cropBatch.length){toast('请先选择多张图片');return}
+    var s=cropState;
+    if(!s.img||s.boxEl.id!=='cropBox'||s.w<=0){toast('请先在当前图片上拖动裁剪框');return}
+    var rel={rx:s.x/s.natW,ry:s.y/s.natH,rw:s.w/s.natW,rh:s.h/s.natH};
+    var size=readCropSize();
+    var btn=document.getElementById('cropBatchBtn');
+    var info=document.getElementById('cropBatchInfo');
+    btn.disabled=true;
+    var doneCount=0;
+    runBatch(cropBatch,function(file,img,done){
+      var iw=img.naturalWidth,ih=img.naturalHeight;
+      var srcW=Math.max(1,Math.round(rel.rw*iw));
+      var srcH=Math.max(1,Math.round(rel.rh*ih));
+      var sx=Math.min(Math.max(0,Math.round(rel.rx*iw)),iw-srcW);
+      var sy=Math.min(Math.max(0,Math.round(rel.ry*ih)),ih-srcH);
+      var outW=srcW,outH=srcH;
+      if(size&&size.w>0&&size.h>0){outW=size.w;outH=size.h}
+      else if(size&&size.w>0){outW=size.w;outH=Math.max(1,Math.round(srcH*(size.w/srcW)))}
+      else if(size&&size.h>0){outH=size.h;outW=Math.max(1,Math.round(srcW*(size.h/srcH)))}
+      var fit=fitCanvas(outW,outH);
+      var src=prepareSource(img);
+      var k=src.scale;
+      var canvas=document.createElement('canvas');
+      canvas.width=fit.w;canvas.height=fit.h;
+      var ctx=canvas.getContext('2d');
+      ctx.drawImage(src.img,Math.round(sx*k),Math.round(sy*k),Math.round(srcW*k),Math.round(srcH*k),0,0,fit.w,fit.h);
+      canvasToBlob(canvas,'image/png').then(function(blob){
+        if(blob){
+          var name=(file.name.replace(/\.[^.]+$/,'')||'image')+'-cropped.png';
+          triggerDownload(blob,name);
+          doneCount++;
+        }
+        done();
+      });
+    },function(i,total){
+      info.textContent='处理中 '+i+'/'+total;
+    },function(){
+      info.textContent=doneCount?('完成 '+doneCount+' 张，已逐张开始下载'):'处理失败';
+      btn.disabled=false;
+      if(doneCount)window.toast('批量裁剪完成 '+doneCount+' 张');
     });
   };
   window.downloadCrop=function(){
@@ -905,7 +977,7 @@ body{
       if(fmt==='image/jpeg'){ctx.fillStyle='#fff';ctx.fillRect(0,0,outW,outH)}
       ctx.drawImage(src.img,0,0,outW,outH);
       canvasToBlob(canvas,fmt,quality).then(function(blob){
-        resolve({blob:blob,cw:outW,ch:outH});
+        resolve({blob:blob,cw:outW,ch:outH,canvas:canvas});
       });
     });
   }
@@ -1012,38 +1084,21 @@ body{
         return;
       }
       resizeData.blob=blob;
-      var preview=canvas,thumb=false;
-      if(outW*outH>2000000){
-        thumb=true;
-        var ps=Math.sqrt(2000000/(outW*outH));
-        preview=document.createElement('canvas');
-        preview.width=Math.max(1,Math.round(outW*ps));
-        preview.height=Math.max(1,Math.round(outH*ps));
-        preview.getContext('2d').drawImage(canvas,0,0,preview.width,preview.height);
-      }
-      var imgEl=document.getElementById('resizeNew');
-      var shown=false;
-      imgEl.onload=function(){
-        if(shown)return;
-        shown=true;
-        document.getElementById('resizeCompare').style.display='grid';
-        info.textContent=canvas.width+'×'+canvas.height+' px · '+ext.toUpperCase()+(fmt==='image/png'?' · 无损':' · 质量 '+Math.round(quality*100)+'%')+' · '+fmtSize(blob.size)+(thumb?'（预览为缩略图，下载为全尺寸）':'');
-        document.getElementById('resizeDownloadBtn').disabled=false;
-        var box=document.getElementById('resizeBox');
-        box.innerHTML='';
-        var outImg=document.createElement('img');
-        outImg.src=imgEl.src;
-        box.appendChild(outImg);
-        window.toast('缩放完成，'+canvas.width+'×'+canvas.height);
-      };
-      imgEl.onerror=function(){
-        if(shown)return;
-        shown=true;
-        info.textContent='预览加载失败，请直接使用下载';
-        document.getElementById('resizeCompare').style.display='grid';
-        document.getElementById('resizeDownloadBtn').disabled=false;
-      };
-      imgEl.src=preview.toDataURL(fmt);
+      var ps=Math.min(1,Math.sqrt(2000000/(outW*outH)));
+      var cvs=document.getElementById('resizeNew');
+      cvs.width=Math.max(1,Math.round(outW*ps));
+      cvs.height=Math.max(1,Math.round(outH*ps));
+      cvs.getContext('2d').drawImage(canvas,0,0,cvs.width,cvs.height);
+      document.getElementById('resizeCompare').style.display='grid';
+      info.textContent=canvas.width+'×'+canvas.height+' px · '+ext.toUpperCase()+(fmt==='image/png'?' · 无损':' · 质量 '+Math.round(quality*100)+'%')+' · '+fmtSize(blob.size)+(ps<1?'（预览为缩略图，下载为全尺寸）':'');
+      document.getElementById('resizeDownloadBtn').disabled=false;
+      var box=document.getElementById('resizeBox');
+      box.innerHTML='';
+      var outCvs=document.createElement('canvas');
+      outCvs.width=cvs.width;outCvs.height=cvs.height;
+      outCvs.getContext('2d').drawImage(cvs,0,0);
+      box.appendChild(outCvs);
+      window.toast('缩放完成，'+canvas.width+'×'+canvas.height);
     });
   };
   window.doResizeBatch=function(){
