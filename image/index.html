@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>图片工具 - 压缩 / 裁剪 / 证件照</title>
-<meta name="description" content="在线图片处理工具箱：图片压缩（质量与尺寸可调）、图片裁剪（自由/固定比例/指定尺寸）、证件照制作（一寸/二寸规格、换底色）、图片加水印（文字/图片水印，可调位置透明度）。全程浏览器本地处理，图片不上传，隐私安全。">
-<meta property="og:title" content="图片工具 - 压缩 / 裁剪 / 证件照">
-<meta property="og:description" content="在线图片压缩、裁剪（含指定尺寸）、证件照制作工具，浏览器本地处理，隐私安全。">
+<title>图片工具 - 压缩 / 缩放 / 裁剪 / 证件照</title>
+<meta name="description" content="在线图片处理工具箱：图片压缩（质量与尺寸可调）、图片缩放（按像素或百分比，保持比例可选）、图片裁剪（自由/固定比例/指定像素尺寸）、证件照制作（一寸/二寸规格、换底色）、图片加水印（文字/图片水印，可调位置透明度）。全程浏览器本地处理，图片不上传，隐私安全。">
+<meta property="og:title" content="图片工具 - 压缩 / 缩放 / 裁剪 / 证件照">
+<meta property="og:description" content="在线图片压缩、缩放（像素/百分比）、裁剪（含指定像素尺寸）、证件照制作工具，浏览器本地处理，隐私安全。">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.justgame.top/image/">
 <meta property="og:site_name" content="星汉灿烂">
@@ -171,6 +171,7 @@ body{
 
   <div class="tabs">
     <button class="tab active" data-tab="compress" onclick="switchTab('compress')"><span class="ic">🗜</span>图片压缩</button>
+    <button class="tab" data-tab="resize" onclick="switchTab('resize')"><span class="ic">⇲</span>图片缩放</button>
     <button class="tab" data-tab="crop" onclick="switchTab('crop')"><span class="ic">✂</span>图片裁剪</button>
     <button class="tab" data-tab="idphoto" onclick="switchTab('idphoto')"><span class="ic">📷</span>证件照</button>
     <button class="tab" data-tab="watermark" onclick="switchTab('watermark')"><span class="ic">🏷</span>图片水印</button>
@@ -208,6 +209,53 @@ body{
     </div>
   </div>
 
+  <!-- 缩放 -->
+  <div class="panel" id="panel-resize">
+    <div class="card">
+      <div class="card-title"><h3>上传图片并设置目标尺寸</h3></div>
+      <div class="file-drop" id="resizeDrop">点击或拖拽图片到此处（JPG / PNG / WebP）</div>
+      <div class="file-meta" id="resizeMeta"></div>
+      <div class="stage" id="resizeStage"><div class="stage-box" id="resizeBox"></div></div>
+      <div class="opts">
+        <label>模式 <select id="resizeMode" onchange="resizeModeChanged()">
+          <option value="pixel" selected>像素</option>
+          <option value="percent">百分比</option>
+        </select></label>
+      </div>
+      <div class="opts" id="resizePixelOpts">
+        <label>宽 <input type="number" id="resizeW" placeholder="px" min="1" oninput="resizeSlider()"></label>
+        <label>高 <input type="number" id="resizeH" placeholder="px" min="1" oninput="resizeSlider()"></label>
+        <label><input type="checkbox" id="resizeKeepRatio" checked> 保持宽高比</label>
+        <span class="range-val" style="min-width:auto;text-align:left">留空一项时自动按原图比例计算</span>
+      </div>
+      <div class="opts" id="resizePercentOpts" style="display:none">
+        <label>缩放 <input type="range" id="resizePercent" min="1" max="200" value="50" oninput="resizePercentSlider()"></label>
+        <span class="range-val" id="resizePercentVal">50%</span>
+      </div>
+      <div class="opts">
+        <label>格式 <select id="resizeFmt"><option value="image/png" selected>PNG</option><option value="image/jpeg">JPG</option><option value="image/webp">WebP</option></select></label>
+        <label>质量 <input type="range" id="resizeQuality" min="1" max="100" value="90" oninput="resizeSlider()" style="max-width:160px"></label>
+        <span class="range-val" id="resizeQualityVal">90%</span>
+      </div>
+      <div class="opts">
+        <button class="btn primary" onclick="doResize()">开始缩放</button>
+        <button class="btn green" id="resizeDownloadBtn" onclick="downloadResize()" disabled>下载缩放图</button>
+      </div>
+      <div class="compare" id="resizeCompare" style="display:none">
+        <div class="result-box">
+          <div class="lbl">缩放前</div>
+          <img id="resizeOrig" alt="原图">
+          <div class="result-info" id="resizeOrigInfo"></div>
+        </div>
+        <div class="result-box">
+          <div class="lbl">缩放后</div>
+          <img id="resizeNew" alt="缩放后">
+          <div class="result-info" id="resizeNewInfo"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- 裁剪 -->
   <div class="panel" id="panel-crop">
     <div class="card">
@@ -227,7 +275,7 @@ body{
       </div>
       <div class="opts">
         <label>指定尺寸 <input type="number" id="cropSizeW" placeholder="宽" min="1" oninput="cropSizeChanged()"> × <input type="number" id="cropSizeH" placeholder="高" min="1" oninput="cropSizeChanged()"> px</label>
-        <span class="range-val" style="min-width:auto;text-align:left">留空则按裁剪框原尺寸输出</span>
+        <span class="range-val" style="min-width:auto;text-align:left">留空宽或高则按裁剪框比例自动计算</span>
       </div>
       <div class="opts">
         <button class="btn primary" onclick="doCrop()">裁剪</button>
@@ -612,15 +660,26 @@ body{
     drawCrop();
   };
   function readCropSize(){
-    var w=parseInt(document.getElementById('cropSizeW').value,10);
-    var h=parseInt(document.getElementById('cropSizeH').value,10);
-    return (w>0&&h>0)?{w:w,h:h}:null;
+    var wVal=document.getElementById('cropSizeW').value;
+    var hVal=document.getElementById('cropSizeH').value;
+    var w=parseInt(wVal,10),h=parseInt(hVal,10);
+    if(w>0&&h>0)return {w:w,h:h};
+    if(w>0&&!hVal.trim())return {w:w,h:0};
+    if(h>0&&!wVal.trim())return {w:0,h:h};
+    return null;
   }
   function applyCropSize(){
     var size=readCropSize();
     var s=cropState;
     if(!size||!s.img)return null;
-    var r=size.w/size.h;
+    var r=s.w/s.h;
+    if(size.w>0&&size.h>0){
+      r=size.w/size.h;
+    }else if(size.w>0){
+      size.h=Math.max(1,Math.round(size.w/r));
+    }else{
+      size.w=Math.max(1,Math.round(size.h*r));
+    }
     var cw=s.w,ch=s.h;
     if(cw/ch>r){ch=Math.round(cw/r)}else{cw=Math.round(ch*r)}
     if(cw>s.natW||ch>s.natH){
@@ -672,6 +731,101 @@ body{
   window.downloadCrop=function(){
     if(!cropData.blob)return;
     triggerDownload(cropData.blob,cropData.fileName+'-cropped.png');
+  };
+
+  /* ===== 缩放 ===== */
+  var resizeData={img:null,blob:null,fileName:''};
+  setupDrop('resizeDrop',function(f){
+    resizeData.fileName=f.name.replace(/\.[^.]+$/,'')||'image';
+    loadImage(f,function(img){
+      resizeData.img=img;
+      document.getElementById('resizeMeta').textContent='已选择：'+f.name+'（'+img.naturalWidth+'×'+img.naturalHeight+'）';
+      var box=document.getElementById('resizeBox');
+      box.innerHTML='';
+      var imgEl=document.createElement('img');
+      imgEl.src=img.src;
+      box.appendChild(imgEl);
+      document.getElementById('resizeStage').style.display='block';
+      document.getElementById('resizeCompare').style.display='none';
+      document.getElementById('resizeDownloadBtn').disabled=true;
+      document.getElementById('resizeOrig').src=img.src;
+      document.getElementById('resizeOrigInfo').textContent=f.name+' · '+img.naturalWidth+'×'+img.naturalHeight+' · '+fmtSize(f.size);
+      window.toast('图片已加载');
+    });
+  });
+  window.resizeModeChanged=function(){
+    var mode=document.getElementById('resizeMode').value;
+    document.getElementById('resizePixelOpts').style.display=mode==='pixel'?'flex':'none';
+    document.getElementById('resizePercentOpts').style.display=mode==='percent'?'flex':'none';
+  };
+  window.resizePercentSlider=function(){
+    document.getElementById('resizePercentVal').textContent=document.getElementById('resizePercent').value+'%';
+  };
+  window.resizeSlider=function(){
+    document.getElementById('resizeQualityVal').textContent=document.getElementById('resizeQuality').value+'%';
+  };
+  function computeResizeSize(){
+    var img=resizeData.img;
+    var iw=img.naturalWidth,ih=img.naturalHeight;
+    var r=iw/ih;
+    var mode=document.getElementById('resizeMode').value;
+    if(mode==='percent'){
+      var p=parseInt(document.getElementById('resizePercent').value,10);
+      return {w:Math.max(1,Math.round(iw*p/100)),h:Math.max(1,Math.round(ih*p/100))};
+    }
+    var wVal=document.getElementById('resizeW').value;
+    var hVal=document.getElementById('resizeH').value;
+    var w=parseInt(wVal,10),h=parseInt(hVal,10);
+    var keep=document.getElementById('resizeKeepRatio').checked;
+    if(w>0&&h>0){
+      if(keep){
+        var sc=Math.min(w/iw,h/ih);
+        return {w:Math.max(1,Math.round(iw*sc)),h:Math.max(1,Math.round(ih*sc))};
+      }
+      return {w:w,h:h};
+    }
+    if(w>0)return {w:w,h:Math.max(1,Math.round(w/r))};
+    if(h>0)return {w:Math.max(1,Math.round(h*r)),h:h};
+    return {w:iw,h:ih};
+  }
+  window.doResize=function(){
+    if(!resizeData.img){toast('请先上传图片');return}
+    var size=computeResizeSize();
+    var fmt=document.getElementById('resizeFmt').value;
+    var quality=parseInt(document.getElementById('resizeQuality').value)/100;
+    var MAX_PIXELS=32000000;
+    var outW=size.w,outH=size.h;
+    var px=outW*outH;
+    if(px>MAX_PIXELS){
+      var sc=Math.sqrt(MAX_PIXELS/px);
+      outW=Math.max(1,Math.round(outW*sc));
+      outH=Math.max(1,Math.round(outH*sc));
+      window.toast('输出尺寸较大，已缩放至 '+outW+'×'+outH+' 处理');
+    }
+    var canvas=document.createElement('canvas');
+    canvas.width=outW;canvas.height=outH;
+    var ctx=canvas.getContext('2d');
+    if(fmt==='image/jpeg'){ctx.fillStyle='#fff';ctx.fillRect(0,0,outW,outH)}
+    ctx.drawImage(resizeData.img,0,0,outW,outH);
+    canvasToBlob(canvas,fmt,quality).then(function(blob){
+      if(!blob){
+        window.toast('生成失败：图片尺寸超出浏览器处理上限，请调整目标尺寸');
+        return;
+      }
+      resizeData.blob=blob;
+      document.getElementById('resizeNew').src=URL.createObjectURL(blob);
+      var ext=fmt==='image/png'?'png':fmt==='image/webp'?'webp':'jpg';
+      document.getElementById('resizeNewInfo').textContent=canvas.width+'×'+canvas.height+' px · '+ext.toUpperCase()+' · '+fmtSize(blob.size);
+      document.getElementById('resizeCompare').style.display='grid';
+      document.getElementById('resizeDownloadBtn').disabled=false;
+      window.toast('缩放完成，'+canvas.width+'×'+canvas.height);
+    });
+  };
+  window.downloadResize=function(){
+    if(!resizeData.blob)return;
+    var fmt=document.getElementById('resizeFmt').value;
+    var ext=fmt==='image/png'?'png':fmt==='image/webp'?'webp':'jpg';
+    triggerDownload(resizeData.blob,resizeData.fileName+'-resized.'+ext);
   };
 
   /* ===== 证件照 ===== */
