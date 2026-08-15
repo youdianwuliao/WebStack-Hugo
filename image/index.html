@@ -338,7 +338,7 @@ body{
       <div class="result-grid" id="idResult" style="display:none;margin-top:14px">
         <div class="result-box">
           <div class="lbl">生成结果</div>
-          <img id="idResultImg" alt="证件照结果">
+          <canvas id="idResultImg" width="0" height="0"></canvas>
           <div class="result-info" id="idResultInfo"></div>
         </div>
       </div>
@@ -404,7 +404,7 @@ body{
       <div class="result-grid" id="wmResult" style="display:none;margin-top:14px">
         <div class="result-box">
           <div class="lbl">生成结果</div>
-          <img id="wmResultImg" alt="水印结果">
+          <canvas id="wmResultImg" width="0" height="0"></canvas>
           <div class="result-info" id="wmResultInfo"></div>
         </div>
       </div>
@@ -434,6 +434,10 @@ body{
   window.switchTab=function(name){
     document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('active',t.dataset.tab===name)});
     document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('active',p.id==='panel-'+name)});
+    if(name==='crop'||name==='idphoto'){
+      var bid=name==='crop'?'cropBox':'idBox';
+      if(cropStateMap[bid])cropState=cropStateMap[bid];
+    }
   };
   var MAX_PIXELS=32000000,MAX_SIDE=16384;
   function fitCanvas(w,h){
@@ -566,6 +570,7 @@ body{
 
   /* ===== 裁剪框交互组件 ===== */
   var cropState={img:null,ratio:'free',x:0,y:0,w:0,h:0};
+  var cropStateMap={};
   function initCrop(stageId,boxId,img,ratio){
     var stage=document.getElementById(stageId);
     var boxEl=document.getElementById(boxId);
@@ -580,6 +585,7 @@ body{
     var dispW=natW*scale,dispH=natH*scale;
     boxEl.style.width=dispW+'px';boxEl.style.height=dispH+'px';
     cropState={img:img,ratio:ratio,x:0,y:0,w:natW,h:natH,scale:scale,natW:natW,natH:natH,stage:stage,boxEl:boxEl};
+    cropStateMap[boxId]=cropState;
     setCropRect(Math.round(natW*0.08),Math.round(natH*0.08),Math.round(natW*0.84),Math.round(natH*0.84),ratio);
     if(cropState.cropEl)boxEl.appendChild(cropState.cropEl);
     drawCrop();
@@ -1203,7 +1209,11 @@ body{
     ctx.drawImage(tmp,0,0,targetW,targetH);
     canvasToBlob(canvas,'image/jpeg',0.95).then(function(blob){
       idData.blob=blob;
-      document.getElementById('idResultImg').src=URL.createObjectURL(blob);
+      var cvs=document.getElementById('idResultImg');
+      var ps=Math.min(1,Math.sqrt(2000000/(spec.w*spec.h)));
+      cvs.width=Math.max(1,Math.round(spec.w*ps));
+      cvs.height=Math.max(1,Math.round(spec.h*ps));
+      cvs.getContext('2d').drawImage(canvas,0,0,cvs.width,cvs.height);
       document.getElementById('idResultInfo').textContent=spec.name+' · '+spec.w+'×'+spec.h+' px · 背景 rgb('+bg.join(',')+') · '+fmtSize(blob.size);
       document.getElementById('idResult').style.display='grid';
       document.getElementById('idDownloadBtn').disabled=false;
@@ -1298,6 +1308,7 @@ body{
     if(type==='text'&&pos==='tile'){doTileText();return}
     var canvas=makeCanvas(wmData.img);
     var ctx=canvas.getContext('2d');
+    if(wmData.origName.match(/\.(jpg|jpeg)$/i)){ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height)}
     ctx.drawImage(wmData.img,0,0);
     if(type==='text'){
       drawTextWatermark(ctx,canvas.width,canvas.height,pos);
@@ -1307,12 +1318,10 @@ body{
     finishWatermark(canvas);
   };
   function makeCanvas(img){
-    var MAX_PIXELS=32000000;
     var w=img.naturalWidth,h=img.naturalHeight;
-    var scale=Math.min(1,Math.sqrt(MAX_PIXELS/(w*h)));
-    if(scale<1){
-      w=Math.max(1,Math.floor(w*scale));
-      h=Math.max(1,Math.floor(h*scale));
+    var fit=fitCanvas(w,h);
+    if(fit.w!==w||fit.h!==h){
+      w=fit.w;h=fit.h;
       window.toast('图片尺寸较大，已按比例缩放至 '+w+'×'+h+' 处理');
     }
     var canvas=document.createElement('canvas');
@@ -1372,6 +1381,7 @@ body{
     var color=document.getElementById('wmColor').value;
     var canvas=makeCanvas(wmData.img);
     var ctx=canvas.getContext('2d');
+    if(wmData.origName.match(/\.(jpg|jpeg)$/i)){ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height)}
     ctx.drawImage(wmData.img,0,0);
     var font='bold '+size+'px -apple-system,"PingFang SC","Microsoft YaHei",sans-serif';
     ctx.font=font;
@@ -1412,9 +1422,13 @@ body{
         return;
       }
       wmData.blob=blob;
-      document.getElementById('wmResultImg').src=URL.createObjectURL(blob);
+      var cvs=document.getElementById('wmResultImg');
+      var ps=Math.min(1,Math.sqrt(2000000/(canvas.width*canvas.height)));
+      cvs.width=Math.max(1,Math.round(canvas.width*ps));
+      cvs.height=Math.max(1,Math.round(canvas.height*ps));
+      cvs.getContext('2d').drawImage(canvas,0,0,cvs.width,cvs.height);
       var ext=fmt==='image/jpeg'?'jpg':'png';
-      document.getElementById('wmResultInfo').textContent=canvas.width+'×'+canvas.height+' px · '+ext.toUpperCase()+' · '+fmtSize(blob.size);
+      document.getElementById('wmResultInfo').textContent=canvas.width+'×'+canvas.height+' px · '+ext.toUpperCase()+' · '+fmtSize(blob.size)+(ps<1?'（预览为缩略图，下载为全尺寸）':'');
       document.getElementById('wmResult').style.display='grid';
       document.getElementById('wmDownloadBtn').disabled=false;
       window.toast('水印已生成');
