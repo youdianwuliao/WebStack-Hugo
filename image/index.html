@@ -922,12 +922,17 @@ body{
     var size=computeResizeSize(resizeData.img);
     var fmt=document.getElementById('resizeFmt').value;
     var quality=parseInt(document.getElementById('resizeQuality').value)/100;
+    var ext=fmt==='image/png'?'png':fmt==='image/webp'?'webp':'jpg';
+    var info=document.getElementById('resizeNewInfo');
     var src=prepareSource(resizeData.img);
     var fit=fitCanvas(size.w,size.h);
     var outW=fit.w,outH=fit.h;
+    var msg=fmt==='image/png'?'正在生成 PNG，大图编码较慢请稍候…':'正在处理…';
     if(outW!==size.w||outH!==size.h){
-      window.toast('输出尺寸较大，已缩放至 '+outW+'×'+outH+' 处理');
+      msg='输出尺寸较大，已缩放至 '+outW+'×'+outH+' 处理';
     }
+    info.textContent=msg;
+    window.toast(msg);
     var canvas=document.createElement('canvas');
     canvas.width=outW;canvas.height=outH;
     var ctx=canvas.getContext('2d');
@@ -936,15 +941,42 @@ body{
     canvasToBlob(canvas,fmt,quality).then(function(blob){
       if(!blob){
         window.toast('生成失败：图片尺寸超出浏览器处理上限，请调整目标尺寸');
+        info.textContent='生成失败';
         return;
       }
       resizeData.blob=blob;
-      document.getElementById('resizeNew').src=URL.createObjectURL(blob);
-      var ext=fmt==='image/png'?'png':fmt==='image/webp'?'webp':'jpg';
-      document.getElementById('resizeNewInfo').textContent=canvas.width+'×'+canvas.height+' px · '+ext.toUpperCase()+' · '+fmtSize(blob.size);
-      document.getElementById('resizeCompare').style.display='grid';
-      document.getElementById('resizeDownloadBtn').disabled=false;
-      window.toast('缩放完成，'+canvas.width+'×'+canvas.height);
+      var preview=canvas,thumb=false;
+      if(outW*outH>2000000){
+        thumb=true;
+        var ps=Math.sqrt(2000000/(outW*outH));
+        preview=document.createElement('canvas');
+        preview.width=Math.max(1,Math.round(outW*ps));
+        preview.height=Math.max(1,Math.round(outH*ps));
+        preview.getContext('2d').drawImage(canvas,0,0,preview.width,preview.height);
+      }
+      var imgEl=document.getElementById('resizeNew');
+      var shown=false;
+      imgEl.onload=function(){
+        if(shown)return;
+        shown=true;
+        document.getElementById('resizeCompare').style.display='grid';
+        info.textContent=canvas.width+'×'+canvas.height+' px · '+ext.toUpperCase()+' · '+fmtSize(blob.size)+(thumb?'（预览为缩略图，下载为全尺寸）':'');
+        document.getElementById('resizeDownloadBtn').disabled=false;
+        var box=document.getElementById('resizeBox');
+        box.innerHTML='';
+        var outImg=document.createElement('img');
+        outImg.src=imgEl.src;
+        box.appendChild(outImg);
+        window.toast('缩放完成，'+canvas.width+'×'+canvas.height);
+      };
+      imgEl.onerror=function(){
+        if(shown)return;
+        shown=true;
+        info.textContent='预览加载失败，请直接使用下载';
+        document.getElementById('resizeCompare').style.display='grid';
+        document.getElementById('resizeDownloadBtn').disabled=false;
+      };
+      imgEl.src=preview.toDataURL(fmt);
     });
   };
   window.doResizeBatch=function(){
