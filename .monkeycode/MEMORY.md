@@ -163,11 +163,12 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
    - **嵌入自研脚本陷阱**：`python .replace('</body>', ...)` 会误替换 JS 字符串字面量里的 `</body>`（如导出模板 `'...'+body+'\n</body>\n</html>'`），破坏字符串；正确做法是锚定文件末尾真实的 `</script>\n</body>\n</html>`，先剥离末尾 `</html>` 再拼接，且自研脚本内不得含 `</script>` 字面量
 
 [canvas 大图处理边界 - 排错知识]
-- Date: 2026-08-14
-- Context: Agent 修复图片水印"生成结果裂开 + 下载无效果"反馈时发现
+- Date: 2026-08-15
+- Context: Agent 修复图片水印/裁剪"结果裂开"反馈时发现（2026-08-15 补充裁剪与证件照）
 - Category: 排错调试
 - Instructions:
   - **canvas 超限根因**：`canvas.toBlob` 在 canvas 尺寸超过浏览器限制（Chrome 面积上限约 16384×16384，经验阈值 3200 万像素内安全）时回调返回 `null`；对 `null` 调 `URL.createObjectURL(null)` 会抛 TypeError，中断后续代码 → 结果图 src 设置失败（显示裂开）、下载按钮逻辑卡死
-  - **统一解法**：`image/` 站新增 `makeCanvas(img)` 工厂，按 `MAX_PIXELS=32000000` 等比缩放后再绘制（`scale=Math.min(1,Math.sqrt(MAX_PIXELS/(w*h)))`），缩放时 toast 提示；`finishWatermark` 对 null blob 做兜底提示"图片尺寸超出浏览器处理上限"
+  - **统一解法**：`image/` 站所有产出 canvas 的路径（水印 `makeCanvas(img)` 工厂、裁剪 `doCrop`、证件照临时画布 tmp）都按 `MAX_PIXELS=32000000` 等比缩放后再绘制（`scale=Math.min(1,Math.sqrt(MAX_PIXELS/(w*h)))`），缩放时 toast 提示；对 null blob 做兜底提示，禁止对 null 调 `URL.createObjectURL`
+  - **裁剪框显示错位根因**：`.stage img` 有 `max-height:460px`，而旧 `initCrop` 的 `scale=min(1,560/max(natW,natH))` 在竖图时显示高度可达 560 > 460，img 被 CSS 压缩后与裁剪框 boxEl 尺寸不一致 → 裁剪框盖错位置（视觉"裂开"）；正确做法：`scale=min(1,(stage.clientWidth-2)/natW,456/natH)`，保证显示尺寸不触发 CSS 约束，且窄屏不溢出
   - **扩展名剥除陷阱**：`wmData.fileName=f.name.replace(/\.[^.]+$/,'')` 已去掉扩展名，后续再 `.match(/\.(jpg|jpeg)$/i)` 判断格式恒为 false；需另存 `wmData.origName=f.name` 用于格式判断，`fileName` 只作下载前缀
-  - **验证方法**：puppeteer + `http://localhost` 实测（file:// 亦可）；下载验证用 CDP `Browser.setDownloadBehavior` 指定下载目录后点按钮，再对下载文件与原始输入做像素差分（>40 阈值计数）确认水印已绘制
+  - **验证方法**：puppeteer + `http://localhost` 实测（file:// 亦可）；下载验证用 CDP `Browser.setDownloadBehavior` 指定下载目录后点按钮，再对下载文件与原始输入做像素差分（>40 阈值计数）确认已绘制

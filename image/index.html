@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>图片工具 - 压缩 / 裁剪 / 证件照</title>
-<meta name="description" content="在线图片处理工具箱：图片压缩（质量与尺寸可调）、图片裁剪（自由/固定比例）、证件照制作（一寸/二寸规格、换底色）、图片加水印（文字/图片水印，可调位置透明度）。全程浏览器本地处理，图片不上传，隐私安全。">
+<meta name="description" content="在线图片处理工具箱：图片压缩（质量与尺寸可调）、图片裁剪（自由/固定比例/指定尺寸）、证件照制作（一寸/二寸规格、换底色）、图片加水印（文字/图片水印，可调位置透明度）。全程浏览器本地处理，图片不上传，隐私安全。">
 <meta property="og:title" content="图片工具 - 压缩 / 裁剪 / 证件照">
-<meta property="og:description" content="在线图片压缩、裁剪、证件照制作工具，浏览器本地处理，隐私安全。">
+<meta property="og:description" content="在线图片压缩、裁剪（含指定尺寸）、证件照制作工具，浏览器本地处理，隐私安全。">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.justgame.top/image/">
 <meta property="og:site_name" content="星汉灿烂">
@@ -226,6 +226,10 @@ body{
         </select></label>
       </div>
       <div class="opts">
+        <label>指定尺寸 <input type="number" id="cropSizeW" placeholder="宽" min="1" oninput="cropSizeChanged()"> × <input type="number" id="cropSizeH" placeholder="高" min="1" oninput="cropSizeChanged()"> px</label>
+        <span class="range-val" style="min-width:auto;text-align:left">留空则按裁剪框原尺寸输出</span>
+      </div>
+      <div class="opts">
         <button class="btn primary" onclick="doCrop()">裁剪</button>
         <button class="btn green" id="cropDownloadBtn" onclick="downloadCrop()" disabled>下载裁剪图</button>
       </div>
@@ -429,7 +433,8 @@ body{
     boxEl.appendChild(imgEl);
     stage.style.display='block';
     var natW=img.naturalWidth,natH=img.naturalHeight;
-    var scale=Math.min(1,560/Math.max(natW,natH));
+    var availW=Math.max(120,stage.clientWidth-2);
+    var scale=Math.min(1,availW/natW,456/natH);
     var dispW=natW*scale,dispH=natH*scale;
     boxEl.style.width=dispW+'px';boxEl.style.height=dispH+'px';
     cropState={img:img,ratio:ratio,x:0,y:0,w:natW,h:natH,scale:scale,natW:natW,natH:natH,stage:stage,boxEl:boxEl};
@@ -606,15 +611,56 @@ body{
     setCropRect(cropState.x,cropState.y,cropState.w,cropState.h,getCropRatio());
     drawCrop();
   };
+  function readCropSize(){
+    var w=parseInt(document.getElementById('cropSizeW').value,10);
+    var h=parseInt(document.getElementById('cropSizeH').value,10);
+    return (w>0&&h>0)?{w:w,h:h}:null;
+  }
+  function applyCropSize(){
+    var size=readCropSize();
+    var s=cropState;
+    if(!size||!s.img)return null;
+    var r=size.w/size.h;
+    var cw=s.w,ch=s.h;
+    if(cw/ch>r){ch=Math.round(cw/r)}else{cw=Math.round(ch*r)}
+    if(cw>s.natW||ch>s.natH){
+      var sc=Math.min(s.natW/cw,s.natH/ch);
+      cw=Math.round(cw*sc);ch=Math.round(ch*sc);
+    }
+    s.x=Math.min(Math.max(0,s.x),s.natW-cw);
+    s.y=Math.min(Math.max(0,s.y),s.natH-ch);
+    s.w=cw;s.h=ch;
+    drawCrop();
+    return size;
+  }
+  window.cropSizeChanged=function(){
+    if(!cropState.img||cropState.boxEl.id!=='cropBox')return;
+    applyCropSize();
+  };
   window.doCrop=function(){
     if(!cropData.img){toast('请先上传图片');return}
     var s=cropState;
     if(!s.img||s.boxEl.id!=='cropBox'){toast('请先上传图片');return}
+    var size=applyCropSize();
+    var srcW=Math.max(1,Math.round(s.w)),srcH=Math.max(1,Math.round(s.h));
+    var MAX_PIXELS=32000000;
+    var outW=size?size.w:srcW,outH=size?size.h:srcH;
+    var px=outW*outH;
+    if(px>MAX_PIXELS){
+      var sc=Math.sqrt(MAX_PIXELS/px);
+      outW=Math.max(1,Math.round(outW*sc));
+      outH=Math.max(1,Math.round(outH*sc));
+      window.toast('输出尺寸较大，已缩放至 '+outW+'×'+outH+' 处理');
+    }
     var canvas=document.createElement('canvas');
-    canvas.width=Math.round(s.w);canvas.height=Math.round(s.h);
+    canvas.width=outW;canvas.height=outH;
     var ctx=canvas.getContext('2d');
-    ctx.drawImage(s.img,s.x,s.y,s.w,s.h,0,0,canvas.width,canvas.height);
+    ctx.drawImage(s.img,s.x,s.y,srcW,srcH,0,0,outW,outH);
     canvasToBlob(canvas,'image/png').then(function(blob){
+      if(!blob){
+        window.toast('生成失败：图片尺寸超出浏览器处理上限，请缩小裁剪区域');
+        return;
+      }
       cropData.blob=blob;
       document.getElementById('cropResultImg').src=URL.createObjectURL(blob);
       document.getElementById('cropResultInfo').textContent=canvas.width+'×'+canvas.height+' px · PNG · '+fmtSize(blob.size);
@@ -679,10 +725,17 @@ body{
     ctx.fillStyle='rgb('+bg[0]+','+bg[1]+','+bg[2]+')';
     ctx.fillRect(0,0,spec.w,spec.h);
     // 将裁剪区绘制到临时画布做背景替换
+    var MAX_PIXELS=32000000;
+    var tw=Math.max(1,Math.round(s.w)),th=Math.max(1,Math.round(s.h));
+    var tp=tw*th;
+    if(tp>MAX_PIXELS){
+      var sc=Math.sqrt(MAX_PIXELS/tp);
+      tw=Math.max(1,Math.round(tw*sc));th=Math.max(1,Math.round(th*sc));
+    }
     var tmp=document.createElement('canvas');
-    tmp.width=Math.round(s.w);tmp.height=Math.round(s.h);
+    tmp.width=tw;tmp.height=th;
     var tctx=tmp.getContext('2d',{willReadFrequently:true});
-    tctx.drawImage(s.img,s.x,s.y,s.w,s.h,0,0,tmp.width,tmp.height);
+    tctx.drawImage(s.img,s.x,s.y,s.w,s.h,0,0,tw,th);
     if(threshold>0){
       replaceBg(tmp,tctx,bg,threshold);
     }
