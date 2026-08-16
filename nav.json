@@ -101,6 +101,12 @@
       "sidebarIcon": "fas fa-robot",
       "items": [
         {
+          "title": "DeepSeek Harness",
+          "icon": "/assets/images/logos/deepseek-harness.svg",
+          "url": "https://deepseek-harness-plugin.com/zh-CN/",
+          "description": "DeepSeek Harness（DSH）插件精选目录：发现、对比并安装 DeepSeek 开源智能体框架的社区插件"
+        },
+        {
           "title": "deepseek",
           "icon": "/assets/images/logos/deepseek.png",
           "url": "https://chat.deepseek.com/",
