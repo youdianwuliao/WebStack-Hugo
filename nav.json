@@ -452,12 +452,6 @@
           "name": "武器库",
           "items": [
             {
-              "title": "千羽数据",
-              "icon": "/assets/images/logos/qinyudata.png",
-              "url": "https://qinyudata.justgame.top",
-              "description": "千羽数据"
-            },
-            {
               "title": "千羽赛事",
               "icon": "/assets/images/logos/qianyu-football.svg",
               "url": "https://football.justgame.top/",
@@ -780,6 +774,12 @@
               "icon": "/assets/images/logos/mongodb.png",
               "url": "https://www.mongodb.com/zh-cn",
               "description": "开源文档型数据库，提供 Atlas 云服务，支持向量搜索与 AI 应用开发"
+            },
+            {
+              "title": "千羽数据",
+              "icon": "/assets/images/logos/qinyudata.png",
+              "url": "https://qinyudata.justgame.top",
+              "description": "千羽数据"
             }
           ]
         },
