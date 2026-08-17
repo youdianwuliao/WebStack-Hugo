@@ -290,6 +290,11 @@ body{
         <span class="range-val" style="min-width:auto;text-align:left">留空宽或高则按裁剪框比例自动计算</span>
       </div>
       <div class="opts">
+        <label>圆角 <input type="range" id="cropRadius" min="0" max="50" value="0" oninput="cropRadiusSlider()"></label>
+        <span class="range-val" id="cropRadiusVal">0（无）</span>
+        <span class="range-val" style="min-width:auto;text-align:left">按图片短边百分比，输出 PNG 角落透明</span>
+      </div>
+      <div class="opts">
         <button class="btn primary" onclick="doCrop()">裁剪</button>
         <button class="btn green" id="cropDownloadBtn" onclick="downloadCrop()" disabled>下载裁剪图</button>
         <button class="btn orange" id="cropBatchBtn" onclick="doCropBatch()" disabled>批量裁剪</button>
@@ -886,6 +891,25 @@ body{
     if(!cropState.img||cropState.boxEl.id!=='cropBox')return;
     applyCropSize();
   };
+  window.cropRadiusSlider=function(){
+    var v=parseInt(document.getElementById('cropRadius').value)||0;
+    document.getElementById('cropRadiusVal').textContent=v>0?(v+'%（按短边）'):'0（无）';
+  };
+  function getCropRadiusPct(){return parseInt(document.getElementById('cropRadius').value)||0}
+  function getCropRadius(w,h){
+    var pct=getCropRadiusPct();
+    if(pct<=0)return 0;
+    return Math.max(1,Math.round(Math.min(w,h)*pct/100));
+  }
+  function roundRectPath(ctx,w,h,r){
+    ctx.beginPath();
+    ctx.moveTo(r,0);
+    ctx.arcTo(w,0,w,h,r);
+    ctx.arcTo(w,h,0,h,r);
+    ctx.arcTo(0,h,0,0,r);
+    ctx.arcTo(0,0,w,0,r);
+    ctx.closePath();
+  }
   window.doCrop=function(){
     if(!cropData.img){toast('请先上传图片');return}
     var s=cropState;
@@ -903,7 +927,14 @@ body{
     var canvas=document.createElement('canvas');
     canvas.width=outW;canvas.height=outH;
     var ctx=canvas.getContext('2d');
+    var radius=getCropRadius(outW,outH);
+    if(radius>0){
+      ctx.save();
+      roundRectPath(ctx,outW,outH,radius);
+      ctx.clip();
+    }
     ctx.drawImage(src.img,Math.round(s.x*k),Math.round(s.y*k),Math.round(srcW*k),Math.round(srcH*k),0,0,outW,outH);
+    if(radius>0)ctx.restore();
     canvasToBlob(canvas,'image/png').then(function(blob){
       if(!blob){
         window.toast('生成失败：图片尺寸超出浏览器处理上限，请缩小裁剪区域');
@@ -915,7 +946,8 @@ body{
       cvs.width=Math.max(1,Math.round(canvas.width*ps));
       cvs.height=Math.max(1,Math.round(canvas.height*ps));
       cvs.getContext('2d').drawImage(canvas,0,0,cvs.width,cvs.height);
-      document.getElementById('cropResultInfo').textContent=canvas.width+'×'+canvas.height+' px · PNG · '+fmtSize(blob.size)+(ps<1?'（预览为缩略图，下载为全尺寸）':'');
+      var roundNote=radius>0?' · 圆角 '+getCropRadiusPct()+'%':'';
+      document.getElementById('cropResultInfo').textContent=canvas.width+'×'+canvas.height+' px · PNG · '+fmtSize(blob.size)+roundNote+(ps<1?'（预览为缩略图，下载为全尺寸）':'');
       document.getElementById('cropResult').style.display='grid';
       document.getElementById('cropDownloadBtn').disabled=false;
       window.toast('裁剪完成');
@@ -947,7 +979,14 @@ body{
       var canvas=document.createElement('canvas');
       canvas.width=fit.w;canvas.height=fit.h;
       var ctx=canvas.getContext('2d');
+      var radius=getCropRadius(fit.w,fit.h);
+      if(radius>0){
+        ctx.save();
+        roundRectPath(ctx,fit.w,fit.h,radius);
+        ctx.clip();
+      }
       ctx.drawImage(src.img,Math.round(sx*k),Math.round(sy*k),Math.round(srcW*k),Math.round(srcH*k),0,0,fit.w,fit.h);
+      if(radius>0)ctx.restore();
       canvasToBlob(canvas,'image/png').then(function(blob){
         if(blob){
           var name=(file.name.replace(/\.[^.]+$/,'')||'image')+'-cropped.png';
