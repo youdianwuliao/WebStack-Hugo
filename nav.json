@@ -41,6 +41,12 @@
       "sidebarIcon": "far fa-star",
       "items": [
         {
+          "title": "日月山河",
+          "icon": "/assets/images/logos/qinyudata.png",
+          "url": "https://qinyudata.justgame.top",
+          "description": "日月山河 · 琴语数据"
+        },
+        {
           "title": "小工具",
           "icon": "/assets/images/logos/t.png",
           "url": "https://tool.justgame.top",
