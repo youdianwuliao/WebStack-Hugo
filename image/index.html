@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>图片工具 - 压缩 / 缩放 / 裁剪 / 证件照</title>
-<meta name="description" content="在线图片处理工具箱：图片压缩与缩放支持批量（一次最多 50 张，处理完自动逐张下载）、图片裁剪（自由/固定比例/指定像素尺寸）、证件照制作、图片加水印。全程浏览器本地处理，图片不上传，隐私安全。">
-<meta property="og:title" content="图片工具 - 压缩 / 缩放 / 裁剪 / 证件照">
-<meta property="og:description" content="在线图片压缩、缩放（像素/百分比）、裁剪（含指定像素尺寸）、证件照制作工具，浏览器本地处理，隐私安全。">
+<title>图片工具 - 压缩 / 缩放 / 裁剪 / 证件照 / 旋转滤镜 / 拼图 / 信息转换</title>
+<meta name="description" content="在线图片处理工具箱：图片压缩与缩放支持批量（一次最多 50 张，处理完自动逐张下载）、图片裁剪（自由/固定比例/指定像素尺寸/圆角）、证件照制作、图片加水印、旋转翻转与滤镜调色、九宫格切图、多图拼接长图、图片信息查看与 Base64 转换。全程浏览器本地处理，图片不上传，隐私安全。">
+<meta property="og:title" content="图片工具 - 压缩 / 缩放 / 裁剪 / 证件照 / 旋转滤镜 / 拼图 / 信息转换">
+<meta property="og:description" content="在线图片压缩、缩放、裁剪（含圆角）、证件照、水印、旋转滤镜、九宫格切图、拼接长图、Base64 转换工具，浏览器本地处理，隐私安全。">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.justgame.top/image/">
 <meta property="og:site_name" content="星汉灿烂">
@@ -156,6 +156,13 @@ body{
 .color-swatch.active{border:2px solid var(--accent);transform:scale(1.1)}
 .swatch-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .size-label{font-size:12px;color:var(--muted);margin-top:10px;margin-bottom:6px}
+.btn.toggled{background:var(--chip-bg-active);color:var(--text);border-color:var(--accent)}
+.info-table{border:1px solid var(--card-border);border-radius:12px;overflow:hidden;margin-bottom:12px}
+.info-row{display:flex;padding:9px 14px;font-size:13px;border-bottom:1px solid var(--card-border)}
+.info-row:last-child{border-bottom:none}
+.info-row:nth-child(odd){background:var(--chip-bg)}
+.info-row .k{width:120px;color:var(--muted);flex-shrink:0}
+.info-row .v{color:var(--text);word-break:break-all}
 </style>
 </head>
 <body>
@@ -180,6 +187,9 @@ body{
     <button class="tab" data-tab="crop" onclick="switchTab('crop')"><span class="ic">✂</span>图片裁剪</button>
     <button class="tab" data-tab="idphoto" onclick="switchTab('idphoto')"><span class="ic">📷</span>证件照</button>
     <button class="tab" data-tab="watermark" onclick="switchTab('watermark')"><span class="ic">🏷</span>图片水印</button>
+    <button class="tab" data-tab="adjust" onclick="switchTab('adjust')"><span class="ic">↻</span>旋转滤镜</button>
+    <button class="tab" data-tab="slice" onclick="switchTab('slice')"><span class="ic">▦</span>拼图工具</button>
+    <button class="tab" data-tab="info" onclick="switchTab('info')"><span class="ic">ℹ</span>信息转换</button>
   </div>
 
   <!-- 压缩 -->
@@ -413,6 +423,128 @@ body{
           <div class="result-info" id="wmResultInfo"></div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- 旋转滤镜 -->
+  <div class="panel" id="panel-adjust">
+    <div class="card">
+      <div class="card-title"><h3>上传图片</h3></div>
+      <div class="file-drop" id="adjDrop">点击或拖拽图片到此处（JPG / PNG / WebP）</div>
+      <div class="file-meta" id="adjMeta"></div>
+      <div class="stage" id="adjStage"><div class="stage-box" id="adjBox"></div></div>
+      <div class="size-label">旋转 / 翻转</div>
+      <div class="opts">
+        <button class="btn" onclick="adjRotate(-90)">左旋 90°</button>
+        <button class="btn" onclick="adjRotate(90)">右旋 90°</button>
+        <button class="btn" id="adjHFlipBtn" onclick="adjFlip('h')">水平翻转</button>
+        <button class="btn" id="adjVFlipBtn" onclick="adjFlip('v')">垂直翻转</button>
+      </div>
+      <div class="opts">
+        <label>角度 <input type="range" id="adjRot" min="-180" max="180" value="0" oninput="adjRotChanged()"></label>
+        <span class="range-val" id="adjRotVal">0°</span>
+      </div>
+      <div class="size-label">滤镜</div>
+      <div class="opts">
+        <select id="adjFx" onchange="applyAdjust()">
+          <option value="none">原图</option>
+          <option value="gray">灰度</option>
+          <option value="bw">黑白</option>
+          <option value="invert">反相</option>
+          <option value="sepia">棕褐</option>
+          <option value="blur">模糊</option>
+          <option value="bright">提亮</option>
+          <option value="dark">变暗</option>
+          <option value="contrast">增强对比</option>
+          <option value="saturate">增强饱和</option>
+          <option value="vintage">复古</option>
+        </select>
+      </div>
+      <div class="opts">
+        <label>格式 <select id="adjFmt" onchange="adjFmtChanged()"><option value="image/png" selected>PNG</option><option value="image/jpeg">JPG</option><option value="image/webp">WebP</option></select></label>
+        <label>质量 <input type="range" id="adjQuality" min="1" max="100" value="90" oninput="adjQualitySlider()" style="max-width:160px"></label>
+        <span class="range-val" id="adjQualityVal">90%</span>
+      </div>
+      <div class="opts">
+        <button class="btn" onclick="adjReset()">重置</button>
+        <button class="btn green" id="adjDownloadBtn" onclick="downloadAdjust()" disabled>下载图片</button>
+      </div>
+      <div class="result-grid" id="adjResult" style="display:none;margin-top:14px">
+        <div class="result-box">
+          <div class="lbl">处理结果</div>
+          <canvas id="adjResultImg" width="0" height="0"></canvas>
+          <div class="result-info" id="adjResultInfo"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 拼图工具 -->
+  <div class="panel" id="panel-slice">
+    <div class="card">
+      <div class="card-title"><h3>九宫格切图 <span class="badge">支持多张批量</span></h3></div>
+      <div class="file-drop" id="sliceDrop">点击或拖拽图片到此处，可多选批量切图</div>
+      <div class="file-meta" id="sliceMeta"></div>
+      <div class="batch-list" id="sliceBatchList"></div>
+      <div class="opts">
+        <label>行 <input type="number" id="sliceRows" value="3" min="1" max="10"></label>
+        <label>列 <input type="number" id="sliceCols" value="3" min="1" max="10"></label>
+        <label>间距 <input type="number" id="sliceGap" value="0" min="0" max="200"></label>
+      </div>
+      <div class="opts">
+        <button class="btn primary" id="sliceBtn" onclick="doSlice()">开始切图</button>
+      </div>
+      <div class="opts"><span class="range-val" id="sliceInfo" style="min-width:auto;text-align:left">将每张图片切成 行×列 网格并逐张下载</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><h3>拼接长图</h3></div>
+      <div class="file-drop" id="stitchDrop">点击或拖拽多张图片到此处，按选择顺序拼接</div>
+      <div class="file-meta" id="stitchMeta"></div>
+      <div class="batch-list" id="stitchBatchList"></div>
+      <div class="opts">
+        <label>方向 <select id="stitchDir"><option value="v" selected>纵向（上下）</option><option value="h">横向（左右）</option></select></label>
+        <label>间距 <input type="number" id="stitchGap" value="0" min="0" max="200" style="width:70px"></label>
+        <label>对齐 <select id="stitchAlign"><option value="left">左对齐</option><option value="center" selected>居中</option><option value="right">右对齐</option></select></label>
+      </div>
+      <div class="opts">
+        <label>格式 <select id="stitchFmt" onchange="stitchFmtChanged()"><option value="image/png" selected>PNG</option><option value="image/jpeg">JPG</option><option value="image/webp">WebP</option></select></label>
+        <label>背景 <input type="color" id="stitchBg" value="#ffffff" style="width:40px;height:30px;border:none;background:none;cursor:pointer"></label>
+      </div>
+      <div class="opts">
+        <button class="btn primary" id="stitchBtn" onclick="doStitch()">开始拼接</button>
+        <button class="btn green" id="stitchDownloadBtn" onclick="downloadStitch()" disabled>下载长图</button>
+      </div>
+      <div class="result-grid" id="stitchResult" style="display:none;margin-top:14px">
+        <div class="result-box">
+          <div class="lbl">拼接结果</div>
+          <canvas id="stitchResultImg" width="0" height="0"></canvas>
+          <div class="result-info" id="stitchResultInfo"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 信息转换 -->
+  <div class="panel" id="panel-info">
+    <div class="card">
+      <div class="card-title"><h3>图片信息与 Base64</h3></div>
+      <div class="file-drop" id="infoDrop">点击或拖拽图片到此处（JPG / PNG / WebP）</div>
+      <div class="file-meta" id="infoMeta"></div>
+      <div class="stage" id="infoStage"><div class="stage-box" id="infoBox"></div></div>
+      <div class="info-table" id="infoTable" style="display:none">
+        <div class="info-row"><span class="k">文件名</span><span class="v" id="infName"></span></div>
+        <div class="info-row"><span class="k">尺寸</span><span class="v" id="infSize"></span></div>
+        <div class="info-row"><span class="k">宽高比</span><span class="v" id="infRatio"></span></div>
+        <div class="info-row"><span class="k">格式</span><span class="v" id="infType"></span></div>
+        <div class="info-row"><span class="k">文件大小</span><span class="v" id="infBytes"></span></div>
+        <div class="info-row"><span class="k">透明通道</span><span class="v" id="infAlpha"></span></div>
+      </div>
+      <div class="opts">
+        <button class="btn primary" onclick="toBase64()">转 Base64</button>
+        <button class="btn" id="copyB64Btn" onclick="copyB64()" disabled>复制</button>
+      </div>
+      <textarea id="b64Out" readonly style="display:none;width:100%;height:120px;margin-top:12px;border-radius:10px;border:1px solid var(--card-border);background:var(--code-bg);color:var(--text);font-size:12px;padding:10px;resize:vertical;font-family:monospace"></textarea>
+      <div class="opts"><span class="range-val" id="b64Hint" style="min-width:auto;text-align:left"></span></div>
     </div>
   </div>
 
@@ -1478,6 +1610,326 @@ body{
     var ext=wmData.blob.type==='image/jpeg'?'jpg':'png';
     triggerDownload(wmData.blob,wmData.fileName+'-watermarked.'+ext);
   };
+
+  /* ===== 旋转滤镜 ===== */
+  var adjData={img:null,fileName:'',rotate:0,hFlip:false,vFlip:false,fx:'none'};
+  var ADJ_FX={
+    none:'',gray:'grayscale(1)',bw:'grayscale(1) contrast(1.6)',invert:'invert(1)',
+    sepia:'sepia(1)',blur:'blur(3px)',bright:'brightness(1.3)',dark:'brightness(.7)',
+    contrast:'contrast(1.4)',saturate:'saturate(1.8)',vintage:'sepia(.5) contrast(1.1) brightness(1.1)'
+  };
+  setupDrop('adjDrop',function(f){
+    loadImage(f,function(img){showAdjust(f,img)});
+  });
+  function showAdjust(f,img){
+    adjData.img=img;adjData.fileName=f.name.replace(/\.[^.]+$/,'')||'image';
+    adjData.rotate=0;adjData.hFlip=false;adjData.vFlip=false;adjData.fx='none';
+    document.getElementById('adjMeta').textContent='已选择：'+f.name+'（'+img.naturalWidth+'×'+img.naturalHeight+'）';
+    document.getElementById('adjBox').innerHTML='';
+    var imgEl=document.createElement('img');imgEl.src=img.src;
+    document.getElementById('adjBox').appendChild(imgEl);
+    document.getElementById('adjStage').style.display='block';
+    document.getElementById('adjRot').value=0;
+    document.getElementById('adjFx').value='none';
+    document.getElementById('adjHFlipBtn').classList.remove('toggled');
+    document.getElementById('adjVFlipBtn').classList.remove('toggled');
+    document.getElementById('adjResult').style.display='none';
+    document.getElementById('adjDownloadBtn').disabled=true;
+    syncAdjustControls();
+    applyAdjust();
+    window.toast('图片已加载，可旋转翻转或加滤镜');
+  }
+  function syncAdjustControls(){
+    document.getElementById('adjRotVal').textContent=(adjData.rotate?adjData.rotate+'°':'0°');
+    var q=document.getElementById('adjQuality');
+    document.getElementById('adjQualityVal').textContent=q.disabled?'无损':q.value+'%';
+  }
+  window.adjRotate=function(deg){
+    adjData.rotate=(adjData.rotate+deg+360)%360;
+    if(adjData.rotate>180)adjData.rotate-=360;
+    document.getElementById('adjRot').value=adjData.rotate;
+    syncAdjustControls();applyAdjust();
+  };
+  window.adjFlip=function(axis){
+    if(axis==='h'){adjData.hFlip=!adjData.hFlip;document.getElementById('adjHFlipBtn').classList.toggle('toggled',adjData.hFlip)}
+    else{adjData.vFlip=!adjData.vFlip;document.getElementById('adjVFlipBtn').classList.toggle('toggled',adjData.vFlip)}
+    applyAdjust();
+  };
+  window.adjRotChanged=function(){
+    adjData.rotate=parseInt(document.getElementById('adjRot').value)||0;
+    syncAdjustControls();applyAdjust();
+  };
+  window.adjQualitySlider=function(){
+    syncAdjustControls();
+  };
+  window.adjFmtChanged=function(){
+    var q=document.getElementById('adjQuality');
+    var png=document.getElementById('adjFmt').value==='image/png';
+    q.disabled=png;
+    document.getElementById('adjQualityVal').style.color=png?'var(--faint)':'';
+    syncAdjustControls();
+  };
+  window.applyAdjust=function(){
+    if(!adjData.img)return;
+    var rot=adjData.rotate*Math.PI/180;
+    var w0=adjData.img.naturalWidth,h0=adjData.img.naturalHeight;
+    var cos=Math.abs(Math.cos(rot)),sin=Math.abs(Math.sin(rot));
+    var bw=Math.max(1,Math.ceil(w0*cos+h0*sin)),bh=Math.max(1,Math.ceil(w0*sin+h0*cos));
+    var fit=fitCanvas(bw,bh);
+    var canvas=document.getElementById('adjResultImg');
+    canvas.width=fit.w;canvas.height=fit.h;
+    var ctx=canvas.getContext('2d');
+    ctx.save();
+    ctx.translate(fit.w/2,fit.h/2);
+    ctx.rotate(rot);
+    ctx.scale(adjData.hFlip?-1:1,adjData.vFlip?-1:1);
+    var sc=Math.min(fit.w/w0,fit.h/h0);
+    var dw=w0*sc,dh=h0*sc;
+    var fx=ADJ_FX[adjData.fx]||'';
+    if(fx)ctx.filter=fx;
+    ctx.drawImage(adjData.img,-dw/2,-dh/2,dw,dh);
+    ctx.restore();
+    document.getElementById('adjResult').style.display='grid';
+    document.getElementById('adjDownloadBtn').disabled=false;
+    var note=(adjData.rotate||adjData.hFlip||adjData.vFlip)?'已应用旋转翻转':'原方向';
+    var fxs=adjData.fx!=='none'?' · 滤镜 '+adjData.fx:'';
+    document.getElementById('adjResultInfo').textContent=canvas.width+'×'+canvas.height+' px · '+note+fxs+' · 预览实时更新';
+  };
+  window.adjReset=function(){
+    if(!adjData.img)return;
+    adjData.rotate=0;adjData.hFlip=false;adjData.vFlip=false;adjData.fx='none';
+    document.getElementById('adjRot').value=0;
+    document.getElementById('adjFx').value='none';
+    document.getElementById('adjHFlipBtn').classList.remove('toggled');
+    document.getElementById('adjVFlipBtn').classList.remove('toggled');
+    syncAdjustControls();applyAdjust();
+  };
+  window.downloadAdjust=function(){
+    if(!adjData.img)return;
+    var canvas=document.getElementById('adjResultImg');
+    var fmt=document.getElementById('adjFmt').value;
+    var q=parseInt(document.getElementById('adjQuality').value)||90;
+    var src=canvas;
+    if(fmt==='image/jpeg'){
+      var c2=document.createElement('canvas');
+      c2.width=canvas.width;c2.height=canvas.height;
+      var c2x=c2.getContext('2d');
+      c2x.fillStyle='#fff';c2x.fillRect(0,0,c2.width,c2.height);
+      c2x.drawImage(canvas,0,0);
+      src=c2;
+    }
+    canvasToBlob(src,fmt,q/100).then(function(blob){
+      if(!blob){window.toast('生成失败：尺寸超出浏览器处理上限');return}
+      var ext=fmt==='image/jpeg'?'jpg':fmt==='image/webp'?'webp':'png';
+      triggerDownload(blob,adjData.fileName+'-adjusted.'+ext);
+    });
+  };
+
+  /* ===== 九宫格切图 ===== */
+  var sliceBatch=[];
+  setupDrop('sliceDrop',function(f){
+    sliceBatch=[f];
+    showSliceBatch();
+  },function(files){
+    sliceBatch=pickBatch(files);
+    showSliceBatch();
+  });
+  function showSliceBatch(){
+    var meta=document.getElementById('sliceMeta');
+    meta.textContent=sliceBatch.length===1?'已选择：'+sliceBatch[0].name:'已选择 '+sliceBatch.length+' 张图片';
+    renderBatchList('sliceBatchList',sliceBatch,function(){});
+    document.getElementById('sliceInfo').textContent='';
+  }
+  window.doSlice=function(){
+    if(!sliceBatch.length){toast('请先选择图片');return}
+    var rows=Math.max(1,Math.min(parseInt(document.getElementById('sliceRows').value)||3,10));
+    var cols=Math.max(1,Math.min(parseInt(document.getElementById('sliceCols').value)||3,10));
+    document.getElementById('sliceRows').value=rows;
+    document.getElementById('sliceCols').value=cols;
+    var gap=Math.max(0,parseInt(document.getElementById('sliceGap').value)||0);
+    var total=sliceBatch.length*rows*cols;
+    if(total>200){toast('切分文件过多（'+total+' 个），请减少张数或行列数');return}
+    var btn=document.getElementById('sliceBtn');
+    var info=document.getElementById('sliceInfo');
+    btn.disabled=true;
+    var doneCount=0;
+    runBatch(sliceBatch,function(file,img,done){
+      var src=prepareSource(img);
+      var base=src.img;
+      var bw=base.width,bh=base.height;
+      var pw=Math.max(1,Math.floor((bw-gap*(cols-1))/cols));
+      var ph=Math.max(1,Math.floor((bh-gap*(rows-1))/rows));
+      var nameBase=(file.name.replace(/\.[^.]+$/,'')||'image');
+      var blocks=[];
+      for(var r=0;r<rows;r++){
+        for(var c=0;c<cols;c++){
+          blocks.push({x:c*(pw+gap),y:r*(ph+gap),r:r+1,c:c+1});
+        }
+      }
+      var i=0;
+      function step(){
+        if(i>=blocks.length){done();return}
+        var b=blocks[i++];
+        var cv=document.createElement('canvas');
+        cv.width=pw;cv.height=ph;
+        var ctx=cv.getContext('2d');
+        ctx.drawImage(base,Math.min(b.x,bw-pw),Math.min(b.y,bh-ph),pw,ph,0,0,pw,ph);
+        canvasToBlob(cv,'image/png').then(function(blob){
+          if(blob){triggerDownload(blob,nameBase+'-'+b.r+'x'+b.c+'.png');doneCount++}
+          step();
+        });
+      }
+      step();
+    },function(i,total2){info.textContent='处理中 '+i+'/'+total2},function(){
+      info.textContent=doneCount?('完成 '+doneCount+' 个，已逐张开始下载'):'处理失败';
+      btn.disabled=false;
+      if(doneCount)window.toast('切图完成 '+doneCount+' 个');
+    });
+  };
+
+  /* ===== 拼接长图 ===== */
+  var stitchBatch=[];
+  var stitchData={blob:null};
+  setupDrop('stitchDrop',function(f){
+    stitchBatch=[f];
+    showStitchBatch();
+  },function(files){
+    stitchBatch=pickBatch(files);
+    showStitchBatch();
+  });
+  function showStitchBatch(){
+    var meta=document.getElementById('stitchMeta');
+    meta.textContent=stitchBatch.length===1?'已选择 1 张图片（建议 2 张以上）':'已选择 '+stitchBatch.length+' 张图片，将按选择顺序拼接';
+    renderBatchList('stitchBatchList',stitchBatch,function(){});
+  }
+  window.stitchFmtChanged=function(){
+    document.getElementById('stitchBg').disabled=document.getElementById('stitchFmt').value==='image/png';
+  };
+  window.doStitch=function(){
+    if(stitchBatch.length<2){toast('请至少选择 2 张图片');return}
+    var dir=document.getElementById('stitchDir').value;
+    var gap=Math.max(0,parseInt(document.getElementById('stitchGap').value)||0);
+    var align=document.getElementById('stitchAlign').value;
+    var fmt=document.getElementById('stitchFmt').value;
+    var bg=document.getElementById('stitchBg').value;
+    var btn=document.getElementById('stitchBtn');
+    btn.disabled=true;
+    var imgs=[],idx=0;
+    function loadNext(){
+      if(idx>=stitchBatch.length){compose();return}
+      loadImage(stitchBatch[idx],function(img){imgs.push(img);idx++;loadNext()},function(){idx++;loadNext()});
+    }
+    loadNext();
+    function compose(){
+      var n=imgs.length;
+      if(!n){btn.disabled=false;toast('加载图片失败');return}
+      var W0=0,H0=0,sub=0;
+      for(var k=0;k<n;k++){
+        if(dir==='h'){W0+=imgs[k].naturalWidth;sub=Math.max(sub,imgs[k].naturalHeight)}
+        else{H0+=imgs[k].naturalHeight;sub=Math.max(sub,imgs[k].naturalWidth)}
+      }
+      if(dir==='h'){W0+=gap*(n-1);H0=sub}
+      else{H0+=gap*(n-1);W0=sub}
+      var fit=fitCanvas(Math.max(1,W0),Math.max(1,H0));
+      var scale=fit.w/W0;
+      var W=fit.w,H=fit.h;
+      var canvas=document.createElement('canvas');
+      canvas.width=W;canvas.height=H;
+      var ctx=canvas.getContext('2d');
+      if(fmt!=='image/png'||bg!=='#ffffff'){ctx.fillStyle=bg;ctx.fillRect(0,0,W,H)}
+      var x=0,y=0,g=gap*scale;
+      for(var m=0;m<n;m++){
+        var iw=Math.round(imgs[m].naturalWidth*scale),ih=Math.round(imgs[m].naturalHeight*scale);
+        var dx=x,dy=y;
+        if(dir==='h'){dy=align==='center'?Math.max(0,Math.round((H-ih)/2)):align==='bottom'?Math.max(0,H-ih):0}
+        else{dx=align==='center'?Math.max(0,Math.round((W-iw)/2)):align==='right'?Math.max(0,W-iw):0}
+        ctx.drawImage(imgs[m],dx,dy,iw,ih);
+        if(dir==='h')x+=iw+g;else y+=ih+g;
+      }
+      canvasToBlob(canvas,fmt,0.92).then(function(blob){
+        btn.disabled=false;
+        if(!blob){toast('生成失败：尺寸超出浏览器处理上限');return}
+        stitchData.blob=blob;
+        var cvs=document.getElementById('stitchResultImg');
+        var ps=Math.min(1,Math.sqrt(2000000/(W*H)));
+        cvs.width=Math.max(1,Math.round(W*ps));
+        cvs.height=Math.max(1,Math.round(H*ps));
+        cvs.getContext('2d').drawImage(canvas,0,0,cvs.width,cvs.height);
+        document.getElementById('stitchResultInfo').textContent=W+'×'+H+' px · '+fmtSize(blob.size)+(ps<1?'（预览为缩略图，下载为全尺寸）':'');
+        document.getElementById('stitchResult').style.display='grid';
+        document.getElementById('stitchDownloadBtn').disabled=false;
+        window.toast('拼接完成');
+      });
+    }
+  };
+  window.downloadStitch=function(){
+    if(!stitchData.blob)return;
+    var ext=stitchData.blob.type==='image/jpeg'?'jpg':stitchData.blob.type==='image/webp'?'webp':'png';
+    triggerDownload(stitchData.blob,'stitch.'+ext);
+  };
+
+  /* ===== 图片信息 / Base64 ===== */
+  var infoData={file:null,img:null};
+  setupDrop('infoDrop',function(f){
+    loadImage(f,function(img){showInfo(f,img)});
+  });
+  function showInfo(f,img){
+    infoData.file=f;infoData.img=img;
+    document.getElementById('infoMeta').textContent='已选择：'+f.name;
+    document.getElementById('infoBox').innerHTML='';
+    var imgEl=document.createElement('img');imgEl.src=img.src;
+    document.getElementById('infoBox').appendChild(imgEl);
+    document.getElementById('infoStage').style.display='block';
+    var w=img.naturalWidth,h=img.naturalHeight;
+    document.getElementById('infName').textContent=f.name;
+    document.getElementById('infSize').textContent=w+' × '+h+' px';
+    document.getElementById('infRatio').textContent=(h>0?(w/h).toFixed(2):'-');
+    document.getElementById('infType').textContent=f.type||'未知';
+    document.getElementById('infBytes').textContent=fmtSize(f.size);
+    document.getElementById('infoTable').style.display='block';
+    var sc=Math.min(1,300/Math.max(w,h));
+    var c=document.createElement('canvas');
+    c.width=Math.max(1,Math.round(w*sc));c.height=Math.max(1,Math.round(h*sc));
+    var ctx=c.getContext('2d');
+    ctx.drawImage(img,0,0,c.width,c.height);
+    try{
+      var d=ctx.getImageData(0,0,c.width,c.height).data;
+      var has=false;
+      for(var i=3;i<d.length;i+=4){if(d[i]<255){has=true;break}}
+      document.getElementById('infAlpha').textContent=has?'是（含半透明像素）':'否';
+    }catch(e){document.getElementById('infAlpha').textContent='无法检测'}
+    document.getElementById('b64Out').style.display='none';
+    document.getElementById('b64Out').value='';
+    document.getElementById('b64Hint').textContent='';
+    document.getElementById('copyB64Btn').disabled=true;
+  }
+  window.toBase64=function(){
+    if(!infoData.file){toast('请先上传图片');return}
+    var sizeMB=infoData.file.size/1048576;
+    if(sizeMB>8){toast('图片较大（'+sizeMB.toFixed(1)+'MB），Base64 文本可能很长')}
+    var r=new FileReader();
+    r.onload=function(){
+      document.getElementById('b64Out').value=r.result;
+      document.getElementById('b64Out').style.display='block';
+      document.getElementById('copyB64Btn').disabled=false;
+      document.getElementById('b64Hint').textContent='Base64 长度 '+r.result.length+' 字符（已含 data URL 前缀）';
+      window.toast('已生成 Base64');
+    };
+    r.onerror=function(){toast('读取失败')};
+    r.readAsDataURL(infoData.file);
+  };
+  window.copyB64=function(){
+    var ta=document.getElementById('b64Out');
+    if(!ta.value)return;
+    function done(){document.getElementById('copyB64Btn').textContent='已复制';setTimeout(function(){document.getElementById('copyB64Btn').textContent='复制'},1500)}
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(ta.value).then(done,function(){fallbackCopy(ta);done()});
+    }else{fallbackCopy(ta);done()}
+  };
+  function fallbackCopy(ta){
+    ta.select();ta.setSelectionRange(0,ta.value.length);
+    try{document.execCommand('copy')}catch(e){toast('复制失败，请手动选择复制')}
+  }
 
   initTheme();
 })();
