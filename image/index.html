@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>图片工具 - 压缩 / 缩放 / 裁剪 / 证件照 / 旋转滤镜 / 拼图 / 信息转换</title>
-<meta name="description" content="在线图片处理工具箱：图片压缩与缩放支持批量（一次最多 50 张，处理完自动逐张下载）、图片裁剪（自由/固定比例/指定像素尺寸/圆角）、证件照制作、图片加水印、旋转翻转与滤镜调色、九宫格切图、多图拼接长图、图片信息查看与 Base64 转换。全程浏览器本地处理，图片不上传，隐私安全。">
-<meta property="og:title" content="图片工具 - 压缩 / 缩放 / 裁剪 / 证件照 / 旋转滤镜 / 拼图 / 信息转换">
-<meta property="og:description" content="在线图片压缩、缩放、裁剪（含圆角）、证件照、水印、旋转滤镜、九宫格切图、拼接长图、Base64 转换工具，浏览器本地处理，隐私安全。">
+<title>图片工具 - 压缩 / 缩放 / 裁剪 / 证件照 / 旋转滤镜 / 拼图 / 信息转换 / 表情包</title>
+<meta name="description" content="在线图片处理工具箱：图片压缩与缩放支持批量（一次最多 50 张，处理完自动逐张下载）、图片裁剪（自由/固定比例/指定像素尺寸/圆角）、证件照制作、图片加水印、旋转翻转与滤镜调色、九宫格切图、多图拼接长图、图片信息查看与 Base64 转换、表情包制作、取色调色板、图片转 PDF。全程浏览器本地处理，图片不上传，隐私安全。">
+<meta property="og:title" content="图片工具 - 压缩 / 缩放 / 裁剪 / 证件照 / 旋转滤镜 / 拼图 / 信息转换 / 表情包">
+<meta property="og:description" content="在线图片压缩、缩放、裁剪（含圆角）、证件照、水印、旋转滤镜、九宫格切图、拼接长图、Base64 转换、表情包、取色、转 PDF 工具，浏览器本地处理，隐私安全。">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.justgame.top/image/">
 <meta property="og:site_name" content="星汉灿烂">
@@ -155,6 +155,9 @@ body{
 .color-swatch{width:26px;height:26px;border-radius:8px;border:1px solid var(--card-border);display:inline-block;vertical-align:middle;cursor:pointer;transition:.15s;box-sizing:border-box}
 .color-swatch.active{border:2px solid var(--accent);transform:scale(1.1)}
 .swatch-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.swatch{width:58px;height:58px;border-radius:10px;border:1px solid var(--card-border);position:relative;cursor:pointer;overflow:hidden;transition:transform .15s}
+.swatch:hover{transform:scale(1.08)}
+.swatch span{position:absolute;left:0;right:0;bottom:0;font-size:10px;padding:2px 0;background:rgba(0,0,0,.55);color:#fff;text-align:center;font-family:monospace}
 .size-label{font-size:12px;color:var(--muted);margin-top:10px;margin-bottom:6px}
 .btn.toggled{background:var(--chip-bg-active);color:var(--text);border-color:var(--accent)}
 .info-table{border:1px solid var(--card-border);border-radius:12px;overflow:hidden;margin-bottom:12px}
@@ -201,6 +204,7 @@ body{
     <button class="tab" data-tab="adjust" onclick="switchTab('adjust')"><span class="ic">↻</span>旋转滤镜</button>
     <button class="tab" data-tab="slice" onclick="switchTab('slice')"><span class="ic">▦</span>拼图工具</button>
     <button class="tab" data-tab="info" onclick="switchTab('info')"><span class="ic">ℹ</span>信息转换</button>
+    <button class="tab" data-tab="meme" onclick="switchTab('meme')"><span class="ic">Aa</span>表情包</button>
   </div>
 
   <!-- 压缩 -->
@@ -479,6 +483,11 @@ body{
         <span class="range-val" id="adjQualityVal">90%</span>
       </div>
       <div class="opts">
+        <label>边框 <input type="range" id="adjBorder" min="0" max="200" value="0" oninput="adjBorderChanged()"></label>
+        <span class="range-val" id="adjBorderVal">0</span>
+        <label>颜色 <input type="color" id="adjBorderColor" value="#ffffff" style="width:40px;height:30px;border:none;background:none;cursor:pointer"></label>
+      </div>
+      <div class="opts">
         <button class="btn" onclick="adjReset()">重置</button>
         <button class="btn green" id="adjDownloadBtn" onclick="downloadAdjust()" disabled>下载图片</button>
       </div>
@@ -535,6 +544,21 @@ body{
         </div>
       </div>
     </div>
+    <div class="card">
+      <div class="card-title"><h3>图片转 PDF <span class="badge">支持多张批量</span></h3></div>
+      <div class="file-drop" id="pdfDrop">点击或拖拽图片到此处，可多选（每张一页）</div>
+      <div class="file-meta" id="pdfMeta"></div>
+      <div class="batch-list" id="pdfBatchList"></div>
+      <div class="opts">
+        <label>纸张 <select id="pdfSize"><option value="a4" selected>A4</option><option value="a3">A3</option><option value="letter">Letter</option></select></label>
+        <label>方向 <select id="pdfOrient"><option value="auto" selected>自动</option><option value="p">纵向</option><option value="l">横向</option></select></label>
+        <label>边距 <input type="number" id="pdfMargin" value="0" min="0" max="200" style="width:70px"> px</label>
+      </div>
+      <div class="opts">
+        <button class="btn primary" id="pdfBtn" onclick="doPdf()">生成 PDF</button>
+      </div>
+      <div class="opts"><span class="range-val" id="pdfInfo" style="min-width:auto;text-align:left">每张图片一页，浏览器本地生成 PDF</span></div>
+    </div>
   </div>
 
   <!-- 信息转换 -->
@@ -558,6 +582,53 @@ body{
       </div>
       <textarea id="b64Out" readonly style="display:none;width:100%;height:120px;margin-top:12px;border-radius:10px;border:1px solid var(--card-border);background:var(--code-bg);color:var(--text);font-size:12px;padding:10px;resize:vertical;font-family:monospace"></textarea>
       <div class="opts"><span class="range-val" id="b64Hint" style="min-width:auto;text-align:left"></span></div>
+    </div>
+    <div class="card" id="pickCard" style="display:none;margin-top:14px">
+      <div class="card-title"><h3>取色器 / 调色板</h3></div>
+      <div class="stage" id="pickStage"><div class="stage-box" style="cursor:crosshair;overflow:hidden"><canvas id="pickCanvas"></canvas></div></div>
+      <div class="opts">
+        <span class="range-val" id="pickHex" style="min-width:84px">--</span>
+        <span class="range-val" id="pickRgb" style="min-width:120px;text-align:left">悬停取样</span>
+        <button class="btn" id="pickCopyBtn" onclick="copyPickHex()" disabled>复制</button>
+      </div>
+      <div class="opts">
+        <button class="btn primary" onclick="extractPalette()">提取主色调色板</button>
+      </div>
+      <div class="swatch-row" id="pickSwatches" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- 表情包 -->
+  <div class="panel" id="panel-meme">
+    <div class="card">
+      <div class="card-title"><h3>上传图片制作表情包</h3></div>
+      <div class="file-drop" id="memeDrop">点击或拖拽图片到此处（JPG / PNG / WebP）</div>
+      <div class="file-meta" id="memeMeta"></div>
+      <div class="stage" id="memeStage"><div class="stage-box" id="memeBox"></div></div>
+      <div class="opts">
+        <label style="flex:1;min-width:200px">顶部文字 <input type="text" id="memeTop" placeholder="上方字幕" style="flex:1;min-width:120px;padding:8px 12px;border-radius:10px;border:1px solid var(--card-border);background:var(--code-bg);color:var(--text);font-size:13px"></label>
+      </div>
+      <div class="opts">
+        <label style="flex:1;min-width:200px">底部文字 <input type="text" id="memeBottom" placeholder="下方字幕" style="flex:1;min-width:120px;padding:8px 12px;border-radius:10px;border:1px solid var(--card-border);background:var(--code-bg);color:var(--text);font-size:13px"></label>
+      </div>
+      <div class="opts">
+        <label>字号 <input type="range" id="memeSize" min="12" max="120" value="48" oninput="memeSlider()"></label>
+        <span class="range-val" id="memeSizeVal">48</span>
+        <label>描边 <input type="range" id="memeStroke" min="0" max="12" value="4" oninput="memeSlider()"></label>
+        <span class="range-val" id="memeStrokeVal">4</span>
+        <label>颜色 <input type="color" id="memeColor" value="#ffffff" style="width:40px;height:30px;border:none;background:none;cursor:pointer"></label>
+      </div>
+      <div class="opts">
+        <button class="btn primary" onclick="renderMeme()">生成表情包</button>
+        <button class="btn green" id="memeDownloadBtn" onclick="downloadMeme()" disabled>下载表情包</button>
+      </div>
+      <div class="result-grid" id="memeResult" style="display:none;margin-top:14px">
+        <div class="result-box">
+          <div class="lbl">生成结果</div>
+          <canvas id="memeResultImg" width="0" height="0"></canvas>
+          <div class="result-info" id="memeResultInfo"></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1677,7 +1748,7 @@ body{
   };
 
   /* ===== 旋转滤镜 ===== */
-  var adjData={img:null,fileName:'',rotate:0,hFlip:false,vFlip:false,fx:'none'};
+  var adjData={img:null,fileName:'',rotate:0,hFlip:false,vFlip:false,fx:'none',border:0,borderColor:'#ffffff'};
   var ADJ_FX={
     none:'',gray:'grayscale(1)',bw:'grayscale(1) contrast(1.6)',invert:'invert(1)',
     sepia:'sepia(1)',blur:'blur(3px)',bright:'brightness(1.3)',dark:'brightness(.7)',
@@ -1689,7 +1760,10 @@ body{
   setupDrop('adjDrop',handleAdjFile);
   function showAdjust(f,img){
     adjData.img=img;adjData.fileName=f.name.replace(/\.[^.]+$/,'')||'image';
-    adjData.rotate=0;adjData.hFlip=false;adjData.vFlip=false;adjData.fx='none';
+    adjData.rotate=0;adjData.hFlip=false;adjData.vFlip=false;adjData.fx='none';adjData.border=0;
+    document.getElementById('adjBorder').value=0;
+    document.getElementById('adjBorderColor').value='#ffffff';
+    document.getElementById('adjBorderVal').textContent='0';
     document.getElementById('adjMeta').textContent='已选择：'+f.name+'（'+img.naturalWidth+'×'+img.naturalHeight+'）';
     document.getElementById('adjBox').innerHTML='';
     var imgEl=document.createElement('img');imgEl.src=img.src;
@@ -1740,11 +1814,16 @@ body{
     var rot=adjData.rotate*Math.PI/180;
     var w0=adjData.img.naturalWidth,h0=adjData.img.naturalHeight;
     var cos=Math.abs(Math.cos(rot)),sin=Math.abs(Math.sin(rot));
-    var bw=Math.max(1,Math.ceil(w0*cos+h0*sin)),bh=Math.max(1,Math.ceil(w0*sin+h0*cos));
+    var border=Math.max(0,Math.floor(adjData.border||0));
+    var bw=Math.max(1,Math.ceil(w0*cos+h0*sin))+border*2,bh=Math.max(1,Math.ceil(w0*sin+h0*cos))+border*2;
     var fit=fitCanvas(bw,bh);
     var canvas=document.getElementById('adjResultImg');
     canvas.width=fit.w;canvas.height=fit.h;
     var ctx=canvas.getContext('2d');
+    if(border>0){
+      ctx.fillStyle=adjData.borderColor||'#ffffff';
+      ctx.fillRect(0,0,fit.w,fit.h);
+    }
     ctx.save();
     ctx.translate(fit.w/2,fit.h/2);
     ctx.rotate(rot);
@@ -1759,13 +1838,22 @@ body{
     document.getElementById('adjDownloadBtn').disabled=false;
     var note=(adjData.rotate||adjData.hFlip||adjData.vFlip)?'已应用旋转翻转':'原方向';
     var fxs=adjData.fx!=='none'?' · 滤镜 '+adjData.fx:'';
-    document.getElementById('adjResultInfo').textContent=canvas.width+'×'+canvas.height+' px · '+note+fxs+' · 预览实时更新';
+    var bds=border>0?' · 边框 '+border+'px':'';
+    document.getElementById('adjResultInfo').textContent=canvas.width+'×'+canvas.height+' px · '+note+fxs+bds+' · 预览实时更新';
+  };
+  window.adjBorderChanged=function(){
+    adjData.border=parseInt(document.getElementById('adjBorder').value)||0;
+    document.getElementById('adjBorderVal').textContent=adjData.border;
+    applyAdjust();
   };
   window.adjReset=function(){
     if(!adjData.img)return;
-    adjData.rotate=0;adjData.hFlip=false;adjData.vFlip=false;adjData.fx='none';
+    adjData.rotate=0;adjData.hFlip=false;adjData.vFlip=false;adjData.fx='none';adjData.border=0;
     document.getElementById('adjRot').value=0;
     document.getElementById('adjFx').value='none';
+    document.getElementById('adjBorder').value=0;
+    document.getElementById('adjBorderColor').value='#ffffff';
+    document.getElementById('adjBorderVal').textContent='0';
     document.getElementById('adjHFlipBtn').classList.remove('toggled');
     document.getElementById('adjVFlipBtn').classList.remove('toggled');
     syncAdjustControls();applyAdjust();
@@ -1984,6 +2072,147 @@ body{
     triggerDownload(stitchData.blob,'stitch.'+ext);
   };
 
+  /* ===== 图片转 PDF ===== */
+  var pdfBatch=[];
+  function handlePdfFiles(files){
+    pdfBatch=pickBatch(files);
+    showPdfBatch();
+  }
+  function handlePdfFile(f){
+    handlePdfFiles([f]);
+  }
+  setupDrop('pdfDrop',handlePdfFile,handlePdfFiles);
+  function showPdfBatch(){
+    document.getElementById('pdfMeta').textContent='已选择 '+pdfBatch.length+' 张图片，将按选择顺序每张一页';
+    renderBatchList('pdfBatchList',pdfBatch,function(){});
+  }
+  function toJpegBytes(img,onOk,onErr){
+    var w=img.naturalWidth,h=img.naturalHeight;
+    var maxSide=8192;
+    var sc=Math.min(1,maxSide/Math.max(w,h));
+    var c=document.createElement('canvas');
+    c.width=Math.max(1,Math.round(w*sc));c.height=Math.max(1,Math.round(h*sc));
+    var ctx=c.getContext('2d');
+    ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);
+    ctx.drawImage(img,0,0,c.width,c.height);
+    try{
+      var url=c.toDataURL('image/jpeg',0.92);
+      var bin=atob(url.split(',')[1]);
+      var u8=new Uint8Array(bin.length);
+      for(var i=0;i<bin.length;i++)u8[i]=bin.charCodeAt(i);
+      onOk(u8,c.width,c.height);
+    }catch(e){if(onErr)onErr(e)}
+  }
+  function imagesToPdf(list,opts){
+    opts=opts||{};
+    var sizes={a4:[595.28,841.89],a3:[841.89,1190.55],letter:[612,792]};
+    var sz=sizes[opts.size]||sizes.a4;
+    var pw=sz[0],ph=sz[1];
+    if(opts.orient==='l'){var t=pw;pw=ph;ph=t}
+    var margin=(Math.max(0,Math.min(200,parseInt(opts.margin)||0))*0.75);
+    var usableW=pw-2*margin,usableH=ph-2*margin;
+    var N=list.length;
+    var out=[];
+    var offsets=[];
+    function push(s){
+      for(var i=0;i<s.length;i++)out.push(s.charCodeAt(i)&255);
+      out.push(10);
+    }
+    function pushRaw(u8){for(var i=0;i<u8.length;i++)out.push(u8[i])}
+    function newObj(id){offsets[id-1]=out.length}
+    push('%PDF-1.4');
+    push('%\xE2\xE3\xCF\xD3');
+    newObj(1);push('1 0 obj');
+    push('<< /Type /Catalog /Pages 2 0 R >>');
+    push('endobj');
+    newObj(2);
+    var kids=[];
+    for(var i=0;i<N;i++)kids.push(String(3+i)+' 0 R');
+    push('2 0 obj');
+    push('<< /Type /Pages /Kids ['+kids.join(' ')+'] /Count '+N+' >>');
+    push('endobj');
+    var total=2+3*N;
+    for(var i=0;i<N;i++){
+      var pageObj=3+i,contentObj=3+N+i*2,imgObj=3+N+i*2+1;
+      newObj(pageObj);push(pageObj+' 0 obj');
+      push('<< /Type /Page /Parent 2 0 R /MediaBox [0 0 '+pw+' '+ph+'] /Resources << /XObject << /Im'+i+' '+imgObj+' 0 R >> /ProcSet [/PDF /ImageC] >> /Contents '+contentObj+' 0 R >>');
+      push('endobj');
+    }
+    for(var i=0;i<N;i++){
+      var pageObj=3+i,contentObj=3+N+i*2,imgObj=3+N+i*2+1;
+      var im=list[i];
+      var scale=Math.min(usableW/im.w,usableH/im.h);
+      if(scale<=0)scale=1;
+      var dw=im.w*scale,dh=im.h*scale;
+      var x=(pw-dw)/2,y=(ph-dh)/2;
+      var cont='q\n'+dw+' 0 0 '+dh+' '+x+' '+y+' cm\n/Im'+i+' Do\nQ';
+      newObj(contentObj);push(contentObj+' 0 obj');
+      push('<< /Length '+cont.length+' >>');
+      push('stream');
+      push(cont);
+      push('endstream');
+      push('endobj');
+    }
+    for(var i=0;i<N;i++){
+      var imgObj=3+N+i*2+1;
+      var im=list[i];
+      newObj(imgObj);push(imgObj+' 0 obj');
+      push('<< /Type /XObject /Subtype /Image /Width '+im.w+' /Height '+im.h+' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length '+im.jpeg.length+' >>');
+      push('stream');
+      pushRaw(im.jpeg);
+      push('endstream');
+      push('endobj');
+    }
+    var xrefOff=out.length;
+    push('xref');
+    push('0 '+(total+1));
+    push('0000000000 65535 f ');
+    for(var i=0;i<offsets.length;i++){
+      var off=String(offsets[i]);
+      while(off.length<10)off='0'+off;
+      push(off+' 00000 n ');
+    }
+    push('trailer');
+    push('<< /Size '+(total+1)+' /Root 1 0 R >>');
+    push('startxref');
+    push(String(xrefOff));
+    push('%%EOF');
+    return new Blob([new Uint8Array(out)],{type:'application/pdf'});
+  }
+  window.doPdf=function(){
+    if(!pdfBatch.length){toast('请先上传图片');return}
+    var btn=document.getElementById('pdfBtn');
+    if(btn.disabled)return;
+    btn.disabled=true;
+    var size=document.getElementById('pdfSize').value;
+    var orient=document.getElementById('pdfOrient').value;
+    var margin=parseInt(document.getElementById('pdfMargin').value)||0;
+    var queue=pdfBatch.slice();
+    var items=[];
+    var name=(pdfBatch[0].name||'images').replace(/\.[^.]+$/,'')||'images';
+    (function next(){
+      if(!queue.length){finish();return}
+      var f=queue.shift();
+      loadImage(f,function(img){
+        toJpegBytes(img,function(jpeg,w,h){
+          items.push({jpeg:jpeg,w:w,h:h});
+          next();
+        },function(){fail(f.name)});
+      },function(){fail(f.name)});
+    })();
+    function fail(fn){
+      btn.disabled=false;
+      toast('读取图片失败：'+fn);
+    }
+    function finish(){
+      btn.disabled=false;
+      if(orient==='auto')orient=(items[0]&&items[0].w>items[0].h)?'l':'p';
+      var blob=imagesToPdf(items,{size:size,orient:orient,margin:margin});
+      triggerDownload(blob,name+'.pdf');
+      toast('PDF 生成完成，共 '+items.length+' 页');
+    }
+  };
+
   /* ===== 图片信息 / Base64 ===== */
   var infoData={file:null,img:null};
   function handleInfoFile(f){
@@ -2019,6 +2248,7 @@ body{
     document.getElementById('b64Out').value='';
     document.getElementById('b64Hint').textContent='';
     document.getElementById('copyB64Btn').disabled=true;
+    initPicker();
   }
   window.toBase64=function(){
     if(!infoData.file){toast('请先上传图片');return}
@@ -2048,6 +2278,169 @@ body{
     try{document.execCommand('copy')}catch(e){toast('复制失败，请手动选择复制')}
   }
 
+  /* ===== 表情包 ===== */
+  var memeData={img:null,fileName:''};
+  function handleMemeFile(f){
+    loadImage(f,function(img){showMeme(f,img)});
+  }
+  setupDrop('memeDrop',handleMemeFile);
+  function showMeme(f,img){
+    memeData.img=img;memeData.fileName=f.name.replace(/\.[^.]+$/,'')||'image';
+    document.getElementById('memeMeta').textContent='已选择：'+f.name+'（'+img.naturalWidth+'×'+img.naturalHeight+'）';
+    document.getElementById('memeBox').innerHTML='';
+    var imgEl=document.createElement('img');imgEl.src=img.src;
+    document.getElementById('memeBox').appendChild(imgEl);
+    document.getElementById('memeStage').style.display='block';
+    document.getElementById('memeResult').style.display='none';
+    document.getElementById('memeDownloadBtn').disabled=true;
+    window.toast('输入上下文字幕生成表情包');
+  }
+  window.memeSlider=function(){
+    document.getElementById('memeSizeVal').textContent=document.getElementById('memeSize').value;
+    document.getElementById('memeStrokeVal').textContent=document.getElementById('memeStroke').value;
+  };
+  function fitMemeText(ctx,text,W,size){
+    var s=size;
+    while(s>10&&ctx.measureText(text).width>W*0.96){s=Math.floor(s*0.9);ctx.font='bold '+s+'px -apple-system,"PingFang SC","Microsoft YaHei",sans-serif'}
+    return s;
+  }
+  window.renderMeme=function(){
+    if(!memeData.img){toast('请先上传图片');return}
+    var top=document.getElementById('memeTop').value;
+    var bottom=document.getElementById('memeBottom').value;
+    if(!top&&!bottom){toast('请输入顶部或底部文字');return}
+    var size=parseInt(document.getElementById('memeSize').value)||48;
+    var stroke=parseInt(document.getElementById('memeStroke').value)||4;
+    var color=document.getElementById('memeColor').value;
+    var fit=fitCanvas(memeData.img.naturalWidth,memeData.img.naturalHeight);
+    var W=fit.w,H=fit.h;
+    var canvas=document.createElement('canvas');
+    canvas.width=W;canvas.height=H;
+    var ctx=canvas.getContext('2d');
+    ctx.drawImage(memeData.img,0,0,W,H);
+    ctx.textAlign='center';
+    ctx.lineJoin='round';
+    ctx.strokeStyle='rgba(0,0,0,.85)';
+    ctx.lineWidth=stroke;
+    ctx.fillStyle=color;
+    if(top){
+      ctx.font='bold '+size+'px -apple-system,"PingFang SC","Microsoft YaHei",sans-serif';
+      var sTop=fitMemeText(ctx,top,W,size);
+      ctx.font='bold '+sTop+'px -apple-system,"PingFang SC","Microsoft YaHei",sans-serif';
+      ctx.textBaseline='top';
+      ctx.strokeText(top,W/2,Math.round(H*0.02));
+      ctx.fillText(top,W/2,Math.round(H*0.02));
+    }
+    if(bottom){
+      ctx.font='bold '+size+'px -apple-system,"PingFang SC","Microsoft YaHei",sans-serif';
+      var sBot=fitMemeText(ctx,bottom,W,size);
+      ctx.font='bold '+sBot+'px -apple-system,"PingFang SC","Microsoft YaHei",sans-serif';
+      ctx.textBaseline='bottom';
+      ctx.strokeText(bottom,W/2,Math.round(H*0.98));
+      ctx.fillText(bottom,W/2,Math.round(H*0.98));
+    }
+    memeData.canvas=canvas;
+    var cvs=document.getElementById('memeResultImg');
+    var ps=Math.min(1,Math.sqrt(2000000/(W*H)));
+    cvs.width=Math.max(1,Math.round(W*ps));
+    cvs.height=Math.max(1,Math.round(H*ps));
+    cvs.getContext('2d').drawImage(canvas,0,0,cvs.width,cvs.height);
+    document.getElementById('memeResultInfo').textContent=W+'×'+H+' px · PNG · 实时预览';
+    document.getElementById('memeResult').style.display='grid';
+    document.getElementById('memeDownloadBtn').disabled=false;
+  };
+  window.downloadMeme=function(){
+    if(!memeData.canvas)return;
+    canvasToBlob(memeData.canvas,'image/png').then(function(blob){
+      if(blob)triggerDownload(blob,memeData.fileName+'-meme.png');
+    });
+  };
+
+  function copyText(txt){
+    function done(){window.toast('已复制：'+txt.slice(0,24))}
+    if(navigator.clipboard&&window.isSecureContext){
+      navigator.clipboard.writeText(txt).then(done,function(){fallbackCopy(txt);done()});
+    }else{fallbackCopy(txt);done()}
+  }
+  function fallbackCopy(txt){
+    var ta=document.createElement('textarea');
+    ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();
+    try{document.execCommand('copy')}catch(e){}
+    document.body.removeChild(ta);
+  }
+  /* ===== 取色器 / 调色板 ===== */
+  var pickData={w:0,h:0,hex:''};
+  function initPicker(){
+    var img=infoData.img;
+    if(!img){return}
+    var W=Math.min(img.naturalWidth,640);
+    var H=Math.max(1,Math.round(img.naturalHeight*W/img.naturalWidth));
+    var cv=document.getElementById('pickCanvas');
+    cv.width=W;cv.height=H;
+    cv.getContext('2d').drawImage(img,0,0,W,H);
+    pickData.w=W;pickData.h=H;pickData.hex='';
+    document.getElementById('pickCard').style.display='block';
+    document.getElementById('pickSwatches').style.display='none';
+    document.getElementById('pickSwatches').innerHTML='';
+    document.getElementById('pickCopyBtn').disabled=true;
+    document.getElementById('pickHex').textContent='--';
+    document.getElementById('pickRgb').textContent='悬停取样';
+  }
+  document.getElementById('pickCanvas').addEventListener('mousemove',function(e){
+    if(!pickData.w)return;
+    var cv=this,ctx=cv.getContext('2d');
+    var r=cv.getBoundingClientRect();
+    var x=Math.max(0,Math.min(pickData.w-1,Math.round((e.clientX-r.left)*cv.width/r.width)));
+    var y=Math.max(0,Math.min(pickData.h-1,Math.round((e.clientY-r.top)*cv.height/r.height)));
+    var d=ctx.getImageData(x,y,1,1).data;
+    var hex='#'+[d[0],d[1],d[2]].map(function(v){return ('0'+v.toString(16)).slice(-2)}).join('').toUpperCase();
+    pickData.hex=hex;
+    document.getElementById('pickHex').textContent=hex;
+    document.getElementById('pickRgb').textContent='RGB('+d[0]+','+d[1]+','+d[2]+')';
+    document.getElementById('pickCopyBtn').disabled=false;
+  });
+  document.getElementById('pickCanvas').addEventListener('click',function(){
+    copyPickHex();
+  });
+  window.copyPickHex=function(){
+    if(pickData.hex)copyText(pickData.hex);
+  };
+  window.extractPalette=function(){
+    if(!pickData.w){toast('请先上传图片');return}
+    var cv=document.getElementById('pickCanvas');
+    var d=cv.getContext('2d').getImageData(0,0,cv.width,cv.height).data;
+    var map={};
+    var step=6;
+    for(var i=0;i<d.length;i+=4){
+      if(d[i+3]<128)continue;
+      var r=Math.floor(d[i]/step)*step,g=Math.floor(d[i+1]/step)*step,b=Math.floor(d[i+2]/step)*step;
+      var k=r+','+g+','+b;
+      map[k]=(map[k]||0)+1;
+    }
+    var arr=Object.keys(map).map(function(k){
+      var p=k.split(',');
+      var c={r:+p[0],g:+p[1],b:+p[2],n:map[k]};
+      c.hex='#'+[c.r,c.g,c.b].map(function(v){return ('0'+v.toString(16)).slice(-2)}).join('').toUpperCase();
+      return c;
+    }).sort(function(a,b){return b.n-a.n}).slice(0,12);
+    if(!arr.length){toast('未提取到有效颜色');return}
+    var row=document.getElementById('pickSwatches');
+    row.innerHTML='';
+    arr.forEach(function(c){
+      var el=document.createElement('div');
+      el.className='swatch';
+      el.style.background=c.hex;
+      el.title=c.hex+' · '+c.n+' 像素';
+      var sp=document.createElement('span');sp.textContent=c.hex;
+      el.appendChild(sp);
+      el.onclick=function(){copyText(c.hex)};
+      row.appendChild(el);
+    });
+    row.style.display='flex';
+    toast('已提取 '+arr.length+' 种主色，点击色块复制');
+  };
+
   /* ===== 全局粘贴 / 拖拽分发 ===== */
   var GLOBAL_HANDLERS={
     compress:function(files){handleCompressFiles(files)},
@@ -2058,7 +2451,8 @@ body{
     adjust:function(files){if(files.length)handleAdjFile(files[0])},
     slice:function(files){handleSliceFiles(files)},
     stitch:function(files){handleStitchFiles(files)},
-    info:function(files){if(files.length)handleInfoFile(files[0])}
+    info:function(files){if(files.length)handleInfoFile(files[0])},
+    meme:function(files){if(files.length)handleMemeFile(files[0])}
   };
   function handleGlobalFiles(files){
     var imgs=files.filter(function(f){return f.type&&f.type.indexOf('image/')===0});

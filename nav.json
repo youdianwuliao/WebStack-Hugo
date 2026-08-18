@@ -33,6 +33,12 @@
           "description": "图片压缩、裁剪、证件照制作，纯本地处理",
           "icon": "/assets/images/logos/image.svg",
           "url": "./image/"
+        },
+        {
+          "title": "实用工具箱",
+          "description": "时间戳互转、文本处理、正则测试、颜色转换、密码生成、进制转换",
+          "icon": "/assets/images/logos/tools.svg",
+          "url": "./tools/"
         }
       ]
     },
