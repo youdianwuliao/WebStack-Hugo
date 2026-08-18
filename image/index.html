@@ -2089,7 +2089,7 @@ body{
   function toJpegBytes(img,onOk,onErr){
     var w=img.naturalWidth,h=img.naturalHeight;
     var maxSide=8192;
-    var sc=Math.min(1,maxSide/Math.max(w,h));
+    var sc=Math.min(1,maxSide/Math.max(w,h),(w*h>32000000)?Math.sqrt(32000000/(w*h)):1);
     var c=document.createElement('canvas');
     c.width=Math.max(1,Math.round(w*sc));c.height=Math.max(1,Math.round(h*sc));
     var ctx=c.getContext('2d');
