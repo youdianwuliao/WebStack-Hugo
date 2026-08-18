@@ -163,6 +163,17 @@ body{
 .info-row:nth-child(odd){background:var(--chip-bg)}
 .info-row .k{width:120px;color:var(--muted);flex-shrink:0}
 .info-row .v{color:var(--text);word-break:break-all}
+.progress-wrap{
+  position:fixed;left:50%;bottom:120px;transform:translateX(-50%);
+  width:min(420px,82vw);z-index:998;display:flex;align-items:center;gap:10px;
+  background:rgba(30,58,95,.92);padding:10px 14px;border-radius:12px;
+  box-shadow:0 6px 20px rgba(0,0,0,.2);
+}
+.progress-bar{flex:1;height:8px;border-radius:99px;background:rgba(255,255,255,.18);overflow:hidden}
+.progress-fill{height:100%;width:0;background:var(--grad);border-radius:99px;transition:width .2s}
+.progress-text{font-size:12px;color:#fff;white-space:nowrap;min-width:64px;text-align:right}
+.batch-item.dragging{opacity:.5}
+.batch-item.drop-target{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
 </style>
 </head>
 <body>
@@ -182,11 +193,11 @@ body{
   </div>
 
   <div class="tabs">
-    <button class="tab active" data-tab="compress" onclick="switchTab('compress')"><span class="ic">🗜</span>图片压缩</button>
+    <button class="tab active" data-tab="compress" onclick="switchTab('compress')"><span class="ic">⇅</span>图片压缩</button>
     <button class="tab" data-tab="resize" onclick="switchTab('resize')"><span class="ic">⇲</span>图片缩放</button>
-    <button class="tab" data-tab="crop" onclick="switchTab('crop')"><span class="ic">✂</span>图片裁剪</button>
-    <button class="tab" data-tab="idphoto" onclick="switchTab('idphoto')"><span class="ic">📷</span>证件照</button>
-    <button class="tab" data-tab="watermark" onclick="switchTab('watermark')"><span class="ic">🏷</span>图片水印</button>
+    <button class="tab" data-tab="crop" onclick="switchTab('crop')"><span class="ic">✁</span>图片裁剪</button>
+    <button class="tab" data-tab="idphoto" onclick="switchTab('idphoto')"><span class="ic">◫</span>证件照</button>
+    <button class="tab" data-tab="watermark" onclick="switchTab('watermark')"><span class="ic">❖</span>图片水印</button>
     <button class="tab" data-tab="adjust" onclick="switchTab('adjust')"><span class="ic">↻</span>旋转滤镜</button>
     <button class="tab" data-tab="slice" onclick="switchTab('slice')"><span class="ic">▦</span>拼图工具</button>
     <button class="tab" data-tab="info" onclick="switchTab('info')"><span class="ic">ℹ</span>信息转换</button>
@@ -331,6 +342,8 @@ body{
       <div class="opts">
         <label><input type="radio" name="idSize" value="1c" checked onclick="idSizeChanged()"> 一寸 25×35mm（295×413px）</label>
         <label><input type="radio" name="idSize" value="2c" onclick="idSizeChanged()"> 二寸 35×49mm（413×579px）</label>
+        <label><input type="radio" name="idSize" value="custom" onclick="idSizeChanged()"> 自定义</label>
+        <label id="idCustomWrap" style="display:none">宽 <input type="number" id="idCw" value="300" min="1" style="width:70px"> × 高 <input type="number" id="idCh" value="400" min="1" style="width:70px"> px</label>
       </div>
       <div class="size-label">背景色</div>
       <div class="swatch-row">
@@ -552,6 +565,10 @@ body{
     <a href="https://www.justgame.top" target="_blank" rel="noopener">星汉灿烂</a> · 图片工具 · 图片仅在本地浏览器处理，不上传服务器
   </div>
 </div>
+<div class="progress-wrap" id="progressWrap" style="display:none">
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <span class="progress-text" id="progressText"></span>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -568,7 +585,9 @@ body{
     applyTheme(isLight?'dark':'light');
     localStorage.setItem(THEME_KEY,isLight?'dark':'light');
   };
+  var ACTIVE_TAB='compress';
   window.switchTab=function(name){
+    ACTIVE_TAB=name;
     document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('active',t.dataset.tab===name)});
     document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('active',p.id==='panel-'+name)});
     if(name==='crop'||name==='idphoto'){
@@ -649,10 +668,28 @@ body{
         for(var k=0;k<items.length;k++)items[k].classList.toggle('active',k===i);
       };
       el.appendChild(item);
-      var r=new FileReader();
-      r.onload=function(){img.src=r.result};
-      r.readAsDataURL(f);
+      makeThumb(f,img);
     });
+  }
+  function makeThumb(f,img){
+    function setSrc(url){img.src=url}
+    if(window.createImageBitmap){
+      createImageBitmap(f,{resizeWidth:152,resizeHeight:128,resizeQuality:'low'}).then(function(bmp){
+        var c=document.createElement('canvas');
+        c.width=bmp.width;c.height=bmp.height;
+        c.getContext('2d').drawImage(bmp,0,0);
+        bmp.close();
+        setSrc(c.toDataURL());
+      }).catch(function(){
+        var r=new FileReader();
+        r.onload=function(){setSrc(r.result)};
+        r.readAsDataURL(f);
+      });
+    }else{
+      var r=new FileReader();
+      r.onload=function(){setSrc(r.result)};
+      r.readAsDataURL(f);
+    }
   }
   function loadImage(file,onOk,onErr){
     if(!file.type.match(/^image\//)){toast('请选择图片文件');if(onErr)onErr();return}
@@ -681,12 +718,24 @@ body{
 
   /* ===== 批量处理 ===== */
   var MAX_BATCH=50,TOTAL_BATCH_SIZE=200*1024*1024;
+  function showProgress(cur,total){
+    var w=document.getElementById('progressWrap');
+    if(!w)return;
+    w.style.display='flex';
+    document.getElementById('progressFill').style.width=(total>0?Math.round(cur/total*100):0)+'%';
+    document.getElementById('progressText').textContent=cur+'/'+total;
+  }
+  function hideProgress(){
+    var w=document.getElementById('progressWrap');
+    if(w)w.style.display='none';
+  }
   function runBatch(list,handler,progress,onDone){
     var results=[],i=0;
+    showProgress(0,list.length);
     function next(){
-      if(i>=list.length){onDone(results);return}
+      if(i>=list.length){hideProgress();onDone(results);return}
       var f=list[i];
-      var tick=function(){i++;if(progress)progress(i,list.length);next()};
+      var tick=function(){i++;showProgress(i,list.length);if(progress)progress(i,list.length);next()};
       if(!f.type.match(/^image\//)){tick();return}
       loadImage(f,function(img){
         handler(f,img,function(res){
@@ -857,11 +906,12 @@ body{
     document.getElementById('compressOrigInfo').textContent=f.name+' · '+img.naturalWidth+'×'+img.naturalHeight+' · '+fmtSize(f.size);
     window.toast('图片已加载');
   }
-  setupDrop('compressDrop',function(f){
+  function handleCompressFile(f){
     compressBatch=[];
     document.getElementById('compressBatchList').innerHTML='';
     loadImage(f,function(img){showCompressPreview(f,img)});
-  },function(files){
+  }
+  function handleCompressFiles(files){
     compressBatch=pickBatch(files);
     document.getElementById('compressMeta').textContent='已选择 '+compressBatch.length+' 张图片，点击缩略图可预览，或直接"批量压缩"';
     document.getElementById('compressBatchInfo').textContent='';
@@ -870,7 +920,8 @@ body{
     });
     loadImage(compressBatch[0],function(img){showCompressPreview(compressBatch[0],img)});
     document.getElementById('compressBatchBtn').disabled=false;
-  });
+  }
+  setupDrop('compressDrop',handleCompressFile,handleCompressFiles);
   window.compressSlider=function(){
     var q=document.getElementById('compressQuality');
     var v=document.getElementById('compressQualityVal');
@@ -966,11 +1017,12 @@ body{
     initCrop('cropStage','cropBox',img,getCropRatio());
     window.toast('拖动裁剪框调整区域');
   }
-  setupDrop('cropDrop',function(f){
+  function handleCropFile(f){
     cropBatch=[];
     document.getElementById('cropBatchList').innerHTML='';
     loadImage(f,function(img){showCropPreview(f,img)});
-  },function(files){
+  }
+  function handleCropFiles(files){
     cropBatch=pickBatch(files);
     document.getElementById('cropMeta').textContent='已选择 '+cropBatch.length+' 张图片，点击缩略图切换，拖好裁剪框后点"批量裁剪"';
     document.getElementById('cropBatchInfo').textContent='';
@@ -979,7 +1031,8 @@ body{
     });
     loadImage(cropBatch[0],function(img){showCropPreview(cropBatch[0],img)});
     document.getElementById('cropBatchBtn').disabled=false;
-  });
+  }
+  setupDrop('cropDrop',handleCropFile,handleCropFiles);
   function getCropRatio(){return document.getElementById('cropRatio').value}
   window.cropRatioChanged=function(){
     if(!cropState.img||cropState.boxEl.id!=='cropBox')return;
@@ -1174,11 +1227,12 @@ body{
     document.getElementById('resizeOrigInfo').textContent=f.name+' · '+img.naturalWidth+'×'+img.naturalHeight+' · '+fmtSize(f.size);
     window.toast('图片已加载');
   }
-  setupDrop('resizeDrop',function(f){
+  function handleResizeFile(f){
     resizeBatch=[];
     document.getElementById('resizeBatchList').innerHTML='';
     loadImage(f,function(img){showResizePreview(f,img)});
-  },function(files){
+  }
+  function handleResizeFiles(files){
     resizeBatch=pickBatch(files);
     document.getElementById('resizeMeta').textContent='已选择 '+resizeBatch.length+' 张图片，点击缩略图可预览，或直接"批量缩放"';
     document.getElementById('resizeBatchInfo').textContent='';
@@ -1187,7 +1241,8 @@ body{
     });
     loadImage(resizeBatch[0],function(img){showResizePreview(resizeBatch[0],img)});
     document.getElementById('resizeBatchBtn').disabled=false;
-  });
+  }
+  setupDrop('resizeDrop',handleResizeFile,handleResizeFiles);
   window.resizeModeChanged=function(){
     var mode=document.getElementById('resizeMode').value;
     document.getElementById('resizePixelOpts').style.display=mode==='pixel'?'flex':'none';
@@ -1314,7 +1369,7 @@ body{
 
   /* ===== 证件照 ===== */
   var idData={img:null,blob:null,bg:'237,28,36'};
-  setupDrop('idDrop',function(f){
+  function handleIdFile(f){
     idData.fileName=f.name.replace(/\.[^.]+$/,'')||'photo';
     loadImage(f,function(img){
       idData.img=img;
@@ -1324,8 +1379,12 @@ body{
       initCrop('idStage','idBox',img,'5:7');
       window.toast('调整裁剪框，人像居中');
     });
-  });
-  window.idSizeChanged=function(){};
+  }
+  setupDrop('idDrop',handleIdFile);
+  window.idSizeChanged=function(){
+    var r=document.querySelector('input[name="idSize"]:checked');
+    document.getElementById('idCustomWrap').style.display=(r&&r.value==='custom')?'flex':'none';
+  };
   window.idSlider=function(){
     document.getElementById('idThresholdVal').textContent=document.getElementById('idThreshold').value;
   };
@@ -1347,6 +1406,11 @@ body{
   function getBgVal(){return parseInt(document.getElementById('idThreshold').value)}
   function getSpec(){
     var r=document.querySelector('input[name="idSize"]:checked');
+    if(r&&r.value==='custom'){
+      var w=Math.max(1,Math.min(parseInt(document.getElementById('idCw').value)||1,MAX_SIDE));
+      var h=Math.max(1,Math.min(parseInt(document.getElementById('idCh').value)||1,MAX_SIDE));
+      return {name:'自定义',w:w,h:h};
+    }
     if(r&&r.value==='2c')return {name:'二寸',w:413,h:579};
     return {name:'一寸',w:295,h:413};
   }
@@ -1429,7 +1493,7 @@ body{
 
   /* ===== 图片水印 ===== */
   var wmData={img:null,logo:null,blob:null,fileName:'image',origName:'image.png'};
-  setupDrop('wmDrop',function(f){
+  function handleWmFile(f){
     wmData.origName=f.name;
     wmData.fileName=f.name.replace(/\.[^.]+$/,'')||'image';
     loadImage(f,function(img){
@@ -1445,7 +1509,8 @@ body{
       document.getElementById('wmDownloadBtn').disabled=true;
       window.toast('底图已加载');
     });
-  });
+  }
+  setupDrop('wmDrop',handleWmFile);
   setupDrop('wmLogoDrop',function(f){
     loadImage(f,function(img){
       wmData.logo=img;
@@ -1618,9 +1683,10 @@ body{
     sepia:'sepia(1)',blur:'blur(3px)',bright:'brightness(1.3)',dark:'brightness(.7)',
     contrast:'contrast(1.4)',saturate:'saturate(1.8)',vintage:'sepia(.5) contrast(1.1) brightness(1.1)'
   };
-  setupDrop('adjDrop',function(f){
+  function handleAdjFile(f){
     loadImage(f,function(img){showAdjust(f,img)});
-  });
+  }
+  setupDrop('adjDrop',handleAdjFile);
   function showAdjust(f,img){
     adjData.img=img;adjData.fileName=f.name.replace(/\.[^.]+$/,'')||'image';
     adjData.rotate=0;adjData.hFlip=false;adjData.vFlip=false;adjData.fx='none';
@@ -1727,13 +1793,15 @@ body{
 
   /* ===== 九宫格切图 ===== */
   var sliceBatch=[];
-  setupDrop('sliceDrop',function(f){
+  function handleSliceFile(f){
     sliceBatch=[f];
     showSliceBatch();
-  },function(files){
+  }
+  function handleSliceFiles(files){
     sliceBatch=pickBatch(files);
     showSliceBatch();
-  });
+  }
+  setupDrop('sliceDrop',handleSliceFile,handleSliceFiles);
   function showSliceBatch(){
     var meta=document.getElementById('sliceMeta');
     meta.textContent=sliceBatch.length===1?'已选择：'+sliceBatch[0].name:'已选择 '+sliceBatch.length+' 张图片';
@@ -1790,17 +1858,65 @@ body{
   /* ===== 拼接长图 ===== */
   var stitchBatch=[];
   var stitchData={blob:null};
-  setupDrop('stitchDrop',function(f){
+  function handleStitchFile(f){
     stitchBatch=[f];
     showStitchBatch();
-  },function(files){
+  }
+  function handleStitchFiles(files){
     stitchBatch=pickBatch(files);
     showStitchBatch();
-  });
+  }
+  setupDrop('stitchDrop',handleStitchFile,handleStitchFiles);
   function showStitchBatch(){
     var meta=document.getElementById('stitchMeta');
-    meta.textContent=stitchBatch.length===1?'已选择 1 张图片（建议 2 张以上）':'已选择 '+stitchBatch.length+' 张图片，将按选择顺序拼接';
+    meta.textContent=stitchBatch.length===1?'已选择 1 张图片（建议 2 张以上）':'已选择 '+stitchBatch.length+' 张图片，将按选择顺序拼接（可拖动缩略图调整顺序）';
     renderBatchList('stitchBatchList',stitchBatch,function(){});
+    enableDragSort('stitchBatchList',stitchBatch,showStitchBatch);
+  }
+  function enableDragSort(listId,arr,reRender){
+    var box=document.getElementById(listId);
+    if(!box)return;
+    Array.prototype.forEach.call(box.children,function(item,i){item.dataset.i=i});
+    if(box._dragInit)return;
+    box._dragInit=true;
+    box.addEventListener('dragstart',function(e){
+      var t=e.target.closest('.batch-item');
+      if(!t)return;
+      e.dataTransfer.effectAllowed='move';
+      box._from=parseInt(t.dataset.i,10);
+      t.classList.add('dragging');
+    });
+    box.addEventListener('dragover',function(e){
+      if(box._from<0)return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect='move';
+      var t=e.target.closest('.batch-item');
+      if(t)t.classList.add('drop-target');
+    });
+    box.addEventListener('dragleave',function(e){
+      var t=e.target.closest('.batch-item');
+      if(t)t.classList.remove('drop-target');
+    });
+    box.addEventListener('drop',function(e){
+      e.preventDefault();
+      var t=e.target.closest('.batch-item');
+      if(t)t.classList.remove('drop-target');
+      var from=box._from;
+      box._from=-1;
+      if(from<0||!t)return;
+      var to=parseInt(t.dataset.i,10);
+      if(to!==from){
+        var f=arr.splice(from,1)[0];
+        arr.splice(to,0,f);
+        reRender();
+        window.toast('已调整拼接顺序');
+      }
+    });
+    box.addEventListener('dragend',function(e){
+      var t=e.target.closest('.batch-item');
+      if(t)t.classList.remove('dragging');
+      box._from=-1;
+    });
   }
   window.stitchFmtChanged=function(){
     document.getElementById('stitchBg').disabled=document.getElementById('stitchFmt').value==='image/png';
@@ -1870,9 +1986,10 @@ body{
 
   /* ===== 图片信息 / Base64 ===== */
   var infoData={file:null,img:null};
-  setupDrop('infoDrop',function(f){
+  function handleInfoFile(f){
     loadImage(f,function(img){showInfo(f,img)});
-  });
+  }
+  setupDrop('infoDrop',handleInfoFile);
   function showInfo(f,img){
     infoData.file=f;infoData.img=img;
     document.getElementById('infoMeta').textContent='已选择：'+f.name;
@@ -1930,6 +2047,48 @@ body{
     ta.select();ta.setSelectionRange(0,ta.value.length);
     try{document.execCommand('copy')}catch(e){toast('复制失败，请手动选择复制')}
   }
+
+  /* ===== 全局粘贴 / 拖拽分发 ===== */
+  var GLOBAL_HANDLERS={
+    compress:function(files){handleCompressFiles(files)},
+    resize:function(files){handleResizeFiles(files)},
+    crop:function(files){handleCropFiles(files)},
+    idphoto:function(files){if(files.length)handleIdFile(files[0])},
+    watermark:function(files){if(files.length)handleWmFile(files[0])},
+    adjust:function(files){if(files.length)handleAdjFile(files[0])},
+    slice:function(files){handleSliceFiles(files)},
+    stitch:function(files){handleStitchFiles(files)},
+    info:function(files){if(files.length)handleInfoFile(files[0])}
+  };
+  function handleGlobalFiles(files){
+    var imgs=files.filter(function(f){return f.type&&f.type.indexOf('image/')===0});
+    if(!imgs.length){toast('请拖入或粘贴图片文件');return}
+    var handler=GLOBAL_HANDLERS[ACTIVE_TAB];
+    if(!handler){toast('当前面板暂不支持批量图片');return}
+    handler(imgs);
+    window.toast('已接收 '+imgs.length+' 张图片');
+  }
+  document.addEventListener('paste',function(e){
+    var files=[];
+    if(e.clipboardData&&e.clipboardData.items){
+      for(var i=0;i<e.clipboardData.items.length;i++){
+        var it=e.clipboardData.items[i];
+        if(it.kind==='file'&&it.type&&it.type.indexOf('image/')===0){
+          var f=it.getAsFile();
+          if(f)files.push(f);
+        }
+      }
+    }
+    if(files.length)handleGlobalFiles(files);
+  });
+  document.addEventListener('dragover',function(e){e.preventDefault()});
+  document.addEventListener('drop',function(e){
+    e.preventDefault();
+    if(e.target&&e.target.closest&&e.target.closest('.file-drop'))return;
+    if(e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files.length){
+      handleGlobalFiles(Array.prototype.slice.call(e.dataTransfer.files));
+    }
+  });
 
   initTheme();
 })();
