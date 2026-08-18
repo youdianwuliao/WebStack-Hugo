@@ -450,7 +450,7 @@
         },
         {
           "title": "pi.dev",
-          "description": "Vercel 推出的 AI 编程平台，智能体驱动开发",
+          "description": "Pi 是一个极简的智能体工具框架",
           "icon": "/assets/images/logos/pi.svg",
           "url": "https://pi.dev/"
         }
