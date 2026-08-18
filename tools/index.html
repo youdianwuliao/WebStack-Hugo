@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>实用工具箱 - 时间戳 / 文本 / 正则 / 颜色 / 密码 / 进制</title>
+<meta name="description" content="在线实用工具箱：Unix 时间戳互转、文本处理（大小写/去重/排序/统计）、正则表达式测试、颜色 HEX/RGB/HSL 互转、强密码生成与强度检测、进制转换（2/8/10/16/36）。全部在浏览器本地运行，无需上传任何数据。">
+<meta property="og:title" content="实用工具箱">
+<meta property="og:description" content="时间戳、文本、正则、颜色、密码、进制六合一在线工具，浏览器本地运行，数据不上传。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.justgame.top/tools/">
+<meta property="og:site_name" content="星汉灿烂">
+<meta name="theme-color" content="#4a90d9">
+<link rel="canonical" href="https://www.justgame.top/tools/">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/images/icon-192.png">
+<style>
+:root{
+  --bg1:#0b1020; --bg2:#141a33; --bg3:#0d1b2a;
+  --card:rgba(255,255,255,.055);
+  --card-border:rgba(255,255,255,.1);
+  --card-hover:rgba(255,255,255,.09);
+  --text:#e8ecf4; --muted:#9aa4c0; --faint:#6b7390;
+  --accent:#4a90d9; --accent2:#818cf8; --gold:#fbbf24;
+  --green:#34d399; --red:#f87171; --orange:#fb923c;
+  --grad:linear-gradient(135deg,#4a90d9,#818cf8);
+  --shadow:0 10px 40px rgba(0,0,0,.35);
+  --chip-bg:rgba(255,255,255,.06);
+  --chip-bg-active:linear-gradient(135deg,rgba(74,144,217,.2),rgba(129,140,248,.2));
+  --code-bg:#0e1526;
+}
+.light{
+  --bg1:#eef2fb; --bg2:#ffffff; --bg3:#e2e9f8;
+  --card:#ffffff; --card-border:#e2e8f0; --card-hover:#f1f5ff;
+  --text:#1e2a44; --muted:#5b6574; --faint:#8a93ab;
+  --chip-bg:#eef2fb;
+  --chip-bg-active:linear-gradient(135deg,#dbeafe,#e0e7ff);
+  --shadow:0 10px 30px rgba(30,58,95,.08);
+  --code-bg:#f6f8fa;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',monospace,sans-serif;
+  background:linear-gradient(160deg,var(--bg1),var(--bg2) 45%,var(--bg3));
+  color:var(--text);min-height:100vh;
+}
+.wrap{max-width:880px;margin:0 auto;padding:18px 16px 40px}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-logo{
+  width:44px;height:44px;border-radius:12px;background:var(--grad);
+  display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;font-weight:700;
+}
+.brand h1{font-size:18px;font-weight:700;line-height:1.25}
+.brand .sub{font-size:11px;color:var(--muted);margin-top:2px}
+.top-actions{display:flex;gap:8px}
+.icon-btn{
+  width:38px;height:38px;border-radius:10px;border:1px solid var(--card-border);
+  background:var(--card);color:var(--muted);font-size:16px;cursor:pointer;transition:.2s;
+}
+.icon-btn:hover{color:var(--text);border-color:var(--accent)}
+.tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.tab{
+  flex:1;min-width:130px;padding:11px 8px;border-radius:12px;border:1px solid var(--card-border);
+  background:var(--card);color:var(--muted);font-size:14px;cursor:pointer;transition:.2s;
+  text-align:center;font-weight:600;
+}
+.tab:hover{color:var(--text)}
+.tab.active{background:var(--chip-bg-active);color:var(--text);border-color:transparent;box-shadow:inset 0 0 0 1px rgba(74,144,217,.35)}
+.tab .ic{font-size:15px;margin-right:6px}
+.panel{display:none;animation:fadein .25s}
+.panel.active{display:block}
+@keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.card{
+  background:var(--card);border:1px solid var(--card-border);border-radius:16px;
+  padding:18px;margin-bottom:14px;box-shadow:var(--shadow);
+}
+.card-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.card-title h3{font-size:14px;font-weight:600}
+.card-title h3 .badge{font-size:11px;padding:2px 8px;border-radius:99px;background:var(--chip-bg);color:var(--faint);margin-left:6px;font-weight:400}
+.btn-group{display:flex;gap:8px;flex-wrap:wrap}
+.btn{
+  padding:8px 16px;border-radius:10px;border:1px solid var(--card-border);
+  background:var(--chip-bg);color:var(--muted);font-size:13px;cursor:pointer;transition:.2s;font-weight:500;
+}
+.btn:hover{color:var(--text);border-color:var(--accent);background:var(--card-hover)}
+.btn.primary{background:var(--grad);color:#fff;border-color:transparent}
+.btn.primary:hover{opacity:.88;color:#fff}
+.btn.green{background:linear-gradient(135deg,#10b981,#34d399);color:#fff;border-color:transparent}
+.btn.green:hover{opacity:.88;color:#fff}
+.btn.orange{background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#1e2a44;border-color:transparent}
+.btn.orange:hover{opacity:.88;color:#1e2a44}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.opts{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.opts label{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer}
+.opts input[type=number]{width:110px;padding:6px 8px;border-radius:8px;border:1px solid var(--card-border);background:var(--code-bg);color:var(--text);font-size:13px}
+.opts input[type=checkbox],.opts input[type=radio]{accent-color:var(--accent);width:15px;height:15px;cursor:pointer}
+.opts select{padding:7px 10px;border-radius:8px;border:1px solid var(--card-border);background:var(--code-bg);color:var(--text);font-size:13px}
+.opts input[type=range]{accent-color:var(--accent);flex:1;min-width:120px}
+.opts .range-val{font-size:12px;color:var(--accent);min-width:34px;text-align:right;font-weight:600}
+.inp{
+  width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--card-border);
+  background:var(--code-bg);color:var(--text);font-size:13px;outline:none;transition:.2s;font-family:inherit;
+}
+.inp:focus{border-color:var(--accent)}
+textarea.inp{min-height:120px;resize:vertical;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;line-height:1.6}
+.inp-row{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.inp-row label{font-size:13px;color:var(--muted);white-space:nowrap}
+.inp-row .inp{flex:1;min-width:200px}
+.status{display:flex;align-items:center;gap:8px;padding:11px 14px;border-radius:12px;font-size:13px;margin-top:12px;flex-wrap:wrap}
+.status.ok{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.4);color:var(--green)}
+.status.err{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.4);color:var(--red)}
+.status.info{background:rgba(74,144,217,.12);border:1px solid rgba(74,144,217,.4);color:var(--accent)}
+.status b{font-weight:700}
+.result-list{list-style:none;margin-top:10px;max-height:260px;overflow:auto;border:1px solid var(--card-border);border-radius:10px}
+.result-list li{padding:8px 12px;font-size:12px;border-bottom:1px solid var(--card-border);display:flex;gap:10px;align-items:baseline;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.result-list li:last-child{border-bottom:none}
+.result-list .idx{color:var(--faint);flex-shrink:0;font-size:11px}
+.result-list .txt{color:var(--text);word-break:break-all;flex:1}
+.result-list .pos{color:var(--accent);font-size:11px;flex-shrink:0}
+.kv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:12px}
+.kv-item{background:var(--code-bg);border:1px solid var(--card-border);border-radius:10px;padding:12px;cursor:pointer;transition:.15s}
+.kv-item:hover{border-color:var(--accent)}
+.kv-item .k{font-size:11px;color:var(--faint);margin-bottom:6px}
+.kv-item .v{font-size:14px;font-weight:600;color:var(--text);word-break:break-all;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.color-prev{width:100%;height:56px;border-radius:10px;border:1px solid var(--card-border);margin-top:12px;transition:background .2s}
+.strength{display:flex;gap:4px;margin-top:10px;align-items:center}
+.strength .seg{height:8px;flex:1;border-radius:4px;background:var(--chip-bg)}
+.strength .seg.on{background:var(--seg-color,var(--red))}
+.strength-txt{font-size:12px;margin-left:8px;color:var(--muted);min-width:56px}
+.swatch-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.swatch{width:58px;height:58px;border-radius:10px;border:1px solid var(--card-border);position:relative;cursor:pointer;overflow:hidden;transition:transform .15s}
+.swatch:hover{transform:scale(1.08)}
+.swatch span{position:absolute;left:0;right:0;bottom:0;font-size:10px;padding:2px 0;background:rgba(0,0,0,.55);color:#fff;text-align:center;font-family:monospace}
+.toast{
+  position:fixed;left:50%;bottom:80px;transform:translateX(-50%);
+  background:rgba(30,58,95,.92);color:#fff;padding:9px 20px;border-radius:999px;
+  font-size:13px;z-index:999;box-shadow:0 6px 20px rgba(0,0,0,.2);
+  opacity:0;transition:opacity .3s;pointer-events:none;
+}
+.footer{text-align:center;font-size:11px;color:var(--faint);margin-top:24px}
+.footer a{color:var(--accent);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-logo">⚙</div>
+      <div>
+        <h1>实用工具箱</h1>
+        <div class="sub">时间戳 · 文本 · 正则 · 颜色 · 密码 · 进制</div>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button class="icon-btn" onclick="window.open('../','_self')" title="返回导航">↩</button>
+      <button class="icon-btn" onclick="toggleTheme()" title="切换主题">◐</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="ts" onclick="switchTab('ts')"><span class="ic">◷</span>时间戳</button>
+    <button class="tab" data-tab="text" onclick="switchTab('text')"><span class="ic">T</span>文本工具</button>
+    <button class="tab" data-tab="regex" onclick="switchTab('regex')"><span class="ic">.*</span>正则测试</button>
+    <button class="tab" data-tab="color" onclick="switchTab('color')"><span class="ic">●</span>颜色转换</button>
+    <button class="tab" data-tab="pwd" onclick="switchTab('pwd')"><span class="ic">⚿</span>密码生成</button>
+    <button class="tab" data-tab="radix" onclick="switchTab('radix')"><span class="ic">0x</span>进制转换</button>
+  </div>
+
+  <!-- 时间戳 -->
+  <div class="panel active" id="panel-ts">
+    <div class="card">
+      <div class="card-title"><h3>当前时间</h3><span class="range-val" id="tsNow" style="min-width:auto"></span></div>
+      <div class="kv-grid">
+        <div class="kv-item" onclick="copyVal('tsUnixSec')"><div class="k">Unix 秒</div><div class="v" id="tsUnixSec">-</div></div>
+        <div class="kv-item" onclick="copyVal('tsUnixMs')"><div class="k">Unix 毫秒</div><div class="v" id="tsUnixMs">-</div></div>
+        <div class="kv-item" onclick="copyVal('tsLocal')"><div class="k">本地时间</div><div class="v" id="tsLocal">-</div></div>
+        <div class="kv-item" onclick="copyVal('tsUtc')"><div class="k">UTC 时间</div><div class="v" id="tsUtc">-</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><h3>时间戳 → 日期时间</h3></div>
+      <div class="inp-row">
+        <label>时间戳</label>
+        <input class="inp" id="tsToDate" placeholder="输入秒或毫秒时间戳，例如 1755500000">
+      </div>
+      <div class="opts">
+        <button class="btn primary" onclick="tsToDate()">转换</button>
+        <button class="btn" onclick="tsUseNow()">填入当前时间</button>
+        <button class="btn" onclick="clearInp('tsToDate')">清空</button>
+      </div>
+      <div class="kv-grid" id="tsToDateOut" style="display:none"></div>
+      <div class="status info" id="tsToDateMsg" style="display:none"><b>提示：</b>自动识别毫秒级时间戳（13 位数字）</div>
+    </div>
+    <div class="card">
+      <div class="card-title"><h3>日期时间 → 时间戳</h3></div>
+      <div class="inp-row">
+        <label>日期时间</label>
+        <input class="inp" id="tsFromDate" placeholder="格式：2025-08-18 12:30:00 或任意能被 Date 解析的格式">
+      </div>
+      <div class="opts">
+        <label><input type="radio" name="tsFromTz" value="local" checked> 本地时区</label>
+        <label><input type="radio" name="tsFromTz" value="utc"> UTC</label>
+        <button class="btn primary" onclick="tsFromDate()">转换</button>
+        <button class="btn" onclick="clearInp('tsFromDate')">清空</button>
+      </div>
+      <div class="kv-grid" id="tsFromDateOut" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- 文本工具 -->
+  <div class="panel" id="panel-text">
+    <div class="card">
+      <div class="card-title"><h3>文本处理</h3><span class="range-val" id="txtStats" style="min-width:auto">0 字符</span></div>
+      <textarea class="inp" id="txtInput" placeholder="在此输入或粘贴要处理的文本…"></textarea>
+      <div class="opts">
+        <button class="btn primary" onclick="txtUpper()">转大写</button>
+        <button class="btn" onclick="txtLower()">转小写</button>
+        <button class="btn" onclick="txtTitle()">首字母大写</button>
+        <button class="btn" onclick="txtTrim()">去首尾空白</button>
+        <button class="btn" onclick="txtCollapse()">合并多余空白</button>
+        <button class="btn" onclick="txtRemoveEmpty()">删除空行</button>
+        <button class="btn" onclick="txtReverse()">反转文本</button>
+      </div>
+      <div class="opts">
+        <button class="btn" onclick="txtUnique()">去重行</button>
+        <button class="btn" onclick="txtSort(1)">行升序</button>
+        <button class="btn" onclick="txtSort(-1)">行降序</button>
+        <button class="btn" onclick="txtCount()">统计字数</button>
+        <button class="btn orange" onclick="copyOut('txtOutput')">复制结果</button>
+      </div>
+      <div class="status info" style="margin-top:14px"><b>统计：</b><span id="txtStatsFull">-</span></div>
+      <textarea class="inp" id="txtOutput" readonly placeholder="处理结果将显示在这里…" style="margin-top:12px"></textarea>
+    </div>
+  </div>
+
+  <!-- 正则 -->
+  <div class="panel" id="panel-regex">
+    <div class="card">
+      <div class="card-title"><h3>正则表达式测试</h3><span class="range-val" id="regexCount" style="min-width:auto">0 个匹配</span></div>
+      <div class="inp-row">
+        <label>表达式</label>
+        <input class="inp" id="regexPattern" placeholder="例如 \d{4}-\d{2}-\d{2}">
+      </div>
+      <div class="inp-row">
+        <label>修饰符</label>
+        <input class="inp" id="regexFlags" placeholder="可选：g i m s u y" style="max-width:220px">
+      </div>
+      <div class="inp-row">
+        <label>测试文本</label>
+        <textarea class="inp" id="regexText" style="min-height:110px" placeholder="输入要匹配的文本"></textarea>
+      </div>
+      <div class="opts">
+        <button class="btn primary" onclick="regexRun()">运行</button>
+        <button class="btn" onclick="regexClear()">清空</button>
+        <button class="btn" onclick="copyOut('regexOutput')">复制结果</button>
+      </div>
+      <div class="status info" id="regexMsg" style="display:none"></div>
+      <div class="result-list" id="regexOutput" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- 颜色 -->
+  <div class="panel" id="panel-color">
+    <div class="card">
+      <div class="card-title"><h3>颜色格式转换</h3></div>
+      <div class="inp-row">
+        <label>颜色值</label>
+        <input class="inp" id="colorInput" placeholder="支持 #ff3366 / #f36 / rgb(255,51,102) / rgba / hsl(340,100%,60%)">
+        <input type="color" id="colorPick" value="#ff3366" style="width:44px;height:36px;border:none;background:none;cursor:pointer" title="从取色器选择">
+      </div>
+      <div class="opts">
+        <button class="btn primary" onclick="colorParse()">转换</button>
+        <button class="btn" onclick="colorRandom()">随机颜色</button>
+        <button class="btn" onclick="copyColorHex()">复制 HEX</button>
+      </div>
+      <div class="color-prev" id="colorPrev" style="background:#ff3366"></div>
+      <div class="kv-grid" id="colorOut" style="display:none"></div>
+      <div class="status info" id="colorMsg" style="display:none"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><h3>调色板</h3></div>
+      <div class="opts">
+        <button class="btn primary" onclick="paletteMonochrome()">生成同色系</button>
+        <button class="btn" onclick="paletteRandom()">随机 12 色</button>
+      </div>
+      <div class="swatch-row" id="paletteRow" style="margin-top:12px"></div>
+    </div>
+  </div>
+
+  <!-- 密码 -->
+  <div class="panel" id="panel-pwd">
+    <div class="card">
+      <div class="card-title"><h3>强密码生成器</h3></div>
+      <div class="inp-row">
+        <label>长度</label>
+        <input type="range" id="pwdLen" min="4" max="64" value="16" oninput="pwdLenSlider()" style="flex:1">
+        <span class="range-val" id="pwdLenVal">16</span>
+      </div>
+      <div class="opts">
+        <label><input type="checkbox" id="pwdUpper" checked> 大写 A-Z</label>
+        <label><input type="checkbox" id="pwdLower" checked> 小写 a-z</label>
+        <label><input type="checkbox" id="pwdDigit" checked> 数字 0-9</label>
+        <label><input type="checkbox" id="pwdSym" checked> 符号 !@#$</label>
+      </div>
+      <div class="opts">
+        <label><input type="checkbox" id="pwdNoAmbig"> 排除易混字符（0O1lI）</label>
+        <label><input type="checkbox" id="pwdCustom" onchange="pwdCustomToggle()"> 自定义字符集</label>
+        <input class="inp" id="pwdCustomChars" placeholder="自定义字符集（勾选后生效）" style="flex:1;min-width:200px;display:none">
+      </div>
+      <div class="opts">
+        <button class="btn primary" onclick="pwdGen()">生成密码</button>
+        <button class="btn green" onclick="copyOut('pwdOutput')">复制</button>
+      </div>
+      <input class="inp" id="pwdOutput" readonly style="margin-top:12px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:15px;text-align:center">
+      <div class="strength" id="pwdStrength">
+        <div class="seg" id="pwdSeg0"></div><div class="seg" id="pwdSeg1"></div><div class="seg" id="pwdSeg2"></div><div class="seg" id="pwdSeg3"></div>
+        <span class="strength-txt" id="pwdStrengthTxt">-</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><h3>密码强度检测</h3></div>
+      <input class="inp" id="pwdCheck" placeholder="输入任意密码进行强度检测" oninput="pwdCheckStrength()">
+      <div class="strength" id="pwdCheckStrength">
+        <div class="seg" id="pwdCSeg0"></div><div class="seg" id="pwdCSeg1"></div><div class="seg" id="pwdCSeg2"></div><div class="seg" id="pwdCSeg3"></div>
+        <span class="strength-txt" id="pwdCheckTxt">-</span>
+      </div>
+      <div class="status info" id="pwdCheckMsg" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- 进制 -->
+  <div class="panel" id="panel-radix">
+    <div class="card">
+      <div class="card-title"><h3>进制转换</h3><span class="range-val" id="radixHint" style="min-width:auto">支持大整数</span></div>
+      <div class="inp-row">
+        <label>输入数值</label>
+        <input class="inp" id="radixInput" placeholder="输入要转换的数值，例如 FF 或 255">
+      </div>
+      <div class="opts">
+        <label>输入进制
+          <select id="radixFrom">
+            <option value="2">二进制 (2)</option>
+            <option value="8">八进制 (8)</option>
+            <option value="10" selected>十进制 (10)</option>
+            <option value="16">十六进制 (16)</option>
+            <option value="36">三十六进制 (36)</option>
+          </select>
+        </label>
+        <button class="btn primary" onclick="radixConvert()">转换</button>
+        <button class="btn" onclick="clearInp('radixInput')">清空</button>
+      </div>
+      <div class="kv-grid" id="radixOut" style="display:none"></div>
+      <div class="status err" id="radixMsg" style="display:none"></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a href="https://www.justgame.top" target="_blank" rel="noopener">星汉灿烂</a> · 实用工具箱 · 所有数据仅在浏览器本地处理，不上传服务器
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+(function(){
+  var toastTimer=null;
+  window.toast=function(msg){
+    var t=document.getElementById('toast');
+    t.textContent=msg;
+    t.style.opacity='1';
+    clearTimeout(toastTimer);
+    toastTimer=setTimeout(function(){t.style.opacity='0'},2000);
+  };
+  window.toggleTheme=function(){
+    document.body.classList.toggle('light');
+    try{localStorage.setItem('tools-theme',document.body.classList.contains('light')?'light':'dark')}catch(e){}
+  };
+  try{
+    if(localStorage.getItem('tools-theme')==='light')document.body.classList.add('light');
+  }catch(e){}
+  window.copyText=function(txt){
+    function done(){toast('已复制：'+txt.slice(0,24))}
+    if(navigator.clipboard&&window.isSecureContext){
+      navigator.clipboard.writeText(txt).then(done,function(){fallbackCopy(txt);done()});
+    }else{fallbackCopy(txt);done()}
+  };
+  function fallbackCopy(txt){
+    var ta=document.createElement('textarea');
+    ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();
+    try{document.execCommand('copy')}catch(e){}
+    document.body.removeChild(ta);
+  }
+  function copyVal(id){
+    var el=document.getElementById(id);
+    if(el&&el.textContent&&el.textContent!=='-')copyText(el.textContent);
+  }
+  window.copyVal=copyVal;
+  function copyOut(id){
+    var el=document.getElementById(id);
+    if(el&&el.value)copyText(el.value);else toast('暂无内容可复制');
+  }
+  window.copyOut=copyOut;
+  function clearInp(id){
+    document.getElementById(id).value='';
+    toast('已清空');
+  }
+  window.clearInp=clearInp;
+  var ACTIVE_TAB='ts';
+  window.switchTab=function(name){
+    ACTIVE_TAB=name;
+    document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('active',t.dataset.tab===name)});
+    document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('active',p.id==='panel-'+name)});
+    if(name==='ts')tick();
+    if(name==='text')txtStats();
+  };
+
+  /* ===== 时间戳 ===== */
+  var nowTimer=null;
+  function pad(n){return n<10?'0'+n:''+n}
+  function fmtLocal(d){
+    return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
+  }
+  function fmtUtc(d){
+    return d.getUTCFullYear()+'-'+pad(d.getUTCMonth()+1)+'-'+pad(d.getUTCDate())+' '+pad(d.getUTCHours())+':'+pad(d.getUTCMinutes())+':'+pad(d.getUTCSeconds())+' UTC';
+  }
+  function tick(){
+    var d=new Date();
+    document.getElementById('tsUnixSec').textContent=Math.floor(d.getTime()/1000);
+    document.getElementById('tsUnixMs').textContent=d.getTime();
+    document.getElementById('tsLocal').textContent=fmtLocal(d);
+    document.getElementById('tsUtc').textContent=fmtUtc(d);
+    document.getElementById('tsNow').textContent=fmtLocal(d);
+  }
+  nowTimer=setInterval(tick,1000);tick();
+  window.tsToDate=function(){
+    var raw=document.getElementById('tsToDate').value.trim();
+    var out=document.getElementById('tsToDateOut');
+    document.getElementById('tsToDateMsg').style.display='block';
+    if(!raw){out.style.display='none';return}
+    if(!/^\d+$/.test(raw)){toast('请输入纯数字时间戳');return}
+    var ms=raw.length>=13?parseInt(raw,10):parseInt(raw,10)*1000;
+    var d=new Date(ms);
+    if(isNaN(d.getTime())){toast('时间戳无效');return}
+    out.innerHTML='';
+    addKv(out,'秒级时间戳',Math.floor(ms/1000));
+    addKv(out,'毫秒级时间戳',ms);
+    addKv(out,'本地时间',fmtLocal(d));
+    addKv(out,'UTC 时间',fmtUtc(d));
+    addKv(out,'ISO 8601',d.toISOString());
+    out.style.display='grid';
+  };
+  window.tsUseNow=function(){
+    document.getElementById('tsToDate').value=Math.floor(Date.now()/1000);
+    tsToDate();
+  };
+  window.tsFromDate=function(){
+    var raw=document.getElementById('tsFromDate').value.trim();
+    var out=document.getElementById('tsFromDateOut');
+    if(!raw){out.style.display='none';return}
+    var utc=document.querySelector('input[name="tsFromTz"]:checked').value==='utc';
+    var d;
+    if(utc){
+      var m=raw.match(/^(\d{4})-(\d{1,2})-(\d{1,2})[T ]?(\d{1,2})?:?(\d{1,2})?:?(\d{1,2})?/);
+      if(m){
+        d=new Date(Date.UTC(+m[1],+m[2]-1,+m[3],+(m[4]||0),+(m[5]||0),+(m[6]||0)));
+      }else{d=new Date(raw)}
+    }else{d=new Date(raw)}
+    if(isNaN(d.getTime())){toast('无法解析该日期格式');return}
+    out.innerHTML='';
+    addKv(out,'Unix 秒',Math.floor(d.getTime()/1000));
+    addKv(out,'Unix 毫秒',d.getTime());
+    addKv(out,'本地时间',fmtLocal(d));
+    addKv(out,'UTC 时间',fmtUtc(d));
+    out.style.display='grid';
+  };
+  function addKv(box,label,val){
+    var el=document.createElement('div');
+    el.className='kv-item';
+    el.innerHTML='<div class="k">'+label+'</div><div class="v"></div>';
+    el.querySelector('.v').textContent=val;
+    el.addEventListener('click',function(){copyText(val)});
+    box.appendChild(el);
+  }
+
+  /* ===== 文本工具 ===== */
+  function txtEl(){return document.getElementById('txtInput')}
+  function txtOut(){return document.getElementById('txtOutput')}
+  window.txtStats=function(){
+    var v=txtEl().value;
+    var chars=v.length;
+    var noSpace=v.replace(/\s/g,'').length;
+    var lines=v?v.split(/\r\n|\r|\n/).length:0;
+    var words=v.trim()?v.trim().split(/\s+/).length:0;
+    var bytes=unescape(encodeURIComponent(v)).length;
+    document.getElementById('txtStats').textContent=chars+' 字符';
+    document.getElementById('txtStatsFull').textContent='字符 '+chars+' · 去空白 '+noSpace+' · 行数 '+lines+' · 词数 '+words+' · UTF-8 字节 '+bytes;
+  };
+  txtEl().addEventListener('input',txtStats);
+  function setOut(v){txtOut().value=v;toast('已生成结果')}
+  window.txtUpper=function(){setOut(txtEl().value.toUpperCase())};
+  window.txtLower=function(){setOut(txtEl().value.toLowerCase())};
+  window.txtTitle=function(){setOut(txtEl().value.replace(/\b[a-z]/g,function(c){return c.toUpperCase()}))};
+  window.txtTrim=function(){setOut(txtEl().value.trim())};
+  window.txtCollapse=function(){setOut(txtEl().value.replace(/[ \t]+/g,' ').replace(/\n{3,}/g,'\n\n').trim())};
+  window.txtRemoveEmpty=function(){setOut(txtEl().value.split(/\r\n|\r|\n/).filter(function(l){return l.trim()!==''}).join('\n'))};
+  window.txtReverse=function(){setOut(txtEl().value.split('').reverse().join(''))};
+  window.txtUnique=function(){setOut(Array.from(new Set(txtEl().value.split(/\r\n|\r|\n/))).join('\n'))};
+  window.txtSort=function(dir){
+    setOut(txtEl().value.split(/\r\n|\r|\n/).sort(function(a,b){
+      var r=a.localeCompare(b,'zh');
+      return dir>0?r:-r;
+    }).join('\n'));
+  };
+  window.txtCount=function(){toast('字符 '+txtEl().value.length+' 个')};
+
+  /* ===== 正则 ===== */
+  window.regexRun=function(){
+    var pat=document.getElementById('regexPattern').value;
+    var flags=document.getElementById('regexFlags').value;
+    var text=document.getElementById('regexText').value;
+    var msg=document.getElementById('regexMsg');
+    var out=document.getElementById('regexOutput');
+    msg.style.display='none';out.style.display='none';
+    if(!pat){toast('请输入正则表达式');return}
+    if(text===''){toast('请输入测试文本');return}
+    var re;
+    try{re=new RegExp(pat,flags)}catch(e){msg.className='status err';msg.style.display='block';msg.innerHTML='<b>正则错误：</b>'+e.message;return}
+    var g=flags.indexOf('g')>-1;
+    var count=0;
+    out.innerHTML='';
+    var m;
+    var guard=0;
+    while((m=re.exec(text))!==null){
+      if(guard++>2000){break}
+      var li=document.createElement('li');
+      var idx=document.createElement('span');idx.className='idx';idx.textContent='#'+(count+1);
+      var txt=document.createElement('span');txt.className='txt';txt.textContent=m[0].length>80?m[0].slice(0,80)+'…':m[0];
+      var pos=document.createElement('span');pos.className='pos';
+      var ptext='位置 '+m.index;
+      if(m.length>1){
+        var groups=[];
+        for(var k=1;k<m.length;k++)groups.push((m[k]===undefined?'(未捕获)':m[k].slice?m[k].slice(0,30):m[k]));
+        ptext+=' · 分组 ['+groups.join(' | ')+']';
+      }
+      pos.textContent=ptext;
+      li.appendChild(idx);li.appendChild(txt);li.appendChild(pos);
+      out.appendChild(li);
+      count++;
+      if(!g)break;
+      if(m[0]==='')re.lastIndex++;
+    }
+    document.getElementById('regexCount').textContent=count+' 个匹配';
+    if(!count){
+      msg.className='status info';msg.style.display='block';
+      msg.innerHTML='<b>结果：</b>未找到匹配';
+      return;
+    }
+    msg.className='status ok';msg.style.display='block';
+    msg.innerHTML='<b>结果：</b>共 '+count+' 个匹配'+(g?'（全局模式）':'（非全局模式，仅显示第一个）');
+    out.style.display='block';
+  };
+  window.regexClear=function(){
+    document.getElementById('regexPattern').value='';
+    document.getElementById('regexFlags').value='';
+    document.getElementById('regexText').value='';
+    document.getElementById('regexOutput').innerHTML='';
+    document.getElementById('regexOutput').style.display='none';
+    document.getElementById('regexMsg').style.display='none';
+    document.getElementById('regexCount').textContent='0 个匹配';
+    toast('已清空');
+  };
+
+  /* ===== 颜色 ===== */
+  function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+  function rgbToHex(r,g,b){
+    r=Math.round(r);g=Math.round(g);b=Math.round(b);
+    return '#'+[r,g,b].map(function(v){return ('0'+v.toString(16)).slice(-2)}).join('').toUpperCase();
+  }
+  function hexToRgb(hex){
+    var m=hex.match(/^#?([0-9a-f]{3}|[0-9a-f]{6})$/i);
+    if(!m)return null;
+    var h=m[1];
+    if(h.length===3)h=h.split('').map(function(c){return c+c}).join('');
+    return {r:parseInt(h.slice(0,2),16),g:parseInt(h.slice(2,4),16),b:parseInt(h.slice(4,6),16),a:1};
+  }
+  function rgbToHsl(r,g,b){
+    r/=255;g/=255;b/=255;
+    var max=Math.max(r,g,b),min=Math.min(r,g,b);
+    var h=0,s=0,l=(max+min)/2;
+    if(max!==min){
+      var d=max-min;
+      s=l>0.5?d/(2-max-min):d/(max+min);
+      if(max===r)h=(g-b)/d+(g<b?6:0);
+      else if(max===g)h=(b-r)/d+2;
+      else h=(r-g)/d+4;
+      h/=6;
+    }
+    return {h:Math.round(h*360),s:Math.round(s*100),l:Math.round(l*100)};
+  }
+  function hslToRgb(h,s,l){
+    h=((h%360)+360)%360;s=clamp(s,0,100)/100;l=clamp(l,0,100)/100;
+    var c=(1-Math.abs(2*l-1))*s;
+    var x=c*(1-Math.abs((h/60)%2-1));
+    var m=l-c/2;
+    var r=0,g=0,b=0;
+    if(h<60){r=c;g=x}
+    else if(h<120){r=x;g=c}
+    else if(h<180){g=c;b=x}
+    else if(h<240){g=x;b=c}
+    else if(h<300){r=x;b=c}
+    else{r=c;b=x}
+    return {r:Math.round((r+m)*255),g:Math.round((g+m)*255),b:Math.round((b+m)*255),a:1};
+  }
+  function parseColor(str){
+    str=str.trim().toLowerCase();
+    var hex=hexToRgb(str);
+    if(hex)return hex;
+    var m;
+    m=str.match(/^rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)(?:[,\s/]+([\d.]+%?))?\s*\)$/);
+    if(m){
+      var a=m[4]!==undefined?(m[4].indexOf('%')>-1?parseFloat(m[4])/100:parseFloat(m[4])):1;
+      return {r:clamp(parseFloat(m[1]),0,255),g:clamp(parseFloat(m[2]),0,255),b:clamp(parseFloat(m[3]),0,255),a:clamp(a,0,1)};
+    }
+    m=str.match(/^hsla?\(\s*([\d.]+)(deg)?[,\s]+([\d.]+)%[,\s]+([\d.]+)%(?:[,\s/]+([\d.]+%?))?\s*\)$/);
+    if(m){
+      var a2=m[5]!==undefined?(m[5].indexOf('%')>-1?parseFloat(m[5])/100:parseFloat(m[5])):1;
+      var rgb=hslToRgb(parseFloat(m[1]),parseFloat(m[3]),parseFloat(m[4]));
+      rgb.a=a2;
+      return rgb;
+    }
+    return null;
+  }
+  function fmtRgb(c){return 'rgb('+Math.round(c.r)+', '+Math.round(c.g)+', '+Math.round(c.b)+')'}
+  function fmtRgba(c){return 'rgba('+Math.round(c.r)+', '+Math.round(c.g)+', '+Math.round(c.b)+', '+(Math.round(c.a*100)/100)+')'}
+  function fmtHsl(c){
+    var hsl=rgbToHsl(c.r,c.g,c.b);
+    return 'hsl('+hsl.h+', '+hsl.s+'%, '+hsl.l+'%)';
+  }
+  window.colorParse=function(){
+    var raw=document.getElementById('colorInput').value.trim();
+    if(!raw)raw=document.getElementById('colorPick').value;
+    var c=parseColor(raw);
+    var msg=document.getElementById('colorMsg');
+    var out=document.getElementById('colorOut');
+    msg.style.display='none';
+    if(!c){
+      msg.className='status err';msg.style.display='block';
+      msg.innerHTML='<b>无法解析：</b>请使用 HEX、RGB/RGBA、HSL/HSLA 格式';
+      out.style.display='none';
+      return;
+    }
+    document.getElementById('colorPrev').style.background=fmtRgba(c);
+    out.innerHTML='';
+    addKv(out,'HEX',rgbToHex(c.r,c.g,c.b));
+    addKv(out,'RGB',fmtRgb(c));
+    addKv(out,'RGBA',fmtRgba(c));
+    addKv(out,'HSL',fmtHsl(c));
+    var hsl=rgbToHsl(c.r,c.g,c.b);
+    addKv(out,'HSLA','hsla('+hsl.h+', '+hsl.s+'%, '+hsl.l+'%, '+(Math.round(c.a*100)/100)+')');
+    var alpha=Math.round(c.a*100);
+    addKv(out,'不透明度',alpha+'%');
+    out.style.display='grid';
+    msg.className='status ok';msg.style.display='block';
+    msg.innerHTML='<b>已解析：</b>'+raw;
+  };
+  window.colorRandom=function(){
+    var c={r:Math.floor(Math.random()*256),g:Math.floor(Math.random()*256),b:Math.floor(Math.random()*256),a:1};
+    var hex=rgbToHex(c.r,c.g,c.b);
+    document.getElementById('colorInput').value=hex;
+    document.getElementById('colorPick').value=hex;
+    document.getElementById('colorPrev').style.background=hex;
+    var out=document.getElementById('colorOut');
+    out.innerHTML='';
+    addKv(out,'HEX',hex);
+    addKv(out,'RGB',fmtRgb(c));
+    addKv(out,'HSL',fmtHsl(c));
+    out.style.display='grid';
+    document.getElementById('colorMsg').style.display='none';
+  };
+  document.getElementById('colorPick').addEventListener('input',function(){
+    document.getElementById('colorInput').value=this.value;
+    colorParse();
+  });
+  window.copyColorHex=function(){
+    var raw=document.getElementById('colorInput').value.trim()||document.getElementById('colorPick').value;
+    var c=parseColor(raw);
+    if(!c){toast('颜色无法解析');return}
+    copyText(rgbToHex(c.r,c.g,c.b));
+  };
+  function addSwatch(box,hex){
+    var el=document.createElement('div');
+    el.className='swatch';
+    el.style.background=hex;
+    el.title=hex+' · 点击复制';
+    var sp=document.createElement('span');sp.textContent=hex;
+    el.appendChild(sp);
+    el.onclick=function(){copyText(hex)};
+    box.appendChild(el);
+  }
+  window.paletteMonochrome=function(){
+    var raw=document.getElementById('colorInput').value.trim()||document.getElementById('colorPick').value;
+    var c=parseColor(raw);
+    if(!c){toast('请先输入一个有效颜色');return}
+    var hsl=rgbToHsl(c.r,c.g,c.b);
+    var box=document.getElementById('paletteRow');
+    box.innerHTML='';
+    for(var i=0;i<10;i++){
+      var l=clamp(hsl.l+(i-5)*11,5,95);
+      var rgb=hslToRgb(hsl.h,hsl.s,l);
+      addSwatch(box,rgbToHex(rgb.r,rgb.g,rgb.b));
+    }
+    toast('已生成同色系调色板');
+  };
+  window.paletteRandom=function(){
+    var box=document.getElementById('paletteRow');
+    box.innerHTML='';
+    for(var i=0;i<12;i++)addSwatch(box,rgbToHex(Math.floor(Math.random()*256),Math.floor(Math.random()*256),Math.floor(Math.random()*256)));
+    toast('已生成随机调色板');
+  };
+
+  /* ===== 密码 ===== */
+  window.pwdLenSlider=function(){
+    document.getElementById('pwdLenVal').textContent=document.getElementById('pwdLen').value;
+  };
+  window.pwdCustomToggle=function(){
+    document.getElementById('pwdCustomChars').style.display=document.getElementById('pwdCustom').checked?'block':'none';
+  };
+  function pwdCharset(){
+    if(document.getElementById('pwdCustom').checked){
+      var s=document.getElementById('pwdCustomChars').value;
+      return s?Array.from(new Set(s.split(''))):null;
+    }
+    var sets=[];
+    if(document.getElementById('pwdUpper').checked)sets.push('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+    if(document.getElementById('pwdLower').checked)sets.push('abcdefghijklmnopqrstuvwxyz');
+    if(document.getElementById('pwdDigit').checked)sets.push('0123456789');
+    if(document.getElementById('pwdSym').checked)sets.push('!@#$%^&*()-_=+[]{};:,.<>?/~');
+    if(document.getElementById('pwdNoAmbig').checked){
+      sets=sets.map(function(s){return s.replace(/[0O1lI]/g,'')});
+    }
+    return sets;
+  }
+  function shuffleArr(arr){
+    for(var i=arr.length-1;i>0;i--){
+      var j=Math.floor(Math.random()*(i+1));
+      var t=arr[i];arr[i]=arr[j];arr[j]=t;
+    }
+    return arr;
+  }
+  window.pwdGen=function(){
+    var len=parseInt(document.getElementById('pwdLen').value)||16;
+    var sets=pwdCharset();
+    if(!sets||!sets.length){toast('请至少选择一种字符集');return}
+    var pool=sets.join('');
+    if(!pool){toast('字符集为空，请检查选项');return}
+    var arr=[];
+    for(var i=0;i<len;i++)arr.push(pool.charAt(Math.floor(Math.random()*pool.length)));
+    var pos=0;
+    sets.forEach(function(s){
+      if(s.length&&pos<len){arr[pos]=s.charAt(Math.floor(Math.random()*s.length));pos++}
+    });
+    arr=shuffleArr(arr);
+    var pwd=arr.join('');
+    document.getElementById('pwdOutput').value=pwd;
+    var score=strength(pwd);
+    paintStrength(score,'pwdSeg','pwdStrengthTxt');
+  };
+  function strength(pwd){
+    var score=0;
+    if(pwd.length>=8)score++;
+    if(pwd.length>=12)score++;
+    if(pwd.length>=16)score++;
+    var classes=0;
+    if(/[a-z]/.test(pwd))classes++;
+    if(/[A-Z]/.test(pwd))classes++;
+    if(/[0-9]/.test(pwd))classes++;
+    if(/[^a-zA-Z0-9]/.test(pwd))classes++;
+    score+=Math.min(3,classes-1);
+    if(/012|123|234|345|456|567|678|789|abc|bcd|cde|def|ghi|jkl|mno|pqr|stu|vwx|xyz|qwerty|password|admin|123456/i.test(pwd))score=Math.max(1,score-2);
+    if(/(.)\1{2,}/.test(pwd))score=Math.max(1,score-1);
+    return clamp(score,0,4);
+  }
+  function paintStrength(score,segPrefix,txtId){
+    var colors=['var(--red)','var(--red)','var(--orange)','var(--green)','var(--green)'];
+    var labels=['极弱','弱','一般','强','极强'];
+    for(var i=0;i<4;i++){
+      var seg=document.getElementById(segPrefix+i);
+      seg.style.setProperty('--seg-color',colors[score]);
+      seg.classList.toggle('on',i<score);
+    }
+    document.getElementById(txtId).textContent=labels[score];
+  }
+  window.pwdCheckStrength=function(){
+    var v=document.getElementById('pwdCheck').value;
+    var msg=document.getElementById('pwdCheckMsg');
+    if(!v){paintStrength(0,'pwdCSeg','pwdCheckTxt');msg.style.display='none';return}
+    var s=strength(v);
+    paintStrength(s,'pwdCSeg','pwdCheckTxt');
+    msg.style.display='block';
+    msg.className='status info';
+    var bits=0;
+    var classes=[/[a-z]/,/[A-Z]/,/[0-9]/,/[^a-zA-Z0-9]/];
+    classes.forEach(function(re){if(re.test(v))bits+=26});
+    if(/[0-9]/.test(v))bits+=10;
+    msg.innerHTML='<b>熵估算：</b>长度 '+v.length+' · 约 '+Math.round(v.length*Math.log2(bits||1))+' bit'+(v.length<8?'（建议至少 12 位以上）':'');
+  };
+
+  /* ===== 进制 ===== */
+  var RADIX_CHARS='0123456789abcdefghijklmnopqrstuvwxyz';
+  function parseBigInt(s,base){
+    s=s.trim().toLowerCase();
+    var neg=false;
+    if(s.charAt(0)==='-'||s.charAt(0)==='+'){neg=s.charAt(0)==='-';s=s.slice(1)}
+    if(base===16&&s.indexOf('0x')===0)s=s.slice(2);
+    if(base===8&&s.indexOf('0o')===0)s=s.slice(2);
+    if(base===2&&s.indexOf('0b')===0)s=s.slice(2);
+    var re=new RegExp('^['+RADIX_CHARS.slice(0,base)+']+$');
+    if(!re.test(s))return null;
+    var n=0n;
+    for(var i=0;i<s.length;i++){
+      n=n*BigInt(base)+BigInt(RADIX_CHARS.indexOf(s[i]));
+    }
+    return neg?-n:n;
+  }
+  function bigToString(n,base){
+    if(n===0n)return '0';
+    var neg=n<0n;
+    if(neg)n=-n;
+    var out='';
+    var b=BigInt(base);
+    while(n>0n){
+      out=RADIX_CHARS[Number(n%b)]+out;
+      n=n/b;
+    }
+    return (neg?'-':'')+out;
+  }
+  window.radixConvert=function(){
+    var raw=document.getElementById('radixInput').value;
+    var from=parseInt(document.getElementById('radixFrom').value,10);
+    var out=document.getElementById('radixOut');
+    var msg=document.getElementById('radixMsg');
+    out.style.display='none';msg.style.display='none';
+    if(!raw.trim()){toast('请输入数值');return}
+    var n=parseBigInt(raw,from);
+    if(n===null){
+      msg.style.display='block';
+      msg.textContent='无效的 '+from+' 进制数值：'+raw;
+      return;
+    }
+    out.innerHTML='';
+    addKv(out,'二进制 (2)',bigToString(n,2));
+    addKv(out,'八进制 (8)',bigToString(n,8));
+    addKv(out,'十进制 (10)',bigToString(n,10));
+    addKv(out,'十六进制 (16)','0x'+bigToString(n,16));
+    addKv(out,'三十六进制 (36)',bigToString(n,36));
+    out.style.display='grid';
+  };
+})();
+</script>
+</body>
+</html>
