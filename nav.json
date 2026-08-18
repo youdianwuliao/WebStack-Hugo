@@ -107,6 +107,12 @@
       "sidebarIcon": "fas fa-robot",
       "items": [
         {
+          "title": "pi.dev",
+          "description": "Vercel 推出的 AI 编程平台，智能体驱动开发",
+          "icon": "/assets/images/logos/pi.svg",
+          "url": "https://pi.dev/"
+        },
+        {
           "title": "DeepSeek Harness",
           "icon": "/assets/images/logos/deepseek-harness.svg",
           "url": "https://deepseek-harness-plugin.com/zh-CN/",
