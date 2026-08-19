@@ -643,6 +643,7 @@ body{
         <div class="stage-box" id="aiBox" style="cursor:crosshair">
           <canvas id="aiDisp" width="0" height="0"></canvas>
           <canvas id="aiMask" width="0" height="0" style="position:absolute;left:0;top:0"></canvas>
+          <canvas id="aiSel" width="0" height="0" style="position:absolute;left:0;top:0;pointer-events:none"></canvas>
         </div>
       </div>
       <div class="opts">
@@ -650,10 +651,15 @@ body{
         <span class="range-val" id="aiBrushVal">28</span>
         <button class="btn toggled" id="aiToolDraw" onclick="aiTool('draw')">涂抹</button>
         <button class="btn" id="aiToolErase" onclick="aiTool('erase')">橡皮</button>
+        <button class="btn" id="aiToolBox" onclick="aiTool('box')">框选</button>
         <button class="btn" onclick="aiMaskFill()">全选</button>
         <button class="btn" onclick="aiMaskClear()">清空蒙版</button>
       </div>
-      <div class="opts"><span class="range-val" id="aiHint" style="min-width:auto;text-align:left">在红色区域涂抹水印位置，AI 将自动填充修复</span></div>
+      <div class="opts">
+        <button class="btn" id="aiUndoBtn" onclick="aiUndo()" disabled>↶ 撤销</button>
+        <button class="btn" id="aiRedoBtn" onclick="aiRedo()" disabled>↷ 重做</button>
+      </div>
+      <div class="opts"><span class="range-val" id="aiHint" style="min-width:auto;text-align:left">在红色区域涂抹/框选水印位置，AI 将自动填充修复</span></div>
     </div>
     <div class="card">
       <div class="card-title"><h3>API 配置</h3></div>
@@ -680,12 +686,17 @@ body{
         <button class="btn primary" id="aiRunBtn" onclick="aiRun()">开始修复</button>
         <button class="btn green" id="aiDownloadBtn" onclick="downloadAiResult()" disabled>下载结果</button>
       </div>
-      <div class="result-grid" id="aiResult" style="display:none;margin-top:14px">
-        <div class="result-box">
-          <div class="lbl">修复结果</div>
-          <img id="aiResultImg" alt="修复结果" style="max-width:100%;max-height:340px;border-radius:10px;border:1px solid var(--card-border)">
-          <div class="result-info" id="aiResultInfo"></div>
+      <div id="aiResult" style="display:none;margin-top:14px">
+        <div class="lbl">修复结果（拖动滑杆对比原图）</div>
+        <div id="aiCompare" style="position:relative;border-radius:10px;overflow:hidden;border:1px solid var(--card-border);line-height:0">
+          <img id="aiResultImg" alt="修复结果" style="width:100%;display:block">
+          <div id="aiCompareTop" style="position:absolute;top:0;left:0;width:50%;overflow:hidden">
+            <img id="aiOrigImg" alt="原图" style="max-width:none;height:auto;display:block">
+          </div>
+          <div id="aiCompareLine" style="position:absolute;top:0;bottom:0;left:50%;width:2px;background:#fff;box-shadow:0 0 6px rgba(0,0,0,.5)"></div>
         </div>
+        <input type="range" id="aiCompareSlider" min="0" max="100" value="50" oninput="aiCompareMove()" style="width:100%;margin-top:10px;accent-color:var(--accent)">
+        <div class="result-info" id="aiResultInfo"></div>
       </div>
     </div>
   </div>
@@ -2500,7 +2511,7 @@ body{
   };
 
   /* ===== AI 去水印 / 修复 ===== */
-  var aiData={img:null,w:0,h:0,fileName:'',drawing:false,tool:'draw',resultUrl:''};
+  var aiData={img:null,w:0,h:0,fileName:'',drawing:false,tool:'draw',resultUrl:'',undoStack:[],redoStack:[],boxStart:null,sourceBlob:null,origUrl:''};
   function handleAiFile(f){
     loadImage(f,function(img){showAi(f,img)});
   }
@@ -2508,6 +2519,7 @@ body{
   function showAi(f,img){
     var fit=fitCanvas(img.naturalWidth,img.naturalHeight);
     aiData.img=img;aiData.w=fit.w;aiData.h=fit.h;aiData.fileName=f.name.replace(/\.[^.]+$/,'')||'image';aiData.resultUrl='';
+    aiData.undoStack=[];aiData.redoStack=[];
     document.getElementById('aiMeta').textContent='已选择：'+f.name+'（'+img.naturalWidth+'×'+img.naturalHeight+(fit.w!==img.naturalWidth?'，已按比例预处理':'')+'）';
     var disp=document.getElementById('aiDisp');
     disp.width=fit.w;disp.height=fit.h;
@@ -2515,15 +2527,24 @@ body{
     var mask=document.getElementById('aiMask');
     mask.width=fit.w;mask.height=fit.h;
     mask.getContext('2d').clearRect(0,0,fit.w,fit.h);
+    var sel=document.getElementById('aiSel');
+    sel.width=fit.w;sel.height=fit.h;
+    sel.getContext('2d').clearRect(0,0,fit.w,fit.h);
     document.getElementById('aiStage').style.display='block';
     document.getElementById('aiResult').style.display='none';
     document.getElementById('aiDownloadBtn').disabled=true;
     aiData.resultUrl='';
+    aiMaskPush();
+    aiUpdateButtons();
     aiHint();
-    window.toast('请涂抹水印区域，然后点击开始修复');
+    window.toast('涂抹或框选水印区域，然后点击开始修复');
+  }
+  function aiUpdateButtons(){
+    document.getElementById('aiUndoBtn').disabled=aiData.undoStack.length===0;
+    document.getElementById('aiRedoBtn').disabled=aiData.redoStack.length===0;
   }
   function aiHint(){
-    document.getElementById('aiHint').textContent='在红色区域涂抹水印位置，AI 将自动填充修复 · 尺寸 '+aiData.w+'×'+aiData.h;
+    document.getElementById('aiHint').textContent='在红色区域涂抹/框选水印位置，AI 将自动填充修复 · 尺寸 '+aiData.w+'×'+aiData.h;
   }
   window.aiBrushChanged=function(){
     document.getElementById('aiBrushVal').textContent=document.getElementById('aiBrush').value;
@@ -2532,6 +2553,7 @@ body{
     aiData.tool=t;
     document.getElementById('aiToolDraw').classList.toggle('toggled',t==='draw');
     document.getElementById('aiToolErase').classList.toggle('toggled',t==='erase');
+    document.getElementById('aiToolBox').classList.toggle('toggled',t==='box');
   };
   function aiPaint(e){
     var mask=document.getElementById('aiMask');
@@ -2551,20 +2573,106 @@ body{
     ctx.globalCompositeOperation='source-over';
     aiData.lastX=x;aiData.lastY=y;
   }
+  function aiDrawSel(c1,c2){
+    var sel=document.getElementById('aiSel');
+    var ctx=sel.getContext('2d');
+    ctx.clearRect(0,0,sel.width,sel.height);
+    ctx.fillStyle='rgba(74,144,217,0.25)';
+    ctx.fillRect(c1.x,c1.y,c2.x-c1.x,c2.y-c1.y);
+    ctx.strokeStyle='#4a90d9';
+    ctx.lineWidth=2;
+    ctx.strokeRect(c1.x,c1.y,c2.x-c1.x,c2.y-c1.y);
+  }
   (function(){
     var mask=document.getElementById('aiMask');
     mask.addEventListener('pointerdown',function(e){
-      aiData.drawing=true;
       var rect=mask.getBoundingClientRect();
-      aiData.lastX=(e.clientX-rect.left)*mask.width/rect.width;
-      aiData.lastY=(e.clientY-rect.top)*mask.height/rect.height;
+      var x=(e.clientX-rect.left)*mask.width/rect.width;
+      var y=(e.clientY-rect.top)*mask.height/rect.height;
       mask.setPointerCapture(e.pointerId);
+      if(aiData.tool==='box'){
+        aiData.boxStart={x:x,y:y};
+        aiData.lastX=x;aiData.lastY=y;
+        return;
+      }
+      aiData.drawing=true;
+      aiData.lastX=x;aiData.lastY=y;
       aiPaint(e);
     });
-    mask.addEventListener('pointermove',function(e){if(aiData.drawing)aiPaint(e)});
-    mask.addEventListener('pointerup',function(e){aiData.drawing=false});
-    mask.addEventListener('pointercancel',function(){aiData.drawing=false});
+    mask.addEventListener('pointermove',function(e){
+      if(aiData.tool==='box'&&aiData.boxStart){
+        var rect=mask.getBoundingClientRect();
+        var x=(e.clientX-rect.left)*mask.width/rect.width;
+        var y=(e.clientY-rect.top)*mask.height/rect.height;
+        aiDrawSel(aiData.boxStart,{x:x,y:y});
+        return;
+      }
+      if(aiData.drawing)aiPaint(e);
+    });
+    mask.addEventListener('pointerup',function(e){
+      if(aiData.tool==='box'&&aiData.boxStart){
+        var rect=mask.getBoundingClientRect();
+        var x=(e.clientX-rect.left)*mask.width/rect.width;
+        var y=(e.clientY-rect.top)*mask.height/rect.height;
+        var c1=aiData.boxStart,c2={x:x,y:y};
+        var x1=Math.min(c1.x,c2.x),x2=Math.max(c1.x,c2.x);
+        var y1=Math.min(c1.y,c2.y),y2=Math.max(c1.y,c2.y);
+        var ctx=mask.getContext('2d');
+        ctx.globalCompositeOperation='source-over';
+        ctx.fillStyle='rgba(255,0,0,0.55)';
+        ctx.fillRect(x1,y1,x2-x1,y2-y1);
+        document.getElementById('aiSel').getContext('2d').clearRect(0,0,aiData.w,aiData.h);
+        aiData.boxStart=null;
+        aiMaskPush();
+        return;
+      }
+      aiData.drawing=false;
+      if(aiData.tool!=='box')aiMaskPush();
+    });
+    mask.addEventListener('pointercancel',function(){
+      aiData.drawing=false;aiData.boxStart=null;
+    });
   })();
+  function aiMaskPush(){
+    var mask=document.getElementById('aiMask');
+    try{
+      var url=mask.toDataURL('image/png');
+      aiData.undoStack.push(url);
+      if(aiData.undoStack.length>20)aiData.undoStack.shift();
+      aiData.redoStack=[];
+      aiUpdateButtons();
+    }catch(e){}
+  }
+  function aiRestoreMask(url){
+    return new Promise(function(resolve){
+      var img=new Image();
+      img.onload=function(){
+        var mask=document.getElementById('aiMask');
+        var ctx=mask.getContext('2d');
+        ctx.globalCompositeOperation='source-over';
+        ctx.clearRect(0,0,mask.width,mask.height);
+        ctx.drawImage(img,0,0,mask.width,mask.height);
+        resolve();
+      };
+      img.onerror=resolve;
+      img.src=url;
+    });
+  }
+  window.aiUndo=function(){
+    if(!aiData.undoStack.length)return;
+    var cur=document.getElementById('aiMask').toDataURL('image/png');
+    aiData.redoStack.push(cur);
+    aiData.undoStack.pop();
+    var prev=aiData.undoStack[aiData.undoStack.length-1];
+    if(prev)aiRestoreMask(prev).then(aiUpdateButtons);
+  };
+  window.aiRedo=function(){
+    if(!aiData.redoStack.length)return;
+    var cur=document.getElementById('aiMask').toDataURL('image/png');
+    aiData.undoStack.push(cur);
+    var next=aiData.redoStack.pop();
+    aiRestoreMask(next).then(aiUpdateButtons);
+  };
   window.aiMaskFill=function(){
     if(!aiData.w)return;
     var mask=document.getElementById('aiMask');
@@ -2572,12 +2680,19 @@ body{
     ctx.globalCompositeOperation='source-over';
     ctx.fillStyle='rgba(255,0,0,0.55)';
     ctx.fillRect(0,0,mask.width,mask.height);
+    aiMaskPush();
     toast('已全选图片作为修复区域');
   };
   window.aiMaskClear=function(){
     if(!aiData.w)return;
     document.getElementById('aiMask').getContext('2d').clearRect(0,0,aiData.w,aiData.h);
+    aiMaskPush();
     toast('蒙版已清空');
+  };
+  window.aiCompareMove=function(){
+    var v=document.getElementById('aiCompareSlider').value;
+    document.getElementById('aiCompareTop').style.width=v+'%';
+    document.getElementById('aiCompareLine').style.left=v+'%';
   };
   window.aiToggleKey=function(){
     var k=document.getElementById('aiKey');
@@ -2635,6 +2750,7 @@ body{
     var oldText=btn.textContent;
     btn.textContent='AI 修复中…';
     canvasToBlob(document.getElementById('aiDisp'),'image/png').then(function(imageBlob){
+      aiData.sourceBlob=imageBlob;
       return maskToBlob().then(function(maskBlob){
         var fd=new FormData();
         fd.append('image',imageBlob,'image.png');
@@ -2662,15 +2778,30 @@ body{
       var imgEl=document.getElementById('aiResultImg');
       imgEl.crossOrigin='anonymous';
       imgEl.src=src;
-      document.getElementById('aiResult').style.display='grid';
+      if(aiData.origUrl)URL.revokeObjectURL(aiData.origUrl);
+      aiData.origUrl=URL.createObjectURL(aiData.sourceBlob);
+      var orig=document.getElementById('aiOrigImg');
+      orig.onload=function(){aiSyncCompare()};
+      orig.src=aiData.origUrl;
+      document.getElementById('aiResult').style.display='block';
+      document.getElementById('aiCompareSlider').value=50;
+      aiCompareMove();
       document.getElementById('aiDownloadBtn').disabled=false;
-      document.getElementById('aiResultInfo').textContent='AI 修复完成 · 点击下载保存';
+      document.getElementById('aiResultInfo').textContent='AI 修复完成 · 拖动滑杆对比 · 点击下载保存';
       btn.disabled=false;btn.textContent=oldText;
     }).catch(function(e){
       btn.disabled=false;btn.textContent=oldText;
       toast('修复失败：'+(e.message||e));
     });
   };
+  function aiSyncCompare(){
+    var wrap=document.getElementById('aiCompare');
+    var w=wrap.clientWidth;
+    if(w>0)document.getElementById('aiOrigImg').style.width=w+'px';
+  }
+  window.addEventListener('resize',function(){
+    if(aiData.origUrl&&document.getElementById('aiResult').style.display!=='none')aiSyncCompare();
+  });
   window.downloadAiResult=function(){
     if(!aiData.resultUrl)return;
     if(aiData.resultUrl.indexOf('http')===0){
