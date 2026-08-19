@@ -107,18 +107,6 @@
       "sidebarIcon": "fas fa-robot",
       "items": [
         {
-          "title": "QMuse",
-          "icon": "/assets/images/logos/qmuse.svg",
-          "url": "https://www.qmuse.cn/",
-          "description": "AI 应用创作与发布平台，用自然语言与 AI 协作快速创建、预览、发布和分享可运行的网页应用"
-        },
-        {
-          "title": "DeepSeek Harness",
-          "icon": "/assets/images/logos/deepseek-harness.svg",
-          "url": "https://deepseek-harness-plugin.com/zh-CN/",
-          "description": "DeepSeek Harness（DSH）插件精选目录：发现、对比并安装 DeepSeek 开源智能体框架的社区插件"
-        },
-        {
           "title": "deepseek",
           "icon": "/assets/images/logos/deepseek.png",
           "url": "https://chat.deepseek.com/",
@@ -155,16 +143,28 @@
           "description": "语音通话"
         },
         {
-          "title": "AI朋友",
-          "icon": "/assets/images/logos/aipyaipy.png",
-          "url": "https://www.aipyaipy.com/",
-          "description": "超级AI牛马"
+          "title": "QMuse",
+          "icon": "/assets/images/logos/qmuse.svg",
+          "url": "https://www.qmuse.cn/",
+          "description": "AI 应用创作与发布平台，用自然语言与 AI 协作快速创建、预览、发布和分享可运行的网页应用"
+        },
+        {
+          "title": "DeepSeek Harness",
+          "icon": "/assets/images/logos/deepseek-harness.svg",
+          "url": "https://deepseek-harness-plugin.com/zh-CN/",
+          "description": "DeepSeek Harness（DSH）插件精选目录：发现、对比并安装 DeepSeek 开源智能体框架的社区插件"
         },
         {
           "title": "MonkeyCode AI",
           "icon": "/assets/images/logos/monkeycode.png",
           "url": "https://monkeycode-ai.com/",
           "description": "专业的 AI 编码助手"
+        },
+        {
+          "title": "AI朋友",
+          "icon": "/assets/images/logos/aipyaipy.png",
+          "url": "https://www.aipyaipy.com/",
+          "description": "超级AI牛马"
         },
         {
           "title": "qwenpaw",
