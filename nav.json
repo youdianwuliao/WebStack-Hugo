@@ -107,6 +107,12 @@
       "sidebarIcon": "fas fa-robot",
       "items": [
         {
+          "title": "QMuse",
+          "icon": "/assets/images/logos/qmuse.svg",
+          "url": "https://www.qmuse.cn/",
+          "description": "AI 应用创作与发布平台，用自然语言与 AI 协作快速创建、预览、发布和分享可运行的网页应用"
+        },
+        {
           "title": "DeepSeek Harness",
           "icon": "/assets/images/logos/deepseek-harness.svg",
           "url": "https://deepseek-harness-plugin.com/zh-CN/",
