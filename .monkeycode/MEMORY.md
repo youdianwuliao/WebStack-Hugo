@@ -159,7 +159,10 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - 第三方 JS 库必须下载到本地子站目录（CDN 会被 CSP `'self'` 拦截）
   - **去依赖策略（2026-08-13 定稿）**：允许使用三方库但注意版权合规；三方库必须本地化（不能引 CDN），若上游变化本地文件仍可继续使用。已用自研替换并删除：`qrcode-generator.js`（自研 `qr-encoder.js` 兼容 `window.qrcode()` API）、`marked.min.js`（自研渲染器暴露 `window.markdownParse()`）；仅保留 `jsqr.js`（图像解码，自研不现实，footer 已注明来源）
   - **新站技术选型**：`encode/` 用 Web Crypto 原生实现 RSA-OAEP（PEM 编解码自写）+ 自研 MD5（Web Crypto 无 MD5）；`image/` 全 canvas 处理，证件照用四角取色 + 颜色距离阈值做背景替换
-  - 内联 JS 语法验证方法：`node -e "new Function(script)"`；函数引用完整性检查：提取所有 `onclick/onchange/oninput` 引用的函数名，与文件内 `window.xxx=` 声明比对（旧站用 IIFE 内 `function xxx(){}`，新站统一 `window.xxx=`）
+   - 内联 JS 语法验证方法：`node -e "new Function(script)"`；函数引用完整性检查：提取所有 `onclick/onchange/oninput` 引用的函数名，与文件内 `window.xxx=` 声明比对（旧站用 IIFE 内 `function xxx(){}`，新站统一 `window.xxx=`）
+   - **视频GIF 集成 FFmpeg.wasm（2026-08-20）**：`image/` 站视频转 GIF 改用 FFmpeg.wasm，资源已本地化到 `image/ffmpeg/`（`@ffmpeg/ffmpeg@0.12.15` + `@ffmpeg/util@0.12.2` + `@ffmpeg/core@0.12.10` esm 版，约 31MB）；`@ffmpeg/core@0.12.10` 实测**支持 HEVC(H.265) 解码**；转 GIF 命令：`-i in -ss S -t D -filter_complex "fps=N,scale=W:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=256[p];[b][p]paletteuse=dither=sierra2_4a" -loop 0|-1 out.gif`（`-loop 0`=无限循环含 NETSCAPE 扩展，`-loop -1`=单次）
+   - **CSP 新增 `'wasm-unsafe-eval'`**：`_headers` 的 `script-src 'self' 'unsafe-inline'` 已加 `'wasm-unsafe-eval'`（Emscripten/FFmpeg.wasm 编译 wasm 必需）；@ffmpeg/ffmpeg 用同源文件 URL 建 worker（`new URL('./worker.js', import.meta.url)`），`worker-src 'self'` 足够，**无需放宽 blob:**；加载核心时 coreURL/wasmURL 用基于 `document.baseURI` 的绝对相对路径，不用 toBlobURL
+   - **FFmpeg.wasm 在 node 中验证的桩**：esm 版 ffmpeg-core.js 顶层引用 `self`/`location`，node 实测需注入 `globalThis.self=globalThis; globalThis.location={href:'file://...'}`；wasm 用 `wasmBinary` 直接传入可跳过 fetch；core 的 `exec(...args)` 需展开参数（非数组），结果读 `ffmpeg.ret`
    - **嵌入自研脚本陷阱**：`python .replace('</body>', ...)` 会误替换 JS 字符串字面量里的 `</body>`（如导出模板 `'...'+body+'\n</body>\n</html>'`），破坏字符串；正确做法是锚定文件末尾真实的 `</script>\n</body>\n</html>`，先剥离末尾 `</html>` 再拼接，且自研脚本内不得含 `</script>` 字面量
 
 [canvas 大图处理边界 - 排错知识]
