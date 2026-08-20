@@ -47,12 +47,6 @@
       "sidebarIcon": "far fa-star",
       "items": [
         {
-          "title": "小工具",
-          "icon": "/assets/images/logos/t.png",
-          "url": "https://tool.justgame.top",
-          "description": "实用小工具"
-        },
-        {
           "title": "QQ 邮箱",
           "icon": "/assets/images/logos/qq-mail.png",
           "url": "https://mail.qq.com/",
@@ -99,6 +93,12 @@
           "icon": "/assets/images/logos/weixin-mp.png",
           "url": "https://mp.weixin.qq.com/",
           "description": "微信公众平台，公众号管理后台"
+        },
+        {
+          "title": "飞书消息",
+          "icon": "/assets/images/logos/feishu.ico",
+          "url": "https://feishu.cn/messages",
+          "description": "飞书消息中心"
         }
       ]
     },
@@ -459,6 +459,12 @@
           "description": "Pi 是一个极简的智能体工具框架",
           "icon": "/assets/images/logos/pi.svg",
           "url": "https://pi.dev/"
+        },
+        {
+          "title": "dsh-TUI",
+          "icon": "/assets/images/logos/dshtui.svg",
+          "url": "https://dshtui.com/",
+          "description": "DeepSeek Harness 的 Claude Code 风格终端界面插件"
         }
       ]
     },
@@ -1328,12 +1334,6 @@
               "icon": "/assets/images/logos/metabase.svg",
               "url": "https://www.metabase.com/",
               "description": "开源 BI 数据分析可视化工具"
-            },
-            {
-              "title": "飞书消息",
-              "icon": "/assets/images/logos/feishu.ico",
-              "url": "https://feishu.cn/messages",
-              "description": "飞书消息中心"
             },
             {
               "title": "gitcode",
