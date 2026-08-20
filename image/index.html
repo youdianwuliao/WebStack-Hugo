@@ -2634,6 +2634,42 @@ body{
 
   /* ===== 视频转 GIF 表情 ===== */
   var vgData={video:null,url:'',fileName:'',gifBlob:null};
+  function detectVideoCodec(file){
+    return new Promise(function(resolve){
+      var r=new FileReader();
+      r.onload=function(){
+        try{
+          var buf=new Uint8Array(r.result);
+          var dv=new DataView(buf.buffer);
+          function findStsd(start,end,depth){
+            if(depth>14)return null;
+            var p=start;
+            while(p+8<=end){
+              var len=dv.getUint32(p);
+              if(len<8||len>end-p)break;
+              var type=String.fromCharCode(buf[p+4],buf[p+5],buf[p+6],buf[p+7]);
+              if(type==='stsd'){
+                var ep=p+16;
+                if(ep+8<=end){
+                  return String.fromCharCode(buf[ep+4],buf[ep+5],buf[ep+6],buf[ep+7]);
+                }
+                return null;
+              }
+              if(type!=='mdat'&&type!=='free'&&type!=='skip'&&type!=='wide'){
+                var r2=findStsd(p+8,p+Math.min(len,end),depth+1);
+                if(r2)return r2;
+              }
+              p+=len;
+            }
+            return null;
+          }
+          resolve(findStsd(0,buf.length,0));
+        }catch(e){resolve(null)}
+      };
+      r.onerror=function(){resolve(null)};
+      r.readAsArrayBuffer(file.slice(0,1024*1024));
+    });
+  }
   function handleVgFile(f){
     if(f.type.indexOf('video/')!==0){toast('请选择视频文件');return}
     vgData.fileName=f.name.replace(/\.[^.]+$/,'')||'video';
@@ -2642,47 +2678,57 @@ body{
     vgData.gifBlob=null;
     document.getElementById('vgDownloadBtn').disabled=true;
     document.getElementById('vgResult').style.display='none';
-    document.getElementById('vgMeta').textContent='已选择：'+f.name+'（视频加载中…）';
-    document.getElementById('vgHint').textContent='正在解析视频，请稍候…';
-    var video=document.getElementById('vgVideo');
-    video.style.display='block';
+    document.getElementById('vgMeta').textContent='已选择：'+f.name+'（解析中…）';
+    document.getElementById('vgHint').textContent='正在检测视频编码…';
     vgData.video=null;
-    var metaLoaded=false;
-    function onReady(){
-      if(metaLoaded)return;
-      metaLoaded=true;
-      vgData.video=video;
-      document.getElementById('vgMeta').textContent='已选择：'+f.name+'（'+video.videoWidth+'×'+video.videoHeight+'，时长 '+formatDuration(video.duration)+'）';
-      document.getElementById('vgHint').textContent='视频已就绪，播放到想要的片段，填入起止参数后点击生成';
-      window.toast('视频加载完成，可点击生成 GIF');
-    }
-    video.onloadedmetadata=onReady;
-    video.onerror=function(){
-      if(metaLoaded)return;
-      vgData.video=null;
-      document.getElementById('vgHint').textContent='视频解析失败，请换用 MP4 / WebM 格式';
-      toast('视频格式不支持或解码失败，请换用 MP4 / WebM');
-    };
-    video.src=vgData.url;
-    video.load();
-    var t0=Date.now();
-    var timer=setInterval(function(){
-      if(metaLoaded){clearInterval(timer);return}
-      var elapsed=Math.round((Date.now()-t0)/1000);
-      if(video.videoWidth>0){
-        clearInterval(timer);
-        onReady();
-      }else if(elapsed>=60){
-        clearInterval(timer);
-        if(!metaLoaded){
-          vgData.video=null;
-          document.getElementById('vgHint').textContent='视频解析超时：文件可能过大，或为 H.265/HEVC 编码，请转码为 H.264 MP4 或压缩后再试';
-          toast('视频解析超时，请转码为 H.264 或压缩后再试');
-        }
-      }else{
-        document.getElementById('vgHint').textContent='正在解析视频…（已 '+elapsed+' 秒，视频较大请耐心等待）';
+    detectVideoCodec(f).then(function(codec){
+      if(codec==='hvc1'||codec==='hev1'||codec==='h265'){
+        document.getElementById('vgHint').textContent='检测到 H.265/HEVC 编码，浏览器无法解码。请将视频转码为 H.264 (AVC) MP4 或 WebM 后再试';
+        toast('不支持 H.265/HEVC 编码，请转码为 H.264');
+        return;
       }
-    },300);
+      startVideoLoad();
+    });
+    function startVideoLoad(){
+      var video=document.getElementById('vgVideo');
+      video.style.display='block';
+      var metaLoaded=false;
+      function onReady(){
+        if(metaLoaded)return;
+        metaLoaded=true;
+        vgData.video=video;
+        document.getElementById('vgMeta').textContent='已选择：'+f.name+'（'+video.videoWidth+'×'+video.videoHeight+'，时长 '+formatDuration(video.duration)+'）';
+        document.getElementById('vgHint').textContent='视频已就绪，播放到想要的片段，填入起止参数后点击生成';
+        window.toast('视频加载完成，可点击生成 GIF');
+      }
+      video.onloadedmetadata=onReady;
+      video.onerror=function(){
+        if(metaLoaded)return;
+        vgData.video=null;
+        document.getElementById('vgHint').textContent='视频解析失败，请换用 MP4 / WebM 格式';
+        toast('视频格式不支持或解码失败，请换用 MP4 / WebM');
+      };
+      video.src=vgData.url;
+      video.load();
+      var t0=Date.now();
+      var timer=setInterval(function(){
+        if(metaLoaded){clearInterval(timer);return}
+        var elapsed=Math.round((Date.now()-t0)/1000);
+        if(video.videoWidth>0){
+          clearInterval(timer);
+          onReady();
+        }else if(elapsed>=60){
+          clearInterval(timer);
+          if(!metaLoaded){
+            vgData.video=null;
+            document.getElementById('vgHint').textContent='视频解析超时：文件可能过大，或为 H.265/HEVC 编码，请转码为 H.264 MP4 或压缩后再试';
+            toast('视频解析超时，请转码为 H.264 或压缩后再试');
+          }
+        }else{
+          document.getElementById('vgHint').textContent='正在解析视频…（已 '+elapsed+' 秒，视频较大请耐心等待）';
+        }
+      },300);
+    }
   }
   function formatDuration(d){
     if(!isFinite(d)||d<=0)return '未知';
