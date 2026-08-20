@@ -2642,20 +2642,49 @@ body{
     vgData.gifBlob=null;
     document.getElementById('vgDownloadBtn').disabled=true;
     document.getElementById('vgResult').style.display='none';
-    document.getElementById('vgMeta').textContent='已选择：'+f.name;
+    document.getElementById('vgMeta').textContent='已选择：'+f.name+'（视频加载中…）';
+    document.getElementById('vgHint').textContent='正在解析视频，请稍候…';
     var video=document.getElementById('vgVideo');
-    video.src=vgData.url;
     video.style.display='block';
     vgData.video=null;
-    video.onloadedmetadata=function(){
+    var metaLoaded=false;
+    function onReady(){
+      if(metaLoaded)return;
+      metaLoaded=true;
       vgData.video=video;
-      document.getElementById('vgMeta').textContent='已选择：'+f.name+'（'+video.videoWidth+'×'+video.videoHeight+'，时长 '+Math.round(video.duration)+' 秒）';
-      window.toast('播放视频并设置起止时间，点击生成 GIF');
-    };
+      document.getElementById('vgMeta').textContent='已选择：'+f.name+'（'+video.videoWidth+'×'+video.videoHeight+'，时长 '+formatDuration(video.duration)+'）';
+      document.getElementById('vgHint').textContent='视频已就绪，播放到想要的片段，填入起止参数后点击生成';
+      window.toast('视频加载完成，可点击生成 GIF');
+    }
+    video.onloadedmetadata=onReady;
     video.onerror=function(){
+      if(metaLoaded)return;
       vgData.video=null;
+      document.getElementById('vgHint').textContent='视频解析失败，请换用 MP4 / WebM 格式';
       toast('视频格式不支持或解码失败，请换用 MP4 / WebM');
     };
+    video.src=vgData.url;
+    video.load();
+    var t0=Date.now();
+    var timer=setInterval(function(){
+      if(metaLoaded){clearInterval(timer);return}
+      if(video.videoWidth>0){
+        clearInterval(timer);
+        onReady();
+      }else if(Date.now()-t0>15000){
+        clearInterval(timer);
+        if(!metaLoaded){
+          vgData.video=null;
+          document.getElementById('vgHint').textContent='视频加载超时，请检查文件格式';
+          toast('视频加载超时，请检查文件格式');
+        }
+      }
+    },300);
+  }
+  function formatDuration(d){
+    if(!isFinite(d)||d<=0)return '未知';
+    var m=Math.floor(d/60),s=Math.round(d%60);
+    return m+':'+(s<10?'0':'')+s;
   }
   setupDrop('vgDrop',handleVgFile,null,'video/*,video/mp4,video/webm,video/ogg');
   function vgQuantize(frames,w,h,maxColors){
@@ -2801,7 +2830,10 @@ body{
     return new Blob([bytes],{type:'image/gif'});
   }
   window.vgGenerate=function(){
-    if(!vgData.video||!vgData.video.videoWidth){toast('请先上传视频或等待视频加载完成');return}
+    if(!vgData.video||!vgData.video.videoWidth){
+      toast(vgData.url?'视频加载中，请稍候再试':'请先上传视频');
+      return;
+    }
     var video=vgData.video;
     var start=parseFloat(document.getElementById('vgStart').value)||0;
     var dur=parseFloat(document.getElementById('vgDuration').value)||3;
