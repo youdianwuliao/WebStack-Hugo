@@ -677,7 +677,7 @@ body{
       <div class="card-title"><h3>视频转 GIF 表情</h3></div>
       <div class="file-drop" id="vgDrop">点击或拖拽视频到此处（MP4 / WebM）</div>
       <div class="file-meta" id="vgMeta"></div>
-      <video id="vgVideo" controls preload="metadata" style="display:none;width:100%;max-height:280px;border-radius:10px;background:#000"></video>
+      <video id="vgVideo" controls preload="auto" style="display:none;width:100%;max-height:280px;border-radius:10px;background:#000"></video>
       <div class="opts">
         <label>起点(秒) <input type="number" id="vgStart" min="0" step="0.5" value="0" style="width:64px"></label>
         <label>时长(秒) <input type="number" id="vgDuration" min="0.2" max="15" step="0.5" value="3" style="width:64px"></label>
@@ -2668,16 +2668,19 @@ body{
     var t0=Date.now();
     var timer=setInterval(function(){
       if(metaLoaded){clearInterval(timer);return}
+      var elapsed=Math.round((Date.now()-t0)/1000);
       if(video.videoWidth>0){
         clearInterval(timer);
         onReady();
-      }else if(Date.now()-t0>15000){
+      }else if(elapsed>=60){
         clearInterval(timer);
         if(!metaLoaded){
           vgData.video=null;
-          document.getElementById('vgHint').textContent='视频加载超时，请检查文件格式';
-          toast('视频加载超时，请检查文件格式');
+          document.getElementById('vgHint').textContent='视频解析超时：文件可能过大，或为 H.265/HEVC 编码，请转码为 H.264 MP4 或压缩后再试';
+          toast('视频解析超时，请转码为 H.264 或压缩后再试');
         }
+      }else{
+        document.getElementById('vgHint').textContent='正在解析视频…（已 '+elapsed+' 秒，视频较大请耐心等待）';
       }
     },300);
   }
