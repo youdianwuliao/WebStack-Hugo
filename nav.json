@@ -465,6 +465,12 @@
           "icon": "/assets/images/logos/dshtui.svg",
           "url": "https://dshtui.com/",
           "description": "DeepSeek Harness 的 Claude Code 风格终端界面插件"
+        },
+        {
+          "title": "dshfind",
+          "icon": "/assets/images/logos/dshfind.ico",
+          "url": "https://dshfind.com/",
+          "description": "DeepSeek Harness 插件市场与学习社区"
         }
       ]
     },
