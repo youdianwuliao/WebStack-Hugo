@@ -2672,36 +2672,72 @@ body{
   }
   setupDrop('vgDrop',handleVgFile,null,'video/*,.mp4,.mov,.avi,.mkv,.webm,.flv,.wmv,.m4v,.3gp');
   var vgFFmpeg=null,vgFFmpegLoading=null,vgFFmpegProgressHooked=false;
-  function vgLoadFFmpeg(){
+  function vgLoadFFmpeg(onProgress){
     if(vgFFmpeg)return Promise.resolve(vgFFmpeg);
     if(vgFFmpegLoading)return vgFFmpegLoading;
     vgFFmpegLoading=import('./ffmpeg/index.js').then(function(mod){
       var base=new URL('ffmpeg/',document.baseURI).href;
-      function fetchParts(i,bufs){
-        return fetch(base+'ffmpeg-core.wasm.'+i).then(function(r){
-          if(!r.ok)return bufs;
-          return r.arrayBuffer().then(function(b){
-            bufs.push(b);
-            return fetchParts(i+1,bufs);
-          });
+      function probe(n){
+        return fetch(base+'ffmpeg-core.wasm.'+n,{method:'HEAD'}).then(function(r){
+          if(!r.ok)return n;
+          return probe(n+1);
         });
       }
-      return fetchParts(0,[]).then(function(bufs){
-        if(!bufs.length)throw new Error('FFmpeg 核心文件加载失败');
-        var total=0;
-        for(var k=0;k<bufs.length;k++)total+=bufs[k].byteLength;
-        var merged=new Uint8Array(total);
-        var off=0;
-        for(k=0;k<bufs.length;k++){
-          merged.set(new Uint8Array(bufs[k]),off);
-          off+=bufs[k].byteLength;
+      function fetchPart(n,onBytes){
+        return fetch(base+'ffmpeg-core.wasm.'+n).then(function(r){
+          if(!r.ok)return null;
+          var total=+r.headers.get('content-length')||0;
+          var received=0;
+          var chunks=[];
+          var reader=r.body.getReader();
+          function pump(){
+            return reader.read().then(function(x){
+              if(x.done)return new Blob(chunks);
+              chunks.push(x.value);
+              received+=x.value.length;
+              if(total)onBytes(received,total);
+              return pump();
+            });
+          }
+          return pump();
+        });
+      }
+      return probe(0).then(function(n){
+        if(!n)throw new Error('FFmpeg 核心文件加载失败');
+        var blobs=[];
+        var done=0;
+        var firstTotal=1;
+        var chain=Promise.resolve();
+        for(var k=0;k<n;k++){
+          chain=chain.then((function(idx){
+            return fetchPart(idx,function(rec,tot){
+              if(idx===0)firstTotal=tot||1;
+              var p=Math.min(99,Math.round((done+rec)/(firstTotal*n)*100));
+              if(onProgress)onProgress(p);
+            }).then(function(b){
+              blobs.push(b);
+              done+=b.size;
+            });
+          })(k));
         }
-        var wasmUrl=URL.createObjectURL(new Blob([merged],{type:'application/wasm'}));
-        var ffmpeg=new mod.FFmpeg();
-        return ffmpeg.load({
-          coreURL:new URL('ffmpeg/ffmpeg-core.js',document.baseURI).href,
-          wasmURL:wasmUrl
-        }).then(function(){return ffmpeg});
+        return chain.then(function(){
+          return Promise.all(blobs.map(function(b){return b.arrayBuffer()}));
+        }).then(function(arrs){
+          var total=0;
+          for(var m=0;m<arrs.length;m++)total+=arrs[m].byteLength;
+          var merged=new Uint8Array(total);
+          var off=0;
+          for(m=0;m<arrs.length;m++){
+            merged.set(new Uint8Array(arrs[m]),off);
+            off+=arrs[m].byteLength;
+          }
+          var wasmUrl=URL.createObjectURL(new Blob([merged],{type:'application/wasm'}));
+          var ffmpeg=new mod.FFmpeg();
+          return ffmpeg.load({
+            coreURL:new URL('ffmpeg/ffmpeg-core.js',document.baseURI).href,
+            wasmURL:wasmUrl
+          }).then(function(){return ffmpeg});
+        });
       });
     }).then(function(ffmpeg){
       vgFFmpeg=ffmpeg;
@@ -2726,9 +2762,11 @@ body{
     btn.disabled=true;
     var oldText=btn.textContent;
     var hint=document.getElementById('vgHint');
-    hint.textContent='正在加载 FFmpeg 引擎（首次约 30MB，稍候）…';
+    hint.textContent='正在加载 FFmpeg 引擎（首次约 30MB）…';
     btn.textContent='加载引擎…';
-    vgLoadFFmpeg().then(function(ffmpeg){
+    vgLoadFFmpeg(function(p){
+      hint.textContent='正在下载 FFmpeg 引擎… '+p+'%';
+    }).then(function(ffmpeg){
       if(!vgFFmpegProgressHooked){
         vgFFmpegProgressHooked=true;
         ffmpeg.on('progress',function(ev){
