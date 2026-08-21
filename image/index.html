@@ -2677,21 +2677,32 @@ body{
     if(vgFFmpegLoading)return vgFFmpegLoading;
     vgFFmpegLoading=import('./ffmpeg/index.js').then(function(mod){
       var base=new URL('ffmpeg/',document.baseURI).href;
-      return Promise.all([fetch(base+'ffmpeg-core.wasm.0'),fetch(base+'ffmpeg-core.wasm.1')])
-        .then(function(rs){
-          return Promise.all(rs.map(function(r){return r.arrayBuffer()}));
-        }).then(function(bufs){
-          var total=bufs[0].byteLength+bufs[1].byteLength;
-          var merged=new Uint8Array(total);
-          merged.set(new Uint8Array(bufs[0]),0);
-          merged.set(new Uint8Array(bufs[1]),bufs[0].byteLength);
-          var wasmUrl=URL.createObjectURL(new Blob([merged],{type:'application/wasm'}));
-          var ffmpeg=new mod.FFmpeg();
-          return ffmpeg.load({
-            coreURL:new URL('ffmpeg/ffmpeg-core.js',document.baseURI).href,
-            wasmURL:wasmUrl
-          }).then(function(){return ffmpeg});
+      function fetchParts(i,bufs){
+        return fetch(base+'ffmpeg-core.wasm.'+i).then(function(r){
+          if(!r.ok)return bufs;
+          return r.arrayBuffer().then(function(b){
+            bufs.push(b);
+            return fetchParts(i+1,bufs);
+          });
         });
+      }
+      return fetchParts(0,[]).then(function(bufs){
+        if(!bufs.length)throw new Error('FFmpeg 核心文件加载失败');
+        var total=0;
+        for(var k=0;k<bufs.length;k++)total+=bufs[k].byteLength;
+        var merged=new Uint8Array(total);
+        var off=0;
+        for(k=0;k<bufs.length;k++){
+          merged.set(new Uint8Array(bufs[k]),off);
+          off+=bufs[k].byteLength;
+        }
+        var wasmUrl=URL.createObjectURL(new Blob([merged],{type:'application/wasm'}));
+        var ffmpeg=new mod.FFmpeg();
+        return ffmpeg.load({
+          coreURL:new URL('ffmpeg/ffmpeg-core.js',document.baseURI).href,
+          wasmURL:wasmUrl
+        }).then(function(){return ffmpeg});
+      });
     }).then(function(ffmpeg){
       vgFFmpeg=ffmpeg;
       return ffmpeg;
