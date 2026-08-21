@@ -471,6 +471,12 @@
           "icon": "/assets/images/logos/dshfind.ico",
           "url": "https://dshfind.com/",
           "description": "DeepSeek Harness 插件市场与学习社区"
+        },
+        {
+          "title": "DeepSeek Harness 中文站",
+          "icon": "/assets/images/logos/deepseekharness.png",
+          "url": "https://deepseekharness.io/zh/",
+          "description": "DeepSeek Harness 中文资料站：安装、插件、对比与教程"
         }
       ]
     },
