@@ -1,4 +1,4 @@
-const CACHE = 'navsite-v12';
+const CACHE = 'navsite-v13';
 const CORE = [
   './',
   './index.html',
