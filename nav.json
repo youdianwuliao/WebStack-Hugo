@@ -103,7 +103,7 @@
       ]
     },
     {
-      "category": "ai未来",
+      "category": "AI 工具",
       "sidebarIcon": "fas fa-robot",
       "items": [],
       "subcategories": [
@@ -470,364 +470,126 @@
       ]
     },
     {
-      "category": "科研办公",
-      "sidebarIcon": "fas fa-flask",
-      "items": [],
+      "category": "开发设计",
+      "sidebarIcon": "fas fa-tools",
+      "items": [
+        {
+          "title": "MongoDB",
+          "icon": "/assets/images/logos/mongodb.png",
+          "url": "https://www.mongodb.com/zh-cn",
+          "description": "开源文档型数据库，提供 Atlas 云服务，支持向量搜索与 AI 应用开发"
+        },
+        {
+          "title": "千羽数据",
+          "icon": "/assets/images/logos/qinyudata.png",
+          "url": "https://qinyudata.justgame.top",
+          "description": "千羽数据"
+        },
+        {
+          "title": "PDFCraft",
+          "icon": "/assets/images/logos/pdfcraft.svg",
+          "url": "https://pdfcraft.devtoolcafe.com/zh/",
+          "description": "免费的在线PDF工具，用于合并、分割、压缩和转换PDF文件。所有处理都在您的浏览器中进行，确保最大隐私"
+        },
+        {
+          "title": "Yantr",
+          "icon": "/assets/images/logos/yantr.png",
+          "url": "https://yantr.org/",
+          "description": "家庭实验室应用商店，可在您自己的硬件上部署100多个自托管应用——Ollama、Nextcloud、Jellyfin等——只需一条 Docker Compose 命令。无需更换操作系统，无厂商锁定"
+        },
+        {
+          "title": "gitcode",
+          "icon": "/assets/images/logos/gitcode.png",
+          "url": "https://gitcode.com/",
+          "description": "华为代码托管"
+        },
+        {
+          "title": "HamCQ.cn",
+          "icon": "/assets/images/logos/hamcq.png",
+          "url": "https://forum.hamcq.cn/",
+          "description": "HamCQ 业余无线电爱好者社区"
+        },
+        {
+          "title": "Webminal",
+          "icon": "/assets/images/logos/webminal.png",
+          "url": "https://webminal.org/",
+          "description": "在线Linux终端和编程学习平台"
+        },
+        {
+          "title": "Metabase",
+          "icon": "/assets/images/logos/metabase.svg",
+          "url": "https://www.metabase.com/",
+          "description": "开源 BI 数据分析可视化工具"
+        },
+        {
+          "title": "支付宝开放平台",
+          "icon": "/assets/images/logos/alipay.png",
+          "url": "https://open.alipay.com/",
+          "description": "支付宝开放平台，支付营销数据能力开放接口"
+        },
+        {
+          "title": "ClickHouse",
+          "icon": "/assets/images/logos/clickhouse.png",
+          "url": "https://clickhouse.com/",
+          "description": "开源列式数据库分析引擎"
+        },
+        {
+          "title": "SQLPub",
+          "icon": "/assets/images/logos/sqlpub.png",
+          "url": "https://sqlpub.com/",
+          "description": "免费 MySQL 无服务器数据库平台"
+        },
+        {
+          "title": "最好的数据库工具",
+          "icon": "/assets/images/logos/dbeaver.png",
+          "url": "https://dbeaver.io/",
+          "description": "dbeaver"
+        },
+        {
+          "title": "graalvm",
+          "icon": "/assets/images/logos/graalvm.png",
+          "url": "https://www.graalvm.org/",
+          "description": "免费jdk"
+        }
+      ],
       "subcategories": [
         {
-          "name": "技术工具",
+          "name": "云服务器",
           "items": [
             {
-              "title": "千羽赛事",
-              "icon": "/assets/images/logos/qianyu-football.svg",
-              "url": "https://football.justgame.top/",
-              "description": "足球赛事前瞻，统计模型每日分析"
+              "title": "阿里云",
+              "icon": "/assets/images/logos/阿里云.jpg",
+              "url": "https://www.aliyun.com/activity/allinaliyun/yunchuang?userCode=uhb7g08f",
+              "description": "上云就上阿里云"
             },
             {
-              "title": "SQLPub",
-              "icon": "/assets/images/logos/sqlpub.png",
-              "url": "https://sqlpub.com/",
-              "description": "免费 MySQL 无服务器数据库平台"
+              "title": "腾讯云",
+              "icon": "/assets/images/logos/腾讯云.jpg",
+              "url": "https://curl.qcloud.com/G2XnwfQQ",
+              "description": "产业智变，云启未来"
             },
             {
-              "title": "SnapAny",
-              "icon": "/assets/images/logos/snapany.png",
-              "url": "https://snapany.com/zh",
-              "description": "万能视频图片解析下载，支持1000+平台"
+              "title": "华为云",
+              "icon": "/assets/images/logos/华为云.png",
+              "url": "https://www.huaweicloud.com/",
+              "description": "提供云计算服务+智能，见未来-华为云"
             },
             {
-              "title": "竞彩计算器",
-              "icon": "/assets/images/logos/lottery.png",
-              "url": "https://www.lottery.gov.cn/jc/jsq/zqspf/",
-              "description": "足球胜平负竞彩计算器"
+              "title": "justhost",
+              "icon": "/assets/images/logos/justhost.png",
+              "url": "https://justhost.asia/?ref=165244",
+              "description": "俄罗斯便宜vps"
             },
             {
-              "title": "PDF.md",
-              "icon": "/assets/images/logos/md-justgame.png",
-              "url": "https://md.justgame.top/",
-              "description": "拖拽PDF一键转Markdown，纯浏览器处理"
-            },
-            {
-              "title": "markdown",
-              "icon": "/assets/images/logos/md-to.svg",
-              "url": "https://md-to.com/zh-cn/",
-              "description": "本地处理 · 隐私安全"
-            },
-            {
-              "title": "TrafficForge",
-              "icon": "/assets/images/logos/trafficforge.svg",
-              "url": "https://sim.justgame.top/",
-              "description": "流量锻造炉 - 网站访问模拟测试工具"
-            },
-            {
-              "title": "GitHubIM",
-              "icon": "/assets/images/logos/githubim.png",
-              "url": "https://githubim.com/",
-              "description": "GitHub IM 即时通讯"
-            },
-            {
-              "title": "ip查询",
-              "icon": "/assets/images/logos/ip.png",
-              "url": "https://ip.justgame.top/",
-              "description": "ip查询"
-            },
-            {
-              "title": "Montastic",
-              "icon": "/assets/images/logos/montastic.png",
-              "url": "https://www.montastic.com/",
-              "description": "免费网站监控服务"
-            },
-            {
-              "title": "n8n",
-              "icon": "/assets/images/logos/n8n.png",
-              "url": "https://n8n.io/",
-              "description": "工作流程自动化工具"
-            },
-            {
-              "title": "青龙面板",
-              "icon": "/assets/images/logos/qinglong.png",
-              "url": "https://qinglong.online/",
-              "description": "定时任务管理平台"
-            },
-            {
-              "title": "Server酱",
-              "icon": "/assets/images/logos/ftqq.png",
-              "url": "https://sct.ftqq.com/",
-              "description": "极简推送API"
-            },
-            {
-              "title": "文件下载",
-              "icon": "/assets/images/logos/file.png",
-              "url": "https://file.justgame.top/",
-              "description": "文件下载"
-            },
-            {
-              "title": "短链接",
-              "icon": "/assets/images/logos/link.png",
-              "url": "https://link.justgame.top",
-              "description": "短链接"
-            },
-            {
-              "title": "篡改猴",
-              "icon": "/assets/images/logos/tampermonkey.png",
-              "url": "https://home.greasyfork.org.cn/",
-              "description": "用户脚本"
-            },
-            {
-              "title": "标小智",
-              "icon": "/assets/images/logos/logosc.png",
-              "url": "https://www.logosc.cn/",
-              "description": "智能logo设计生成"
-            },
-            {
-              "title": "archive",
-              "icon": "/assets/images/logos/archive.png",
-              "url": "https://archive.org/",
-              "description": "互联网博物馆"
-            },
-            {
-              "title": "ventoy",
-              "icon": "/assets/images/logos/ventoy.png",
-              "url": "https://www.ventoy.net/cn/index.html",
-              "description": "多系统启动U盘"
-            },
-            {
-              "title": "最好的数据库工具",
-              "icon": "/assets/images/logos/dbeaver.png",
-              "url": "https://dbeaver.io/",
-              "description": "dbeaver"
-            },
-            {
-              "title": "genymotion",
-              "icon": "/assets/images/logos/genymotion.png",
-              "url": "https://www.genymotion.com/",
-              "description": "安卓模拟器"
-            },
-            {
-              "title": "lineageos",
-              "icon": "/assets/images/logos/lineageos.png",
-              "url": "https://lineageos.org/",
-              "description": "开源安卓系统"
-            },
-            {
-              "title": "域名监控",
-              "icon": "/assets/images/logos/httpsok.png",
-              "url": "https://httpsok.com/",
-              "description": "域名续期ssl"
-            },
-            {
-              "title": "antping",
-              "icon": "/assets/images/logos/antping.png",
-              "url": "https://antping.com/",
-              "description": "网络监控"
-            },
-            {
-              "title": "UptimeRobot",
-              "icon": "/assets/images/logos/uptimerobot.png",
-              "url": "https://www.uptimerobot.com/",
-              "description": "网站监控服务"
-            },
-            {
-              "title": "Clarity",
-              "icon": "/assets/images/logos/clarity.png",
-              "url": "https://clarity.microsoft.com/",
-              "description": "微软免费的埋点工具"
-            },
-            {
-              "title": "arthas",
-              "icon": "/assets/images/logos/arthas.png",
-              "url": "https://arthas.aliyun.com/",
-              "description": "Java 应用诊断利器"
-            },
-            {
-              "title": "ghproxy",
-              "icon": "/assets/images/logos/github.png",
-              "url": "https://ghproxy.link/",
-              "description": "github代理"
-            },
-            {
-              "title": "鸠摩搜索",
-              "icon": "/assets/images/logos/jiumodiary.png",
-              "url": "https://www.jiumodiary.com/",
-              "description": "电子书搜索平台"
-            },
-            {
-              "title": "xdouban",
-              "icon": "/assets/images/logos/xdouban.png",
-              "url": "https://xdouban.com/",
-              "description": "温暖的音乐下载站"
-            },
-            {
-              "title": "graalvm",
-              "icon": "/assets/images/logos/graalvm.png",
-              "url": "https://www.graalvm.org/",
-              "description": "免费jdk"
-            },
-            {
-              "title": "tailscale",
-              "icon": "/assets/images/logos/tailscale.png",
-              "url": "https://tailscale.com/",
-              "description": "vnn 基于 wireguard"
-            },
-            {
-              "title": "拓扑兔",
-              "icon": "/assets/images/logos/tools.png",
-              "url": "https://tools.top/",
-              "description": "研发工具平台"
-            },
-            {
-              "title": "docsmall",
-              "icon": "/assets/images/logos/docsmall.png",
-              "url": "https://docsmall.com/",
-              "description": "免费的在线图片、PDF处理工具"
-            },
-            {
-              "title": "冰狐智能辅助",
-              "icon": "/assets/images/logos/aznfz.png",
-              "url": "https://aznfz.com/",
-              "description": "一站式自动化脚本解决方案"
-            },
-            {
-              "title": "Auto.js Pro",
-              "icon": "/assets/images/logos/autojs-pro.png",
-              "url": "https://pro.autojs.run/",
-              "description": "永久免费 AutojsPro 安卓自动化开发平台"
-            },
-            {
-              "title": "HakoVNN",
-              "icon": "/assets/images/logos/hakovpn.png",
-              "url": "https://www.hakovpn.com/",
-              "description": "HakoVNN 服务"
-            },
-            {
-              "title": "ClickHouse",
-              "icon": "/assets/images/logos/clickhouse.png",
-              "url": "https://clickhouse.com/",
-              "description": "开源列式数据库分析引擎"
-            },
-            {
-              "title": "WeaveFox",
-              "icon": "/assets/images/logos/weavefox.png",
-              "url": "https://www.weavefox.cn/",
-              "description": "零门槛做应用，让创意看得见"
-            },
-            {
-              "title": "CloakBrowser",
-              "icon": "/assets/images/logos/cloakbrowser.png",
-              "url": "https://cloakbrowser.dev/",
-              "description": "隐身 Chromium，自动化反检测浏览器"
+              "title": "支付宝小程序云",
+              "icon": "/assets/images/logos/alipay.png",
+              "url": "https://cloud.alipay.com/",
+              "description": "支付宝小程序云，蚂蚁云原生服务端解决方案"
             }
           ]
         },
         {
-          "name": "安全相关",
-          "items": [
-            {
-              "title": "Kali Linux",
-              "icon": "/assets/images/logos/kali.png",
-              "url": "https://www.kali.org/",
-              "description": "最先进的渗透测试发行版"
-            },
-            {
-              "title": "OpenOcta",
-              "icon": "/assets/images/logos/openocta.ico",
-              "url": "https://openocta.com/",
-              "description": "安全工具平台"
-            },
-            {
-              "title": "yakit",
-              "icon": "/assets/images/logos/yakit.png",
-              "url": "https://www.yaklang.io/products/intro/",
-              "description": "yakit"
-            },
-            {
-              "title": "weakpass",
-              "icon": "/assets/images/logos/weakpass.png",
-              "url": "https://weakpass.com/",
-              "description": "弱口令字典的网站"
-            },
-            {
-              "title": "crackstation",
-              "icon": "/assets/images/logos/crackstation.png",
-              "url": "https://crackstation.net/",
-              "description": "密码破解工具"
-            },
-            {
-              "title": "全平台抓包工具",
-              "icon": "/assets/images/logos/httptoolkit.png",
-              "url": "https://httptoolkit.com/",
-              "description": "httptoolkit"
-            },
-            {
-              "title": "全平台逆向学习",
-              "icon": "/assets/images/logos/frida.png",
-              "url": "https://frida.re/",
-              "description": "frida"
-            },
-            {
-              "title": "开源交互式HTTPS代理",
-              "icon": "/assets/images/logos/mitmproxy.png",
-              "url": "https://mitmproxy.org/",
-              "description": "mitmproxy"
-            },
-            {
-              "title": "旁观者",
-              "icon": "/assets/images/logos/ecapture.png",
-              "url": "https://ecapture.cc/",
-              "description": "无证书抓包"
-            },
-            {
-              "title": "apktool",
-              "icon": "/assets/images/logos/apktool.png",
-              "url": "https://apktool.org/",
-              "description": "反编译APK"
-            },
-            {
-              "title": "avast",
-              "icon": "/assets/images/logos/avast.png",
-              "url": "https://www.avast.com/",
-              "description": "安全免费"
-            },
-            {
-              "title": "avira",
-              "icon": "/assets/images/logos/avira.png",
-              "url": "https://www.avira.com/",
-              "description": "小红伞杀毒"
-            },
-            {
-              "title": "卡饭",
-              "icon": "/assets/images/logos/kafan.png",
-              "url": "https://bbs.kafan.cn/",
-              "description": "计算机安全杀毒软件bbs"
-            },
-            {
-              "title": "crowdsec",
-              "icon": "/assets/images/logos/crowdsec.png",
-              "url": "https://www.crowdsec.net/",
-              "description": "免费WAF"
-            },
-            {
-              "title": "PentAGI",
-              "icon": "/assets/images/logos/pentagi.png",
-              "url": "https://pentagi.com/",
-              "description": "先进的AI驱动渗透测试平台"
-            },
-            {
-              "title": "OpenClaw",
-              "icon": "/assets/images/logos/openclaw.ico",
-              "url": "https://openclaw.allegro.earth/",
-              "description": "OpenClaw暴露监控面板，追踪公开暴露的AI代理实例"
-            },
-            {
-              "title": "Memfit AI",
-              "icon": "/assets/images/logos/memfit.ico",
-              "url": "https://memfit.ai/",
-              "description": "AI安全工具平台"
-            }
-          ]
-        },
-        {
-          "name": "免费空间",
+          "name": "免费部署",
           "items": [
             {
               "title": "vecel",
@@ -854,94 +616,557 @@
               "description": "最大同性交友网站"
             }
           ]
-        },
-        {
-          "name": "资源类",
-          "items": [
-            {
-              "title": "tvbox",
-              "icon": "/assets/images/logos/tvbox.png",
-              "url": "https://tvbox.clbug.com/",
-              "description": "电视盒神器"
-            },
-            {
-              "title": "github加速",
-              "icon": "/assets/images/logos/github.png",
-              "url": "https://gh-proxy.com/",
-              "description": "文件加速"
-            },
-            {
-              "title": "paywallbuster",
-              "icon": "/assets/images/logos/paywallbuster.png",
-              "url": "https://paywallbuster.com/",
-              "description": "绕过付费墙"
-            },
-            {
-              "title": "樊振东",
-              "icon": "/assets/images/logos/fzd.png",
-              "url": "https://www.f-zd.com/",
-              "description": "紫微星"
-            },
-            {
-              "title": "科大",
-              "icon": "/assets/images/logos/ustc.png",
-              "url": "https://mirrors.ustc.edu.cn/",
-              "description": "镜像源"
-            },
-            {
-              "title": "flac",
-              "icon": "/assets/images/logos/flac.png",
-              "url": "https://flac.music.hi.cn/",
-              "description": "无损音乐"
-            },
-            {
-              "title": "KolibriOS git",
-              "icon": "/assets/images/logos/kolibrios.svg",
-              "url": "https://git.kolibrios.org/",
-              "description": "快速紧凑的操作系统，满足您的日常需求"
-            },
-            {
-              "title": "夸克圈",
-              "icon": "/assets/images/logos/kuakeq.ico",
-              "url": "https://www.quskt.com/",
-              "description": "优质夸克网盘资源分享圈"
-            },
-            {
-              "title": "夸克吧",
-              "icon": "/assets/images/logos/kuakeq.ico",
-              "url": "https://www.kuakeba.com/",
-              "description": "夸克网盘资源分享"
-            },
-            {
-              "title": "云操作系统",
-              "icon": "/assets/images/logos/sealos.png",
-              "url": "https://sealos.io/",
-              "description": "Sealos"
-            },
-            {
-              "title": "k8s快捷工具",
-              "icon": "/assets/images/logos/kubegems.png",
-              "url": "https://www.kubegems.io",
-              "description": "KubeGems"
-            },
-            {
-              "title": "云原生应用管理平台",
-              "icon": "/assets/images/logos/rainbound.png",
-              "url": "https://www.rainbond.com/",
-              "description": "rainbond"
-            },
-            {
-              "title": "商家自助保障平台",
-              "icon": "/assets/images/logos/zfb.png",
-              "url": "https://opensupport.alipay.com/kaproject/p/workplace",
-              "description": "压力测试"
-            }
-          ]
         }
       ]
     },
     {
-      "category": "丫丫喜欢玩游戏",
+      "category": "运维监控",
+      "sidebarIcon": "fas fa-flask",
+      "items": [
+        {
+          "title": "TrafficForge",
+          "icon": "/assets/images/logos/trafficforge.svg",
+          "url": "https://sim.justgame.top/",
+          "description": "流量锻造炉 - 网站访问模拟测试工具"
+        },
+        {
+          "title": "ip查询",
+          "icon": "/assets/images/logos/ip.png",
+          "url": "https://ip.justgame.top/",
+          "description": "ip查询"
+        },
+        {
+          "title": "Montastic",
+          "icon": "/assets/images/logos/montastic.png",
+          "url": "https://www.montastic.com/",
+          "description": "免费网站监控服务"
+        },
+        {
+          "title": "n8n",
+          "icon": "/assets/images/logos/n8n.png",
+          "url": "https://n8n.io/",
+          "description": "工作流程自动化工具"
+        },
+        {
+          "title": "青龙面板",
+          "icon": "/assets/images/logos/qinglong.png",
+          "url": "https://qinglong.online/",
+          "description": "定时任务管理平台"
+        },
+        {
+          "title": "Server酱",
+          "icon": "/assets/images/logos/ftqq.png",
+          "url": "https://sct.ftqq.com/",
+          "description": "极简推送API"
+        },
+        {
+          "title": "genymotion",
+          "icon": "/assets/images/logos/genymotion.png",
+          "url": "https://www.genymotion.com/",
+          "description": "安卓模拟器"
+        },
+        {
+          "title": "lineageos",
+          "icon": "/assets/images/logos/lineageos.png",
+          "url": "https://lineageos.org/",
+          "description": "开源安卓系统"
+        },
+        {
+          "title": "域名监控",
+          "icon": "/assets/images/logos/httpsok.png",
+          "url": "https://httpsok.com/",
+          "description": "域名续期ssl"
+        },
+        {
+          "title": "antping",
+          "icon": "/assets/images/logos/antping.png",
+          "url": "https://antping.com/",
+          "description": "网络监控"
+        },
+        {
+          "title": "UptimeRobot",
+          "icon": "/assets/images/logos/uptimerobot.png",
+          "url": "https://www.uptimerobot.com/",
+          "description": "网站监控服务"
+        },
+        {
+          "title": "Clarity",
+          "icon": "/assets/images/logos/clarity.png",
+          "url": "https://clarity.microsoft.com/",
+          "description": "微软免费的埋点工具"
+        },
+        {
+          "title": "arthas",
+          "icon": "/assets/images/logos/arthas.png",
+          "url": "https://arthas.aliyun.com/",
+          "description": "Java 应用诊断利器"
+        },
+        {
+          "title": "tailscale",
+          "icon": "/assets/images/logos/tailscale.png",
+          "url": "https://tailscale.com/",
+          "description": "vnn 基于 wireguard"
+        },
+        {
+          "title": "冰狐智能辅助",
+          "icon": "/assets/images/logos/aznfz.png",
+          "url": "https://aznfz.com/",
+          "description": "一站式自动化脚本解决方案"
+        },
+        {
+          "title": "Auto.js Pro",
+          "icon": "/assets/images/logos/autojs-pro.png",
+          "url": "https://pro.autojs.run/",
+          "description": "永久免费 AutojsPro 安卓自动化开发平台"
+        },
+        {
+          "title": "HakoVNN",
+          "icon": "/assets/images/logos/hakovpn.png",
+          "url": "https://www.hakovpn.com/",
+          "description": "HakoVNN 服务"
+        },
+        {
+          "title": "云操作系统",
+          "icon": "/assets/images/logos/sealos.png",
+          "url": "https://sealos.io/",
+          "description": "Sealos"
+        },
+        {
+          "title": "k8s快捷工具",
+          "icon": "/assets/images/logos/kubegems.png",
+          "url": "https://www.kubegems.io",
+          "description": "KubeGems"
+        },
+        {
+          "title": "云原生应用管理平台",
+          "icon": "/assets/images/logos/rainbound.png",
+          "url": "https://www.rainbond.com/",
+          "description": "rainbond"
+        },
+        {
+          "title": "商家自助保障平台",
+          "icon": "/assets/images/logos/zfb.png",
+          "url": "https://opensupport.alipay.com/kaproject/p/workplace",
+          "description": "压力测试"
+        }
+      ]
+    },
+    {
+      "category": "安全工具",
+      "sidebarIcon": "fas fa-flask",
+      "items": [
+        {
+          "title": "Kali Linux",
+          "icon": "/assets/images/logos/kali.png",
+          "url": "https://www.kali.org/",
+          "description": "最先进的渗透测试发行版"
+        },
+        {
+          "title": "OpenOcta",
+          "icon": "/assets/images/logos/openocta.ico",
+          "url": "https://openocta.com/",
+          "description": "安全工具平台"
+        },
+        {
+          "title": "yakit",
+          "icon": "/assets/images/logos/yakit.png",
+          "url": "https://www.yaklang.io/products/intro/",
+          "description": "yakit"
+        },
+        {
+          "title": "weakpass",
+          "icon": "/assets/images/logos/weakpass.png",
+          "url": "https://weakpass.com/",
+          "description": "弱口令字典的网站"
+        },
+        {
+          "title": "crackstation",
+          "icon": "/assets/images/logos/crackstation.png",
+          "url": "https://crackstation.net/",
+          "description": "密码破解工具"
+        },
+        {
+          "title": "全平台抓包工具",
+          "icon": "/assets/images/logos/httptoolkit.png",
+          "url": "https://httptoolkit.com/",
+          "description": "httptoolkit"
+        },
+        {
+          "title": "全平台逆向学习",
+          "icon": "/assets/images/logos/frida.png",
+          "url": "https://frida.re/",
+          "description": "frida"
+        },
+        {
+          "title": "开源交互式HTTPS代理",
+          "icon": "/assets/images/logos/mitmproxy.png",
+          "url": "https://mitmproxy.org/",
+          "description": "mitmproxy"
+        },
+        {
+          "title": "旁观者",
+          "icon": "/assets/images/logos/ecapture.png",
+          "url": "https://ecapture.cc/",
+          "description": "无证书抓包"
+        },
+        {
+          "title": "apktool",
+          "icon": "/assets/images/logos/apktool.png",
+          "url": "https://apktool.org/",
+          "description": "反编译APK"
+        },
+        {
+          "title": "avast",
+          "icon": "/assets/images/logos/avast.png",
+          "url": "https://www.avast.com/",
+          "description": "安全免费"
+        },
+        {
+          "title": "avira",
+          "icon": "/assets/images/logos/avira.png",
+          "url": "https://www.avira.com/",
+          "description": "小红伞杀毒"
+        },
+        {
+          "title": "卡饭",
+          "icon": "/assets/images/logos/kafan.png",
+          "url": "https://bbs.kafan.cn/",
+          "description": "计算机安全杀毒软件bbs"
+        },
+        {
+          "title": "crowdsec",
+          "icon": "/assets/images/logos/crowdsec.png",
+          "url": "https://www.crowdsec.net/",
+          "description": "免费WAF"
+        },
+        {
+          "title": "PentAGI",
+          "icon": "/assets/images/logos/pentagi.png",
+          "url": "https://pentagi.com/",
+          "description": "先进的AI驱动渗透测试平台"
+        },
+        {
+          "title": "OpenClaw",
+          "icon": "/assets/images/logos/openclaw.ico",
+          "url": "https://openclaw.allegro.earth/",
+          "description": "OpenClaw暴露监控面板，追踪公开暴露的AI代理实例"
+        },
+        {
+          "title": "Memfit AI",
+          "icon": "/assets/images/logos/memfit.ico",
+          "url": "https://memfit.ai/",
+          "description": "AI安全工具平台"
+        },
+        {
+          "title": "WeaveFox",
+          "icon": "/assets/images/logos/weavefox.png",
+          "url": "https://www.weavefox.cn/",
+          "description": "零门槛做应用，让创意看得见"
+        },
+        {
+          "title": "CloakBrowser",
+          "icon": "/assets/images/logos/cloakbrowser.png",
+          "url": "https://cloakbrowser.dev/",
+          "description": "隐身 Chromium，自动化反检测浏览器"
+        }
+      ]
+    },
+    {
+      "category": "效率办公",
+      "sidebarIcon": "fas fa-flask",
+      "items": [
+        {
+          "title": "千羽赛事",
+          "icon": "/assets/images/logos/qianyu-football.svg",
+          "url": "https://football.justgame.top/",
+          "description": "足球赛事前瞻，统计模型每日分析"
+        },
+        {
+          "title": "竞彩计算器",
+          "icon": "/assets/images/logos/lottery.png",
+          "url": "https://www.lottery.gov.cn/jc/jsq/zqspf/",
+          "description": "足球胜平负竞彩计算器"
+        },
+        {
+          "title": "PDF.md",
+          "icon": "/assets/images/logos/md-justgame.png",
+          "url": "https://md.justgame.top/",
+          "description": "拖拽PDF一键转Markdown，纯浏览器处理"
+        },
+        {
+          "title": "markdown",
+          "icon": "/assets/images/logos/md-to.svg",
+          "url": "https://md-to.com/zh-cn/",
+          "description": "本地处理 · 隐私安全"
+        },
+        {
+          "title": "SnapAny",
+          "icon": "/assets/images/logos/snapany.png",
+          "url": "https://snapany.com/zh",
+          "description": "万能视频图片解析下载，支持1000+平台"
+        },
+        {
+          "title": "GitHubIM",
+          "icon": "/assets/images/logos/githubim.png",
+          "url": "https://githubim.com/",
+          "description": "GitHub IM 即时通讯"
+        },
+        {
+          "title": "鸠摩搜索",
+          "icon": "/assets/images/logos/jiumodiary.png",
+          "url": "https://www.jiumodiary.com/",
+          "description": "电子书搜索平台"
+        },
+        {
+          "title": "xdouban",
+          "icon": "/assets/images/logos/xdouban.png",
+          "url": "https://xdouban.com/",
+          "description": "温暖的音乐下载站"
+        },
+        {
+          "title": "docsmall",
+          "icon": "/assets/images/logos/docsmall.png",
+          "url": "https://docsmall.com/",
+          "description": "免费的在线图片、PDF处理工具"
+        },
+        {
+          "title": "标小智",
+          "icon": "/assets/images/logos/logosc.png",
+          "url": "https://www.logosc.cn/",
+          "description": "智能logo设计生成"
+        },
+        {
+          "title": "篡改猴",
+          "icon": "/assets/images/logos/tampermonkey.png",
+          "url": "https://home.greasyfork.org.cn/",
+          "description": "用户脚本"
+        },
+        {
+          "title": "ventoy",
+          "icon": "/assets/images/logos/ventoy.png",
+          "url": "https://www.ventoy.net/cn/index.html",
+          "description": "多系统启动U盘"
+        },
+        {
+          "title": "短链接",
+          "icon": "/assets/images/logos/link.png",
+          "url": "https://link.justgame.top",
+          "description": "短链接"
+        },
+        {
+          "title": "樊振东",
+          "icon": "/assets/images/logos/fzd.png",
+          "url": "https://www.f-zd.com/",
+          "description": "紫微星"
+        },
+        {
+          "title": "科大",
+          "icon": "/assets/images/logos/ustc.png",
+          "url": "https://mirrors.ustc.edu.cn/",
+          "description": "镜像源"
+        },
+        {
+          "title": "拓扑兔",
+          "icon": "/assets/images/logos/tools.png",
+          "url": "https://tools.top/",
+          "description": "研发工具平台"
+        },
+        {
+          "title": "汉服",
+          "icon": "/assets/images/logos/han.svg",
+          "url": "https://han.justgame.top",
+          "description": "衣冠上国，三千年服饰"
+        },
+        {
+          "title": "爱词霸",
+          "icon": "/assets/images/logos/iciba.png",
+          "url": "https://www.iciba.com/",
+          "description": "爱词霸"
+        },
+        {
+          "title": "ProcessOn",
+          "icon": "/assets/images/logos/ProcessOn.png",
+          "url": "https://www.processon.com/i/5a658f5ce4b010a6e728faa9?full_name=%E6%9C%89%E7%82%B9%E6%97%A0%E8%81%8A",
+          "description": "免费在线作图、实时协作"
+        },
+        {
+          "title": "弟弟快看",
+          "icon": "/assets/images/logos/ddkk.png",
+          "url": "https://ddkk.com/",
+          "description": "程序员编程资料站"
+        },
+        {
+          "title": "有道云笔记",
+          "icon": "/assets/images/logos/youdao.png",
+          "url": "https://note.youdao.com/",
+          "description": "有道云笔记"
+        },
+        {
+          "title": "在线打开文件",
+          "icon": "/assets/images/logos/openfiles.jpg",
+          "url": "https://openfiles.online/",
+          "description": "各种文件打开"
+        },
+        {
+          "title": "MinerU",
+          "icon": "/assets/images/logos/mineru.png",
+          "url": "https://mineru.net/",
+          "description": "大模型文档神器"
+        },
+        {
+          "title": "wps",
+          "icon": "/assets/images/logos/wps.png",
+          "url": "https://www.kdocs.cn/",
+          "description": "在线文档"
+        },
+        {
+          "title": "学法减分",
+          "icon": "/assets/images/logos/jianfen.png",
+          "url": "./jianfen/",
+          "description": "交管12123学法减分题库"
+        },
+        {
+          "title": "中小学智慧平台",
+          "icon": "/assets/images/logos/smartedu.png",
+          "url": "https://basic.smartedu.cn/",
+          "description": "国家级课程"
+        }
+      ]
+    },
+    {
+      "category": "下载资源",
+      "sidebarIcon": "fas fa-flask",
+      "items": [
+        {
+          "title": "文件下载",
+          "icon": "/assets/images/logos/file.png",
+          "url": "https://file.justgame.top/",
+          "description": "文件下载"
+        },
+        {
+          "title": "archive",
+          "icon": "/assets/images/logos/archive.png",
+          "url": "https://archive.org/",
+          "description": "互联网博物馆"
+        },
+        {
+          "title": "ghproxy",
+          "icon": "/assets/images/logos/github.png",
+          "url": "https://ghproxy.link/",
+          "description": "github代理"
+        },
+        {
+          "title": "音乐解锁",
+          "icon": "/assets/images/logos/yinyuejiesuo.png",
+          "url": "https://www.yinyuejiesuo.com/",
+          "description": "在线免费转换"
+        },
+        {
+          "title": "tvbox",
+          "icon": "/assets/images/logos/tvbox.png",
+          "url": "https://tvbox.clbug.com/",
+          "description": "电视盒神器"
+        },
+        {
+          "title": "github加速",
+          "icon": "/assets/images/logos/github.png",
+          "url": "https://gh-proxy.com/",
+          "description": "文件加速"
+        },
+        {
+          "title": "paywallbuster",
+          "icon": "/assets/images/logos/paywallbuster.png",
+          "url": "https://paywallbuster.com/",
+          "description": "绕过付费墙"
+        },
+        {
+          "title": "flac",
+          "icon": "/assets/images/logos/flac.png",
+          "url": "https://flac.music.hi.cn/",
+          "description": "无损音乐"
+        },
+        {
+          "title": "KolibriOS git",
+          "icon": "/assets/images/logos/kolibrios.svg",
+          "url": "https://git.kolibrios.org/",
+          "description": "快速紧凑的操作系统，满足您的日常需求"
+        },
+        {
+          "title": "夸克圈",
+          "icon": "/assets/images/logos/kuakeq.ico",
+          "url": "https://www.quskt.com/",
+          "description": "优质夸克网盘资源分享圈"
+        },
+        {
+          "title": "夸克吧",
+          "icon": "/assets/images/logos/kuakeq.ico",
+          "url": "https://www.kuakeba.com/",
+          "description": "夸克网盘资源分享"
+        },
+        {
+          "title": "steampy",
+          "icon": "/assets/images/logos/steampy.png",
+          "url": "https://steampy.com/",
+          "description": "Steam省钱平台"
+        },
+        {
+          "title": "看看价格",
+          "icon": "/assets/images/logos/steamdb.png",
+          "url": "https://steamdb.info/",
+          "description": "steamdb"
+        },
+        {
+          "title": "历史价格",
+          "icon": "/assets/images/logos/zwjhl.png",
+          "url": "https://p.zwjhl.com/",
+          "description": "慢慢买"
+        },
+        {
+          "title": "羊毛集合",
+          "icon": "/assets/images/logos/xiaobao.png",
+          "url": "http://new.xianbao.fun/",
+          "description": "线报酷"
+        },
+        {
+          "title": "assiw",
+          "icon": "/assets/images/logos/assiw.png",
+          "url": "https://steam.assiw.xyz/",
+          "description": "Steam清单下载工具"
+        },
+        {
+          "title": "Polymarket Analytics",
+          "icon": "/assets/images/logos/polymarket.ico",
+          "url": "https://polymarketanalytics.com/",
+          "description": "Polymath 市场数据分析平台"
+        },
+        {
+          "title": "购车",
+          "icon": "/assets/images/logos/buycar.ico",
+          "url": "https://buycar.justgame.top/",
+          "description": "购车服务"
+        },
+        {
+          "title": "Project Nomad",
+          "icon": "/assets/images/logos/projectnomad.png",
+          "url": "https://www.projectnomad.us/",
+          "description": "离线媒体、档案和数据的节点——一个免费开源的离线服务器"
+        },
+        {
+          "title": "Swagbucks",
+          "icon": "/assets/images/logos/swagbucks.svg",
+          "url": "https://www.swagbucks.com/",
+          "description": "在线赚钱与返现奖励平台"
+        },
+        {
+          "title": "AiToEarn",
+          "icon": "/assets/images/logos/aitoearn.png",
+          "url": "https://aitoearn.cn/",
+          "description": "付费推广任务，用社交媒体赚钱"
+        }
+      ]
+    },
+    {
+      "category": "游戏娱乐",
       "sidebarIcon": "fas fa-gamepad",
       "items": [
         {
@@ -1142,275 +1367,48 @@
           "icon": "/assets/images/logos/old-game-site.ico",
           "url": "https://8.147.134.144/old/",
           "description": "经典怀旧游戏"
-        }
-      ]
-    },
-    {
-      "category": "开发设计",
-      "sidebarIcon": "fas fa-tools",
-      "items": [
-        {
-          "title": "MongoDB",
-          "icon": "/assets/images/logos/mongodb.png",
-          "url": "https://www.mongodb.com/zh-cn",
-          "description": "开源文档型数据库，提供 Atlas 云服务，支持向量搜索与 AI 应用开发"
         },
         {
-          "title": "千羽数据",
-          "icon": "/assets/images/logos/qinyudata.png",
-          "url": "https://qinyudata.justgame.top",
-          "description": "千羽数据"
+          "title": "anbernic",
+          "icon": "/assets/images/logos/anbernic.png",
+          "url": "https://win.anbernic.com/cn/",
+          "description": "开源掌机一哥"
         },
         {
-          "title": "PDFCraft",
-          "icon": "/assets/images/logos/pdfcraft.svg",
-          "url": "https://pdfcraft.devtoolcafe.com/zh/",
-          "description": "免费的在线PDF工具，用于合并、分割、压缩和转换PDF文件。所有处理都在您的浏览器中进行，确保最大隐私"
+          "title": "沙雕掌机",
+          "icon": "/assets/images/logos/retroid.png",
+          "url": "https://www.retroid.cn/",
+          "description": "rp系列"
         },
         {
-          "title": "Yantr",
-          "icon": "/assets/images/logos/yantr.png",
-          "url": "https://yantr.org/",
-          "description": "家庭实验室应用商店，可在您自己的硬件上部署100多个自托管应用——Ollama、Nextcloud、Jellyfin等——只需一条 Docker Compose 命令。无需更换操作系统，无厂商锁定"
-        }
-      ],
-      "subcategories": [
-        {
-          "name": "云服务器",
-          "items": [
-            {
-              "title": "阿里云",
-              "icon": "/assets/images/logos/阿里云.jpg",
-              "url": "https://www.aliyun.com/activity/allinaliyun/yunchuang?userCode=uhb7g08f",
-              "description": "上云就上阿里云"
-            },
-            {
-              "title": "腾讯云",
-              "icon": "/assets/images/logos/腾讯云.jpg",
-              "url": "https://curl.qcloud.com/G2XnwfQQ",
-              "description": "产业智变，云启未来"
-            },
-            {
-              "title": "华为云",
-              "icon": "/assets/images/logos/华为云.png",
-              "url": "https://www.huaweicloud.com/",
-              "description": "提供云计算服务+智能，见未来-华为云"
-            },
-            {
-              "title": "justhost",
-              "icon": "/assets/images/logos/justhost.png",
-              "url": "https://justhost.asia/?ref=165244",
-              "description": "俄罗斯便宜vps"
-            },
-            {
-              "title": "支付宝小程序云",
-              "icon": "/assets/images/logos/alipay.png",
-              "url": "https://cloud.alipay.com/",
-              "description": "支付宝小程序云，蚂蚁云原生服务端解决方案"
-            }
-          ]
+          "title": "ayntek",
+          "icon": "/assets/images/logos/ayntek.png",
+          "url": "http://www.ayntek.com/",
+          "description": "奥丁2"
         },
         {
-          "name": "花点钱",
-          "items": [
-            {
-              "title": "steampy",
-              "icon": "/assets/images/logos/steampy.png",
-              "url": "https://steampy.com/",
-              "description": "Steam省钱平台"
-            },
-            {
-              "title": "看看价格",
-              "icon": "/assets/images/logos/steamdb.png",
-              "url": "https://steamdb.info/",
-              "description": "steamdb"
-            },
-            {
-              "title": "历史价格",
-              "icon": "/assets/images/logos/zwjhl.png",
-              "url": "https://p.zwjhl.com/",
-              "description": "慢慢买"
-            },
-            {
-              "title": "羊毛集合",
-              "icon": "/assets/images/logos/xiaobao.png",
-              "url": "http://new.xianbao.fun/",
-              "description": "线报酷"
-            },
-            {
-              "title": "assiw",
-              "icon": "/assets/images/logos/assiw.png",
-              "url": "https://steam.assiw.xyz/",
-              "description": "Steam清单下载工具"
-            },
-            {
-              "title": "anbernic",
-              "icon": "/assets/images/logos/anbernic.png",
-              "url": "https://win.anbernic.com/cn/",
-              "description": "开源掌机一哥"
-            },
-            {
-              "title": "沙雕掌机",
-              "icon": "/assets/images/logos/retroid.png",
-              "url": "https://www.retroid.cn/",
-              "description": "rp系列"
-            },
-            {
-              "title": "ayntek",
-              "icon": "/assets/images/logos/ayntek.png",
-              "url": "http://www.ayntek.com/",
-              "description": "奥丁2"
-            },
-            {
-              "title": "trimui",
-              "icon": "/assets/images/logos/trimui.png",
-              "url": "http://www.trimui.com/",
-              "description": "小白友好掌机"
-            },
-            {
-              "title": "onexplayer",
-              "icon": "/assets/images/logos/oneplayer.png",
-              "url": "http://www.onexplayer.com/",
-              "description": "最贵掌机"
-            },
-            {
-              "title": "ayaneo",
-              "icon": "/assets/images/logos/ayaneo.png",
-              "url": "https://ayaneo.com.cn/",
-              "description": "高端掌机"
-            },
-            {
-              "title": "掌机圈",
-              "icon": "/assets/images/logos/zhangjiquan.png",
-              "url": "https://zhangjiquan.com/",
-              "description": "关注游戏掌机"
-            },
-            {
-              "title": "Polymarket Analytics",
-              "icon": "/assets/images/logos/polymarket.ico",
-              "url": "https://polymarketanalytics.com/",
-              "description": "Polymath 市场数据分析平台"
-            },
-            {
-              "title": "购车",
-              "icon": "/assets/images/logos/buycar.ico",
-              "url": "https://buycar.justgame.top/",
-              "description": "购车服务"
-            },
-            {
-              "title": "Project Nomad",
-              "icon": "/assets/images/logos/projectnomad.png",
-              "url": "https://www.projectnomad.us/",
-              "description": "离线媒体、档案和数据的节点——一个免费开源的离线服务器"
-            },
-            {
-              "title": "Swagbucks",
-              "icon": "/assets/images/logos/swagbucks.svg",
-              "url": "https://www.swagbucks.com/",
-              "description": "在线赚钱与返现奖励平台"
-            },
-            {
-              "title": "AiToEarn",
-              "icon": "/assets/images/logos/aitoearn.png",
-              "url": "https://aitoearn.cn/",
-              "description": "付费推广任务，用社交媒体赚钱"
-            }
-          ]
+          "title": "trimui",
+          "icon": "/assets/images/logos/trimui.png",
+          "url": "http://www.trimui.com/",
+          "description": "小白友好掌机"
         },
         {
-          "name": "效率办公",
-          "items": [
-            {
-              "title": "汉服",
-              "icon": "/assets/images/logos/han.svg",
-              "url": "https://han.justgame.top",
-              "description": "衣冠上国，三千年服饰"
-            },
-            {
-              "title": "爱词霸",
-              "icon": "/assets/images/logos/iciba.png",
-              "url": "https://www.iciba.com/",
-              "description": "爱词霸"
-            },
-            {
-              "title": "ProcessOn",
-              "icon": "/assets/images/logos/ProcessOn.png",
-              "url": "https://www.processon.com/i/5a658f5ce4b010a6e728faa9?full_name=%E6%9C%89%E7%82%B9%E6%97%A0%E8%81%8A",
-              "description": "免费在线作图、实时协作"
-            },
-            {
-              "title": "弟弟快看",
-              "icon": "/assets/images/logos/ddkk.png",
-              "url": "https://ddkk.com/",
-              "description": "程序员编程资料站"
-            },
-            {
-              "title": "有道云笔记",
-              "icon": "/assets/images/logos/youdao.png",
-              "url": "https://note.youdao.com/",
-              "description": "有道云笔记"
-            },
-            {
-              "title": "在线打开文件",
-              "icon": "/assets/images/logos/openfiles.jpg",
-              "url": "https://openfiles.online/",
-              "description": "各种文件打开"
-            },
-            {
-              "title": "MinerU",
-              "icon": "/assets/images/logos/mineru.png",
-              "url": "https://mineru.net/",
-              "description": "大模型文档神器"
-            },
-            {
-              "title": "wps",
-              "icon": "/assets/images/logos/wps.png",
-              "url": "https://www.kdocs.cn/",
-              "description": "在线文档"
-            },
-            {
-              "title": "Webminal",
-              "icon": "/assets/images/logos/webminal.png",
-              "url": "https://webminal.org/",
-              "description": "在线Linux终端和编程学习平台"
-            },
-            {
-              "title": "Metabase",
-              "icon": "/assets/images/logos/metabase.svg",
-              "url": "https://www.metabase.com/",
-              "description": "开源 BI 数据分析可视化工具"
-            },
-            {
-              "title": "gitcode",
-              "icon": "/assets/images/logos/gitcode.png",
-              "url": "https://gitcode.com/",
-              "description": "华为代码托管"
-            },
-            {
-              "title": "HamCQ.cn",
-              "icon": "/assets/images/logos/hamcq.png",
-              "url": "https://forum.hamcq.cn/",
-              "description": "HamCQ 业余无线电爱好者社区"
-            },
-            {
-              "title": "支付宝开放平台",
-              "icon": "/assets/images/logos/alipay.png",
-              "url": "https://open.alipay.com/",
-              "description": "支付宝开放平台，支付营销数据能力开放接口"
-            },
-            {
-              "title": "学法减分",
-              "icon": "/assets/images/logos/jianfen.png",
-              "url": "./jianfen/",
-              "description": "交管12123学法减分题库"
-            },
-            {
-              "title": "中小学智慧平台",
-              "icon": "/assets/images/logos/smartedu.png",
-              "url": "https://basic.smartedu.cn/",
-              "description": "国家级课程"
-            }
-          ]
+          "title": "onexplayer",
+          "icon": "/assets/images/logos/oneplayer.png",
+          "url": "http://www.onexplayer.com/",
+          "description": "最贵掌机"
+        },
+        {
+          "title": "ayaneo",
+          "icon": "/assets/images/logos/ayaneo.png",
+          "url": "https://ayaneo.com.cn/",
+          "description": "高端掌机"
+        },
+        {
+          "title": "掌机圈",
+          "icon": "/assets/images/logos/zhangjiquan.png",
+          "url": "https://zhangjiquan.com/",
+          "description": "关注游戏掌机"
         }
       ]
     },
@@ -1435,12 +1433,6 @@
           "icon": "/assets/images/logos/xlys01.png",
           "url": "https://xlys.me/",
           "description": "高清好看"
-        },
-        {
-          "title": "音乐解锁",
-          "icon": "/assets/images/logos/yinyuejiesuo.png",
-          "url": "https://www.yinyuejiesuo.com/",
-          "description": "在线免费转换"
         }
       ]
     },
