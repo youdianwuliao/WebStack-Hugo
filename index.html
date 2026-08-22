@@ -578,9 +578,10 @@
       container.innerHTML = quick + navData.navigation.map((cat, catIdx) => {
         let html = `<section class="category" id="cat-${catIdx}"><h2>${iconSvg(cat.sidebarIcon)} ${escapeHtml(cat.category)}</h2>`;
         
-        if (cat.items) {
+        if (cat.items && cat.items.length) {
           html += `<div class="site-grid">${cat.items.map(item => cardHtml(item)).join('')}</div>`;
-        } else if (cat.subcategories) {
+        }
+        if (cat.subcategories) {
           cat.subcategories.forEach((sub, subIdx) => {
             html += `<div class="subcategory" id="sub-${catIdx}-${subIdx}"><h3>${escapeHtml(sub.name)}</h3>`;
             html += `<div class="site-grid">${(sub.items || []).map(item => cardHtml(item)).join('')}</div></div>`;
