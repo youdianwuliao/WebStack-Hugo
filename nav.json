@@ -39,6 +39,12 @@
           "description": "时间戳互转、文本处理、正则测试、颜色转换、密码生成、进制转换",
           "icon": "/assets/images/logos/tools.svg",
           "url": "./tools/"
+        },
+        {
+          "title": "开发小工具",
+          "icon": "/assets/images/logos/dev.svg",
+          "url": "./dev/",
+          "description": "文本对比、统计去重、UUID、Cron、IP 计算、代码转图片、URL 编解码、JSON/CSV、文件哈希、速查表"
         }
       ]
     },

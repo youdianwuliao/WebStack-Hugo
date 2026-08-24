@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>开发小工具 - 文本对比 / 统计去重 / UUID / Cron / IP 计算 / 代码转图 / URL / JSON-CSV / 文件哈希 / 速查</title>
+<meta name="description" content="在线开发小工具：文本 Diff 对比、文本统计去重排序、UUID 批量生成、Cron 表达式解析与执行时间计算、IP/子网 CIDR 计算、代码转图片、URL 编解码、JSON/CSV 互转、本地文件哈希（MD5/SHA）、HTTP 状态码与常用端口速查。全部在浏览器本地运行，数据不上传。">
+<meta property="og:title" content="开发小工具">
+<meta property="og:description" content="文本对比、统计去重、UUID、Cron、IP 计算、代码转图、URL 编解码、JSON/CSV、文件哈希、速查表十合一在线工具，浏览器本地运行。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.justgame.top/dev/">
+<meta property="og:site_name" content="星汉灿烂">
+<meta name="theme-color" content="#4a90d9">
+<link rel="canonical" href="https://www.justgame.top/dev/">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/images/icon-192.png">
+<style>
+:root{
+  --bg1:#0b1020; --bg2:#141a33; --bg3:#0d1b2a;
+  --card:rgba(255,255,255,.055);
+  --card-border:rgba(255,255,255,.1);
+  --card-hover:rgba(255,255,255,.09);
+  --text:#e8ecf4; --muted:#9aa4c0; --faint:#6b7390;
+  --accent:#4a90d9; --accent2:#818cf8; --gold:#fbbf24;
+  --green:#34d399; --red:#f87171; --orange:#fb923c;
+  --grad:linear-gradient(135deg,#4a90d9,#818cf8);
+  --shadow:0 10px 40px rgba(0,0,0,.35);
+  --chip-bg:rgba(255,255,255,.06);
+  --chip-bg-active:linear-gradient(135deg,rgba(74,144,217,.2),rgba(129,140,248,.2));
+  --code-bg:#0e1526;
+}
+.light{
+  --bg1:#eef2fb; --bg2:#ffffff; --bg3:#e2e9f8;
+  --card:#ffffff; --card-border:#e2e8f0; --card-hover:#f1f5ff;
+  --text:#1e2a44; --muted:#5b6574; --faint:#8a93ab;
+  --chip-bg:#eef2fb;
+  --chip-bg-active:linear-gradient(135deg,#dbeafe,#e0e7ff);
+  --shadow:0 10px 30px rgba(30,58,95,.08);
+  --code-bg:#f6f8fa;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',monospace,sans-serif;
+  background:linear-gradient(160deg,var(--bg1),var(--bg2) 45%,var(--bg3));
+  color:var(--text);min-height:100vh;
+}
+.wrap{max-width:880px;margin:0 auto;padding:18px 16px 40px}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-logo{
+  width:44px;height:44px;border-radius:12px;background:var(--grad);
+  display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;font-weight:700;
+}
+.brand h1{font-size:18px;font-weight:700;line-height:1.25}
+.brand .sub{font-size:11px;color:var(--muted);margin-top:2px}
+.top-actions{display:flex;gap:8px}
+.icon-btn{
+  width:38px;height:38px;border-radius:10px;border:1px solid var(--card-border);
+  background:var(--card);color:var(--muted);font-size:16px;cursor:pointer;transition:.2s;
+}
+.icon-btn:hover{color:var(--text);border-color:var(--accent)}
+.tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.tab{
+  flex:1;min-width:120px;padding:11px 6px;border-radius:12px;border:1px solid var(--card-border);
+  background:var(--card);color:var(--muted);font-size:13px;cursor:pointer;transition:.2s;
+  text-align:center;font-weight:600;
+}
+.tab:hover{color:var(--text)}
+.tab.active{background:var(--chip-bg-active);color:var(--text);border-color:transparent;box-shadow:inset 0 0 0 1px rgba(74,144,217,.35)}
+.tab .ic{font-size:14px;margin-right:4px}
+.panel{display:none;animation:fadein .25s}
+.panel.active{display:block}
+@keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.card{
+  background:var(--card);border:1px solid var(--card-border);border-radius:16px;
+  padding:18px;margin-bottom:14px;box-shadow:var(--shadow);
+}
+.card-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.card-title h3{font-size:14px;font-weight:600}
+.card-title h3 .badge{font-size:11px;padding:2px 8px;border-radius:99px;background:var(--chip-bg);color:var(--faint);margin-left:6px;font-weight:400}
+.btn-group{display:flex;gap:8px;flex-wrap:wrap}
+.btn{
+  padding:8px 16px;border-radius:10px;border:1px solid var(--card-border);
+  background:var(--chip-bg);color:var(--muted);font-size:13px;cursor:pointer;transition:.2s;font-weight:500;
+}
+.btn:hover{color:var(--text);border-color:var(--accent);background:var(--card-hover)}
+.btn.primary{background:var(--grad);color:#fff;border-color:transparent}
+.btn.primary:hover{opacity:.88;color:#fff}
+.btn.green{background:linear-gradient(135deg,#10b981,#34d399);color:#fff;border-color:transparent}
+.btn.green:hover{opacity:.88;color:#fff}
+.btn.orange{background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#1e2a44;border-color:transparent}
+.btn.orange:hover{opacity:.88;color:#1e2a44}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.opts{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.opts label{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer}
+.opts input[type=number]{width:110px;padding:6px 8px;border-radius:8px;border:1px solid var(--card-border);background:var(--code-bg);color:var(--text);font-size:13px}
+.opts input[type=checkbox],.opts input[type=radio]{accent-color:var(--accent);width:15px;height:15px;cursor:pointer}
+.opts select{padding:7px 10px;border-radius:8px;border:1px solid var(--card-border);background:var(--code-bg);color:var(--text);font-size:13px}
+.opts input[type=range]{accent-color:var(--accent);flex:1;min-width:120px}
+.opts .range-val{font-size:12px;color:var(--accent);min-width:34px;text-align:right;font-weight:600}
+.inp{
+  width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--card-border);
+  background:var(--code-bg);color:var(--text);font-size:13px;outline:none;transition:.2s;font-family:inherit;
+}
+.inp:focus{border-color:var(--accent)}
+textarea.inp{min-height:120px;resize:vertical;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;line-height:1.6}
+.inp-row{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.inp-row label{font-size:13px;color:var(--muted);white-space:nowrap}
+.inp-row .inp{flex:1;min-width:200px}
+.status{display:flex;align-items:center;gap:8px;padding:11px 14px;border-radius:12px;font-size:13px;margin-top:12px;flex-wrap:wrap}
+.status.ok{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.4);color:var(--green)}
+.status.err{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.4);color:var(--red)}
+.status.info{background:rgba(74,144,217,.12);border:1px solid rgba(74,144,217,.4);color:var(--accent)}
+.status b{font-weight:700}
+.result-list{list-style:none;margin-top:10px;max-height:260px;overflow:auto;border:1px solid var(--card-border);border-radius:10px}
+.result-list li{padding:8px 12px;font-size:12px;border-bottom:1px solid var(--card-border);display:flex;gap:10px;align-items:baseline;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.result-list li:last-child{border-bottom:none}
+.result-list .idx{color:var(--faint);flex-shrink:0;font-size:11px}
+.result-list .txt{color:var(--text);word-break:break-all;flex:1}
+.result-list .pos{color:var(--accent);font-size:11px;flex-shrink:0}
+.kv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:12px}
+.kv-item{background:var(--code-bg);border:1px solid var(--card-border);border-radius:10px;padding:12px;cursor:pointer;transition:.15s}
+.kv-item:hover{border-color:var(--accent)}
+.kv-item .k{font-size:11px;color:var(--faint);margin-bottom:6px}
+.kv-item .v{font-size:14px;font-weight:600;color:var(--text);word-break:break-all;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.toast{
+  position:fixed;left:50%;bottom:80px;transform:translateX(-50%);
+  background:rgba(30,58,95,.92);color:#fff;padding:9px 20px;border-radius:999px;
+  font-size:13px;z-index:999;box-shadow:0 6px 20px rgba(0,0,0,.2);
+  opacity:0;transition:opacity .3s;pointer-events:none;
+}
+.footer{text-align:center;font-size:11px;color:var(--faint);margin-top:24px}
+.footer a{color:var(--accent);text-decoration:none}
+/* diff */
+.diff-box{margin-top:12px;border:1px solid var(--card-border);border-radius:10px;overflow:auto;max-height:420px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;line-height:1.7}
+.diff-box .dl{display:flex}
+.diff-box .dln{width:44px;flex-shrink:0;color:var(--faint);text-align:right;padding:0 8px;background:rgba(255,255,255,.02);user-select:none}
+.diff-box .dtxt{padding:0 10px;white-space:pre;word-break:break-all;flex:1}
+.diff-box .add{background:rgba(16,185,129,.13)}
+.diff-box .add .dtxt{color:var(--green)}
+.diff-box .del{background:rgba(239,68,68,.12)}
+.diff-box .del .dtxt{color:var(--red)}
+.diff-box .same{color:var(--muted)}
+.diff-box .info-row{padding:6px 10px;color:var(--faint);font-size:11px;background:rgba(74,144,217,.07)}
+/* cron */
+.cron-sample{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.cron-sample .btn{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px}
+.next-list li{display:block;padding:9px 12px}
+.next-list li .pos{float:right}
+/* codeimg */
+.codeimg-prev{margin-top:12px;text-align:center}
+.codeimg-prev img{max-width:100%;border:1px solid var(--card-border);border-radius:12px}
+/* drop */
+.drop-zone{
+  border:2px dashed var(--card-border);border-radius:12px;padding:26px 16px;text-align:center;
+  color:var(--muted);font-size:13px;cursor:pointer;transition:.2s;margin-bottom:12px;
+}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--accent);background:rgba(74,144,217,.06)}
+.drop-zone b{color:var(--text)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-logo">&lt;/&gt;</div>
+      <div>
+        <h1>开发小工具</h1>
+        <div class="sub">文本对比 · 统计去重 · UUID · Cron · IP · 代码转图 · URL · JSON/CSV · 哈希 · 速查</div>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button class="icon-btn" onclick="window.open('../','_self')" title="返回导航">↩</button>
+      <button class="icon-btn" onclick="toggleTheme()" title="切换主题">◐</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="diff" onclick="switchTab('diff')"><span class="ic">⇄</span>文本对比</button>
+    <button class="tab" data-tab="stat" onclick="switchTab('stat')"><span class="ic">≡</span>统计去重</button>
+    <button class="tab" data-tab="uuid" onclick="switchTab('uuid')"><span class="ic">UUID</span>UUID</button>
+    <button class="tab" data-tab="cron" onclick="switchTab('cron')"><span class="ic">⏱</span>Cron</button>
+    <button class="tab" data-tab="ip" onclick="switchTab('ip')"><span class="ic">IP</span>IP 计算</button>
+    <button class="tab" data-tab="codeimg" onclick="switchTab('codeimg')"><span class="ic">▦</span>代码转图</button>
+    <button class="tab" data-tab="url" onclick="switchTab('url')"><span class="ic">URL</span>URL 编解码</button>
+    <button class="tab" data-tab="csv" onclick="switchTab('csv')"><span class="ic">⇵</span>JSON/CSV</button>
+    <button class="tab" data-tab="hash" onclick="switchTab('hash')"><span class="ic">#</span>文件哈希</button>
+    <button class="tab" data-tab="ref" onclick="switchTab('ref')"><span class="ic">⌕</span>速查表</button>
+  </div>
+
+  <!-- 文本对比 -->
+  <div class="panel active" id="panel-diff">
+    <div class="card">
+      <div class="card-title"><h3>文本对比（按行）</h3><span class="badge">高亮差异</span></div>
+      <div class="inp-row" style="gap:10px">
+        <div style="flex:1;min-width:240px">
+          <label>原文 A</label>
+          <textarea class="inp" id="diffA" placeholder="粘贴原文…" style="min-height:160px"></textarea>
+        </div>
+        <div style="flex:1;min-width:240px">
+          <label>对比 B</label>
+          <textarea class="inp" id="diffB" placeholder="粘贴对比文本…" style="min-height:160px"></textarea>
+        </div>
+      </div>
+      <div class="opts">
+        <button class="btn primary" onclick="diffRun()">对比</button>
+        <button class="btn" onclick="clearInp('diffA');clearInp('diffB')">清空</button>
+      </div>
+      <div class="diff-box" id="diffOut" style="display:none"></div>
+      <div class="status info" id="diffMsg" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- 统计去重 -->
+  <div class="panel" id="panel-stat">
+    <div class="card">
+      <div class="card-title"><h3>文本统计与处理</h3><span class="range-val" id="statInfo" style="min-width:auto">0 字符</span></div>
+      <textarea class="inp" id="statInput" placeholder="在此输入或粘贴文本…" style="min-height:160px"></textarea>
+      <div class="opts">
+        <button class="btn primary" onclick="statSort('asc')">排序（升）</button>
+        <button class="btn" onclick="statSort('desc')">排序（降）</button>
+        <button class="btn green" onclick="statDedup()">去重（保留顺序）</button>
+        <button class="btn orange" onclick="statBlank()">去除空白行</button>
+        <button class="btn" onclick="statTrim()">行首尾去空格</button>
+        <button class="btn" onclick="statReverse()">行序反转</button>
+      </div>
+      <textarea class="inp" id="statOutput" placeholder="处理结果…" readonly style="min-height:140px;margin-top:10px"></textarea>
+    </div>
+  </div>
+
+  <!-- UUID -->
+  <div class="panel" id="panel-uuid">
+    <div class="card">
+      <div class="card-title"><h3>UUID 生成器</h3><span class="badge">点击任意 UUID 复制</span></div>
+      <div class="inp-row">
+        <label>生成数量</label>
+        <input class="inp" type="number" id="uuidCount" value="5" min="1" max="100" style="width:120px">
+        <label style="margin-left:12px"><input type="checkbox" id="uuidUpper" style="margin-right:4px">大写</label>
+        <label><input type="checkbox" id="uuidNoDash" style="margin-right:4px">去除连字符</label>
+      </div>
+      <div class="opts">
+        <button class="btn primary" onclick="uuidGen()">生成</button>
+      </div>
+      <ul class="result-list" id="uuidOut"></ul>
+    </div>
+  </div>
+
+  <!-- Cron -->
+  <div class="panel" id="panel-cron">
+    <div class="card">
+      <div class="card-title"><h3>Cron 表达式解析</h3><span class="badge">分 时 日 月 周</span></div>
+      <div class="inp-row">
+        <input class="inp" id="cronExpr" placeholder="例如 */5 * * * *  或  0 3 * * 1" style="font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">
+      </div>
+      <div class="cron-sample">
+        <span style="font-size:12px;color:var(--muted);align-self:center">常用模板：</span>
+        <button class="btn" onclick="cronFill('*/5 * * * *')">每 5 分钟</button>
+        <button class="btn" onclick="cronFill('0 * * * *')">每小时</button>
+        <button class="btn" onclick="cronFill('0 3 * * *')">每天 03:00</button>
+        <button class="btn" onclick="cronFill('0 9 * * 1-5')">工作日 09:00</button>
+        <button class="btn" onclick="cronFill('0 0 1 * *')">每月 1 日</button>
+      </div>
+      <div class="opts">
+        <button class="btn primary" onclick="cronRun()">解析并计算</button>
+      </div>
+      <div class="status info" id="cronDesc" style="display:none"></div>
+      <ul class="result-list next-list" id="cronNext"></ul>
+      <div class="status err" id="cronErr" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- IP 计算 -->
+  <div class="panel" id="panel-ip">
+    <div class="card">
+      <div class="card-title"><h3>IP / 子网计算（CIDR）</h3></div>
+      <div class="inp-row">
+        <input class="inp" id="ipInput" placeholder="192.168.1.5/24  或  192.168.1.5" style="font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">
+        <input class="inp" type="number" id="ipPrefix" placeholder="前缀 0-32" min="0" max="32" style="width:130px">
+      </div>
+      <div class="opts">
+        <button class="btn primary" onclick="ipCalc()">计算</button>
+      </div>
+      <div class="kv-grid" id="ipOut" style="display:none"></div>
+      <div class="status err" id="ipErr" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- 代码转图片 -->
+  <div class="panel" id="panel-codeimg">
+    <div class="card">
+      <div class="card-title"><h3>代码转图片</h3><span class="badge">Canvas 本地绘制</span></div>
+      <textarea class="inp" id="codeSrc" placeholder="粘贴代码…" style="min-height:160px"></textarea>
+      <div class="opts">
+        <label>标题</label>
+        <input class="inp" id="codeTitle" placeholder="代码片段" style="width:160px">
+        <label>字体大小</label>
+        <input class="inp" type="number" id="codeFontSize" value="14" min="10" max="28" style="width:90px">
+        <label>圆角</label>
+        <input class="inp" type="number" id="codeRadius" value="16" min="0" max="60" style="width:80px">
+      </div>
+      <div class="opts">
+        <label>背景</label>
+        <select id="codeTheme">
+          <option value="d">午夜蓝（默认）</option>
+          <option value="g">森林绿</option>
+          <option value="p">暗紫</option>
+          <option value="c">碳灰</option>
+          <option value="l">明亮（浅色）</option>
+        </select>
+        <button class="btn primary" onclick="codeImgGen()">生成图片</button>
+      </div>
+      <div class="codeimg-prev" id="codeImgOut"></div>
+    </div>
+  </div>
+
+  <!-- URL 编解码 -->
+  <div class="panel" id="panel-url">
+    <div class="card">
+      <div class="card-title"><h3>URL 编解码</h3></div>
+      <textarea class="inp" id="urlInput" placeholder="输入要编码/解码的内容…"></textarea>
+      <div class="opts">
+        <button class="btn primary" onclick="urlEncode()">encodeURIComponent</button>
+        <button class="btn" onclick="urlDecode()">decodeURIComponent</button>
+        <button class="btn" onclick="urlEncodeFull()">encodeURI</button>
+        <button class="btn" onclick="urlDecodeFull()">decodeURI</button>
+      </div>
+      <textarea class="inp" id="urlOutput" placeholder="结果…" readonly style="min-height:120px;margin-top:10px"></textarea>
+      <div class="status err" id="urlErr" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- JSON/CSV -->
+  <div class="panel" id="panel-csv">
+    <div class="card">
+      <div class="card-title"><h3>JSON ⇄ CSV</h3></div>
+      <textarea class="inp" id="csvInput" placeholder='JSON 数组对象，例如：
+[{"name":"张三","age":20},{"name":"李四","age":30}]
+
+或 CSV（首行为表头）：
+name,age
+张三,20' style="min-height:170px"></textarea>
+      <div class="opts">
+        <button class="btn primary" onclick="csvToJson()">CSV → JSON</button>
+        <button class="btn" onclick="jsonToCsv()">JSON → CSV</button>
+      </div>
+      <textarea class="inp" id="csvOutput" placeholder="结果…" readonly style="min-height:170px;margin-top:10px"></textarea>
+      <div class="status err" id="csvErr" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- 文件哈希 -->
+  <div class="panel" id="panel-hash">
+    <div class="card">
+      <div class="card-title"><h3>文件哈希</h3><span class="badge">本地计算</span></div>
+      <div class="drop-zone" id="hashDrop">点击选择文件，或将文件拖拽到此处<br><b>支持任意文件</b>，仅在本地计算，不会上传</div>
+      <input type="file" id="hashFile" style="display:none">
+      <div class="status info" id="hashFileInfo" style="display:none"></div>
+      <div class="kv-grid" id="hashOut" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- 速查表 -->
+  <div class="panel" id="panel-ref">
+    <div class="card">
+      <div class="card-title"><h3>HTTP 状态码 / 常用端口</h3></div>
+      <div class="inp-row">
+        <input class="inp" id="refSearch" placeholder="输入关键词过滤，如 404、bad、redis、mysql…">
+      </div>
+      <div class="opts">
+        <button class="btn primary" onclick="refShow('http')">状态码</button>
+        <button class="btn" onclick="refShow('port')">常用端口</button>
+      </div>
+      <ul class="result-list" id="refOut" style="max-height:400px"></ul>
+    </div>
+  </div>
+
+  <div class="footer"><a href="../">星汉灿烂</a> · 开发小工具 · 全部在浏览器本地运行</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  var toastTimer=null;
+  window.toast=function(msg){
+    var t=document.getElementById('toast');
+    t.textContent=msg;t.style.opacity='1';
+    clearTimeout(toastTimer);
+    toastTimer=setTimeout(function(){t.style.opacity='0'},2000);
+  };
+  window.toggleTheme=function(){
+    document.body.classList.toggle('light');
+    try{localStorage.setItem('dev-theme',document.body.classList.contains('light')?'light':'dark')}catch(e){}
+  };
+  try{
+    if(localStorage.getItem('dev-theme')==='light')document.body.classList.add('light');
+  }catch(e){}
+  window.copyText=function(txt){
+    function done(){toast('已复制：'+txt.slice(0,24))}
+    if(navigator.clipboard&&window.isSecureContext){
+      navigator.clipboard.writeText(txt).then(done,function(){fallbackCopy(txt);done()});
+    }else{fallbackCopy(txt);done()}
+  };
+  function fallbackCopy(txt){
+    var ta=document.createElement('textarea');
+    ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();
+    try{document.execCommand('copy')}catch(e){}
+    document.body.removeChild(ta);
+  }
+  function copyVal(id){
+    var el=document.getElementById(id);
+    if(el&&el.textContent&&el.textContent!=='-')copyText(el.textContent);
+  }
+  window.copyVal=copyVal;
+  function copyOut(id){
+    var el=document.getElementById(id);
+    if(el&&el.value)copyText(el.value);else toast('暂无内容可复制');
+  }
+  window.copyOut=copyOut;
+  function clearInp(id){
+    document.getElementById(id).value='';
+    toast('已清空');
+  }
+  window.clearInp=clearInp;
+  function addKv(box,label,val){
+    var el=document.createElement('div');
+    el.className='kv-item';
+    el.innerHTML='<div class="k"></div><div class="v"></div>';
+    el.querySelector('.k').textContent=label;
+    el.querySelector('.v').textContent=val;
+    el.addEventListener('click',function(){copyText(val)});
+    box.appendChild(el);
+  }
+  function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+  window.switchTab=function(name){
+    document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('active',t.dataset.tab===name)});
+    document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('active',p.id==='panel-'+name)});
+    if(name==='stat')statInfo();
+  };
+
+  /* ===== 文本对比 ===== */
+  window.diffRun=function(){
+    var a=document.getElementById('diffA').value.replace(/\r\n/g,'\n').split('\n');
+    var b=document.getElementById('diffB').value.replace(/\r\n/g,'\n').split('\n');
+    var box=document.getElementById('diffOut');
+    var msg=document.getElementById('diffMsg');
+    if(a.length+b.length>2000){toast('行数过多，请分段对比');return}
+    if(!document.getElementById('diffA').value&&!document.getElementById('diffB').value){toast('请输入待对比文本');return}
+    var result=lcsDiff(a,b);
+    var add=0,del=0,same=0;
+    result.forEach(function(r){
+      if(r.op==='add')add++;else if(r.op==='del')del++;else same++;
+    });
+    var html='';
+    result.forEach(function(r){
+      if(r.op==='add'){
+        html+='<div class="dl add"><div class="dln">+'+r.nb+'</div><div class="dtxt">'+esc(r.text)+'</div></div>';
+      }else if(r.op==='del'){
+        html+='<div class="dl del"><div class="dln">-'+r.na+'</div><div class="dtxt">'+esc(r.text)+'</div></div>';
+      }else{
+        html+='<div class="dl same"><div class="dln">'+r.na+'</div><div class="dtxt">'+esc(r.text)+'</div></div>';
+      }
+    });
+    box.innerHTML='<div class="info-row">新增 '+add+' · 删除 '+del+' · 相同 '+same+' 行</div>'+html;
+    box.style.display='block';
+    msg.style.display='block';
+    msg.className='status info';
+    msg.innerHTML='<b>提示：</b>绿色为 B 中新增，红色为 A 中删除，灰色为相同行';
+  };
+  function lcsDiff(a,b){
+    var n=a.length,m=b.length;
+    var dp=[];
+    for(var i=0;i<=n;i++){dp[i]=new Array(m+1).fill(0)}
+    for(i=n-1;i>=0;i--){
+      for(var j=m-1;j>=0;j--){
+        dp[i][j]=a[i]===b[j]?dp[i+1][j+1]+1:Math.max(dp[i+1][j],dp[i][j+1]);
+      }
+    }
+    var out=[];i=0;j=0;
+    while(i<n&&j<m){
+      if(a[i]===b[j]){out.push({op:'same',text:a[i],na:i+1});i++;j++}
+      else if(dp[i+1][j]>=dp[i][j+1]){out.push({op:'del',text:a[i],na:i+1});i++}
+      else{out.push({op:'add',text:b[j],nb:j+1});j++}
+    }
+    while(i<n){out.push({op:'del',text:a[i],na:i+1});i++}
+    while(j<m){out.push({op:'add',text:b[j],nb:j+1});j++}
+    return out;
+  }
+  function esc(s){
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  /* ===== 统计去重 ===== */
+  function statInput(){return document.getElementById('statInput')}
+  function statOutput(){return document.getElementById('statOutput')}
+  window.statInfo=function(){
+    var v=statInput().value;
+    var noWs=v.replace(/\s/g,'');
+    var lines=v?((v.endsWith('\n')?v.slice(0,-1):v).split('\n')).length:0;
+    var info='';
+    if(v)info=v.length+' 字符 · '+noWs.length+' 非空白 · '+lines+' 行';
+    else info='0 字符';
+    document.getElementById('statInfo').textContent=info;
+  };
+  statInput().addEventListener('input',statInfo);
+  window.statSort=function(dir){
+    var lines=statInput().value.split('\n');
+    lines.sort(function(x,y){return dir==='asc'?(x>y?1:x<y?-1:0):(x<y?1:x>y?-1:0)});
+    statOutput().value=lines.join('\n');
+  };
+  window.statDedup=function(){
+    var seen={},out=[];
+    statInput().value.split('\n').forEach(function(l){if(!seen[l]){seen[l]=1;out.push(l)}});
+    statOutput().value=out.join('\n');
+    toast('去重完成');
+  };
+  window.statBlank=function(){
+    statOutput().value=statInput().value.split('\n').filter(function(l){return l.trim()!==''}).join('\n');
+    toast('已去除空白行');
+  };
+  window.statTrim=function(){
+    statOutput().value=statInput().value.split('\n').map(function(l){return l.trim()}).join('\n');
+    toast('已去除行首尾空格');
+  };
+  window.statReverse=function(){
+    statOutput().value=statInput().value.split('\n').reverse().join('\n');
+    toast('已反转行序');
+  };
+
+  /* ===== UUID ===== */
+  function uuidGenOne(){
+    var s='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
+    return s.replace(/[xy]/g,function(c){
+      var r=Math.random()*16|0;
+      var v=c==='x'?r:(r&0x3|0x8);
+      return v.toString(16);
+    });
+  }
+  window.uuidGen=function(){
+    var count=parseInt(document.getElementById('uuidCount').value)||5;
+    count=clamp(count,1,100);
+    var upper=document.getElementById('uuidUpper').checked;
+    var noDash=document.getElementById('uuidNoDash').checked;
+    var out=document.getElementById('uuidOut');
+    out.innerHTML='';
+    var list=[];
+    for(var i=0;i<count;i++){
+      (function(v){
+        var li=document.createElement('li');
+        var idx=document.createElement('span');idx.className='idx';idx.textContent=(i+1);
+        var txt=document.createElement('span');txt.className='txt';txt.textContent=v;
+        li.appendChild(idx);li.appendChild(txt);
+        li.addEventListener('click',function(){copyText(v)});
+        out.appendChild(li);
+        list.push(v);
+      })(formatUuid(uuidGenOne(),upper,noDash));
+    }
+    var li=document.createElement('li');
+    li.style.cssText='justify-content:center;color:var(--accent);cursor:pointer';
+    li.textContent='复制全部 ('+count+')';
+    li.addEventListener('click',function(){copyText(list.join('\n'))});
+    out.appendChild(li);
+  };
+  function formatUuid(s,upper,noDash){
+    s=upper?s.toUpperCase():s;
+    return noDash?s.replace(/-/g,''):s;
+  }
+
+  /* ===== Cron ===== */
+  window.cronFill=function(expr){
+    document.getElementById('cronExpr').value=expr;
+    cronRun();
+  };
+  function parseField(field,min,max){
+    var allowed={};
+    function addRange(a,b){
+      a=clamp(a,min,max);b=clamp(b,min,max);
+      if(a>b){var t=a;a=b;b=t}
+      for(var i=a;i<=b;i++)allowed[i]=1;
+    }
+    var parts=field.split(',');
+    if(parts.some(function(p){return p.trim()===''}))return null;
+    parts.forEach(function(p){
+      var stepMatch=p.match(/^\*?\/(\d+)$/);
+      if(p==='*'){addRange(min,max);return}
+      if(stepMatch){
+        var st=parseInt(stepMatch[1],10);
+        if(st<1)return;
+        for(var i=min;i<=max;i+=st)allowed[i]=1;
+        return;
+      }
+      var rangeMatch=p.match(/^(\d+|\*)(?:-(\d+))?(?:\/(\d+))?$/);
+      if(!rangeMatch)return;
+      var from=rangeMatch[1]==='*'?min:parseInt(rangeMatch[1],10);
+      var to=rangeMatch[2]?parseInt(rangeMatch[2],10):from;
+      var step=rangeMatch[3]?parseInt(rangeMatch[3],10):1;
+      if(step<1)return;
+      for(var i=from;i<=to;i+=step)allowed[i]=1;
+    });
+    if(Object.keys(allowed).length===0)return null;
+    return allowed;
+  }
+  function fieldDesc(field,min,max,name,hasStar){
+    if(field['*'])return hasStar?'':'';
+    var keys=Object.keys(field).map(Number).sort(function(a,b){return a-b});
+    if(keys.length===(max-min+1))return '';
+    return ' '+name+'='+keys.join(',');
+  }
+  window.cronRun=function(){
+    var raw=document.getElementById('cronExpr').value.trim().split(/\s+/);
+    var desc=document.getElementById('cronDesc');
+    var nextBox=document.getElementById('cronNext');
+    var err=document.getElementById('cronErr');
+    desc.style.display='none';nextBox.style.display='none';nextBox.innerHTML='';err.style.display='none';
+    if(raw.length!==5){err.textContent='需要 5 个字段：分 时 日 月 周（例如 */5 * * * *）';err.style.display='block';return}
+    var f={
+      min:parseField(raw[0],0,59),
+      hour:parseField(raw[1],0,23),
+      dom:parseField(raw[2],1,31),
+      mon:parseField(raw[3],1,12),
+      dow:parseField(raw[4],0,7)
+    };
+    for(var k in f){
+      if(!f[k]){err.textContent='第 '+[1,2,3,4,5][['min','hour','dom','mon','dow'].indexOf(k)]+' 个字段格式无效';err.style.display='block';return}
+    }
+    function matches(d){
+      var m=d.getMonth()+1,date=d.getDate(),day=d.getDay();
+      var w=day===0?7:day;
+      var okDow=f.dow[day]||f.dow[7];
+      if(!okDow)return false;
+      var domOk=f.dom[date]||(f.dom['L']===1);
+      var dowStar=Object.keys(f.dow).length===8;
+      var domStar=Object.keys(f.dom).length===31;
+      if(!domStar&&!dowStar){
+        return f.mon[m]&&f.dom[date]&&okDow;
+      }
+      if(domStar&&dowStar){return f.mon[m]}
+      if(domStar){return f.mon[m]&&okDow}
+      return f.mon[m]&&f.dom[date];
+    }
+    var d=new Date();
+    d.setSeconds(0,0);
+    d.setMinutes(d.getMinutes()+1);
+    var found=[];
+    var steps=0;
+    while(found.length<5&&steps<2000000){
+      if(f.min[d.getMinutes()]&&f.hour[d.getHours()]&&matches(d)){
+        found.push(new Date(d));
+      }
+      d.setMinutes(d.getMinutes()+1);
+      steps++;
+    }
+    var parts=raw.map(function(x){return x==='*'?'*':x}).join(' ');
+    desc.innerHTML='<b>表达式：</b><code>'+esc(parts)+'</code> · <b>接下来 5 次执行：</b>';
+    desc.style.display='block';
+    if(!found.length){
+      nextBox.innerHTML='<li style="display:block">在可计算范围内无匹配（可能年月字段范围过宽）</li>';
+    }else{
+      var html='';
+      found.forEach(function(dt,i){
+        html+='<li><span class="pos">'+(i+1)+'</span><span class="txt">'+fmtDateTime(dt)+'</span></li>';
+      });
+      nextBox.innerHTML=html;
+    }
+    nextBox.style.display='block';
+  };
+  function pad(n){return n<10?'0'+n:''+n}
+  function fmtDateTime(d){
+    var wd=['周日','周一','周二','周三','周四','周五','周六'][d.getDay()];
+    return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes())+':00 '+wd;
+  }
+
+  /* ===== IP 计算 ===== */
+  window.ipCalc=function(){
+    var raw=document.getElementById('ipInput').value.trim();
+    var out=document.getElementById('ipOut');
+    var err=document.getElementById('ipErr');
+    out.style.display='none';out.innerHTML='';err.style.display='none';
+    var m=raw.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})(?:\/(\d{1,2}))?$/);
+    if(!m){err.textContent='IP 格式无效，例如 192.168.1.5/24';err.style.display='block';return}
+    var octs=[+m[1],+m[2],+m[3],+m[4]];
+    if(octs.some(function(o){return o>255})){err.textContent='IP 字段不能大于 255';err.style.display='block';return}
+    var prefixRaw=document.getElementById('ipPrefix').value.trim();
+    var prefix;
+    if(m[5]){prefix=parseInt(m[5],10)}
+    else if(prefixRaw!==''){prefix=parseInt(prefixRaw,10)}
+    else{prefix=24}
+    if(isNaN(prefix)||prefix<0||prefix>32){err.textContent='子网前缀需在 0-32 之间';err.style.display='block';return}
+    var ip=0;
+    for(var i=0;i<4;i++)ip=(ip<<8)|octs[i];
+    var mask=prefix===0?0:(0xffffffff<<(32-prefix))>>>0;
+    var net=(ip&mask)>>>0;
+    var bc=(net|(~mask))>>>0;
+    var hostCount=prefix>=31?0:Math.pow(2,32-prefix)-2;
+    function fmtIp(n){
+      return [(n>>>24)&255,(n>>>16)&255,(n>>>8)&255,n&255].join('.');
+    }
+    function fmtBin(n){
+      return ('00000000000000000000000000000000'+n.toString(2)).slice(-32).replace(/(\d{8})(?=\d)/g,'$1.');
+    }
+    addKv(out,'IP 地址',raw.split('/')[0]);
+    addKv(out,'子网前缀','/'+prefix);
+    addKv(out,'子网掩码',fmtIp(mask));
+    addKv(out,'网络地址',fmtIp(net)+'/'+prefix);
+    addKv(out,'广播地址',fmtIp(bc));
+    addKv(out,'可用主机数',hostCount.toLocaleString());
+    if(prefix<31){
+      addKv(out,'主机范围',fmtIp((net+1)>>>0)+' ~ '+fmtIp((bc-1)>>>0));
+    }
+    addKv(out,'IP 二进制',fmtBin(ip));
+    addKv(out,'掩码二进制',fmtBin(mask));
+    out.style.display='grid';
+  };
+
+  /* ===== 代码转图片 ===== */
+  var CODE_THEMES={
+    d:{bg1:'#0b1020',bg2:'#141a33',text:'#d8e1f0',line:'#2a3350',title:'#7d8cb8'},
+    g:{bg1:'#0a1f18',bg2:'#0e2b21',text:'#cdeeda',line:'#1e4036',title:'#5d9c80'},
+    p:{bg1:'#17101f',bg2:'#221730',text:'#e4d8f0',line:'#3a2a4f',title:'#8f7ab5'},
+    c:{bg1:'#111318',bg2:'#181b22',text:'#d5d9e0',line:'#2b2f38',title:'#78808f'},
+    l:{bg1:'#f7f8fb',bg2:'#ffffff',text:'#243044',line:'#e3e8f0',title:'#64748b'}
+  };
+  window.codeImgGen=function(){
+    var src=document.getElementById('codeSrc').value.replace(/\n+$/,'');
+    if(!src){toast('请先粘贴代码');return}
+    var title=document.getElementById('codeTitle').value||'代码片段';
+    var fontSize=parseInt(document.getElementById('codeFontSize').value)||14;
+    var radius=parseInt(document.getElementById('codeRadius').value)||16;
+    var theme=CODE_THEMES[document.getElementById('codeTheme').value]||CODE_THEMES.d;
+    var lines=src.split('\n');
+    var font=fontSize+'px Menlo,Consolas,ui-monospace,monospace';
+    var cv=document.createElement('canvas');
+    var ctx=cv.getContext('2d');
+    ctx.font=font;
+    var charW=ctx.measureText('0').width;
+    var maxLen=Math.max.apply(null,lines.map(function(l){return l.length}))||1;
+    var pad=28,gutter=44,titleH=title?48:0,lineH=Math.ceil(fontSize*1.6);
+    var w=Math.max(420,pad*2+gutter+maxLen*charW+16);
+    var h=pad*2+titleH+lines.length*lineH+18;
+    cv.width=w;cv.height=h;
+    ctx.fillStyle='#000';ctx.fillRect(0,0,w,h);
+    var g=ctx.createLinearGradient(0,0,w,h);
+    g.addColorStop(0,theme.bg1);g.addColorStop(1,theme.bg2);
+    ctx.fillStyle=g;
+    roundRect(ctx,0,0,w,h,radius);
+    ctx.fill();
+    if(titleH){
+      ctx.font='600 '+Math.round(fontSize*0.95)+'px Menlo,Consolas,monospace';
+      ctx.fillStyle=theme.title;
+      ctx.fillText(title,pad,pad+Math.round(fontSize*0.9));
+      ctx.beginPath();
+      ctx.strokeStyle=theme.line;ctx.lineWidth=1;
+      ctx.moveTo(pad,pad+titleH-14);ctx.lineTo(w-pad,pad+titleH-14);
+      ctx.stroke();
+    }
+    var ty=pad+titleH+Math.round(lineH*0.78);
+    lines.forEach(function(l,idx){
+      ctx.font=font;
+      ctx.fillStyle=theme.title;
+      ctx.textAlign='right';
+      ctx.fillText(String(idx+1),pad+gutter-12,ty);
+      ctx.textAlign='left';
+      ctx.fillStyle=theme.text;
+      ctx.fillText(l,pad+gutter,ty);
+      ty+=lineH;
+    });
+    var url=cv.toDataURL('image/png');
+    var out=document.getElementById('codeImgOut');
+    out.innerHTML='';
+    var img=document.createElement('img');
+    img.src=url;
+    img.alt='代码图片';
+    out.appendChild(img);
+    var bar=document.createElement('div');
+    bar.style.cssText='margin-top:10px;display:flex;gap:8px;justify-content:center';
+    var dl=document.createElement('button');
+    dl.className='btn primary';dl.textContent='下载 PNG';
+    dl.onclick=function(){
+      var a=document.createElement('a');
+      a.href=url;a.download=(title||'code')+'.png';
+      document.body.appendChild(a);a.click();document.body.removeChild(a);
+    };
+    var cp=document.createElement('button');
+    cp.className='btn';cp.textContent='复制图片';
+    cp.onclick=function(){
+      cv.toBlob(function(blob){
+        if(blob&&navigator.clipboard&&navigator.clipboard.write){
+          navigator.clipboard.write([new ClipboardItem({'image/png':blob})]).then(function(){toast('已复制图片')},function(){toast('复制失败')});
+        }else{toast('当前浏览器不支持复制图片')}
+      });
+    };
+    bar.appendChild(dl);bar.appendChild(cp);
+    out.appendChild(bar);
+  };
+  function roundRect(ctx,x,y,w,h,r){
+    r=Math.min(r,w/2,h/2);
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r);
+    ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r);
+    ctx.arcTo(x,y,x+w,y,r);
+    ctx.closePath();
+  }
+
+  /* ===== URL 编解码 ===== */
+  function urlDo(fn,name,isDecode){
+    var v=document.getElementById('urlInput').value;
+    var out=document.getElementById('urlOutput');
+    var err=document.getElementById('urlErr');
+    err.style.display='none';
+    if(!v){toast('请输入内容');return}
+    try{
+      out.value=fn(v);
+    }catch(e){
+      err.textContent=name+' 失败：'+(isDecode?'编码内容包含非法序列（% 需为有效转义）':'编码出错');
+      err.style.display='block';
+    }
+  }
+  window.urlEncode=function(){urlDo(function(v){return encodeURIComponent(v)},'encodeURIComponent',false)};
+  window.urlDecode=function(){urlDo(function(v){return decodeURIComponent(v)},'decodeURIComponent',true)};
+  window.urlEncodeFull=function(){urlDo(function(v){return encodeURI(v)},'encodeURI',false)};
+  window.urlDecodeFull=function(){urlDo(function(v){return decodeURI(v)},'decodeURI',true)};
+
+  /* ===== JSON/CSV ===== */
+  window.csvToJson=function(){
+    var raw=document.getElementById('csvInput').value;
+    var out=document.getElementById('csvOutput');
+    var err=document.getElementById('csvErr');
+    err.style.display='none';
+    if(!raw.trim()){toast('请输入 CSV');return}
+    try{
+      var rows=parseCsv(raw);
+      if(rows.length<2){throw new Error('至少需要表头 + 一行数据')}
+      var keys=rows[0];
+      var arr=rows.slice(1).map(function(r){
+        var o={};
+        keys.forEach(function(k,i){o[k]=(r[i]!==undefined?r[i]:'')});
+        return o;
+      });
+      out.value=JSON.stringify(arr,null,2);
+    }catch(e){
+      err.textContent='CSV 解析失败：'+e.message;
+      err.style.display='block';
+    }
+  };
+  function parseCsv(text){
+    var rows=[],row=[],field='',inQ=false;
+    for(var i=0;i<text.length;i++){
+      var c=text[i];
+      if(inQ){
+        if(c==='"'){
+          if(text[i+1]==='"'){field+='"';i++}
+          else inQ=false;
+        }else{field+=c}
+      }else{
+        if(c==='"'){inQ=true}
+        else if(c===','){row.push(field);field=''}
+        else if(c==='\n'){row.push(field);rows.push(row);row=[];field=''}
+        else if(c==='\r'){}
+        else{field+=c}
+      }
+    }
+    if(field!==''||row.length){row.push(field);rows.push(row)}
+    return rows.filter(function(r){return r.some(function(x){return x!==''})});
+  }
+  window.jsonToCsv=function(){
+    var raw=document.getElementById('csvInput').value;
+    var out=document.getElementById('csvOutput');
+    var err=document.getElementById('csvErr');
+    err.style.display='none';
+    if(!raw.trim()){toast('请输入 JSON');return}
+    var data;
+    try{
+      data=JSON.parse(raw);
+      if(!Array.isArray(data)||!data.length){throw new Error('需要 JSON 数组')}
+      if(data.some(function(x){return typeof x!=='object'||x===null||Array.isArray(x)})){throw new Error('数组元素需为对象')}
+      var keys=[];
+      data.forEach(function(o){Object.keys(o).forEach(function(k){if(keys.indexOf(k)<0)keys.push(k)})});
+      var lines=[keys.map(csvCell).join(',')];
+      data.forEach(function(o){
+        lines.push(keys.map(function(k){return csvCell(o[k]!==undefined?o[k]:'')}).join(','));
+      });
+      out.value=lines.join('\n');
+    }catch(e){
+      err.textContent='JSON 解析失败：'+e.message;
+      err.style.display='block';
+    }
+  };
+  function csvCell(v){
+    var s=String(v);
+    return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;
+  }
+
+  /* ===== 文件哈希 ===== */
+  var dropZone=document.getElementById('hashDrop');
+  var fileInput=document.getElementById('hashFile');
+  dropZone.addEventListener('click',function(){fileInput.click()});
+  dropZone.addEventListener('dragover',function(e){e.preventDefault();dropZone.classList.add('drag')});
+  dropZone.addEventListener('dragleave',function(){dropZone.classList.remove('drag')});
+  dropZone.addEventListener('drop',function(e){
+    e.preventDefault();dropZone.classList.remove('drag');
+    if(e.dataTransfer.files.length)hashFile(e.dataTransfer.files[0]);
+  });
+  fileInput.addEventListener('change',function(){
+    if(fileInput.files.length)hashFile(fileInput.files[0]);
+  });
+  function fmtSize(b){
+    if(b<1024)return b+' B';
+    if(b<1048576)return (b/1024).toFixed(1)+' KB';
+    if(b<1073741824)return (b/1048576).toFixed(2)+' MB';
+    return (b/1073741824).toFixed(2)+' GB';
+  }
+  function hashFile(file){
+    var info=document.getElementById('hashFileInfo');
+    var out=document.getElementById('hashOut');
+    out.style.display='none';out.innerHTML='';
+    info.style.display='block';
+    info.className='status info';
+    info.innerHTML='<b>'+esc(file.name)+'</b> · '+fmtSize(file.size)+' · 计算中…';
+    file.arrayBuffer().then(function(buf){
+      var jobs=['SHA-256','SHA-1','SHA-384','SHA-512'].map(function(algo){
+        return crypto.subtle.digest(algo,buf).then(function(hash){
+          return {algo:algo,hex:toHex(new Uint8Array(hash))};
+        });
+      });
+      jobs.push(md5File(buf).then(function(hex){return {algo:'MD5',hex:hex}}));
+      return Promise.all(jobs);
+    }).then(function(results){
+      info.innerHTML='<b>'+esc(file.name)+'</b> · '+fmtSize(file.size)+' · 点击哈希值复制';
+      results.forEach(function(r){addKv(out,r.algo,r.hex)});
+      out.style.display='grid';
+    }).catch(function(e){
+      info.className='status err';
+      info.textContent='计算失败：'+e.message;
+    });
+  }
+  function toHex(bytes){
+    var s='';
+    for(var i=0;i<bytes.length;i++)s+=('0'+(bytes[i]&0xff).toString(16)).slice(-2);
+    return s;
+  }
+  function md5File(buf){
+    var bytes=new Uint8Array(buf);
+    var bitLen=BigInt(bytes.length)*8n;
+    var padded=new Uint8Array((((bytes.length+8)>>6)+1)<<6);
+    padded.set(bytes);
+    padded[bytes.length]=0x80;
+    for(var bi=0;bi<8;bi++){
+      padded[padded.length-8+bi]=Number((bitLen>>BigInt(bi*8))&0xffn);
+    }
+    var state=[0x67452301,0xefcdab89,0x98badcfe,0x10325476];
+    var S=[7,12,17,22,7,12,17,22,7,12,17,22,7,12,17,22,5,9,14,20,5,9,14,20,5,9,14,20,5,9,14,20,4,11,16,23,4,11,16,23,4,11,16,23,4,11,16,23,6,10,15,21,6,10,15,21,6,10,15,21,6,10,15,21];
+    var K=[];
+    for(var i=0;i<64;i++)K[i]=Math.floor(Math.abs(Math.sin(i+1))*4294967296)>>>0;
+    var view=new DataView(padded.buffer);
+    for(var off=0;off<padded.length;off+=64){
+      var M=[];
+      for(var j=0;j<16;j++)M[j]=view.getUint32(off+j*4,true);
+      var a=state[0],b=state[1],c=state[2],d=state[3];
+      for(j=0;j<64;j++){
+        var f,g;
+        if(j<16){f=(b&c)|(~b&d);g=j}
+        else if(j<32){f=(d&b)|(~d&c);g=(5*j+1)%16}
+        else if(j<48){f=b^c^d;g=(3*j+5)%16}
+        else{f=c^(b|~d);g=(7*j)%16}
+        var tmp=d;d=c;c=b;
+        b=(b+rotl((a+f+K[j]+M[g])>>>0,S[j]))>>>0;
+        a=tmp;
+      }
+      state[0]=(state[0]+a)>>>0;state[1]=(state[1]+b)>>>0;state[2]=(state[2]+c)>>>0;state[3]=(state[3]+d)>>>0;
+    }
+    var hex='';
+    for(var i=0;i<4;i++){
+      var v=state[i];
+      hex+=('0'+(v&0xff).toString(16)).slice(-2)+('0'+((v>>8)&0xff).toString(16)).slice(-2)+('0'+((v>>16)&0xff).toString(16)).slice(-2)+('0'+((v>>24)&0xff).toString(16)).slice(-2);
+    }
+    return Promise.resolve(hex);
+  }
+  function rotl(x,n){return ((x<<n)|(x>>>(32-n)))>>>0}
+
+  /* ===== 速查表 ===== */
+  var HTTP_CODES=[
+    [100,'Continue','继续'], [101,'Switching Protocols','切换协议'], [103,'Early Hints','早期提示'],
+    [200,'OK','成功'], [201,'Created','已创建'], [202,'Accepted','已接受'], [204,'No Content','无内容'],
+    [206,'Partial Content','部分内容'],
+    [300,'Multiple Choices','多种选择'], [301,'Moved Permanently','永久重定向'], [302,'Found','临时重定向'],
+    [303,'See Other','查看其他位置'], [304,'Not Modified','未修改（缓存）'], [307,'Temporary Redirect','临时重定向'],
+    [308,'Permanent Redirect','永久重定向'],
+    [400,'Bad Request','请求错误'], [401,'Unauthorized','未认证'], [403,'Forbidden','禁止访问'],
+    [404,'Not Found','资源不存在'], [405,'Method Not Allowed','方法不允许'], [406,'Not Acceptable','不可接受'],
+    [408,'Request Timeout','请求超时'], [409,'Conflict','冲突'], [410,'Gone','资源已删除'],
+    [413,'Payload Too Large','请求体过大'], [414,'URI Too Long','URL 过长'], [415,'Unsupported Media Type','不支持的媒体类型'],
+    [422,'Unprocessable Entity','无法处理实体'], [425,'Too Early','过早请求'], [429,'Too Many Requests','请求过多'],
+    [431,'Request Header Fields Too Large','请求头过大'], [451,'Unavailable For Legal Reasons','法律原因不可用'],
+    [500,'Internal Server Error','服务器内部错误'], [501,'Not Implemented','未实现'], [502,'Bad Gateway','网关错误'],
+    [503,'Service Unavailable','服务不可用'], [504,'Gateway Timeout','网关超时'], [505,'HTTP Version Not Supported','HTTP 版本不支持']
+  ];
+  var PORTS=[
+    [20,'FTP 数据'], [21,'FTP 控制'], [22,'SSH / SFTP'], [23,'Telnet'], [25,'SMTP 邮件发送'],
+    [53,'DNS 域名解析'], [67,68,'DHCP'], [80,'HTTP'], [110,'POP3 邮件接收'], [111,'RPC'],
+    [123,'NTP 时间同步'], [137,138,139,'NetBIOS'], [143,'IMAP 邮件'], [161,'SNMP'],
+    [389,'LDAP'], [443,'HTTPS'], [445,'SMB 文件共享'], [465,'SMTPS'], [587,'SMTP 提交'],
+    [993,'IMAPS'], [995,'POP3S'], [1080,'SOCKS 代理'], [1433,'MSSQL'], [1521,'Oracle'],
+    [2049,'NFS'], [2181,'ZooKeeper'], [2375,'Docker API'], [3000,'开发服务器（常见）'],
+    [3306,'MySQL'], [3389,'RDP 远程桌面'], [5432,'PostgreSQL'], [5672,'RabbitMQ'],
+    [5900,'VNC'], [6379,'Redis'], [8080,'HTTP 备用/代理'], [8443,'HTTPS 备用'],
+    [8888,'常见开发端口'], [9200,'Elasticsearch'], [11211,'Memcached'], [27017,'MongoDB']
+  ];
+  var REF_STATE={type:'http'};
+  function renderRef(){
+    var q=document.getElementById('refSearch').value.trim().toLowerCase();
+    var out=document.getElementById('refOut');
+    out.innerHTML='';
+    var data=REF_STATE.type==='http'?HTTP_CODES:PORTS;
+    var hit=0;
+    data.forEach(function(row){
+      var key=(row[0]+' '+row[1]+' '+row[2]).toLowerCase();
+      if(q&&key.indexOf(q)<0)return;
+      hit++;
+      var li=document.createElement('li');
+      var idx=document.createElement('span');idx.className='idx';
+      idx.textContent=REF_STATE.type==='http'?row[0]:row[0];
+      var txt=document.createElement('span');txt.className='txt';
+      txt.textContent=REF_STATE.type==='http'?row[1]+' · '+row[2]:row.slice(1).join(' · ');
+      li.appendChild(idx);li.appendChild(txt);
+      li.addEventListener('click',function(){copyText(row[0])});
+      out.appendChild(li);
+    });
+    if(!hit){
+      var li=document.createElement('li');
+      li.style.display='block';li.style.color='var(--faint)';
+      li.textContent='无匹配';
+      out.appendChild(li);
+    }
+  }
+  window.refShow=function(type){
+    REF_STATE.type=type;
+    renderRef();
+  };
+  document.getElementById('refSearch').addEventListener('input',renderRef);
+  refShow('http');
+})();
+</script>
+</body>
+</html>
