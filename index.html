@@ -281,12 +281,16 @@
     .fav-btn.on { color: #f5b942; }
     .site-info { padding-right: 20px; }
 
+    /* NEW 角标 */
+    .badge-new { display: inline-block; margin-left: 6px; vertical-align: 2px; background: linear-gradient(135deg, #ff6b6b, #ff4757); color: #fff; font-size: 10px; font-weight: 700; line-height: 1; padding: 3px 7px; border-radius: 8px 2px 8px 2px; letter-spacing: 0.5px; box-shadow: 0 2px 6px rgba(255, 71, 87, 0.4); }
+
     /* 分享栏 */
     .share-bar { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--card-border); flex-wrap: wrap; }
     .share-bar span { font-size: 12px; color: var(--faint); }
     .share-btn { display: inline-flex; align-items: center; gap: 5px; padding: 6px 16px; border-radius: 999px; border: 1px solid var(--card-border); background: var(--card-bg); color: var(--muted); font-size: 12px; cursor: pointer; transition: all 0.25s; text-decoration: none; }
     .share-btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); box-shadow: 0 4px 12px var(--shadow); }
     .share-btn svg { width: 13px; height: 13px; }
+    .share-sep { color: var(--card-border); font-size: 13px; }
 
     /* ===== 电子书阅读专区 ===== */
     .reading-zone { margin-bottom: 40px; }
@@ -454,10 +458,15 @@
         <button class="share-btn" onclick="shareTo('qzone')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16 10 14 8 12 10 10 8 8 10"></polygon><path d="M8 14h8"></path></svg>QQ空间</button>
         <button class="share-btn" onclick="shareTo('twitter')"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M22 5.9c-.7.3-1.5.5-2.3.6.8-.5 1.4-1.3 1.7-2.2-.8.5-1.6.8-2.5 1a4 4 0 0 0-6.9 3.7A11.4 11.4 0 0 1 4.4 4.7a4 4 0 0 0 1.2 5.3c-.6 0-1.2-.2-1.8-.5v.1a4 4 0 0 0 3.2 3.9c-.6.2-1.2.2-1.9.1a4 4 0 0 0 3.7 2.8A8 8 0 0 1 2 18.6a11.3 11.3 0 0 0 6.1 1.8c7.4 0 11.4-6.1 11.4-11.4v-.5c.8-.6 1.5-1.3 2.5-1.8z"></path></svg>X</button>
         <button class="share-btn" onclick="copyLink()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>复制链接</button>
+        <span class="share-sep">|</span>
+        <button class="share-btn" onclick="exportData()" title="导出收藏与最近访问为 JSON 文件"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>导出数据</button>
+        <button class="share-btn" onclick="document.getElementById('importFile').click()" title="从 JSON 文件恢复收藏与最近访问"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>导入数据</button>
+        <input type="file" id="importFile" accept="application/json,.json" style="display:none" onchange="importData(event)">
       </div>
     </div>
   </footer>
 
+  <script src="assets/js/pinyin-map.js"></script>
   <script>
     const BASE_URL = '';
     const SEARCH_URLS = {
@@ -517,7 +526,7 @@
     function cardHtml(item) {
       return `<a href="${escapeHtml(item.url)}" class="site-card fade-in" target="_blank" rel="noopener">
         <img src="${escapeHtml(fixIconPath(item.icon))}" alt="${escapeHtml(item.title)}" loading="lazy" decoding="async" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🔗</text></svg>'">
-        <div class="site-info" title="${escapeHtml(item.description || '')}"><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.description || '')}</p></div>
+        <div class="site-info" title="${escapeHtml(item.description || '')}"><h3>${escapeHtml(item.title)}${item.badge ? `<span class="badge-new">${escapeHtml(item.badge)}</span>` : ''}</h3><p>${escapeHtml(item.description || '')}</p></div>
         <button class="fav-btn${isFav(item.url) ? ' on' : ''}" data-url="${escapeHtml(item.url)}" title="${isFav(item.url) ? '取消收藏' : '收藏'}">${isFav(item.url) ? '★' : '☆'}</button>
       </a>`;
     }
@@ -613,15 +622,28 @@
 
     /* ===== 站内搜索 ===== */
     const searchIndex = [];
+    const PY = window.PINYIN_MAP || {};
+    function toPinyin(text) {
+      return String(text || '').split('').map(ch => PY[ch] || ch).join('').toLowerCase();
+    }
+    function toInitials(text) {
+      return String(text || '').split('').map(ch => (PY[ch] ? PY[ch][0] : ch)).join('').toLowerCase();
+    }
     function buildSearchIndex() {
       searchIndex.length = 0;
       navData.navigation.forEach(cat => {
         const add = items => (items || []).forEach(it => {
+          const t = it.title || '';
+          const d = it.description || '';
           searchIndex.push({
             it,
-            t: (it.title || '').toLowerCase(),
-            d: (it.description || '').toLowerCase(),
+            t: t.toLowerCase(),
+            d: d.toLowerCase(),
             u: (it.url || '').toLowerCase(),
+            py: toPinyin(t),
+            pi: toInitials(t),
+            dpy: toPinyin(d),
+            dpi: toInitials(d),
             cat: cat.category
           });
         });
@@ -632,6 +654,8 @@
 
     function searchLocal(q) {
       const kw = q.toLowerCase();
+      const qpy = toPinyin(kw);
+      const qpi = toInitials(kw);
       return searchIndex.map(e => {
         let score = 0;
         if (e.t === kw) score = 100;
@@ -639,6 +663,18 @@
         else if (e.t.includes(kw)) score = 65;
         else if (e.d.includes(kw)) score = 35;
         else if (e.u.includes(kw)) score = 18;
+        if (qpy && qpy.length >= 2) {
+          if (e.py === qpy) score = Math.max(score, 90);
+          else if (e.py.startsWith(qpy)) score = Math.max(score, 80);
+          else if (e.py.includes(qpy)) score = Math.max(score, 60);
+          if (e.dpy.includes(qpy)) score = Math.max(score, 30);
+        }
+        if (qpi && qpi.length >= 2) {
+          if (e.pi === qpi) score = Math.max(score, 88);
+          else if (e.pi.startsWith(qpi)) score = Math.max(score, 78);
+          else if (e.pi.includes(qpi)) score = Math.max(score, 58);
+          else if (e.dpi.includes(qpi)) score = Math.max(score, 28);
+        }
         return score ? { it: e.it, cat: e.cat, score } : null;
       }).filter(Boolean).sort((a, b) => b.score - a.score).slice(0, 7).map(x => { x.it.cat = x.cat; return x.it; });
     }
@@ -835,6 +871,50 @@
       } else {
         prompt('复制链接:', url);
       }
+    }
+
+    function exportData() {
+      const data = {
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        favs: getFavs(),
+        recents: getRecents(),
+        nightMode: localStorage.getItem('nightMode')
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'xinghan-nav-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+      toast('数据已导出，可导入到其他浏览器');
+    }
+
+    function importData(event) {
+      const file = event.target.files && event.target.files[0];
+      event.target.value = '';
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const data = JSON.parse(reader.result);
+          if (data && Array.isArray(data.favs) && Array.isArray(data.recents)) {
+            localStorage.setItem(FAV_KEY, JSON.stringify(data.favs));
+            localStorage.setItem(RECENT_KEY, JSON.stringify(data.recents.slice(0, 10)));
+            if (typeof data.nightMode === 'boolean') localStorage.setItem('nightMode', data.nightMode);
+            favCache = null;
+            recentCache = null;
+            rerenderQuick();
+            toast('数据导入成功');
+          } else {
+            toast('文件格式不正确，导入失败');
+          }
+        } catch (e) {
+          toast('文件解析失败，请选择正确的备份文件');
+        }
+      };
+      reader.readAsText(file);
     }
 
     function toast(msg) {
