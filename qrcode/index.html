@@ -863,7 +863,8 @@ document.addEventListener('keydown',function(e){
 /* ---------- 解析查看 ---------- */
 var scanCanvas=null;
 function scanImageFromCanvas(canvas){
-  var w=canvas.width,h=canvas.height;
+  var w=canvas.width||canvas.naturalWidth||0,h=canvas.height||canvas.naturalHeight||0;
+  if(!w||!h)return null;
   var maxDim=1200;
   var scale=1;
   if(Math.max(w,h)>maxDim)scale=maxDim/Math.max(w,h);
@@ -894,15 +895,22 @@ function processImageFile(file){
   var url=URL.createObjectURL(file);
   var img=new Image();
   img.onload=function(){
-    scanCanvas=img;
-    var code=scanImageFromCanvas(img);
     URL.revokeObjectURL(url);
+    var canvas=document.createElement('canvas');
+    canvas.width=img.naturalWidth||img.width;
+    canvas.height=img.naturalHeight||img.height;
+    var ctx=canvas.getContext('2d');
+    try{
+      ctx.drawImage(img,0,0);
+      var preview=canvas.toDataURL('image/png');
+    }catch(e){preview=null}
+    var code=scanImageFromCanvas(canvas);
     if(code&&code.data){
       showScanStatus(true,'<b>✓ 识别成功</b>，共 <b>'+code.binaryData.length+'</b> 个模块');
-      renderScanResult(code.data,img);
+      renderScanResult(code.data,preview);
     }else{
       showScanStatus(false,'<b>✗ 未识别到二维码</b>，请尝试：旋转图片、放大二维码区域、提高清晰度');
-      renderScanResult(null,img);
+      renderScanResult(null,preview);
     }
   };
   img.onerror=function(){
@@ -911,11 +919,11 @@ function processImageFile(file){
   };
   img.src=url;
 }
-function renderScanResult(content,img){
+function renderScanResult(content,preview){
   var box=$('scanResult');
   var html='';
-  if(img&&img.src){
-    html+='<img class="scan-img" src="'+img.src+'" alt="扫描图片" style="max-width:180px">';
+  if(preview){
+    html+='<img class="scan-img" src="'+preview+'" alt="扫描图片" style="max-width:180px">';
   }
   if(content!==null){
     html+='<div class="scan-content">'+escapeHtml(content)+'</div>';
