@@ -892,32 +892,38 @@ function processImageFile(file){
     showScanStatus(false,'<b>错误：</b>请选择图片文件');
     return;
   }
-  var url=URL.createObjectURL(file);
-  var img=new Image();
-  img.onload=function(){
-    URL.revokeObjectURL(url);
-    var canvas=document.createElement('canvas');
-    canvas.width=img.naturalWidth||img.width;
-    canvas.height=img.naturalHeight||img.height;
-    var ctx=canvas.getContext('2d');
-    try{
-      ctx.drawImage(img,0,0);
-      var preview=canvas.toDataURL('image/png');
-    }catch(e){preview=null}
-    var code=scanImageFromCanvas(canvas);
-    if(code&&code.data){
-      showScanStatus(true,'<b>✓ 识别成功</b>，共 <b>'+code.binaryData.length+'</b> 个模块');
-      renderScanResult(code.data,preview);
-    }else{
-      showScanStatus(false,'<b>✗ 未识别到二维码</b>，请尝试：旋转图片、放大二维码区域、提高清晰度');
-      renderScanResult(null,preview);
-    }
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var src=e.target.result;
+    var img=new Image();
+    img.onload=function(){
+      var canvas=document.createElement('canvas');
+      canvas.width=img.naturalWidth||img.width;
+      canvas.height=img.naturalHeight||img.height;
+      var ctx=canvas.getContext('2d');
+      var preview=null;
+      try{
+        ctx.drawImage(img,0,0);
+        preview=canvas.toDataURL('image/png');
+      }catch(err){}
+      var code=scanImageFromCanvas(canvas);
+      if(code&&code.data){
+        showScanStatus(true,'<b>✓ 识别成功</b>，共 <b>'+code.binaryData.length+'</b> 个模块');
+        renderScanResult(code.data,preview);
+      }else{
+        showScanStatus(false,'<b>✗ 未识别到二维码</b>，请尝试：旋转图片、放大二维码区域、提高清晰度');
+        renderScanResult(null,preview);
+      }
+    };
+    img.onerror=function(){
+      showScanStatus(false,'<b>错误：</b>图片加载失败');
+    };
+    img.src=src;
   };
-  img.onerror=function(){
-    URL.revokeObjectURL(url);
-    showScanStatus(false,'<b>错误：</b>图片加载失败');
+  reader.onerror=function(){
+    showScanStatus(false,'<b>错误：</b>读取文件失败');
   };
-  img.src=url;
+  reader.readAsDataURL(file);
 }
 function renderScanResult(content,preview){
   var box=$('scanResult');
