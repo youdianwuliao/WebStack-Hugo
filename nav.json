@@ -2,7 +2,7 @@
   "navigation": [
     {
       "category": "实用工具",
-      "sidebarIcon": "far fa-star",
+      "sidebarIcon": "fas fa-cube",
       "items": [
         {
           "title": "JSON 工具箱",
@@ -52,7 +52,7 @@
     },
     {
       "category": "常用推荐",
-      "sidebarIcon": "far fa-star",
+      "sidebarIcon": "fas fa-heart",
       "items": [
         {
           "title": "QQ 邮箱",
@@ -629,7 +629,7 @@
     },
     {
       "category": "运维监控",
-      "sidebarIcon": "fas fa-flask",
+      "sidebarIcon": "fas fa-activity",
       "items": [
         {
           "title": "TrafficForge",
@@ -761,7 +761,7 @@
     },
     {
       "category": "安全工具",
-      "sidebarIcon": "fas fa-flask",
+      "sidebarIcon": "fas fa-shield",
       "items": [
         {
           "title": "Kali Linux",
@@ -881,7 +881,7 @@
     },
     {
       "category": "效率办公",
-      "sidebarIcon": "fas fa-flask",
+      "sidebarIcon": "fas fa-briefcase",
       "items": [
         {
           "title": "千羽赛事",
@@ -1043,7 +1043,7 @@
     },
     {
       "category": "下载资源",
-      "sidebarIcon": "fas fa-flask",
+      "sidebarIcon": "fas fa-download",
       "items": [
         {
           "title": "文件下载",
