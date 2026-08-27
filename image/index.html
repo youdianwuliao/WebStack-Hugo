@@ -2956,9 +2956,9 @@ body{
   function vgLoadFFmpeg(onProgress){
     if(vgFFmpeg)return Promise.resolve(vgFFmpeg);
     if(vgFFmpegLoading)return vgFFmpegLoading;
-    vgFFmpegLoading=import('./ffmpeg/index.js').then(function(mod){
+    vgFFmpegLoading=import('./ffmpeg/index.js?v=3').then(function(mod){
       var base=new URL('ffmpeg/',document.baseURI).href;
-      var ver='v=2';
+      var ver='v=3';
       function probe(n){
         return fetch(base+'ffmpeg-core.wasm.'+n+'?'+ver,{method:'HEAD'}).then(function(r){
           if(!r.ok)return n;
@@ -3021,7 +3021,7 @@ body{
           }
           var ffmpeg=new mod.FFmpeg();
           return ffmpeg.load({
-            coreURL:new URL('ffmpeg/ffmpeg-core.js',document.baseURI).href,
+            coreURL:new URL('ffmpeg/ffmpeg-core.js',document.baseURI).href+'?v=3',
             wasmBinary:merged
           }).then(function(){return ffmpeg});
         });
