@@ -2898,14 +2898,15 @@ body{
     if(vgFFmpegLoading)return vgFFmpegLoading;
     vgFFmpegLoading=import('./ffmpeg/index.js').then(function(mod){
       var base=new URL('ffmpeg/',document.baseURI).href;
+      var ver='v=2';
       function probe(n){
-        return fetch(base+'ffmpeg-core.wasm.'+n,{method:'HEAD'}).then(function(r){
+        return fetch(base+'ffmpeg-core.wasm.'+n+'?'+ver,{method:'HEAD'}).then(function(r){
           if(!r.ok)return n;
           return probe(n+1);
         });
       }
       function fetchPart(n,onBytes){
-        return fetch(base+'ffmpeg-core.wasm.'+n).then(function(r){
+        return fetch(base+'ffmpeg-core.wasm.'+n+'?'+ver).then(function(r){
           if(!r.ok)throw new Error('FFmpeg 引擎文件下载失败（HTTP '+r.status+'），请检查网络后重试');
           var total=+r.headers.get('content-length')||0;
           var received=0;
@@ -2970,6 +2971,16 @@ body{
       return ffmpeg;
     },function(err){
       vgFFmpegLoading=null;
+      var msg=String(err&&err.message||err);
+      if(/magic word|CompileError|Aborted\(/.test(msg)){
+        if('caches' in window){
+          caches.keys().then(function(keys){
+            var targets=keys.filter(function(k){return k.indexOf('navsite')===0});
+            return Promise.all(targets.map(function(k){return caches.delete(k)}));
+          }).catch(function(){});
+        }
+        err=new Error('FFmpeg 引擎缓存异常，已尝试清除缓存，请刷新页面后重试（仍失败请按 Ctrl/Cmd+Shift+R 强制刷新）');
+      }
       throw err;
     });
     return vgFFmpegLoading;
