@@ -2499,17 +2499,43 @@ body{
         var b=bytes||[];
         var sig='';
         for(var k=0;k<Math.min(8,b.length||0);k++)sig+=(b[k]&255).toString(16).padStart(2,'0');
-        nomarkData.gifFrameDiag='['+label+' '+((b&&b.length)||0)+'B sig:'+sig+']';
+        nomarkData.gifFrameDiag+='['+label+' '+((b&&b.length)||0)+'B sig:'+sig+'] ';
         URL.revokeObjectURL(url);
         resolve(null);
       };
       img.src=url;
     });
   }
+  function nomarkTryLoadFirstFrame(ffmpeg,names){
+    if(!names||!names.length)return Promise.resolve(null);
+    var idx=0;
+    function attempt(){
+      if(idx>=names.length)return Promise.resolve(null);
+      var name=names[idx++];
+      return ffmpeg.readFile(name).then(function(bytes){
+        return nomarkLoadImageFromBytes(bytes,name);
+      }).then(function(img){
+        if(img)return img;
+        return ffmpeg.exec(['-i',name,'-frames:v','1','_re.png']).then(function(ret){
+          if(ret!==0)return Promise.resolve(null);
+          return ffmpeg.readFile('_re.png').then(function(b2){
+            return nomarkLoadImageFromBytes(b2,name+'<re>');
+          });
+        });
+      }).catch(function(){
+        return Promise.resolve(null);
+      }).then(function(img){
+        if(img)return img;
+        return attempt();
+      });
+    }
+    return attempt();
+  }
   function handleNomarkGif(f){
     nomarkData.fileName=f.name.replace(/\.[^.]+$/,'')||'image';
     nomarkData.resultCanvas=null;
     nomarkData.gifBlob=null;
+    nomarkData.gifFrameDiag='';
     var meta=document.getElementById('nomarkMeta');
     var hint=document.getElementById('nomarkHint');
     var runBtn=document.getElementById('nomarkRunBtn');
@@ -2556,9 +2582,7 @@ body{
     }).then(function(info){
       nomarkData.gifFps=info.fps;
       nomarkData.gifNames=info.names;
-      return ffmpeg.readFile(info.names[0]);
-    }).then(function(bytes){
-      return nomarkLoadImageFromBytes(bytes,nomarkData.gifNames[0]);
+      return nomarkTryLoadFirstFrame(ffmpeg,info.names);
     }).then(function(firstImg){
       if(!firstImg)throw new Error('GIF 帧读取失败'+(nomarkData.gifFrameDiag||''));
       var preview2=document.getElementById('nomarkGifPreview');
