@@ -188,6 +188,7 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - **localInpaint 对封闭涂抹区域失效的根因**：原实现 `todo` 数组只覆盖 mask 区域（内部像素全为 1），边界像素朝外越界、朝内邻居未填充，n 恒为 0 → 永不填充（涂抹矩形整块时水印毫无变化）。修复：`todo` 用 `(bw+2)*(bh+2)` 尺寸，mask 区域偏移 1，外围边框默认为 0 作为"外部可取色种子"，扩散从边框逐层向内
   - **清理函数不能删源帧**：若 `nomarkGifClearFrames` 连 `f_*.png` 一起删，随后逐帧 `readFile('f_XXX.png')` 报 `ErrnoError: FS error`；修复流程应在开头清理后**重新写源 GIF 并拆帧**，保持自洽
   - **浏览器端验证**：playwright 上传带水印 GIF → 涂抹矩形（fillRect mask）→ 点击修复 → 下载产物；ffmpeg.wasm node 桩验证输出帧数不变、水印区平均 RGB 由纯红变为填充色（testsrc drawbox red@0.9 水印 16,16 64×32）
+  - **线上 wasm 加载 HTML 报错（magic word ... found 3c 21 44 4f）的根因与防护**：`<!DO` = HTML DOCTYPE。线上 wasm 单文件 `ffmpeg-core.wasm` 不存在（31MB > Cloudflare Pages 25MB 单文件限制，只能分片），core.js 的 `getBinary` 仅在 `Module.wasmBinary` 缺失时兜底 fetch 单文件 → 404 HTML → instantiate 报错。若 SW 缓存了旧版 classes.js/worker.js（wasmBinary 传递是 commit 2561671 才加的），wasmBinary 不传 → 触发兜底 fetch。防护：① sw.js fetch handler 排除 `/image/ffmpeg/`（不缓存不拦截，体积大更新频繁）；② 分片 URL 加版本参数 `?v=2` 绕过 HTTP 缓存；③ wasm 编译错误时自动清 `navsite*` 缓存并提示硬刷新（自愈）；④ worker.js 在 wasmBinary 缺失时直接抛中文报错而非让 core 去 fetch
 
 [canvas 大图处理边界 - 排错知识]
 - Date: 2026-08-15
