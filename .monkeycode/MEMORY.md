@@ -175,7 +175,19 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - **可靠性增强（非根因）**：主线程合并分片为 `Uint8Array` 后经 `ffmpeg.load({ coreURL, wasmBinary: merged })` 直传 worker（跳过 blob URL + worker fetch 链路）；`image/ffmpeg/worker.js` 透传 `wasmBinary`，`image/ffmpeg/classes.js` 把 `wasmBinary.buffer` 加入 transfer 数组减少 postMessage 拷贝
   - **sw.js 缓存陷阱**：sw.js 用 stale-while-revalidate 缓存 `./image/index.html`，部署后若不递增 `CACHE` 版本号，用户仍从缓存拿到旧代码、修复不生效；改 index.html 类关键页面必须同步 bump `CACHE`（v18→v19）
   - **验证**：node 模拟完整链路（合并 → wasmBinary → createFFmpegCore → `exec('-version')` 返回 0）；playwright + chromium headless shell 本地服务器实测上传 test.mp4 → 生成 240px/30 帧 100KB GIF 成功；线上分片与本地 md5 一致、HEAD/GET 正常
-  - **FFmpeg.wasm 加载依赖注入**：测试需 `globalThis.self=globalThis; globalThis.location={href:'file:///...'}`；esm 版 ffmpeg-core.js 为 `export default createFFmpegCore`，`await ffmpeg.ready` 后 `exec` 需展开参数、结果读 `ffmpeg.ret`
+   - **FFmpeg.wasm 加载依赖注入**：测试需 `globalThis.self=globalThis; globalThis.location={href:'file:///...'}`；esm 版 ffmpeg-core.js 为 `export default createFFmpegCore`，`await ffmpeg.ready` 后 `exec` 需展开参数、结果读 `ffmpeg.ret`
+
+[GIF 去水印（逐帧 inpaint + palette 合成）排错知识]
+- Date: 2026-08-27
+- Context: Agent 实现 `image/` GIF 去水印功能（单色半透明水印逐帧本地修复）时发现
+- Category: 排错调试
+- Instructions:
+  - **流程**：`vgLoadFFmpeg` 单例加载 → `writeFile` 源 GIF → `exec(['-i','in.gif','-vsync','0','f_%03d.png'])` 拆帧 → 逐帧 `readFile` → 转 ImageData → `localInpaint` → `putImageData` → `toBlob` PNG → `writeFile('n_XXX.png')` → `exec` palettegen/paletteuse 合成动画 GIF（`-framerate F -i n_%03d.png -filter_complex 'split[a][b];[a]palettegen=max_colors=256[p];[b][p]paletteuse' -loop 0`），动画帧数保留
+  - **主线程 `FFmpeg` 类实例没有 `FS` 属性**：文件系统操作必须用 `writeFile/readFile/deleteFile/listDir`（走 postMessage），不能用 `ffmpeg.FS.*`；`listDir('/')` 返回 node 数组
+  - **writeFile 会 transfer 传入的 Uint8Array.buffer 给 worker → 原 buffer 被 detach**：同一份数据要写多次（解析+修复各写一次源 GIF）时必须传副本 `new Uint8Array(orig)`，否则二次写报 `An ArrayBuffer is detached and could not be cloned`
+  - **localInpaint 对封闭涂抹区域失效的根因**：原实现 `todo` 数组只覆盖 mask 区域（内部像素全为 1），边界像素朝外越界、朝内邻居未填充，n 恒为 0 → 永不填充（涂抹矩形整块时水印毫无变化）。修复：`todo` 用 `(bw+2)*(bh+2)` 尺寸，mask 区域偏移 1，外围边框默认为 0 作为"外部可取色种子"，扩散从边框逐层向内
+  - **清理函数不能删源帧**：若 `nomarkGifClearFrames` 连 `f_*.png` 一起删，随后逐帧 `readFile('f_XXX.png')` 报 `ErrnoError: FS error`；修复流程应在开头清理后**重新写源 GIF 并拆帧**，保持自洽
+  - **浏览器端验证**：playwright 上传带水印 GIF → 涂抹矩形（fillRect mask）→ 点击修复 → 下载产物；ffmpeg.wasm node 桩验证输出帧数不变、水印区平均 RGB 由纯红变为填充色（testsrc drawbox red@0.9 水印 16,16 64×32）
 
 [canvas 大图处理边界 - 排错知识]
 - Date: 2026-08-15
