@@ -1,6 +1,6 @@
-import { FFMessageType } from "./const.js";
-import { getMessageID } from "./utils.js";
-import { ERROR_TERMINATED, ERROR_NOT_LOADED } from "./errors.js";
+import { FFMessageType } from "./const.js?v=3";
+import { getMessageID } from "./utils.js?v=3";
+import { ERROR_TERMINATED, ERROR_NOT_LOADED } from "./errors.js?v=3";
 /**
  * Provides APIs to interact with ffmpeg web worker.
  *
@@ -107,7 +107,7 @@ export class FFmpeg {
                 }) :
                 // We need to duplicated the code here to enable webpack
                 // to bundle worekr.js here.
-                new Worker(new URL("./worker.js", import.meta.url), {
+                new Worker(new URL("./worker.js?v=3", import.meta.url), {
                     type: "module",
                 });
             this.#registerHandlers();

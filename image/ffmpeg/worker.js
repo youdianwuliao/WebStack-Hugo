@@ -1,8 +1,8 @@
 /// <reference no-default-lib="true" />
 /// <reference lib="esnext" />
 /// <reference lib="webworker" />
-import { CORE_URL, FFMessageType } from "./const.js";
-import { ERROR_UNKNOWN_MESSAGE_TYPE, ERROR_NOT_LOADED, ERROR_IMPORT_FAILURE, } from "./errors.js";
+import { CORE_URL, FFMessageType } from "./const.js?v=3";
+import { ERROR_UNKNOWN_MESSAGE_TYPE, ERROR_NOT_LOADED, ERROR_IMPORT_FAILURE, } from "./errors.js?v=3";
 let ffmpeg;
 const load = async ({ coreURL: _coreURL, wasmURL: _wasmURL, workerURL: _workerURL, wasmBinary: _wasmBinary, }) => {
     const first = !ffmpeg;
@@ -23,10 +23,11 @@ const load = async ({ coreURL: _coreURL, wasmURL: _wasmURL, workerURL: _workerUR
         }
     }
     const coreURL = _coreURL;
-    const wasmURL = _wasmURL ? _wasmURL : _coreURL.replace(/.js$/g, ".wasm");
+    const coreURLNoQuery = _coreURL.split("?")[0];
+    const wasmURL = _wasmURL ? _wasmURL : coreURLNoQuery.replace(/.js$/g, ".wasm");
     const workerURL = _workerURL
         ? _workerURL
-        : _coreURL.replace(/.js$/g, ".worker.js");
+        : coreURLNoQuery.replace(/.js$/g, ".worker.js");
     if (!_wasmBinary) {
         throw new Error("FFmpeg 引擎数据缺失（缓存异常），请硬刷新页面后重试");
     }
