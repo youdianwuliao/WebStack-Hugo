@@ -27,8 +27,11 @@ const load = async ({ coreURL: _coreURL, wasmURL: _wasmURL, workerURL: _workerUR
     const workerURL = _workerURL
         ? _workerURL
         : _coreURL.replace(/.js$/g, ".worker.js");
+    if (!_wasmBinary) {
+        throw new Error("FFmpeg 引擎数据缺失（缓存异常），请硬刷新页面后重试");
+    }
     ffmpeg = await self.createFFmpegCore({
-        wasmBinary: _wasmBinary || undefined,
+        wasmBinary: _wasmBinary,
         // Fix `Overload resolution failed.` when using multi-threaded ffmpeg-core.
         // Encoded wasmURL and workerURL in the URL as a hack to fix locateFile issue.
         mainScriptUrlOrBlob: `${coreURL}#${btoa(JSON.stringify({ wasmURL, workerURL }))}`,

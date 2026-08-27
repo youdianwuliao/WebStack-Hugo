@@ -1,4 +1,4 @@
-const CACHE = 'navsite-v20';
+const CACHE = 'navsite-v21';
 const CORE = [
   './',
   './index.html',
@@ -57,6 +57,9 @@ self.addEventListener('fetch', (e) => {
   const { request } = e;
   if (request.method !== 'GET' || !request.url.startsWith(self.location.origin)) return;
   if (request.url.includes('/api/counter')) return;
+  // ffmpeg 资源（31MB 分片等）不做 SW 缓存：体积大、更新频繁，
+  // 缓存到旧版本会污染 wasmBinary 加载链路（详见 index.html vgLoadFFmpeg）。
+  if (request.url.includes('/image/ffmpeg/')) return;
 
   e.respondWith(
     (async () => {
