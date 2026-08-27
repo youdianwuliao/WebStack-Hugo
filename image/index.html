@@ -2691,6 +2691,65 @@ body{
     }
     return 1;
   }
+  function localInpaintAsync(imgData,maskData,w,h,onProgress){
+    return new Promise(function(resolve){
+      var img=imgData.data;
+      var mask=maskData.data;
+      var x0=w,y0=h,x1=-1,y1=-1;
+      for(var y=0;y<h;y++){
+        for(var x=0;x<w;x++){
+          if(mask[(y*w+x)*4+3]>64){
+            if(x<x0)x0=x;if(x>x1)x1=x;
+            if(y<y0)y0=y;if(y>y1)y1=y;
+          }
+        }
+      }
+      if(x1<0){resolve(0);return}
+      var bw=x1-x0+1,bh=y1-y0+1;
+      var sw=bw+2,sh=bh+2;
+      var todo=new Uint8Array(sw*sh);
+      for(y=0;y<bh;y++){
+        for(x=0;x<bw;x++){
+          if(mask[((y+y0)*w+(x+x0))*4+3]>64)todo[(y+1)*sw+(x+1)]=1;
+        }
+      }
+      var iter=0,changed=false;
+      function chunk(){
+        var until=iter+40;
+        while(iter<until){
+          iter++;
+          changed=false;
+          for(var y=0;y<bh;y++){
+            for(var x=0;x<bw;x++){
+              var idx=(y+1)*sw+(x+1);
+              if(todo[idx]!==1)continue;
+              var n=0,r=0,g=0,b=0,xx=x+x0,yy=y+y0;
+              if(xx>0&&todo[idx-1]===0){n++;var p=(yy*w+(xx-1))*4;r+=img[p];g+=img[p+1];b+=img[p+2]}
+              if(xx<w-1&&todo[idx+1]===0){n++;var p=(yy*w+(xx+1))*4;r+=img[p];g+=img[p+1];b+=img[p+2]}
+              if(yy>0&&todo[idx-sw]===0){n++;var p=((yy-1)*w+xx)*4;r+=img[p];g+=img[p+1];b+=img[p+2]}
+              if(yy<h-1&&todo[idx+sw]===0){n++;var p=((yy+1)*w+xx)*4;r+=img[p];g+=img[p+1];b+=img[p+2]}
+              if(n){
+                img[(yy*w+xx)*4]=r/n;img[(yy*w+xx)*4+1]=g/n;img[(yy*w+xx)*4+2]=b/n;
+                todo[idx]=2;
+              }
+            }
+          }
+          for(var i=0;i<todo.length;i++){
+            if(todo[i]===2)todo[i]=0;
+            else if(todo[i]===1)changed=true;
+          }
+          if(!changed||iter>800)break;
+        }
+        if(onProgress)onProgress(Math.min(iter/800,1));
+        if(iter<800&&changed){
+          setTimeout(chunk,0);
+        }else{
+          resolve(1);
+        }
+      }
+      chunk();
+    });
+  }
   window.nomarkRepair=function(){
     if(!nomarkData.img){toast('请先上传图片');return}
     if(nomarkData.gifMode){nomarkGifRepair();return}
@@ -2707,31 +2766,32 @@ body{
     var btn=document.getElementById('nomarkRunBtn');
     btn.disabled=true;
     var oldText=btn.textContent;
-    btn.textContent='修复中…';
-    setTimeout(function(){
-      try{
-        if(localInpaint(imgData,maskData,disp.width,disp.height)){
-          var out=document.createElement('canvas');
-          out.width=disp.width;out.height=disp.height;
-          out.getContext('2d').putImageData(imgData,0,0);
-          var before=document.getElementById('nomarkBefore');
-          before.width=disp.width;before.height=disp.height;
-          before.getContext('2d').drawImage(disp,0,0);
-          var after=document.getElementById('nomarkAfter');
-          after.width=disp.width;after.height=disp.height;
-          after.getContext('2d').putImageData(imgData,0,0);
-          document.getElementById('nomarkResult').style.display='grid';
-          document.getElementById('nomarkDownloadBtn').disabled=false;
-          document.getElementById('nomarkResultInfo').textContent='修复完成 · 本地处理，未上传任何数据';
-          nomarkData.resultCanvas=out;
-        }else{
-          toast('未检测到涂抹区域');
-        }
-      }catch(e){
-        toast('修复失败：'+(e.message||e));
+    btn.textContent='修复中 0%';
+    localInpaintAsync(imgData,maskData,disp.width,disp.height,function(p){
+      btn.textContent='修复中 '+Math.round(p*100)+'%';
+    }).then(function(ok){
+      if(ok){
+        var out=document.createElement('canvas');
+        out.width=disp.width;out.height=disp.height;
+        out.getContext('2d').putImageData(imgData,0,0);
+        var before=document.getElementById('nomarkBefore');
+        before.width=disp.width;before.height=disp.height;
+        before.getContext('2d').drawImage(disp,0,0);
+        var after=document.getElementById('nomarkAfter');
+        after.width=disp.width;after.height=disp.height;
+        after.getContext('2d').putImageData(imgData,0,0);
+        document.getElementById('nomarkResult').style.display='grid';
+        document.getElementById('nomarkDownloadBtn').disabled=false;
+        document.getElementById('nomarkResultInfo').textContent='修复完成 · 本地处理，未上传任何数据';
+        nomarkData.resultCanvas=out;
+      }else{
+        toast('未检测到涂抹区域');
       }
       btn.disabled=false;btn.textContent=oldText;
-    },30);
+    }).catch(function(e){
+      toast('修复失败：'+(e.message||e));
+      btn.disabled=false;btn.textContent=oldText;
+    });
   };
   function nomarkGifClearFrames(ffmpeg){
     if(!ffmpeg)return Promise.resolve();
