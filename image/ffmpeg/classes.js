@@ -112,10 +112,14 @@ export class FFmpeg {
                 });
             this.#registerHandlers();
         }
+        const trans = [];
+        if (config.wasmBinary instanceof Uint8Array) {
+            trans.push(config.wasmBinary.buffer);
+        }
         return this.#send({
             type: FFMessageType.LOAD,
             data: config,
-        }, undefined, signal);
+        }, trans, signal);
     };
     /**
      * Execute ffmpeg command.

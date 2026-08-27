@@ -2685,7 +2685,7 @@ body{
       }
       function fetchPart(n,onBytes){
         return fetch(base+'ffmpeg-core.wasm.'+n).then(function(r){
-          if(!r.ok)return null;
+          if(!r.ok)throw new Error('FFmpeg 引擎文件下载失败（HTTP '+r.status+'），请检查网络后重试');
           var total=+r.headers.get('content-length')||0;
           var received=0;
           var chunks=[];
@@ -2710,14 +2710,16 @@ body{
         var chain=Promise.resolve();
         for(var k=0;k<n;k++){
           chain=chain.then((function(idx){
-            return fetchPart(idx,function(rec,tot){
-              if(idx===0)firstTotal=tot||1;
-              var p=Math.min(99,Math.round((done+rec)/(firstTotal*n)*100));
-              if(onProgress)onProgress(p);
-            }).then(function(b){
-              blobs.push(b);
-              done+=b.size;
-            });
+            return function(){
+              return fetchPart(idx,function(rec,tot){
+                if(idx===0)firstTotal=tot||1;
+                var p=Math.min(99,Math.round((done+rec)/(firstTotal*n)*100));
+                if(onProgress)onProgress(p);
+              }).then(function(b){
+                blobs.push(b);
+                done+=b.size;
+              });
+            };
           })(k));
         }
         return chain.then(function(){
@@ -2725,17 +2727,20 @@ body{
         }).then(function(arrs){
           var total=0;
           for(var m=0;m<arrs.length;m++)total+=arrs[m].byteLength;
+          if(!total)throw new Error('FFmpeg 引擎数据为空，请检查网络后重试');
           var merged=new Uint8Array(total);
           var off=0;
           for(m=0;m<arrs.length;m++){
             merged.set(new Uint8Array(arrs[m]),off);
             off+=arrs[m].byteLength;
           }
-          var wasmUrl=URL.createObjectURL(new Blob([merged],{type:'application/wasm'}));
+          if(merged[0]!==0||merged[1]!==97||merged[2]!==115||merged[3]!==109){
+            throw new Error('FFmpeg 引擎数据不完整，请刷新页面后重试');
+          }
           var ffmpeg=new mod.FFmpeg();
           return ffmpeg.load({
             coreURL:new URL('ffmpeg/ffmpeg-core.js',document.baseURI).href,
-            wasmURL:wasmUrl
+            wasmBinary:merged
           }).then(function(){return ffmpeg});
         });
       });
