@@ -4,7 +4,7 @@
 import { CORE_URL, FFMessageType } from "./const.js";
 import { ERROR_UNKNOWN_MESSAGE_TYPE, ERROR_NOT_LOADED, ERROR_IMPORT_FAILURE, } from "./errors.js";
 let ffmpeg;
-const load = async ({ coreURL: _coreURL, wasmURL: _wasmURL, workerURL: _workerURL, }) => {
+const load = async ({ coreURL: _coreURL, wasmURL: _wasmURL, workerURL: _workerURL, wasmBinary: _wasmBinary, }) => {
     const first = !ffmpeg;
     try {
         if (!_coreURL)
@@ -28,6 +28,7 @@ const load = async ({ coreURL: _coreURL, wasmURL: _wasmURL, workerURL: _workerUR
         ? _workerURL
         : _coreURL.replace(/.js$/g, ".worker.js");
     ffmpeg = await self.createFFmpegCore({
+        wasmBinary: _wasmBinary || undefined,
         // Fix `Overload resolution failed.` when using multi-threaded ffmpeg-core.
         // Encoded wasmURL and workerURL in the URL as a hack to fix locateFile issue.
         mainScriptUrlOrBlob: `${coreURL}#${btoa(JSON.stringify({ wasmURL, workerURL }))}`,

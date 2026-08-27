@@ -163,7 +163,19 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
    - **视频GIF 集成 FFmpeg.wasm（2026-08-20）**：`image/` 站视频转 GIF 改用 FFmpeg.wasm，资源已本地化到 `image/ffmpeg/`（`@ffmpeg/ffmpeg@0.12.15` + `@ffmpeg/util@0.12.2` + `@ffmpeg/core@0.12.10` esm 版，约 31MB）；`@ffmpeg/core@0.12.10` 实测**支持 HEVC(H.265) 解码**；转 GIF 命令：`-i in -ss S -t D -filter_complex "fps=N,scale=W:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=256[p];[b][p]paletteuse=dither=sierra2_4a" -loop 0|-1 out.gif`（`-loop 0`=无限循环含 NETSCAPE 扩展，`-loop -1`=单次）
    - **CSP 新增 `'wasm-unsafe-eval'`**：`_headers` 的 `script-src 'self' 'unsafe-inline'` 已加 `'wasm-unsafe-eval'`（Emscripten/FFmpeg.wasm 编译 wasm 必需）；@ffmpeg/ffmpeg 用同源文件 URL 建 worker（`new URL('./worker.js', import.meta.url)`），`worker-src 'self'` 足够，**无需放宽 blob:**；加载核心时 coreURL/wasmURL 用基于 `document.baseURI` 的绝对相对路径，不用 toBlobURL
    - **FFmpeg.wasm 在 node 中验证的桩**：esm 版 ffmpeg-core.js 顶层引用 `self`/`location`，node 实测需注入 `globalThis.self=globalThis; globalThis.location={href:'file://...'}`；wasm 用 `wasmBinary` 直接传入可跳过 fetch；core 的 `exec(...args)` 需展开参数（非数组），结果读 `ffmpeg.ret`
-   - **嵌入自研脚本陷阱**：`python .replace('</body>', ...)` 会误替换 JS 字符串字面量里的 `</body>`（如导出模板 `'...'+body+'\n</body>\n</html>'`），破坏字符串；正确做法是锚定文件末尾真实的 `</script>\n</body>\n</html>`，先剥离末尾 `</html>` 再拼接，且自研脚本内不得含 `</script>` 字面量
+    - **嵌入自研脚本陷阱**：`python .replace('</body>', ...)` 会误替换 JS 字符串字面量里的 `</body>`（如导出模板 `'...'+body+'\n</body>\n</html>'`），破坏字符串；正确做法是锚定文件末尾真实的 `</script>\n</body>\n</html>`，先剥离末尾 `</html>` 再拼接，且自研脚本内不得含 `</script>` 字面量
+
+[FFmpeg.wasm wasm 加载 "BufferSource argument is empty" 排错]
+- Date: 2026-08-27
+- Context: Agent 排查 `image/` 视频转 GIF 生成失败（`RuntimeError: Aborted(CompileError: WebAssembly.instantiate(): BufferSource argument is empty)`）时发现
+- Category: 排错调试
+- Instructions:
+  - **真正根因**：该错误 = Emscripten 实例化 wasm 时拿到 0 字节 buffer。根因是 `image/index.html` 的 vgLoadFFmpeg 用 `chain=chain.then((function(idx){ return fetchPart(idx, cb).then(cb2); })(k))` 把 **promise 传给了 `.then()`**（参数非函数被当 undefined 忽略），导致分片下载链与 chain 解耦：chain 立即 resolve，`blobs` 还是空数组 → 合并出 0 字节 wasm；旧代码把它做成空 blob URL 交给 worker 编译 → `BufferSource argument is empty`；新代码 `if(!total)throw` 抛"数据为空"，但 catch 提示随后又被后台仍在下载的 onBytes 进度（99%）覆盖，表现"卡在 99%"
+  - **修复**：IIFE 必须返回**函数**再传给 `.then()`，即 `chain=chain.then((function(idx){ return function(){ return fetchPart(idx, cb).then(cb2); }; })(k))`，让下载链按序等待每个分片完成后再合并；浏览器实测 2 个分片完整合并（32232419 bytes）后 `ffmpeg.load` resolve、转 GIF 成功
+  - **可靠性增强（非根因）**：主线程合并分片为 `Uint8Array` 后经 `ffmpeg.load({ coreURL, wasmBinary: merged })` 直传 worker（跳过 blob URL + worker fetch 链路）；`image/ffmpeg/worker.js` 透传 `wasmBinary`，`image/ffmpeg/classes.js` 把 `wasmBinary.buffer` 加入 transfer 数组减少 postMessage 拷贝
+  - **sw.js 缓存陷阱**：sw.js 用 stale-while-revalidate 缓存 `./image/index.html`，部署后若不递增 `CACHE` 版本号，用户仍从缓存拿到旧代码、修复不生效；改 index.html 类关键页面必须同步 bump `CACHE`（v18→v19）
+  - **验证**：node 模拟完整链路（合并 → wasmBinary → createFFmpegCore → `exec('-version')` 返回 0）；playwright + chromium headless shell 本地服务器实测上传 test.mp4 → 生成 240px/30 帧 100KB GIF 成功；线上分片与本地 md5 一致、HEAD/GET 正常
+  - **FFmpeg.wasm 加载依赖注入**：测试需 `globalThis.self=globalThis; globalThis.location={href:'file:///...'}`；esm 版 ffmpeg-core.js 为 `export default createFFmpegCore`，`await ffmpeg.ready` 后 `exec` 需展开参数、结果读 `ffmpeg.ret`
 
 [canvas 大图处理边界 - 排错知识]
 - Date: 2026-08-15
