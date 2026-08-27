@@ -641,6 +641,7 @@ body{
       <div class="file-meta" id="nomarkMeta"></div>
       <div class="stage" id="nomarkStage" style="display:none">
         <div class="stage-box" id="nomarkBox" style="cursor:crosshair">
+          <img id="nomarkGifPreview" alt="" style="display:none">
           <canvas id="nomarkDisp" width="0" height="0"></canvas>
           <canvas id="nomarkMask" width="0" height="0" style="position:absolute;left:0;top:0"></canvas>
         </div>
@@ -2466,6 +2467,8 @@ body{
     });
   }
   function nomarkShowStage(img,f,extraInfo){
+    var preview=document.getElementById('nomarkGifPreview');
+    if(preview&&preview.style.display!=='none'){preview.style.display='none';if(preview._url){URL.revokeObjectURL(preview._url);preview._url=null}}
     nomarkData.img=img;
     var fit=fitCanvas(img.naturalWidth||img.width,img.naturalHeight||img.height);
     nomarkData.w=fit.w;nomarkData.h=fit.h;
@@ -2475,9 +2478,11 @@ body{
     document.getElementById('nomarkResultInfo').textContent='';
     document.getElementById('nomarkStage').style.display='block';
     var disp=document.getElementById('nomarkDisp');
+    disp.style.display='inline-block';
     disp.width=fit.w;disp.height=fit.h;
     disp.getContext('2d').drawImage(img,0,0,fit.w,fit.h);
     var mask=document.getElementById('nomarkMask');
+    mask.style.display='inline-block';
     mask.width=fit.w;mask.height=fit.h;
     mask.getContext('2d').clearRect(0,0,fit.w,fit.h);
     nomarkData.undoStack=[];
@@ -2511,6 +2516,18 @@ body{
     var oldBtn=runBtn.textContent;
     runBtn.disabled=true;
     var ffmpeg=null;
+    var preview=document.getElementById('nomarkGifPreview');
+    document.getElementById('nomarkStage').style.display='block';
+    document.getElementById('nomarkResult').style.display='none';
+    document.getElementById('nomarkDownloadBtn').disabled=true;
+    if(preview._url){URL.revokeObjectURL(preview._url);preview._url=null}
+    preview._url=URL.createObjectURL(f);
+    preview.src=preview._url;
+    preview.style.display='inline-block';
+    var dispP=document.getElementById('nomarkDisp');
+    var maskP=document.getElementById('nomarkMask');
+    dispP.style.display='none';
+    maskP.style.display='none';
     meta.textContent='正在解析 GIF 帧…';
     vgLoadFFmpeg(function(p){
       meta.textContent='正在加载 FFmpeg 引擎（首次约 30MB）… '+p+'%';
@@ -2544,12 +2561,22 @@ body{
       return nomarkLoadImageFromBytes(bytes,nomarkData.gifNames[0]);
     }).then(function(firstImg){
       if(!firstImg)throw new Error('GIF 帧读取失败'+(nomarkData.gifFrameDiag||''));
+      var preview2=document.getElementById('nomarkGifPreview');
+      preview2.style.display='none';
+      if(preview2._url){URL.revokeObjectURL(preview2._url);preview2._url=null}
+      document.getElementById('nomarkDisp').style.display='inline-block';
+      document.getElementById('nomarkMask').style.display='inline-block';
       var fit=nomarkShowStage(firstImg,f,'（GIF '+nomarkData.gifNames.length+' 帧 · '+nomarkData.gifFps+'fps）');
       nomarkData.gifMode=true;
       hint.textContent='在红色区域涂抹第一帧水印位置（修复将应用到全部 '+nomarkData.gifNames.length+' 帧），点击修复，本地处理不上传';
       try{ffmpeg.deleteFile('nomark_in.gif');ffmpeg.deleteFile('nomark_probe.txt')}catch(e){}
       window.toast('涂抹第一帧水印位置，修复应用到全部帧');
     }).catch(function(e){
+      var preview3=document.getElementById('nomarkGifPreview');
+      preview3.style.display='none';
+      if(preview3._url){URL.revokeObjectURL(preview3._url);preview3._url=null}
+      document.getElementById('nomarkDisp').style.display='inline-block';
+      document.getElementById('nomarkMask').style.display='inline-block';
       meta.textContent='GIF 解析失败：'+(e.message||e);
       try{ffmpeg&&ffmpeg.deleteFile('nomark_in.gif')}catch(_){}
       window.toast('GIF 解析失败：'+(e.message||e));
