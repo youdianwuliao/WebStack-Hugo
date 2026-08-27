@@ -2865,11 +2865,12 @@ body{
           return ffmpeg.readFile(names[idx]).then(function(data){
             return nomarkGifBytesToImageData(data,c,ctx,w,h);
           }).then(function(imgData){
-            localInpaint(imgData,maskData,w,h);
-            ctx.putImageData(imgData,0,0);
-            if(idx===0)firstAfter=ctx.getImageData(0,0,w,h);
-            return new Promise(function(res){
-              c.toBlob(function(blob){res(blob)},'image/png');
+            return localInpaintAsync(imgData,maskData,w,h).then(function(){
+              ctx.putImageData(imgData,0,0);
+              if(idx===0)firstAfter=ctx.getImageData(0,0,w,h);
+              return new Promise(function(res){
+                c.toBlob(function(blob){res(blob)},'image/png');
+              });
             });
           }).then(function(blob){
             return blob.arrayBuffer();
