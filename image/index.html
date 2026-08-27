@@ -2436,7 +2436,7 @@ body{
   };
 
   /* ===== 去水印（本地涂抹修复） ===== */
-  var nomarkData={img:null,w:0,h:0,fileName:'',drawing:false,tool:'draw',undoStack:[],resultCanvas:null,gifMode:false,gifFps:10,gifNames:[],gifBlob:null,gifFirstCanvas:null,gifBuf:null};
+  var nomarkData={img:null,w:0,h:0,fileName:'',drawing:false,tool:'draw',undoStack:[],resultCanvas:null,gifMode:false,gifFps:10,gifNames:[],gifBlob:null,gifFirstCanvas:null,gifBuf:null,gifFrameDiag:''};
   function handleNomarkFile(f){
     var isGif=(f.type==='image/gif')||/\.gif$/i.test(f.name);
     if(isGif){handleNomarkGif(f);return}
@@ -2485,12 +2485,19 @@ body{
     nomarkUpdateButtons();
     return fit;
   }
-  function nomarkLoadImageFromBytes(bytes){
+  function nomarkLoadImageFromBytes(bytes,label){
     return new Promise(function(resolve){
       var url=URL.createObjectURL(new Blob([bytes],{type:'image/png'}));
       var img=new Image();
-      img.onload=function(){resolve(img)};
-      img.onerror=function(){resolve(null)};
+      img.onload=function(){URL.revokeObjectURL(url);resolve(img)};
+      img.onerror=function(){
+        var b=bytes||[];
+        var sig='';
+        for(var k=0;k<Math.min(8,b.length||0);k++)sig+=(b[k]&255).toString(16).padStart(2,'0');
+        nomarkData.gifFrameDiag='['+label+' '+((b&&b.length)||0)+'B sig:'+sig+']';
+        URL.revokeObjectURL(url);
+        resolve(null);
+      };
       img.src=url;
     });
   }
@@ -2534,9 +2541,9 @@ body{
       nomarkData.gifNames=info.names;
       return ffmpeg.readFile(info.names[0]);
     }).then(function(bytes){
-      return nomarkLoadImageFromBytes(bytes);
+      return nomarkLoadImageFromBytes(bytes,nomarkData.gifNames[0]);
     }).then(function(firstImg){
-      if(!firstImg)throw new Error('GIF 帧读取失败');
+      if(!firstImg)throw new Error('GIF 帧读取失败'+(nomarkData.gifFrameDiag||''));
       var fit=nomarkShowStage(firstImg,f,'（GIF '+nomarkData.gifNames.length+' 帧 · '+nomarkData.gifFps+'fps）');
       nomarkData.gifMode=true;
       hint.textContent='在红色区域涂抹第一帧水印位置（修复将应用到全部 '+nomarkData.gifNames.length+' 帧），点击修复，本地处理不上传';
