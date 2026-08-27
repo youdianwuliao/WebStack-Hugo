@@ -189,6 +189,7 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - **清理函数不能删源帧**：若 `nomarkGifClearFrames` 连 `f_*.png` 一起删，随后逐帧 `readFile('f_XXX.png')` 报 `ErrnoError: FS error`；修复流程应在开头清理后**重新写源 GIF 并拆帧**，保持自洽
   - **浏览器端验证**：playwright 上传带水印 GIF → 涂抹矩形（fillRect mask）→ 点击修复 → 下载产物；ffmpeg.wasm node 桩验证输出帧数不变、水印区平均 RGB 由纯红变为填充色（testsrc drawbox red@0.9 水印 16,16 64×32）
   - **线上 wasm 加载 HTML 报错（magic word ... found 3c 21 44 4f）的根因与防护**：`<!DO` = HTML DOCTYPE。线上 wasm 单文件 `ffmpeg-core.wasm` 不存在（31MB > Cloudflare Pages 25MB 单文件限制，只能分片），core.js 的 `getBinary` 仅在 `Module.wasmBinary` 缺失时兜底 fetch 单文件 → 404 HTML → instantiate 报错。若 SW 缓存了旧版 classes.js/worker.js（wasmBinary 传递是 commit 2561671 才加的），wasmBinary 不传 → 触发兜底 fetch。防护：① sw.js fetch handler 排除 `/image/ffmpeg/`（不缓存不拦截，体积大更新频繁）；② 分片 URL 加版本参数 `?v=2` 绕过 HTTP 缓存；③ wasm 编译错误时自动清 `navsite*` 缓存并提示硬刷新（自愈）；④ worker.js 在 wasmBinary 缺失时直接抛中文报错而非让 core 去 fetch
+  - **大图静态去水印性能与反馈**：`localInpaint` 是逐迭代同步扫描涂抹包围盒的算法（800 次上限，实测 mask 收敛迭代数 ≈ 中心到边框最短距离 ≈ min(bw,bh)/2）。大图（如 1200×1200 + 大涂抹区域）同步执行会冻结 UI 数秒到数十秒，用户感知为"一键修复没反应"。修复：新增 `localInpaintAsync`（相同算法、40 迭代/片分片 + `setTimeout(0)` 让出主线程 + 进度回调），静态图路径按钮实时显示"修复中 x%"；GIF 逐帧路径仍用同步版。headless 测试若异常慢是后台标签页 timer throttle（禁用 `--disable-background-timer-throttling` 后正常）
 
 [canvas 大图处理边界 - 排错知识]
 - Date: 2026-08-15
