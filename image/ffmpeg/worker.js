@@ -62,7 +62,12 @@ const writeFile = ({ path, data }) => {
     ffmpeg.FS.writeFile(path, data);
     return true;
 };
-const readFile = ({ path, encoding }) => ffmpeg.FS.readFile(path, { encoding });
+const readFile = ({ path, encoding }) => {
+    const data = ffmpeg.FS.readFile(path, { encoding });
+    if (data instanceof Uint8Array) return data;
+    if (Array.isArray(data)) return Uint8Array.from(data);
+    return data;
+};
 // TODO: check if deletion works.
 const deleteFile = ({ path }) => {
     ffmpeg.FS.unlink(path);

@@ -2490,20 +2490,56 @@ body{
     nomarkUpdateButtons();
     return fit;
   }
+  function nomarkToU8(bytes){
+    if(bytes instanceof Uint8Array)return bytes;
+    if(Array.isArray(bytes))return Uint8Array.from(bytes);
+    if(bytes instanceof ArrayBuffer)return new Uint8Array(bytes);
+    if(ArrayBuffer.isView(bytes))return new Uint8Array(bytes.buffer,bytes.byteOffset,bytes.byteLength);
+    return bytes;
+  }
+  function nomarkBytesToDataUrl(bytes){
+    var u8=nomarkToU8(bytes);
+    var bin='';
+    var CH=32768;
+    for(var i=0;i<u8.length;i+=CH){
+      bin+=String.fromCharCode.apply(null,u8.subarray(i,Math.min(i+CH,u8.length)));
+    }
+    return 'data:image/png;base64,'+btoa(bin);
+  }
   function nomarkLoadImageFromBytes(bytes,label){
     return new Promise(function(resolve){
-      var url=URL.createObjectURL(new Blob([bytes],{type:'image/png'}));
-      var img=new Image();
-      img.onload=function(){URL.revokeObjectURL(url);resolve(img)};
-      img.onerror=function(){
-        var b=bytes||[];
-        var sig='';
-        for(var k=0;k<Math.min(8,b.length||0);k++)sig+=(b[k]&255).toString(16).padStart(2,'0');
-        nomarkData.gifFrameDiag+='['+label+' '+((b&&b.length)||0)+'B sig:'+sig+'] ';
-        URL.revokeObjectURL(url);
-        resolve(null);
-      };
-      img.src=url;
+      var bb=nomarkToU8(bytes);
+      var tried=0;
+      function tryLoad(){
+        var url;
+        var img=new Image();
+        img.onload=function(){
+          if(url&&url.indexOf('blob:')===0)URL.revokeObjectURL(url);
+          resolve(img);
+        };
+        img.onerror=function(){
+          if(url&&url.indexOf('blob:')===0)URL.revokeObjectURL(url);
+          if(tried===0){
+            tried++;
+            url=nomarkBytesToDataUrl(bb);
+            img.src=url;
+            return;
+          }
+          var b=bytes||[];
+          var sig='';
+          for(var k=0;k<Math.min(8,b.length||0);k++)sig+=(b[k]&255).toString(16).padStart(2,'0');
+          var t=Object.prototype.toString.call(b).slice(8,-1);
+          nomarkData.gifFrameDiag+='['+label+' '+((b&&b.length)||0)+'B/'+t+' sig:'+sig+'] ';
+          resolve(null);
+        };
+        if(tried===0){
+          url=URL.createObjectURL(new Blob([bb],{type:'image/png'}));
+        }else{
+          url=nomarkBytesToDataUrl(bb);
+        }
+        img.src=url;
+      }
+      tryLoad();
     });
   }
   function nomarkTryLoadFirstFrame(ffmpeg,names){
@@ -2862,18 +2898,29 @@ body{
     }).catch(function(){});
   }
   function nomarkGifBytesToImageData(bytes,c,ctx,w,h){
-    var url=URL.createObjectURL(new Blob([bytes],{type:'image/png'}));
-    return new Promise(function(resolve){
+    var tried=0;
+    function attempt(cb){
+      var url;
       var img=new Image();
       img.onload=function(){
+        if(url&&url.indexOf('blob:')===0)URL.revokeObjectURL(url);
         ctx.clearRect(0,0,w,h);
         ctx.drawImage(img,0,0,w,h);
-        URL.revokeObjectURL(url);
-        resolve(ctx.getImageData(0,0,w,h));
+        cb(ctx.getImageData(0,0,w,h));
       };
-      img.onerror=function(){URL.revokeObjectURL(url);resolve(ctx.getImageData(0,0,w,h))};
+      img.onerror=function(){
+        if(url&&url.indexOf('blob:')===0)URL.revokeObjectURL(url);
+        if(tried===0){tried++;attempt(cb);return}
+        cb(ctx.getImageData(0,0,w,h));
+      };
+      if(tried===0){
+        url=URL.createObjectURL(new Blob([nomarkToU8(bytes)],{type:'image/png'}));
+      }else{
+        url=nomarkBytesToDataUrl(bytes);
+      }
       img.src=url;
-    });
+    }
+    return new Promise(function(resolve){attempt(resolve)});
   }
   function nomarkGifProcessAll(ffmpeg,maskData,w,h,btn){
     var names=nomarkData.gifNames;
@@ -2914,7 +2961,7 @@ body{
       if(ret!==0)throw new Error('GIF 合成失败（exit '+ret+'）');
       return ffmpeg.readFile('nomark_out.gif');
     }).then(function(bytes){
-      nomarkData.gifBlob=new Blob([bytes],{type:'image/gif'});
+      nomarkData.gifBlob=new Blob([nomarkToU8(bytes)],{type:'image/gif'});
     });
   }
   function nomarkGifRepair(){
@@ -3146,7 +3193,7 @@ body{
         if(code!==0)throw new Error('FFmpeg 处理失败（exit '+code+'）');
         return ffmpeg.readFile(outputName);
       }).then(function(data){
-        var blob=new Blob([data],{type:'image/gif'});
+        var blob=new Blob([nomarkToU8(data)],{type:'image/gif'});
         ffmpeg.deleteFile(inputName);
         ffmpeg.deleteFile(outputName);
         return blob;
