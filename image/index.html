@@ -651,12 +651,21 @@ body{
         <span class="range-val" id="nomarkBrushVal">24</span>
         <button class="btn toggled" id="nomarkToolDraw" onclick="nomarkTool('draw')">涂抹</button>
         <button class="btn" id="nomarkToolErase" onclick="nomarkTool('erase')">橡皮</button>
+        <button class="btn" id="nomarkToolAuto" onclick="nomarkTool('auto')">自动选区</button>
+        <label id="nomarkAutoTolWrap">容差 <input type="range" id="nomarkAutoTol" min="10" max="160" value="60"></label>
         <button class="btn" id="nomarkUndoBtn" onclick="nomarkUndo()" disabled>撤销</button>
         <button class="btn" onclick="nomarkClear()">清空</button>
+      </div>
+      <div class="opts" id="nomarkGifNav" style="display:none">
+        <button class="btn" onclick="nomarkGifStep(-1)">◀ 上一帧</button>
+        <span class="range-val" id="nomarkGifIdx" style="min-width:auto">1/1</span>
+        <button class="btn" onclick="nomarkGifStep(1)">下一帧 ▶</button>
+        <span class="range-val" style="min-width:auto;text-align:left" id="nomarkGifNavHint">水印位置各帧不同可逐帧涂抹</span>
       </div>
       <div class="opts"><span class="range-val" id="nomarkHint" style="min-width:auto;text-align:left">在红色区域涂抹水印位置，点击修复，本地算法自动用周围像素填充，全程不上传</span></div>
       <div class="opts">
         <button class="btn primary" id="nomarkRunBtn" onclick="nomarkRepair()">一键修复</button>
+        <button class="btn" id="nomarkCancelBtn" onclick="nomarkCancelRepair()" style="display:none">取消</button>
         <button class="btn green" id="nomarkDownloadBtn" onclick="downloadNomarkResult()" disabled>下载结果</button>
       </div>
       <div class="result-grid" id="nomarkResult" style="display:none;margin-top:14px">
@@ -668,6 +677,14 @@ body{
           <div class="lbl">修复后</div>
           <canvas id="nomarkAfter" width="0" height="0"></canvas>
         </div>
+      </div>
+      <div class="opts" id="nomarkCmpRow" style="display:none;margin-top:10px;flex-direction:column;align-items:center">
+        <div style="position:relative;width:100%;max-width:420px">
+          <canvas id="nomarkCmpAfter" width="0" height="0" style="width:100%;height:auto;display:block"></canvas>
+          <canvas id="nomarkCmpBefore" width="0" height="0" style="position:absolute;left:0;top:0;width:100%;height:100%;clip-path:inset(0 50% 0 0)"></canvas>
+          <input type="range" id="nomarkCmpSlider" min="0" max="100" value="50" oninput="nomarkCmpSlider()" style="position:absolute;left:0;bottom:-8px;width:100%;margin:0">
+        </div>
+        <span class="range-val" style="min-width:auto;margin-top:12px;text-align:center">拖动滑块对比修复前后</span>
       </div>
       <div class="result-info" id="nomarkResultInfo"></div>
     </div>
@@ -2437,13 +2454,15 @@ body{
   };
 
   /* ===== 去水印（本地涂抹修复） ===== */
-  var nomarkData={img:null,w:0,h:0,fileName:'',drawing:false,tool:'draw',undoStack:[],resultCanvas:null,gifMode:false,gifFps:10,gifNames:[],gifBlob:null,gifFirstCanvas:null,gifBuf:null,gifFrameDiag:''};
+  var nomarkData={img:null,w:0,h:0,fileName:'',drawing:false,tool:'draw',undoStack:[],resultCanvas:null,gifMode:false,gifFps:10,gifNames:[],gifBlob:null,gifFirstCanvas:null,gifBuf:null,gifFrameDiag:'',cancelled:false,gifFfmpeg:null,gifIdx:0,gifMasks:[]};
   function handleNomarkFile(f){
     var isGif=(f.type==='image/gif')||/\.gif$/i.test(f.name);
     if(isGif){handleNomarkGif(f);return}
     nomarkData.gifMode=false;
     nomarkData.gifBlob=null;
     nomarkData.gifNames=[];
+    nomarkData.gifFfmpeg=null;
+    document.getElementById('nomarkGifNav').style.display='none';
     nomarkData.fileName=f.name.replace(/\.[^.]+$/,'')||'image';
     loadImage(f,function(img){
       nomarkData.img=img;
@@ -2453,6 +2472,8 @@ body{
       document.getElementById('nomarkResult').style.display='none';
       document.getElementById('nomarkDownloadBtn').disabled=true;
       document.getElementById('nomarkResultInfo').textContent='';
+      document.getElementById('nomarkCmpRow').style.display='none';
+      document.getElementById('nomarkCancelBtn').style.display='none';
       document.getElementById('nomarkStage').style.display='block';
       var disp=document.getElementById('nomarkDisp');
       disp.width=fit.w;disp.height=fit.h;
@@ -2476,6 +2497,8 @@ body{
     document.getElementById('nomarkResult').style.display='none';
     document.getElementById('nomarkDownloadBtn').disabled=true;
     document.getElementById('nomarkResultInfo').textContent='';
+    document.getElementById('nomarkCmpRow').style.display='none';
+    document.getElementById('nomarkCancelBtn').style.display='none';
     document.getElementById('nomarkStage').style.display='block';
     var disp=document.getElementById('nomarkDisp');
     disp.style.display='inline-block';
@@ -2488,7 +2511,63 @@ body{
     nomarkData.undoStack=[];
     nomarkMaskPush();
     nomarkUpdateButtons();
+    document.getElementById('nomarkGifNav').style.display=nomarkData.gifMode?'flex':'none';
     return fit;
+  }
+  function nomarkUpdateGifNav(){
+    var el=document.getElementById('nomarkGifIdx');
+    if(!el)return;
+    el.textContent=(nomarkData.gifIdx+1)+'/'+(nomarkData.gifNames.length||1);
+  }
+  window.nomarkGifStep=function(dir){
+    if(!nomarkData.gifMode||!nomarkData.gifFfmpeg)return;
+    var names=nomarkData.gifNames;
+    if(!names.length)return;
+    nomarkSaveCurrentMask();
+    var ni=nomarkData.gifIdx+dir;
+    if(ni<0||ni>=names.length)return;
+    nomarkData.gifIdx=ni;
+    nomarkLoadFrame(ni);
+  };
+  function nomarkSaveCurrentMask(){
+    if(!nomarkData.gifMode)return;
+    var mask=document.getElementById('nomarkMask');
+    try{
+      nomarkData.gifMasks[nomarkData.gifIdx]=mask.toDataURL('image/png');
+    }catch(e){}
+  }
+  function nomarkLoadFrame(idx){
+    var ff=nomarkData.gifFfmpeg;
+    var names=nomarkData.gifNames;
+    var meta=document.getElementById('nomarkMeta');
+    meta.textContent='加载帧 '+(idx+1)+'/'+names.length+'…';
+    ff.readFile(names[idx]).then(function(data){
+      var w=nomarkData.w,h=nomarkData.h;
+      var c=document.createElement('canvas');
+      c.width=w;c.height=h;
+      var ctx=c.getContext('2d',{willReadFrequently:true});
+      return nomarkGifBytesToImageData(data,c,ctx,w,h).then(function(imgData){
+        var disp=document.getElementById('nomarkDisp');
+        disp.getContext('2d',{willReadFrequently:true}).putImageData(imgData,0,0);
+        return nomarkRestoreMaskForFrame(idx);
+      });
+    }).then(function(){
+      nomarkUpdateGifNav();
+      document.getElementById('nomarkMeta').textContent='帧 '+(idx+1)+'/'+names.length+' · 涂抹该帧水印位置';
+    }).catch(function(e){
+      window.toast('帧加载失败：'+(e.message||e));
+    });
+  }
+  function nomarkRestoreMaskForFrame(idx){
+    var mask=document.getElementById('nomarkMask');
+    mask.getContext('2d').clearRect(0,0,mask.width,mask.height);
+    nomarkData.undoStack=[];
+    var url=nomarkData.gifMasks[idx];
+    if(!url){nomarkMaskPush();nomarkUpdateButtons();return Promise.resolve()}
+    return nomarkRestoreMask(url).then(function(){
+      nomarkMaskPush();
+      nomarkUpdateButtons();
+    });
   }
   function nomarkToU8(bytes){
     if(bytes instanceof Uint8Array)return bytes;
@@ -2610,6 +2689,7 @@ body{
         return names;
       });
     }).then(function(names){
+      if(names.length>150&&!confirm('该 GIF 共 '+names.length+' 帧，逐帧修复需要较长时间，是否继续？')){throw new Error('用户取消')}
       return ffmpeg.ffprobe(['-v','error','-select_streams','v:0','-show_entries','stream=avg_frame_rate','-of','csv=p=0','nomark_in.gif','-o','nomark_probe.txt']).then(function(){
         var txt='';
         try{txt=new TextDecoder().decode(ffmpeg.readFile('nomark_probe.txt'))}catch(e){}
@@ -2618,6 +2698,9 @@ body{
     }).then(function(info){
       nomarkData.gifFps=info.fps;
       nomarkData.gifNames=info.names;
+      nomarkData.gifFfmpeg=ffmpeg;
+      nomarkData.gifIdx=0;
+      nomarkData.gifMasks=[];
       return nomarkTryLoadFirstFrame(ffmpeg,info.names);
     }).then(function(firstImg){
       if(!firstImg)throw new Error('GIF 帧读取失败'+(nomarkData.gifFrameDiag||''));
@@ -2628,9 +2711,12 @@ body{
       document.getElementById('nomarkMask').style.display='inline-block';
       var fit=nomarkShowStage(firstImg,f,'（GIF '+nomarkData.gifNames.length+' 帧 · '+nomarkData.gifFps+'fps）');
       nomarkData.gifMode=true;
-      hint.textContent='在红色区域涂抹第一帧水印位置（修复将应用到全部 '+nomarkData.gifNames.length+' 帧），点击修复，本地处理不上传';
+      nomarkData.gifIdx=0;
+      nomarkUpdateGifNav();
+      document.getElementById('nomarkGifNav').style.display='flex';
+      hint.textContent='在红色区域涂抹水印位置。水印在各帧位置不同可切帧逐帧涂抹，全部帧相同可直接点修复，本地处理不上传';
       try{ffmpeg.deleteFile('nomark_in.gif');ffmpeg.deleteFile('nomark_probe.txt')}catch(e){}
-      window.toast('涂抹第一帧水印位置，修复应用到全部帧');
+      window.toast('涂抹水印位置，各帧不同可切帧涂抹');
     }).catch(function(e){
       var preview3=document.getElementById('nomarkGifPreview');
       preview3.style.display='none';
@@ -2664,6 +2750,15 @@ body{
     nomarkData.tool=t;
     document.getElementById('nomarkToolDraw').classList.toggle('toggled',t==='draw');
     document.getElementById('nomarkToolErase').classList.toggle('toggled',t==='erase');
+    document.getElementById('nomarkToolAuto').classList.toggle('toggled',t==='auto');
+    var hint=document.getElementById('nomarkHint');
+    if(t==='auto'){
+      hint.textContent='自动选区：点击水印上的任意颜色点，自动选中周围颜色相近的连通区域（容差可调），可多次点击补选';
+    }else if(nomarkData.gifMode){
+      hint.textContent='在红色区域涂抹水印位置。水印在各帧位置不同可切帧逐帧涂抹，全部帧相同可直接点修复，本地处理不上传';
+    }else{
+      hint.textContent='在红色区域涂抹水印位置，点击修复，本地算法自动用周围像素填充，全程不上传';
+    }
   };
   function nomarkMaskPush(){
     var mask=document.getElementById('nomarkMask');
@@ -2712,6 +2807,10 @@ body{
       var rect=mask.getBoundingClientRect();
       var scale=mask.width/rect.width;
       var x=(e.clientX-rect.left)*scale,y=(e.clientY-rect.top)*scale;
+      if(nomarkData.tool==='auto'){
+        nomarkAutoSelect(Math.round(x),Math.round(y));
+        return;
+      }
       var ctx=mask.getContext('2d');
       var r=parseInt(document.getElementById('nomarkBrush').value)/2;
       ctx.globalCompositeOperation=nomarkData.tool==='erase'?'destination-out':'source-over';
@@ -2720,6 +2819,37 @@ body{
       if(isDown)drawLine(ctx,lastX,lastY,x,y,r);
       ctx.globalCompositeOperation='source-over';
       lastX=x;lastY=y;
+    }
+    function nomarkAutoSelect(sx,sy){
+      if(!nomarkData.img)return;
+      var w=nomarkData.w,h=nomarkData.h;
+      var disp=document.getElementById('nomarkDisp');
+      var dctx=disp.getContext('2d',{willReadFrequently:true});
+      var src=dctx.getImageData(0,0,w,h).data;
+      if(sx<0||sy<0||sx>=w||sy>=h)return;
+      var tol=parseInt(document.getElementById('nomarkAutoTol').value);
+      var si=(sy*w+sx)*4,seedR=src[si],seedG=src[si+1],seedB=src[si+2];
+      var mctx=mask.getContext('2d',{willReadFrequently:true});
+      var mdata=mctx.getImageData(0,0,w,h);
+      var md=mdata.data;
+      var visited=new Uint8Array(w*h);
+      var stack=[[sx,sy]];
+      while(stack.length){
+        var p=stack.pop(),px=p[0],py=p[1];
+        var vi=py*w+px;
+        if(vi<0||vi>=visited.length||visited[vi])continue;
+        visited[vi]=1;
+        var di=vi*4;
+        var dr=Math.abs(src[di]-seedR),dg=Math.abs(src[di+1]-seedG),db=Math.abs(src[di+2]-seedB);
+        if(dr+dg+db>tol)continue;
+        md[di]=255;md[di+1]=0;md[di+2]=0;md[di+3]=217;
+        if(px>0)stack.push([px-1,py]);
+        if(px<w-1)stack.push([px+1,py]);
+        if(py>0)stack.push([px,py-1]);
+        if(py<h-1)stack.push([px,py+1]);
+      }
+      mctx.putImageData(mdata,0,0);
+      nomarkMaskPush();
     }
     mask.addEventListener('pointerdown',function(e){
       if(!nomarkData.img)return;
@@ -2809,6 +2939,7 @@ body{
       }
       var iter=0,changed=false;
       function chunk(){
+        if(nomarkData.cancelled){resolve(0);return}
         var until=iter+40;
         while(iter<until){
           iter++;
@@ -2847,6 +2978,7 @@ body{
   window.nomarkRepair=function(){
     if(!nomarkData.img){toast('请先上传图片');return}
     if(nomarkData.gifMode){nomarkGifRepair();return}
+    nomarkData.cancelled=false;
     var mask=document.getElementById('nomarkMask');
     var maskCtx=mask.getContext('2d',{willReadFrequently:true});
     var maskData=maskCtx.getImageData(0,0,mask.width,mask.height);
@@ -2858,12 +2990,15 @@ body{
     var disp=document.getElementById('nomarkDisp');
     var imgData=disp.getContext('2d',{willReadFrequently:true}).getImageData(0,0,disp.width,disp.height);
     var btn=document.getElementById('nomarkRunBtn');
+    var cancelBtn=document.getElementById('nomarkCancelBtn');
     btn.disabled=true;
+    cancelBtn.style.display='inline-block';
     var oldText=btn.textContent;
     btn.textContent='修复中 0%';
     localInpaintAsync(imgData,maskData,disp.width,disp.height,function(p){
       btn.textContent='修复中 '+Math.round(p*100)+'%';
     }).then(function(ok){
+      if(nomarkData.cancelled)throw new Error('已取消');
       if(ok){
         var out=document.createElement('canvas');
         out.width=disp.width;out.height=disp.height;
@@ -2878,13 +3013,17 @@ body{
         document.getElementById('nomarkDownloadBtn').disabled=false;
         document.getElementById('nomarkResultInfo').textContent='修复完成 · 本地处理，未上传任何数据';
         nomarkData.resultCanvas=out;
+        nomarkFillCompare(before,after);
       }else{
         toast('未检测到涂抹区域');
       }
       btn.disabled=false;btn.textContent=oldText;
+      document.getElementById('nomarkCancelBtn').style.display='none';
     }).catch(function(e){
-      toast('修复失败：'+(e.message||e));
+      if(nomarkData.cancelled){toast('已取消');}
+      else{toast('修复失败：'+(e.message||e));}
       btn.disabled=false;btn.textContent=oldText;
+      document.getElementById('nomarkCancelBtn').style.display='none';
     });
   };
   function nomarkGifClearFrames(ffmpeg){
@@ -2922,6 +3061,24 @@ body{
     }
     return new Promise(function(resolve){attempt(resolve)});
   }
+  function nomarkFrameMaskData(idx,w,h,fallback){
+    var url=null;
+    for(var i=idx;i>=0;i--){
+      if(nomarkData.gifMasks[i]){url=nomarkData.gifMasks[i];break}
+    }
+    if(!url)return Promise.resolve(fallback);
+    return new Promise(function(resolve){
+      var im=new Image();
+      im.onload=function(){
+        var c=document.createElement('canvas');
+        c.width=w;c.height=h;
+        c.getContext('2d').drawImage(im,0,0);
+        resolve(c.getContext('2d',{willReadFrequently:true}).getImageData(0,0,w,h));
+      };
+      im.onerror=function(){resolve(fallback)};
+      im.src=url;
+    });
+  }
   function nomarkGifProcessAll(ffmpeg,maskData,w,h,btn){
     var names=nomarkData.gifNames;
     var c=document.createElement('canvas');
@@ -2929,26 +3086,33 @@ body{
     var ctx=c.getContext('2d',{willReadFrequently:true});
     var chain=Promise.resolve();
     var firstAfter=null;
+    var t0=Date.now();
     for(var i=0;i<names.length;i++){
       chain=chain.then((function(idx){
         return function(){
-          btn.textContent='修复中 '+(idx+1)+'/'+names.length;
-          return ffmpeg.readFile(names[idx]).then(function(data){
-            return nomarkGifBytesToImageData(data,c,ctx,w,h);
-          }).then(function(imgData){
-            return localInpaintAsync(imgData,maskData,w,h).then(function(){
-              ctx.putImageData(imgData,0,0);
-              if(idx===0)firstAfter=ctx.getImageData(0,0,w,h);
-              return new Promise(function(res){
-                c.toBlob(function(blob){res(blob)},'image/png');
+          if(nomarkData.cancelled)throw new Error('已取消');
+          var pct=Math.round(idx/names.length*100);
+          var avg=(Date.now()-t0)/Math.max(idx,1);
+          var remain=Math.ceil(avg*(names.length-idx)/1000);
+          btn.textContent='修复中 '+pct+'% · 预计剩余 '+remain+'s';
+          return nomarkFrameMaskData(idx,w,h,maskData).then(function(frameMask){
+            return ffmpeg.readFile(names[idx]).then(function(data){
+              return nomarkGifBytesToImageData(data,c,ctx,w,h);
+            }).then(function(imgData){
+              return localInpaintAsync(imgData,frameMask,w,h).then(function(){
+                ctx.putImageData(imgData,0,0);
+                if(idx===0)firstAfter=ctx.getImageData(0,0,w,h);
+                return new Promise(function(res){
+                  c.toBlob(function(blob){res(blob)},'image/png');
+                });
               });
+            }).then(function(blob){
+              return blob.arrayBuffer();
+            }).then(function(buf){
+              return ffmpeg.writeFile('n_'+('000'+idx).slice(-3)+'.png',new Uint8Array(buf));
+            }).then(function(){
+              return new Promise(function(r){setTimeout(r,0)});
             });
-          }).then(function(blob){
-            return blob.arrayBuffer();
-          }).then(function(buf){
-            return ffmpeg.writeFile('n_'+('000'+idx).slice(-3)+'.png',new Uint8Array(buf));
-          }).then(function(){
-            return new Promise(function(r){setTimeout(r,0)});
           });
         };
       })(i));
@@ -2966,6 +3130,8 @@ body{
   }
   function nomarkGifRepair(){
     if(!nomarkData.gifNames.length){toast('未检测到 GIF 帧');return}
+    nomarkData.cancelled=false;
+    nomarkSaveCurrentMask();
     var mask=document.getElementById('nomarkMask');
     var maskData=mask.getContext('2d',{willReadFrequently:true}).getImageData(0,0,mask.width,mask.height);
     var has=false;
@@ -2975,9 +3141,11 @@ body{
     if(!has){toast('请先涂抹水印位置');return}
     var w=nomarkData.w,h=nomarkData.h;
     var btn=document.getElementById('nomarkRunBtn');
+    var cancelBtn=document.getElementById('nomarkCancelBtn');
     var oldText=btn.textContent;
     btn.disabled=true;
     btn.textContent='准备 FFmpeg…';
+    cancelBtn.style.display='inline-block';
     var ffmpeg=null;
     vgLoadFFmpeg(null).then(function(ff){
       ffmpeg=ff;
@@ -2994,6 +3162,7 @@ body{
     }).then(function(firstAfter){
       return nomarkGifCompose(ffmpeg,btn).then(function(){return firstAfter});
     }).then(function(firstAfter){
+      if(nomarkData.cancelled)throw new Error('已取消');
       var before=document.getElementById('nomarkBefore');
       before.width=w;before.height=h;
       before.getContext('2d').drawImage(document.getElementById('nomarkDisp'),0,0);
@@ -3003,15 +3172,21 @@ body{
       document.getElementById('nomarkResult').style.display='grid';
       document.getElementById('nomarkDownloadBtn').disabled=false;
       document.getElementById('nomarkResultInfo').textContent='修复完成 · '+nomarkData.gifNames.length+' 帧 · 本地处理，未上传任何数据';
+      nomarkFillCompare(before,after);
       window.toast('GIF 修复完成');
     }).catch(function(e){
-      window.toast('修复失败：'+(e.message||e));
+      if(nomarkData.cancelled){window.toast('已取消');}
+      else{window.toast('修复失败：'+(e.message||e));}
     }).then(function(){
       return nomarkGifClearFrames(ffmpeg);
     }).then(function(){
       btn.disabled=false;btn.textContent=oldText;
+      cancelBtn.style.display='none';
     });
   }
+  window.nomarkCancelRepair=function(){
+    if(!nomarkData.cancelled)nomarkData.cancelled=true;
+  };
   window.downloadNomarkResult=function(){
     if(nomarkData.gifBlob){
       triggerDownload(nomarkData.gifBlob,nomarkData.fileName+'-去水印.gif');
@@ -3022,6 +3197,22 @@ body{
       triggerDownload(blob,nomarkData.fileName+'-去水印.png');
     });
   };
+  window.nomarkCmpSlider=function(){
+    var v=parseInt(document.getElementById('nomarkCmpSlider').value);
+    var before=document.getElementById('nomarkCmpBefore');
+    before.style.clipPath='inset(0 '+(100-v)+'% 0 0)';
+  };
+  function nomarkFillCompare(before,after){
+    var ca=document.getElementById('nomarkCmpAfter');
+    var cb=document.getElementById('nomarkCmpBefore');
+    ca.width=before.width||nomarkData.w;ca.height=before.height||nomarkData.h;
+    cb.width=ca.width;cb.height=ca.height;
+    ca.getContext('2d').drawImage(before,0,0);
+    cb.getContext('2d').drawImage(after,0,0);
+    document.getElementById('nomarkCmpRow').style.display='flex';
+    document.getElementById('nomarkCmpSlider').value=50;
+    nomarkCmpSlider();
+  }
 
   /* ===== 视频转 GIF 表情 ===== */
   var vgData={video:null,url:'',fileName:'',file:null,gifBlob:null};
