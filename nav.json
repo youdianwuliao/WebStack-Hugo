@@ -1425,6 +1425,12 @@
       "sidebarIcon": "fas fa-play-circle",
       "items": [
         {
+          "title": "美剧屋",
+          "icon": "/assets/images/logos/美剧屋_icon.jpg",
+          "url": "https://mjwu.cc/",
+          "description": "免费在线观看美剧"
+        },
+        {
           "title": "哔哩哔哩",
           "icon": "/assets/images/logos/哔哩哔哩.png",
           "url": "https://www.bilibili.com/",
