@@ -55,8 +55,6 @@
       --header-bg1: #f8f9fa;
       --header-bg2: #e8eef5;
       --header-border: #d0d8e4;
-      --nav-bg: #f8f9fa;
-      --nav-border: #e0e0e0;
       --nav-hover: #e3f2fd;
       --nav-sub-hover: #dbeafe;
       --footer-bg: #fff;
@@ -84,8 +82,6 @@
       --header-bg1: #03152a;
       --header-bg2: #072e52;
       --header-border: #1a4670;
-      --nav-bg: #03152a;
-      --nav-border: #1a4670;
       --nav-hover: #0b2c4a;
       --nav-sub-hover: #0b2c4a;
       --footer-bg: #03152a;
@@ -106,41 +102,30 @@
     .star-dust { position: fixed; border-radius: 50%; pointer-events: none; z-index: 249; }
     .container { max-width: 1200px; margin: 0 auto; padding: 0 20px 0 80px; position: relative; z-index: 1; }
     
-    header { background: linear-gradient(135deg, var(--header-bg1) 0%, var(--header-bg2) 100%); border-bottom: 1px solid var(--header-border); padding: 15px 20px; position: relative; }
+    header { background: linear-gradient(135deg, var(--header-bg1) 0%, var(--header-bg2) 100%); border-bottom: 1px solid var(--header-border); padding: 56px 20px 48px; position: relative; }
     header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--primary), var(--accent), var(--primary)); }
-    .header-content { display: flex; align-items: center; max-width: 1200px; margin: 0 auto; gap: 40px; }
-    .logo-area { flex-shrink: 0; }
-    header h1 { font-size: 1.5rem; font-weight: 300; letter-spacing: 0.1em; background: var(--title-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin: 0; white-space: nowrap; }
+    header::after { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.65; background-image: radial-gradient(1.2px 1.2px at 40px 20px, var(--accent-light) 50%, transparent 100%), radial-gradient(1px 1px at 120px 60px, rgba(74,144,217,.6) 50%, transparent 100%), radial-gradient(1.4px 1.4px at 200px 100px, var(--accent-light) 50%, transparent 100%), radial-gradient(1px 1px at 80px 120px, rgba(74,144,217,.5) 50%, transparent 100%), radial-gradient(1.2px 1.2px at 160px 40px, rgba(74,144,217,.7) 50%, transparent 100%), radial-gradient(1px 1px at 240px 140px, var(--accent-light) 50%, transparent 100%), radial-gradient(1.3px 1.3px at 30px 90px, rgba(74,144,217,.5) 50%, transparent 100%), radial-gradient(1px 1px at 300px 30px, rgba(74,144,217,.6) 50%, transparent 100%), radial-gradient(1.2px 1.2px at 350px 120px, var(--accent-light) 50%, transparent 100%), radial-gradient(1px 1px at 190px 160px, rgba(74,144,217,.55) 50%, transparent 100%); background-size: 380px 200px; }
+    .header-content { display: flex; flex-direction: column; align-items: center; max-width: 1200px; margin: 0 auto; gap: 34px; position: relative; z-index: 2; }
+    .logo-area { flex-shrink: 0; text-align: center; }
+    header h1 { font-size: 44px; font-weight: 700; letter-spacing: 0.12em; background: var(--title-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin: 0; white-space: nowrap; }
     header h1 a { text-decoration: none; color: inherit; }
     header h1 a:hover { text-decoration: none; }
-    .search-area { flex: 1; display: flex; justify-content: flex-end; }
-    .search-wrapper { max-width: 500px; width: 100%; display: flex; gap: 6px; }
-    .search-wrapper select { width: 60px; padding: 8px 4px; border: 1px solid var(--input-border); border-radius: 6px; background: var(--input-bg); color: var(--text); font-size: 11px; cursor: pointer; }
-    .search-wrapper input { flex: 1; padding: 8px 12px; border: 1px solid var(--input-border); border-radius: 6px; background: var(--input-bg); color: var(--text); font-size: 13px; transition: border-color 0.2s; }
-    .search-wrapper input:focus { outline: none; border-color: var(--accent); }
+    .search-area { flex: 1; display: flex; justify-content: center; width: 100%; }
+    .header-quote { position: absolute; top: 22px; right: 28px; z-index: 2; font-family: 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', SimSun, serif; font-size: 14px; color: var(--primary); letter-spacing: 1px; cursor: pointer; user-select: none; opacity: 0.85; transition: opacity 0.3s, color 0.3s; max-width: 46vw; text-align: right; line-height: 1.4; }
+    .header-quote:hover { opacity: 1; color: var(--accent); }
+    .header-quote .quote-text { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .header-quote .quote-source { font-size: 11px; color: var(--faint); display: block; letter-spacing: 2px; margin-top: 2px; }
+    .search-wrapper { max-width: 640px; width: 100%; height: 52px; display: flex; gap: 6px; align-items: center; background: var(--input-bg); border: 1px solid var(--input-border); border-radius: 999px; padding: 0 6px 0 18px; box-shadow: 0 2px 10px var(--shadow); transition: box-shadow 0.25s, border-color 0.25s; }
+    .search-wrapper:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(74,144,217,0.14), 0 6px 20px var(--shadow); }
+    .search-wrapper select { width: auto; min-width: 56px; padding: 0 2px; border: none; background: transparent; color: var(--primary); font-size: 12px; cursor: pointer; outline: none; }
+    .search-wrapper select option { background: var(--popup-bg); color: var(--text); }
+    .search-wrapper input { flex: 1; padding: 0 6px; border: none; background: transparent; color: var(--text); font-size: 15px; outline: none; min-width: 0; }
     .search-wrapper input::placeholder { color: var(--faint); }
-    .search-wrapper button { padding: 8px 16px; background: var(--btn-bg); color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; transition: opacity 0.2s; white-space: nowrap; }
-    .search-wrapper button:hover { opacity: 0.85; }
+    .search-wrapper button { height: 40px; padding: 0 24px; background: var(--btn-bg); color: #fff; border: none; border-radius: 999px; cursor: pointer; font-size: 13px; transition: opacity 0.2s, transform 0.2s; white-space: nowrap; flex-shrink: 0; box-shadow: 0 2px 8px var(--shadow); }
+    .search-wrapper button:hover { opacity: 0.9; transform: translateY(-1px); }
     
     main { padding: 30px 0; }
     .nav-categories { display: none; }
-    
-    .floating-nav { position: fixed; left: -50px; top: 50%; transform: translateY(-50%); z-index: 100; width: 50px; transition: left 0.3s ease; }
-    .floating-nav.expanded { left: 0; width: 160px; }
-    .floating-nav-toggle { position: absolute; right: -12px; top: 50%; transform: translateY(-50%); width: 18px; height: 40px; background: var(--primary); color: #fff; border: none; border-radius: 0 6px 6px 0; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 10px; box-shadow: 2px 0 6px rgba(0,0,0,0.12); }
-    .floating-nav-toggle:hover { background: var(--primary-2); }
-    .floating-nav-toggle::before { content: '‹'; font-size: 12px; line-height: 1; }
-    .floating-nav.expanded .floating-nav-toggle::before { content: '›'; }
-    .floating-nav-content { background: var(--nav-bg); border-radius: 0 10px 10px 0; padding: 10px 6px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); border: 1px solid var(--nav-border); border-left: none; overflow: hidden; }
-    .floating-nav-content button { display: block; width: 100%; padding: 8px 10px; border: none; background: transparent; color: var(--text); border-radius: 6px; cursor: pointer; font-size: 12px; text-align: left; transition: all 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .floating-nav.expanded .floating-nav-content button span { display: inline; }
-    .floating-nav-content button i { width: 16px; text-align: center; color: var(--accent); font-size: 12px; }
-    .floating-nav.expanded .floating-nav-content button { text-align: left; padding: 8px 12px; }
-    .floating-nav:not(.expanded) .floating-nav-content button { text-align: center; padding: 10px 6px; }
-    .floating-nav-content button:hover, .floating-nav-content button.active { background: var(--nav-hover); color: var(--accent); }
-    .floating-nav-content button.sub-nav-item { padding-left: 25px; font-size: 11px; color: var(--faint); }
-    .floating-nav.expanded .floating-nav-content button.sub-nav-item span { display: inline; }
-    .floating-nav-content button.sub-nav-item:hover, .floating-nav-content button.sub-nav-item.active { background: var(--nav-sub-hover); color: var(--accent-light); }
     
     .category { margin-bottom: 35px; }
     .category h2 { font-size: 1rem; font-weight: 500; color: var(--primary); margin-bottom: 18px; padding-bottom: 8px; border-bottom: 2px solid var(--accent); display: inline-block; }
@@ -184,13 +169,14 @@
     
     @media (max-width: 768px) {
       .container { padding: 0 20px; }
-      .header-content { flex-direction: column; gap: 12px; align-items: stretch; }
+      .header-content { flex-direction: column; gap: 24px; align-items: center; }
       .logo-area { text-align: center; }
       .search-area { justify-content: center; }
-      .search-wrapper { max-width: 100%; width: 100%; }
-      header h1 { font-size: 1.2rem; }
-      header { padding: 12px 15px; }
-      .floating-nav { display: none; }
+      .search-wrapper { max-width: 100%; width: 100%; height: 48px; }
+      .search-wrapper button { height: 36px; padding: 0 18px; font-size: 12px; }
+      header h1 { font-size: 32px; letter-spacing: 0.08em; }
+      header { padding: 40px 15px 36px; }
+      .header-quote { display: none; }
       .nav-categories { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 50px; padding-bottom: 30px; border-bottom: 1px solid var(--card-border); }
       .nav-categories button { padding: 8px 20px; border: 1px solid var(--input-border); background: var(--card-bg); color: var(--muted); border-radius: 20px; cursor: pointer; font-size: 14px; transition: all 0.2s; }
       .nav-categories button:hover, .nav-categories button.active { background: var(--primary); color: #fff; border-color: var(--primary); }
@@ -227,17 +213,13 @@
     .category h2::after { content: ''; position: absolute; left: 0; bottom: -2px; width: 0; height: 2px; background: linear-gradient(90deg, var(--primary), var(--accent)); transition: width 0.35s ease; }
     .category:hover h2::after { width: 100%; }
 
-    /* 玻璃拟态吸顶头部 */
-    header { position: sticky; top: 0; z-index: 150; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
-
     /* 搜索框与按钮增强 */
-    .search-wrapper input, .popup-input { box-shadow: inset 0 1px 3px rgba(0,0,0,0.06); }
+    .popup-input { box-shadow: inset 0 1px 3px rgba(0,0,0,0.06); }
     .search-wrapper button, .popup-btn { position: relative; overflow: hidden; }
     .search-wrapper button::after, .popup-btn::after { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent); transition: left 0.4s; }
     .search-wrapper button:hover::after, .popup-btn:hover::after { left: 100%; }
 
     /* SVG 图标适配（替代 FontAwesome） */
-    .floating-nav-content button i, .floating-nav-content button svg { width: 16px; height: 16px; color: var(--accent); vertical-align: middle; }
     .action-btn svg { width: 16px; height: 16px; }
     .footer-icon { vertical-align: -1px; }
 
@@ -381,13 +363,10 @@
         </div>
       </div>
     </div>
+    <div class="header-quote" id="headerQuote" title="点击切换金句"></div>
   </header>
   
   <main class="container">
-    <nav class="floating-nav" id="floatingNav">
-      <button class="floating-nav-toggle" onclick="toggleNav()"></button>
-      <div class="floating-nav-content" id="navCategories"></div>
-    </nav>
     <div id="siteContainer">
       <div class="skeleton-grid" id="skeleton" aria-hidden="true">
         <div class="skeleton-card"><div class="skeleton-icon"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
@@ -470,7 +449,8 @@
     </div>
   </footer>
 
-  <script src="assets/js/pinyin-map.js"></script>
+  <script defer src="assets/js/pinyin-map.js"></script>
+  <script defer src="assets/js/quotes.js"></script>
   <script>
     const BASE_URL = '';
     const SEARCH_URLS = {
@@ -512,32 +492,21 @@
       return BASE_URL + icon;
     }
     
-    function renderNav() {
-      const nav = document.getElementById('navCategories');
-      let html = '';
-      navData.navigation.forEach((cat, idx) => {
-        html += `<button onclick="scrollToCategory('cat-${idx}')" class="${idx === 0 ? 'active' : ''}">${iconSvg(cat.sidebarIcon)}<span>${escapeHtml(cat.category)}</span></button>`;
-        if (cat.subcategories) {
-          cat.subcategories.forEach((sub, subIdx) => {
-            html += `<button onclick="scrollToCategory('sub-${idx}-${subIdx}')" class="sub-nav-item"><span style="font-size:8px;color:#888;margin-right:5px;">▸</span><span>${escapeHtml(sub.name)}</span></button>`;
-          });
-        }
-      });
-      nav.innerHTML = html;
-    }
-    
     const FAV_KEY = 'navFavs', RECENT_KEY = 'navRecents';
-    let favCache = null, recentCache = null;
+    let favCache = null, recentCache = null, favSet = new Set();
     function getJson(key) { try { return JSON.parse(localStorage.getItem(key)) || []; } catch(e) { return []; } }
     function getFavs() { if (favCache === null) favCache = getJson(FAV_KEY); return favCache; }
     function getRecents() { if (recentCache === null) recentCache = getJson(RECENT_KEY); return recentCache; }
-    function isFav(url) { return getFavs().includes(url); }
+    function refreshFavSet() { favSet = new Set(getFavs()); }
+    function isFav(url) { return favSet.has(url); }
 
     function cardHtml(item) {
-      return `<a href="${escapeHtml(item.url)}" class="site-card fade-in" target="_blank" rel="noopener">
-        <img src="${escapeHtml(fixIconPath(item.icon))}" alt="${escapeHtml(item.title)}" loading="lazy" decoding="async" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🔗</text></svg>'">
-        <div class="site-info" title="${escapeHtml(item.description || '')}"><h3>${escapeHtml(item.title)}${item.badge ? `<span class="badge-new">${escapeHtml(item.badge)}</span>` : ''}</h3><p>${escapeHtml(item.description || '')}</p></div>
-        <button class="fav-btn${isFav(item.url) ? ' on' : ''}" data-url="${escapeHtml(item.url)}" title="${isFav(item.url) ? '取消收藏' : '收藏'}">${isFav(item.url) ? '★' : '☆'}</button>
+      const url = escapeHtml(item.url), title = escapeHtml(item.title), desc = escapeHtml(item.description || '');
+      const fav = isFav(item.url);
+      return `<a href="${url}" class="site-card fade-in" target="_blank" rel="noopener">
+        <img src="${escapeHtml(fixIconPath(item.icon))}" alt="${title}" loading="lazy" decoding="async" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🔗</text></svg>'">
+        <div class="site-info" title="${desc}"><h3>${title}${item.badge ? `<span class="badge-new">${escapeHtml(item.badge)}</span>` : ''}</h3><p>${desc}</p></div>
+        <button class="fav-btn${fav ? ' on' : ''}" data-url="${url}" title="${fav ? '取消收藏' : '收藏'}">${fav ? '★' : '☆'}</button>
       </a>`;
     }
 
@@ -547,11 +516,12 @@
       return `<section class="category quick-section" id="${id}"><h2><span>${escapeHtml(title)}</span><em style="font-style:normal;font-size:11px;color:var(--faint);margin-left:8px;font-weight:400;">${items.length}</em></h2><div class="site-grid">${cardList}</div></section>`;
     }
 
+    const urlIndex = new Map();
     function favItems() {
-      return getFavs().map(u => (searchIndex.find(x => x.it.url === u) || {}).it).filter(Boolean);
+      return getFavs().map(u => urlIndex.get(u)).filter(Boolean);
     }
     function recentItems() {
-      return getRecents().map(u => (searchIndex.find(x => x.it.url === u) || {}).it).filter(Boolean);
+      return getRecents().map(u => urlIndex.get(u)).filter(Boolean);
     }
 
     function toggleFav(url) {
@@ -560,6 +530,7 @@
       if (i >= 0) favs.splice(i, 1); else favs.push(url);
       localStorage.setItem(FAV_KEY, JSON.stringify(favs));
       favCache = null;
+      refreshFavSet();
       document.querySelectorAll('.fav-btn').forEach(btn => {
         if (btn.dataset.url === url) {
           const on = isFav(url);
@@ -612,17 +583,6 @@
       }).join('');
     }
     
-    function toggleNav() {
-      document.getElementById('floatingNav').classList.toggle('expanded');
-    }
-    
-    function scrollToCategory(id) {
-      document.querySelectorAll('.floating-nav-content button').forEach(b => b.classList.remove('active'));
-      document.querySelector(`[onclick="scrollToCategory('${id}')"]`).classList.add('active');
-      document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
-      document.getElementById('floatingNav').classList.remove('expanded');
-    }
-    
     function doSearch() {
       const query = document.getElementById('searchInput').value.trim();
       if (!query) return;
@@ -632,15 +592,18 @@
 
     /* ===== 站内搜索 ===== */
     const searchIndex = [];
-    const PY = window.PINYIN_MAP || {};
+    function getPY() { return window.PINYIN_MAP || {}; }
     function toPinyin(text) {
+      const PY = getPY();
       return String(text || '').split('').map(ch => PY[ch] || ch).join('').toLowerCase();
     }
     function toInitials(text) {
+      const PY = getPY();
       return String(text || '').split('').map(ch => (PY[ch] ? PY[ch][0] : ch)).join('').toLowerCase();
     }
     function buildSearchIndex() {
       searchIndex.length = 0;
+      urlIndex.clear();
       navData.navigation.forEach(cat => {
         const add = items => (items || []).forEach(it => {
           const t = it.title || '';
@@ -656,6 +619,7 @@
             dpi: toInitials(d),
             cat: cat.category
           });
+          if (!urlIndex.has(it.url)) urlIndex.set(it.url, it);
         });
         add(cat.items);
         (cat.subcategories || []).forEach(sub => add(sub.items));
@@ -780,6 +744,7 @@
     }
 
     function initStarDust() {
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       const MAX = 30;
       let count = 0, last = 0;
       document.addEventListener('mousemove', (e) => {
@@ -841,13 +806,38 @@
       }
       if (e.key === 'Escape') hideSearch();
     });
+
+    /* ===== 右上角金句 ===== */
+    function renderQuote(idx) {
+      const el = document.getElementById('headerQuote');
+      const Q = window.QUOTES;
+      if (!el || !Q || !Q.length) return;
+      const q = Q[idx % Q.length];
+      el.innerHTML = '<span class="quote-text">' + q[0] + '</span><span class="quote-source">— ' + q[1] + '</span>';
+    }
+    (function initQuote() {
+      const el = document.getElementById('headerQuote');
+      if (!el) return;
+      function setup() {
+        const Q = window.QUOTES;
+        if (!Q || !Q.length) return;
+        let idx = Math.floor(Math.random() * Q.length);
+        renderQuote(idx);
+        el.addEventListener('click', function() {
+          idx = (idx + 1) % Q.length;
+          el.style.transition = 'opacity 0.2s';
+          el.style.opacity = '0.3';
+          setTimeout(function() {
+            renderQuote(idx);
+            el.style.opacity = '';
+          }, 180);
+        });
+      }
+      if (window.QUOTES && window.QUOTES.length) setup();
+      else window.addEventListener('DOMContentLoaded', setup);
+    })();
     
     document.addEventListener('click', function(e) {
-      const nav = document.getElementById('floatingNav');
-      const toggle = document.querySelector('.floating-nav-toggle');
-      if (!nav.contains(e.target) && e.target !== toggle) {
-        nav.classList.remove('expanded');
-      }
       if (e.target.id === 'searchPopup') hideSearch();
 
       const fav = e.target.closest('.fav-btn');
@@ -915,6 +905,7 @@
             if (typeof data.nightMode === 'boolean') localStorage.setItem('nightMode', data.nightMode);
             favCache = null;
             recentCache = null;
+            refreshFavSet();
             rerenderQuick();
             toast('数据导入成功');
           } else {
@@ -967,8 +958,8 @@
       try {
         const res = await fetch('/nav.json');
         navData = await res.json();
-        renderNav();
         buildSearchIndex();
+        refreshFavSet();
         renderSites();
         observeScroll();
         initNightMode();

@@ -1,4 +1,4 @@
-const CACHE = 'navsite-v29';
+const CACHE = 'navsite-v30';
 const CORE = [
   './',
   './index.html',
@@ -28,6 +28,7 @@ const CORE = [
   './dev/index.html',
   './nav.json',
   './assets/js/pinyin-map.js',
+  './assets/js/quotes.js',
   './404.html',
   './manifest.webmanifest',
   './assets/favicon.svg'
