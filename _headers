@@ -5,3 +5,18 @@
   Referrer-Policy: strict-origin-when-cross-origin
   X-Frame-Options: SAMEORIGIN
   Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+# Service Worker 不缓存，保证版本更新即时生效
+/sw.js
+  Cache-Control: public, max-age=0, must-revalidate
+
+# HTML 页面与导航数据：短缓存 + 协商验证，SW 负责离线兜底
+/
+/index.html
+/nav.json
+/*/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+# 站内图标与静态脚本：长缓存（文件名或内容变更通过 SW 版本刷新）
+/assets/*
+  Cache-Control: public, max-age=604800
