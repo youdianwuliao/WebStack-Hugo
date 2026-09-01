@@ -562,25 +562,45 @@
       document.querySelectorAll('.fade-in').forEach(el => el.classList.add('visible'));
     }
 
+    function buildCategory(cat, catIdx) {
+      let html = `<section class="category" id="cat-${catIdx}"><h2>${iconSvg(cat.sidebarIcon)} ${escapeHtml(cat.category)}</h2>`;
+      if (cat.items && cat.items.length) {
+        html += `<div class="site-grid">${cat.items.map(item => cardHtml(item)).join('')}</div>`;
+      }
+      if (cat.subcategories) {
+        cat.subcategories.forEach((sub, subIdx) => {
+          html += `<div class="subcategory" id="sub-${catIdx}-${subIdx}"><h3>${escapeHtml(sub.name)}</h3>`;
+          html += `<div class="site-grid">${(sub.items || []).map(item => cardHtml(item)).join('')}</div></div>`;
+        });
+      }
+      html += '</section>';
+      return html;
+    }
+
     function renderSites() {
       const container = document.getElementById('siteContainer');
+      container.innerHTML = '';
       const quick = quickSectionHtml('我的收藏', favItems(), 'fav-section') + quickSectionHtml('最近访问', recentItems(), 'recent-section');
-      container.innerHTML = quick + navData.navigation.map((cat, catIdx) => {
-        let html = `<section class="category" id="cat-${catIdx}"><h2>${iconSvg(cat.sidebarIcon)} ${escapeHtml(cat.category)}</h2>`;
-        
-        if (cat.items && cat.items.length) {
-          html += `<div class="site-grid">${cat.items.map(item => cardHtml(item)).join('')}</div>`;
-        }
-        if (cat.subcategories) {
-          cat.subcategories.forEach((sub, subIdx) => {
-            html += `<div class="subcategory" id="sub-${catIdx}-${subIdx}"><h3>${escapeHtml(sub.name)}</h3>`;
-            html += `<div class="site-grid">${(sub.items || []).map(item => cardHtml(item)).join('')}</div></div>`;
-          });
-        }
-        
-        html += '</section>';
-        return html;
-      }).join('');
+      container.insertAdjacentHTML('beforeend', quick);
+
+      let i = 0;
+      const flush = limit => {
+        const end = Math.min(i + limit, navData.navigation.length);
+        let html = '';
+        for (; i < end; i++) html += buildCategory(navData.navigation[i], i);
+        if (html) container.insertAdjacentHTML('beforeend', html);
+      };
+      flush(2);
+      if (i < navData.navigation.length) {
+        const tick = () => {
+          flush(4);
+          if (i < navData.navigation.length) setTimeout(tick, 0);
+          else observeScroll();
+        };
+        setTimeout(tick, 0);
+      } else {
+        observeScroll();
+      }
     }
     
     function doSearch() {
@@ -961,7 +981,6 @@
         buildSearchIndex();
         refreshFavSet();
         renderSites();
-        observeScroll();
         initNightMode();
         initStarDust();
       } catch (e) {
