@@ -125,9 +125,11 @@
     .search-wrapper button:hover { opacity: 0.9; transform: translateY(-1px); }
     
     main { padding: 30px 0; }
-    .nav-categories { display: none; }
+    .nav-categories { position: sticky; top: 0; z-index: 150; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; margin-bottom: 40px; padding: 12px 14px; border-radius: 14px; background: var(--bg); background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid var(--card-border); box-shadow: 0 4px 16px var(--shadow); }
+    .nav-categories button { flex-shrink: 0; padding: 7px 16px; border: 1px solid var(--input-border); background: var(--card-bg); color: var(--muted); border-radius: 999px; cursor: pointer; font-size: 13px; transition: all 0.2s; }
+    .nav-categories button:hover, .nav-categories button.active { background: var(--primary); color: #fff; border-color: var(--primary); }
     
-    .category { margin-bottom: 35px; }
+    .category { margin-bottom: 35px; scroll-margin-top: 78px; }
     .category h2 { font-size: 1rem; font-weight: 500; color: var(--primary); margin-bottom: 18px; padding-bottom: 8px; border-bottom: 2px solid var(--accent); display: inline-block; }
     .category h2 i, .category h2 svg { margin-right: 6px; color: var(--accent); width: 14px; height: 14px; vertical-align: -2px; }
     .site-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
@@ -177,9 +179,8 @@
       header h1 { font-size: 32px; letter-spacing: 0.08em; }
       header { padding: 40px 15px 36px; }
       .header-quote { display: none; }
-      .nav-categories { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 50px; padding-bottom: 30px; border-bottom: 1px solid var(--card-border); }
-      .nav-categories button { padding: 8px 20px; border: 1px solid var(--input-border); background: var(--card-bg); color: var(--muted); border-radius: 20px; cursor: pointer; font-size: 14px; transition: all 0.2s; }
-      .nav-categories button:hover, .nav-categories button.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+      .nav-categories { flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; scrollbar-width: none; }
+      .nav-categories::-webkit-scrollbar { display: none; }
       .site-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
       .site-card { padding: 15px; flex-direction: column; align-items: center; text-align: center; }
     }
@@ -367,6 +368,7 @@
   </header>
   
   <main class="container">
+    <nav class="nav-categories" id="catNav" aria-label="分类导航"></nav>
     <div id="siteContainer">
       <div class="skeleton-grid" id="skeleton" aria-hidden="true">
         <div class="skeleton-card"><div class="skeleton-icon"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
@@ -500,11 +502,18 @@
     function refreshFavSet() { favSet = new Set(getFavs()); }
     function isFav(url) { return favSet.has(url); }
 
+    function iconFallback(title) {
+      const ch = (title || '').trim().charAt(0) || '🔗';
+      const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" rx="10" fill="#eef2f7"/><text x="20" y="21" font-size="17" font-family="system-ui, sans-serif" font-weight="600" text-anchor="middle" dominant-baseline="central" fill="#5a7a9a">' + ch + '</text></svg>';
+      return 'data:image/svg+xml,' + encodeURIComponent(svg);
+    }
+
     function cardHtml(item) {
       const url = escapeHtml(item.url), title = escapeHtml(item.title), desc = escapeHtml(item.description || '');
       const fav = isFav(item.url);
+      const fb = iconFallback(item.title);
       return `<a href="${url}" class="site-card fade-in" target="_blank" rel="noopener">
-        <img src="${escapeHtml(fixIconPath(item.icon))}" alt="${title}" loading="lazy" decoding="async" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🔗</text></svg>'">
+        <img src="${escapeHtml(fixIconPath(item.icon))}" alt="${title}" loading="lazy" decoding="async" onerror="this.src='${fb}'">
         <div class="site-info" title="${desc}"><h3>${title}${item.badge ? `<span class="badge-new">${escapeHtml(item.badge)}</span>` : ''}</h3><p>${desc}</p></div>
         <button class="fav-btn${fav ? ' on' : ''}" data-url="${url}" title="${fav ? '取消收藏' : '收藏'}">${fav ? '★' : '☆'}</button>
       </a>`;
@@ -952,6 +961,37 @@
       t._timer = setTimeout(() => { t.style.opacity = '0'; }, 2000);
     }
     
+    function renderNav() {
+      const nav = document.getElementById('catNav');
+      if (!nav || !navData.navigation.length) return;
+      nav.innerHTML = navData.navigation.map((cat, i) =>
+        `<button type="button" data-cat="cat-${i}">${escapeHtml(cat.category)}</button>`
+      ).join('');
+      nav.addEventListener('click', e => {
+        const btn = e.target.closest('button[data-cat]');
+        if (!btn) return;
+        const el = document.getElementById(btn.dataset.cat);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+      const btns = [...nav.querySelectorAll('button')];
+      const secs = () => document.querySelectorAll('section[id^="cat-"]');
+      const update = () => {
+        const mark = window.scrollY + 88;
+        let cur = '';
+        secs().forEach(s => {
+          if (s.getBoundingClientRect().top + window.scrollY <= mark) cur = s.id;
+        });
+        btns.forEach(b => b.classList.toggle('active', b.dataset.cat === cur));
+      };
+      let raf = 0;
+      window.addEventListener('scroll', () => {
+        if (raf) return;
+        raf = requestAnimationFrame(() => { raf = 0; update(); });
+      }, { passive: true });
+      window.addEventListener('resize', update);
+      setTimeout(update, 60);
+    }
+
     function observeScroll() {
       if (!('IntersectionObserver' in window)) {
         document.querySelectorAll('.fade-in').forEach(el => el.classList.add('visible'));
@@ -981,6 +1021,7 @@
         buildSearchIndex();
         refreshFavSet();
         renderSites();
+        renderNav();
         initNightMode();
         initStarDust();
       } catch (e) {
