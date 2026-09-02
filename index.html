@@ -326,22 +326,22 @@
 </head>
 <body>
   <div class="action-buttons">
-    <button class="action-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到顶部"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg></button>
-    <button class="action-btn" onclick="showSearch()" title="搜索"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></button>
-    <button class="action-btn night-toggle" onclick="toggleNight()" title="夜间模式"></button>
+    <button class="action-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到顶部" aria-label="回到顶部"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg></button>
+    <button class="action-btn" onclick="showSearch()" title="搜索" aria-label="打开站内搜索"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></button>
+    <button class="action-btn night-toggle" onclick="toggleNight()" title="夜间模式" aria-label="切换夜间模式"></button>
   </div>
   
   <div class="search-popup" id="searchPopup">
     <div class="search-popup-content">
       <div class="search-popup-body">
-        <select id="popupSearchEngine" class="popup-select">
+        <select id="popupSearchEngine" class="popup-select" aria-label="搜索引擎">
           <option value="bing">Bing</option>
           <option value="google">Google</option>
           <option value="yandex">Yandex</option>
         </select>
-        <input type="text" id="popupSearchInput" class="popup-input" placeholder="输入关键词搜索..." autocomplete="off">
+        <input type="text" id="popupSearchInput" class="popup-input" placeholder="输入关键词搜索..." autocomplete="off" aria-label="搜索关键词">
         <button class="popup-btn" onclick="doPopupSearch()">搜索</button>
-        <button class="close-btn" onclick="hideSearch()">×</button>
+        <button class="close-btn" onclick="hideSearch()" aria-label="关闭搜索弹窗">×</button>
       </div>
       <div class="site-search-results popup-results" id="popupSiteResults"></div>
     </div>
@@ -353,12 +353,12 @@
       </div>
       <div class="search-area">
         <div class="search-wrapper">
-          <select id="searchEngine">
+          <select id="searchEngine" aria-label="搜索引擎">
             <option value="bing">Bing</option>
             <option value="google">Google</option>
             <option value="yandex">Yandex</option>
           </select>
-          <input type="text" id="searchInput" placeholder="搜索站点..." autocomplete="off">
+          <input type="text" id="searchInput" placeholder="搜索站点..." autocomplete="off" aria-label="搜索关键词">
           <button onclick="doSearch()">搜索</button>
           <div class="site-search-results" id="siteResults"></div>
         </div>
@@ -446,7 +446,7 @@
         <span class="share-sep">|</span>
         <button class="share-btn" onclick="exportData()" title="导出收藏与最近访问为 JSON 文件"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>导出数据</button>
         <button class="share-btn" onclick="document.getElementById('importFile').click()" title="从 JSON 文件恢复收藏与最近访问"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>导入数据</button>
-        <input type="file" id="importFile" accept="application/json,.json" style="display:none" onchange="importData(event)">
+        <input type="file" id="importFile" accept="application/json,.json" style="display:none" onchange="importData(event)" aria-label="导入收藏数据文件">
       </div>
     </div>
   </footer>
@@ -515,7 +515,7 @@
       return `<a href="${url}" class="site-card fade-in" target="_blank" rel="noopener">
         <img src="${escapeHtml(fixIconPath(item.icon))}" alt="${title}" loading="lazy" decoding="async" onerror="this.src='${fb}'">
         <div class="site-info" title="${desc}"><h3>${title}${item.badge ? `<span class="badge-new">${escapeHtml(item.badge)}</span>` : ''}</h3><p>${desc}</p></div>
-        <button class="fav-btn${fav ? ' on' : ''}" data-url="${url}" title="${fav ? '取消收藏' : '收藏'}">${fav ? '★' : '☆'}</button>
+        <button class="fav-btn${fav ? ' on' : ''}" data-url="${url}" title="${fav ? '取消收藏' : '收藏'}" aria-pressed="${fav}" aria-label="${fav ? '取消收藏' : '收藏'} ${title}">${fav ? '★' : '☆'}</button>
       </a>`;
     }
 
@@ -543,9 +543,12 @@
       document.querySelectorAll('.fav-btn').forEach(btn => {
         if (btn.dataset.url === url) {
           const on = isFav(url);
+          const t = urlIndex.get(url)?.title || '';
           btn.classList.toggle('on', on);
           btn.textContent = on ? '★' : '☆';
           btn.title = on ? '取消收藏' : '收藏';
+          btn.setAttribute('aria-pressed', on);
+          btn.setAttribute('aria-label', (on ? '取消收藏' : '收藏') + ' ' + t);
         }
       });
       rerenderQuick();
