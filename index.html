@@ -757,8 +757,14 @@
       document.body.classList.toggle('night-mode');
       const isNight = document.body.classList.contains('night-mode');
       localStorage.setItem('nightMode', isNight);
+      applyThemeColor();
     }
     
+    function applyThemeColor() {
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute('content', document.body.classList.contains('night-mode') ? '#0a1526' : '#1e3a5f');
+    }
+
     function initNightMode() {
       const saved = localStorage.getItem('nightMode');
       if (saved !== null) {
@@ -766,6 +772,7 @@
       } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
         document.body.classList.add('night-mode');
       }
+      applyThemeColor();
     }
 
     function initStarDust() {

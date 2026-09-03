@@ -1,6 +1,7 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
         :root {
+            color-scheme: light;
             --accent: #3182ce;
             --accent-light: #7eb3e8;
             --accent-soft: rgba(49, 130, 206, 0.08);
@@ -21,6 +22,7 @@
         }
         @media (prefers-color-scheme: dark) {
             :root {
+                color-scheme: dark;
                 --accent: #7eb3e8;
                 --accent-light: #a8cdf0;
                 --accent-soft: rgba(126, 179, 232, 0.12);
@@ -39,6 +41,46 @@
                 --hr-color: #334155;
                 --btn-shadow: rgba(126, 179, 232, 0.35);
             }
+        }
+        html[data-theme="light"] {
+            color-scheme: light;
+            --accent: #3182ce;
+            --accent-light: #7eb3e8;
+            --accent-soft: rgba(49, 130, 206, 0.08);
+            --accent-border: rgba(49, 130, 206, 0.2);
+            --bg1: #f0f4f8; --bg2: #e2ecf5; --bg3: #f7f3ec;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --card-border: rgba(255, 255, 255, 0.6);
+            --text: #2d3748;
+            --text-light: #718096;
+            --body-text: #334155;
+            --h3-color: #2d5a87;
+            --strong-color: #1a3a5c;
+            --quote-bg: rgba(49, 130, 206, 0.06);
+            --quote-border: #7c9ec9;
+            --quote-color: #4a5568;
+            --hr-color: #d1d9e2;
+            --btn-shadow: rgba(49, 130, 206, 0.4);
+        }
+        html[data-theme="dark"] {
+            color-scheme: dark;
+            --accent: #7eb3e8;
+            --accent-light: #a8cdf0;
+            --accent-soft: rgba(126, 179, 232, 0.12);
+            --accent-border: rgba(126, 179, 232, 0.3);
+            --bg1: #111827; --bg2: #0f172a; --bg3: #1a2332;
+            --card-bg: rgba(30, 41, 59, 0.92);
+            --card-border: rgba(100, 116, 139, 0.25);
+            --text: #e2e8f0;
+            --text-light: #94a3b8;
+            --body-text: #cbd5e1;
+            --h3-color: #93c5fd;
+            --strong-color: #f1f5f9;
+            --quote-bg: rgba(126, 179, 232, 0.08);
+            --quote-border: #475569;
+            --quote-color: #a0aec0;
+            --hr-color: #334155;
+            --btn-shadow: rgba(126, 179, 232, 0.35);
         }
         body {
             font-family: "SF Pro Display", "Helvetica Neue", "Segoe UI", Arial, sans-serif;
