@@ -30,6 +30,29 @@
     document.body.style.setProperty('--read-font-family', fam);
   }
 
+  // ===== 夜间主题（与首页共享 nightMode 偏好）=====
+  var THEME_KEY = 'nightMode';
+  function setThemeAttr(theme) {
+    if (theme) document.documentElement.setAttribute('data-theme', theme);
+    else document.documentElement.removeAttribute('data-theme');
+  }
+  function systemDark() {
+    return !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  }
+  function currentDark() {
+    var attr = document.documentElement.getAttribute('data-theme');
+    if (attr === 'dark') return true;
+    if (attr === 'light') return false;
+    return systemDark();
+  }
+  function applyTheme() {
+    var v = getPref(THEME_KEY, '');
+    if (v === 'true') setThemeAttr('dark');
+    else if (v === 'false') setThemeAttr('light');
+    else setThemeAttr('');
+  }
+  applyTheme();
+
   // 阅读进度条
   var bar = document.createElement('div');
   bar.className = 'reading-progress';
@@ -63,7 +86,9 @@
       '<span class="tool-label">字体</span>' +
       '<button type="button" class="tool-btn face-btn" data-face="song">宋</button>' +
       '<button type="button" class="tool-btn face-btn" data-face="kai">楷</button>' +
-      '<button type="button" class="tool-btn face-btn" data-face="hei">黑</button>';
+      '<button type="button" class="tool-btn face-btn" data-face="hei">黑</button>' +
+      '<span class="tool-divider"></span>' +
+      '<button type="button" class="tool-btn night-btn" id="nightToggle" title="切换夜间模式">' + (currentDark() ? '☀️' : '🌙') + '</button>';
     topBar.appendChild(tb);
 
     function setActive() {
@@ -90,6 +115,18 @@
         setActive();
       });
     });
+
+    var nightBtn = tb.querySelector('#nightToggle');
+    if (nightBtn) {
+      nightBtn.classList.toggle('active', currentDark());
+      nightBtn.addEventListener('click', function () {
+        var dark = !currentDark();
+        setPref(THEME_KEY, dark ? 'true' : 'false');
+        setThemeAttr(dark ? 'dark' : 'light');
+        nightBtn.textContent = dark ? '☀️' : '🌙';
+        nightBtn.classList.toggle('active', dark);
+      });
+    }
   }
 
   // 返回顶部按钮
