@@ -78,7 +78,7 @@
       --popup-input-border: #e8e8e8;
       --close-hover: #f0f0f0;
     }
-    .night-mode {
+    html.night-mode, .night-mode {
       --bg: #0a1526;
       --text: #e6eef8;
       --muted: #a8bfd9;
@@ -153,6 +153,7 @@
     .subcategory h3 { font-size: 13px; font-weight: 500; color: var(--primary); margin-bottom: 15px; padding-left: 10px; border-left: 3px solid var(--accent); }
     @supports (content-visibility: auto) {
       .category { content-visibility: auto; contain-intrinsic-size: auto 300px; }
+      #siteContainer > .category:first-child, .reading-zone { content-visibility: visible; contain-intrinsic-size: auto; }
     }
     
     footer { text-align: center; padding: 25px 0; border-top: 1px solid var(--card-border); color: var(--faint); font-size: 11px; background: var(--footer-bg); position: relative; z-index: 1; }
@@ -524,12 +525,18 @@
       return 'data:image/svg+xml,' + encodeURIComponent(svg);
     }
 
+    let eagerLeft = 8;
     function cardHtml(item) {
       const url = escapeHtml(item.url), title = escapeHtml(item.title), desc = escapeHtml(item.description || '');
       const fav = isFav(item.url);
       const fb = iconFallback(item.title);
-      return `<a href="${url}" class="site-card fade-in" target="_blank" rel="noopener">
-        <img src="${escapeHtml(fixIconPath(item.icon))}" alt="${title}" width="40" height="40" loading="lazy" decoding="async" onerror="this.src='${fb}'">
+      const eager = eagerLeft > 0;
+      if (eager) eagerLeft--;
+      const load = eager ? 'eager' : 'lazy';
+      const prio = eager ? ' fetchpriority="high"' : '';
+      const fade = eager ? '' : ' fade-in';
+      return `<a href="${url}" class="site-card${fade}" target="_blank" rel="noopener">
+        <img src="${escapeHtml(fixIconPath(item.icon))}" alt="${title}" width="40" height="40" loading="${load}" decoding="async"${prio} onerror="this.src='${fb}'">
         <div class="site-info" title="${desc}"><h3>${title}${item.badge ? `<span class="badge-new">${escapeHtml(item.badge)}</span>` : ''}</h3><p>${desc}</p></div>
         <button class="fav-btn${fav ? ' on' : ''}" data-url="${url}" title="${fav ? '取消收藏' : '收藏'}" aria-pressed="${fav}" aria-label="${fav ? '取消收藏' : '收藏'} ${title}">${fav ? '★' : '☆'}</button>
       </a>`;
@@ -608,6 +615,7 @@
     function renderSites() {
       const container = document.getElementById('siteContainer');
       container.innerHTML = '';
+      eagerLeft = 8;
       const quick = quickSectionHtml('我的收藏', favItems(), 'fav-section') + quickSectionHtml('最近访问', recentItems(), 'recent-section');
       container.insertAdjacentHTML('beforeend', quick);
 
@@ -1095,10 +1103,12 @@
     initNightMode();
     initStarDust();
     loadData();
-    fetch('https://counter.justgame.top/api/counter', { method: 'POST' })
-      .then(r => r.json())
-      .then(d => document.getElementById('visitor-count').textContent = d.count)
-      .catch(() => {});
+    (window.requestIdleCallback || function (cb) { setTimeout(cb, 1500); })(function () {
+      fetch('https://counter.justgame.top/api/counter', { method: 'POST' })
+        .then(r => r.json())
+        .then(d => { const el = document.getElementById('visitor-count'); if (el) el.textContent = d.count; })
+        .catch(() => {});
+    });
   </script>
 </body>
 </html>
