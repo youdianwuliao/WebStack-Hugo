@@ -19,4 +19,4 @@
 
 # 站内图标与静态脚本：长缓存（文件名或内容变更通过 SW 版本刷新）
 /assets/*
-  Cache-Control: public, max-age=604800
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
