@@ -19,6 +19,19 @@
   <meta name="twitter:description" content="精选 AI 工具、运维监控、开发设计、影音视频、网盘资源等 200+ 优质网站导航，网址一键直达。">
   <meta name="twitter:image" content="https://www.justgame.top/assets/images/og-cover.png">
   <meta name="theme-color" content="#1e3a5f">
+  <script>
+    (function () {
+      try {
+        var s = localStorage.getItem('nightMode');
+        var night = s === 'true' || (s === null && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (night) {
+          document.documentElement.classList.add('night-mode');
+          var m = document.querySelector('meta[name="theme-color"]');
+          if (m) m.setAttribute('content', '#0a1526');
+        }
+      } catch (e) {}
+    })();
+  </script>
   <link rel="canonical" href="https://www.justgame.top/">
   <link rel="apple-touch-icon" href="assets/images/icon-192.png">
   <link rel="manifest" href="manifest.webmanifest">
@@ -36,7 +49,6 @@
   </script>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="nav.json" as="fetch" crossorigin="anonymous">
-  <link rel="preload" href="assets/js/pinyin-map.js" as="script">
   <link rel="preload" href="assets/favicon.svg" as="image">
   <style>
     :root {
@@ -94,13 +106,14 @@
       --close-hover: #1e3a5c;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { color-scheme: light; }
+    html.night-mode { color-scheme: dark; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
-    body::before { content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: var(--star-opacity, 0.25); background-image: radial-gradient(1px 1px at 25px 8px, rgba(255,255,255,.7), transparent 100%), radial-gradient(1px 1px at 85px 48px, rgba(255,255,255,.55), transparent 100%), radial-gradient(1.6px 1.6px at 120px 82px, rgba(255,255,255,.5), transparent 100%), radial-gradient(1px 1px at 175px 28px, rgba(255,255,255,.6), transparent 100%), radial-gradient(1px 1px at 50px 98px, rgba(255,255,255,.45), transparent 100%), radial-gradient(1.3px 1.3px at 150px 120px, rgba(255,255,255,.55), transparent 100%), radial-gradient(1px 1px at 200px 70px, rgba(255,255,255,.4), transparent 100%), radial-gradient(1.2px 1.2px at 95px 140px, rgba(255,255,255,.5), transparent 100%); background-size: 220px 220px; }
-    .night-mode { --star-opacity: 0.65; }
-    body.night-mode::before { animation: starTwinkle 5s ease-in-out infinite; }
+    body::before { content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0; background-image: radial-gradient(1px 1px at 25px 8px, rgba(255,255,255,.7), transparent 100%), radial-gradient(1px 1px at 85px 48px, rgba(255,255,255,.55), transparent 100%), radial-gradient(1.6px 1.6px at 120px 82px, rgba(255,255,255,.5), transparent 100%), radial-gradient(1px 1px at 175px 28px, rgba(255,255,255,.6), transparent 100%), radial-gradient(1px 1px at 50px 98px, rgba(255,255,255,.45), transparent 100%), radial-gradient(1.3px 1.3px at 150px 120px, rgba(255,255,255,.55), transparent 100%), radial-gradient(1px 1px at 200px 70px, rgba(255,255,255,.4), transparent 100%), radial-gradient(1.2px 1.2px at 95px 140px, rgba(255,255,255,.5), transparent 100%); background-size: 220px 220px; }
+    html.night-mode body::before, body.night-mode::before { opacity: 0.65; animation: starTwinkle 5s ease-in-out infinite; }
     @keyframes starTwinkle { 0%, 100% { opacity: 0.45; } 50% { opacity: 0.65; } }
     .star-dust { position: fixed; border-radius: 50%; pointer-events: none; z-index: 249; }
-    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px 0 80px; position: relative; z-index: 1; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 1; }
     
     header { background: linear-gradient(135deg, var(--header-bg1) 0%, var(--header-bg2) 100%); border-bottom: 1px solid var(--header-border); padding: 56px 20px 48px; position: relative; }
     header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--primary), var(--accent), var(--primary)); }
@@ -124,12 +137,13 @@
     .search-wrapper button { height: 40px; padding: 0 24px; background: var(--btn-bg); color: #fff; border: none; border-radius: 999px; cursor: pointer; font-size: 13px; transition: opacity 0.2s, transform 0.2s; white-space: nowrap; flex-shrink: 0; box-shadow: 0 2px 8px var(--shadow); }
     .search-wrapper button:hover { opacity: 0.9; transform: translateY(-1px); }
     
-    main { padding: 30px 0; }
+    main { padding: 48px 0 30px; }
+    #siteContainer > .category:first-child { margin-top: 8px; }
     .category { margin-bottom: 35px; }
-    .category h2 { font-size: 1rem; font-weight: 500; color: var(--primary); margin-bottom: 18px; padding-bottom: 8px; border-bottom: 2px solid var(--accent); display: inline-block; }
-    .category h2 i, .category h2 svg { margin-right: 6px; color: var(--accent); width: 14px; height: 14px; vertical-align: -2px; }
-    .site-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
-    .site-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 10px; padding: 16px; text-decoration: none; color: inherit; transition: all 0.25s; display: flex; align-items: flex-start; gap: 12px; }
+    .category h2 { font-size: 1.2rem; font-weight: 600; letter-spacing: 0.04em; color: var(--primary); margin-bottom: 18px; padding: 0 0 8px 10px; border-left: 3px solid var(--accent); border-bottom: 2px solid var(--accent); display: inline-flex; align-items: center; }
+    .category h2 i, .category h2 svg { margin-right: 8px; color: var(--accent); width: 16px; height: 16px; vertical-align: -2px; }
+    .site-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+    .site-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 10px; padding: 16px; text-decoration: none; color: inherit; transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s; display: flex; align-items: flex-start; gap: 12px; }
     .site-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 3px 10px var(--shadow); }
     .site-card img { width: 40px; height: 40px; border-radius: 10px; object-fit: contain; flex-shrink: 0; background: #fff; padding: 5px; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05); }
     .site-info { min-width: 0; flex: 1; text-align: left; padding-top: 2px; }
@@ -146,11 +160,12 @@
     footer a:hover { color: var(--accent); }
     
     .action-buttons { position: fixed; bottom: 20px; right: 20px; z-index: 200; display: flex; flex-direction: column; gap: 8px; }
-    .action-btn { width: 36px; height: 36px; background: var(--card-bg); border: 2px solid var(--card-border); border-radius: 50%; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .action-btn { width: 36px; height: 36px; background: var(--card-bg); border: 2px solid var(--card-border); border-radius: 50%; cursor: pointer; transition: transform 0.25s, box-shadow 0.25s, background 0.25s, border-color 0.25s, color 0.25s; display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); color: var(--primary); }
     .action-btn:hover { transform: scale(1.1); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-    .night-toggle::before { content: '☀️'; font-size: 12px; }
-    .night-mode .night-toggle::before { content: '🌙'; }
-    .night-mode .night-toggle { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .night-toggle .icon-moon { display: none; }
+    html.night-mode .night-toggle .icon-sun, .night-mode .night-toggle .icon-sun { display: none; }
+    html.night-mode .night-toggle .icon-moon, .night-mode .night-toggle .icon-moon { display: block; }
+    html.night-mode .night-toggle, .night-mode .night-toggle { background: var(--primary); border-color: var(--primary); color: #fff; }
     
     .search-popup { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 300; justify-content: center; align-items: center; }
     .search-popup.active { display: flex; }
@@ -175,8 +190,11 @@
       header h1 { font-size: 32px; letter-spacing: 0.08em; }
       header { padding: 40px 15px 36px; }
       .header-quote { display: none; }
-      .site-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
-      .site-card { padding: 15px; flex-direction: column; align-items: center; text-align: center; }
+      .site-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+      .site-card { padding: 14px; }
+    }
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .site-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     }
 
     /* ===== 性能与美观优化 ===== */
@@ -193,6 +211,10 @@
     .site-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, var(--accent), transparent); opacity: 0; transition: opacity 0.3s; pointer-events: none; }
     .site-card:hover::after { opacity: 0.06; }
     .site-card:hover { transform: translateY(-4px); box-shadow: 0 10px 24px var(--shadow); border-color: var(--accent); }
+    .site-card:focus-visible, .action-btn:focus-visible, .fav-btn:focus-visible, .share-btn:focus-visible, .search-wrapper button:focus-visible, .popup-btn:focus-visible, .close-btn:focus-visible, .sr-item:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
     .site-card img { transition: transform 0.3s ease; }
     .site-card:hover img { transform: scale(1.12) rotate(-3deg); }
     .site-card h3 { transition: color 0.25s; }
@@ -322,7 +344,10 @@
   <div class="action-buttons">
     <button class="action-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到顶部" aria-label="回到顶部"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg></button>
     <button class="action-btn" onclick="showSearch()" title="搜索" aria-label="打开站内搜索"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></button>
-    <button class="action-btn night-toggle" onclick="toggleNight()" title="夜间模式" aria-label="切换夜间模式"></button>
+    <button class="action-btn night-toggle" onclick="toggleNight()" title="夜间模式" aria-label="切换夜间模式">
+      <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>
+      <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 14.3A8.5 8.5 0 0 1 9.7 3 7 7 0 1 0 21 14.3z"></path></svg>
+    </button>
   </div>
   
   <div class="search-popup" id="searchPopup">
@@ -444,8 +469,6 @@
     </div>
   </footer>
 
-  <script defer src="assets/js/pinyin-map.js"></script>
-  <script defer src="assets/js/quotes.js"></script>
   <script>
     const BASE_URL = '';
     const SEARCH_URLS = {
@@ -506,7 +529,7 @@
       const fav = isFav(item.url);
       const fb = iconFallback(item.title);
       return `<a href="${url}" class="site-card fade-in" target="_blank" rel="noopener">
-        <img src="${escapeHtml(fixIconPath(item.icon))}" alt="${title}" loading="lazy" decoding="async" onerror="this.src='${fb}'">
+        <img src="${escapeHtml(fixIconPath(item.icon))}" alt="${title}" width="40" height="40" loading="lazy" decoding="async" onerror="this.src='${fb}'">
         <div class="site-info" title="${desc}"><h3>${title}${item.badge ? `<span class="badge-new">${escapeHtml(item.badge)}</span>` : ''}</h3><p>${desc}</p></div>
         <button class="fav-btn${fav ? ' on' : ''}" data-url="${url}" title="${fav ? '取消收藏' : '收藏'}" aria-pressed="${fav}" aria-label="${fav ? '取消收藏' : '收藏'} ${title}">${fav ? '★' : '☆'}</button>
       </a>`;
@@ -626,6 +649,29 @@
       const PY = getPY();
       return String(text || '').split('').map(ch => (PY[ch] ? PY[ch][0] : ch)).join('').toLowerCase();
     }
+    function loadScript(src) {
+      return new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = src;
+        s.onload = resolve;
+        s.onerror = reject;
+        document.head.appendChild(s);
+      });
+    }
+    let pinyinPromise = null, searchIndexHasPinyin = false;
+    function loadPinyin() {
+      if (window.PINYIN_MAP) return Promise.resolve(window.PINYIN_MAP);
+      if (pinyinPromise) return pinyinPromise;
+      pinyinPromise = loadScript('assets/js/pinyin-map.js').then(() => window.PINYIN_MAP || {}).catch(() => ({}));
+      return pinyinPromise;
+    }
+    function ensurePinyinIndex() {
+      if (searchIndexHasPinyin) return Promise.resolve();
+      return loadPinyin().then(() => {
+        buildSearchIndex();
+        searchIndexHasPinyin = !!window.PINYIN_MAP;
+      });
+    }
     function buildSearchIndex() {
       searchIndex.length = 0;
       urlIndex.clear();
@@ -692,7 +738,7 @@
         html += `<div class="sr-header"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg><span>站内匹配 <b>${items.length}</b> 个站点</span></div>`;
         html += items.map(it =>
           `<a class="sr-item" href="${escapeHtml(it.url)}" target="_blank" rel="noopener">
-            <img src="${escapeHtml(fixIconPath(it.icon))}" loading="lazy" alt="" onerror="this.style.visibility='hidden'">
+            <img src="${escapeHtml(fixIconPath(it.icon))}" width="26" height="26" loading="lazy" alt="" onerror="this.style.visibility='hidden'">
             <span class="sr-item-main"><span class="sr-item-title">${highlight(it.title, q)}</span>${it.desc ? `<span class="sr-item-desc">${highlight(it.desc, q)}</span>` : ''}</span>
             <span class="sr-item-cat">${escapeHtml(it.cat)}</span>
           </a>`
@@ -716,7 +762,18 @@
         clearTimeout(timer);
         const q = input.value.trim();
         if (!q) { results.classList.remove('show'); active = -1; return; }
-        timer = setTimeout(() => { renderSiteResults(searchLocal(q), q, results, engineId); active = -1; }, 150);
+        timer = setTimeout(() => {
+          renderSiteResults(searchLocal(q), q, results, engineId);
+          active = -1;
+          if (!searchIndexHasPinyin) {
+            ensurePinyinIndex().then(() => {
+              if (input.value.trim() === q) {
+                renderSiteResults(searchLocal(q), q, results, engineId);
+                active = -1;
+              }
+            });
+          }
+        }, 150);
       });
 
       input.addEventListener('keydown', (e) => {
@@ -744,6 +801,7 @@
       });
 
       input.addEventListener('focus', () => {
+        if (!searchIndexHasPinyin) ensurePinyinIndex();
         const q = input.value.trim();
         if (q) { renderSiteResults(searchLocal(q), q, results, engineId); active = -1; }
       });
@@ -753,33 +811,44 @@
       });
     }
     
-    function toggleNight() {
-      document.body.classList.toggle('night-mode');
-      const isNight = document.body.classList.contains('night-mode');
-      localStorage.setItem('nightMode', isNight);
+    function isNightMode() {
+      return document.documentElement.classList.contains('night-mode') || document.body.classList.contains('night-mode');
+    }
+
+    function setNightMode(on) {
+      document.documentElement.classList.toggle('night-mode', on);
+      document.body.classList.toggle('night-mode', on);
+      localStorage.setItem('nightMode', on);
       applyThemeColor();
+    }
+
+    function toggleNight() {
+      setNightMode(!isNightMode());
     }
     
     function applyThemeColor() {
       const meta = document.querySelector('meta[name="theme-color"]');
-      if (meta) meta.setAttribute('content', document.body.classList.contains('night-mode') ? '#0a1526' : '#1e3a5f');
+      if (meta) meta.setAttribute('content', isNightMode() ? '#0a1526' : '#1e3a5f');
     }
 
     function initNightMode() {
       const saved = localStorage.getItem('nightMode');
-      if (saved !== null) {
-        if (saved === 'true') document.body.classList.add('night-mode');
-      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.body.classList.add('night-mode');
-      }
+      let on = false;
+      if (saved !== null) on = saved === 'true';
+      else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) on = true;
+      document.documentElement.classList.toggle('night-mode', on);
+      document.body.classList.toggle('night-mode', on);
       applyThemeColor();
     }
 
     function initStarDust() {
       if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if (initStarDust._bound) return;
+      initStarDust._bound = true;
       const MAX = 30;
       let count = 0, last = 0;
       document.addEventListener('mousemove', (e) => {
+        if (!isNightMode()) return;
         const now = performance.now();
         if (now - last < 50 || count >= MAX) return;
         last = now;
@@ -840,33 +909,49 @@
     });
 
     /* ===== 右上角金句 ===== */
+    const FALLBACK_QUOTE = ['关关雎鸠，在河之洲。窈窕淑女，君子好逑。', '诗经·周南·关雎'];
     function renderQuote(idx) {
       const el = document.getElementById('headerQuote');
+      if (!el) return;
       const Q = window.QUOTES;
-      if (!el || !Q || !Q.length) return;
-      const q = Q[idx % Q.length];
+      const q = (Q && Q.length) ? Q[idx % Q.length] : FALLBACK_QUOTE;
       el.innerHTML = '<span class="quote-text">' + q[0] + '</span><span class="quote-source">— ' + q[1] + '</span>';
     }
     (function initQuote() {
       const el = document.getElementById('headerQuote');
       if (!el) return;
+      let idx = 0, ready = false, quotesPromise = null;
+      function loadQuotes() {
+        if (window.QUOTES && window.QUOTES.length) return Promise.resolve();
+        if (quotesPromise) return quotesPromise;
+        quotesPromise = loadScript('assets/js/quotes.js').catch(() => {});
+        return quotesPromise;
+      }
       function setup() {
         const Q = window.QUOTES;
         if (!Q || !Q.length) return;
-        let idx = Math.floor(Math.random() * Q.length);
+        idx = Math.floor(Math.random() * Q.length);
         renderQuote(idx);
-        el.addEventListener('click', function() {
-          idx = (idx + 1) % Q.length;
-          el.style.transition = 'opacity 0.2s';
-          el.style.opacity = '0.3';
-          setTimeout(function() {
-            renderQuote(idx);
-            el.style.opacity = '';
-          }, 180);
-        });
+        ready = true;
       }
-      if (window.QUOTES && window.QUOTES.length) setup();
-      else window.addEventListener('DOMContentLoaded', setup);
+      function cycle() {
+        const Q = window.QUOTES;
+        if (!Q || !Q.length) return;
+        idx = (idx + 1) % Q.length;
+        el.style.transition = 'opacity 0.2s';
+        el.style.opacity = '0.3';
+        setTimeout(function() {
+          renderQuote(idx);
+          el.style.opacity = '';
+        }, 180);
+      }
+      renderQuote(0);
+      el.addEventListener('click', function() {
+        if (ready) cycle();
+        else loadQuotes().then(() => { setup(); cycle(); });
+      });
+      const idle = window.requestIdleCallback || function(cb) { setTimeout(cb, 800); };
+      idle(() => loadQuotes().then(setup));
     })();
     
     document.addEventListener('click', function(e) {
@@ -993,8 +1078,6 @@
         buildSearchIndex();
         refreshFavSet();
         renderSites();
-        initNightMode();
-        initStarDust();
       } catch (e) {
         console.error('Failed to load:', e);
         const sk = document.getElementById('skeleton');
@@ -1003,14 +1086,14 @@
         if (box) {
           box.innerHTML = '<div style="text-align:center;padding:48px 20px;color:var(--muted)">数据加载失败，请刷新页面重试</div>';
         }
-        initNightMode();
-        initStarDust();
       }
     }
     
     setupSiteSearch('searchInput', 'siteResults', 'searchEngine', doSearch);
     setupSiteSearch('popupSearchInput', 'popupSiteResults', 'popupSearchEngine', doPopupSearch);
     
+    initNightMode();
+    initStarDust();
     loadData();
     fetch('https://counter.justgame.top/api/counter', { method: 'POST' })
       .then(r => r.json())
