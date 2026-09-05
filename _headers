@@ -20,3 +20,14 @@
 # 站内图标与静态脚本：长缓存（文件名或内容变更通过 SW 版本刷新）
 /assets/*
   Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+# 共享阅读样式与脚本（gushi/maoxuan/shiji/jiashen/nanmingshi 400+ 正文页复用）：
+# 浏览器缓存 1 小时 + CDN SWR 一天，缩短冷缓存与无 SW 场景的重复回源；
+# SW 接管后由 CACHE 版本号（v48）保证全局样式更新
+/gushi/gushi.css
+/gushi/gushi.js
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+# FFmpeg.wasm 分片（约 31MB）：URL 已带 ?v= 版本参数，不可变长缓存避免重复回源
+/image/ffmpeg/*
+  Cache-Control: public, max-age=31536000, immutable
