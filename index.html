@@ -117,14 +117,15 @@
     
     header { background: linear-gradient(135deg, var(--header-bg1) 0%, var(--header-bg2) 100%); border-bottom: 1px solid var(--header-border); padding: 56px 20px 48px; position: relative; }
     header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--primary), var(--accent), var(--primary)); }
-    header::after { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.65; background-image: radial-gradient(1.2px 1.2px at 40px 20px, var(--accent-light) 50%, transparent 100%), radial-gradient(1px 1px at 120px 60px, rgba(74,144,217,.6) 50%, transparent 100%), radial-gradient(1.4px 1.4px at 200px 100px, var(--accent-light) 50%, transparent 100%), radial-gradient(1px 1px at 80px 120px, rgba(74,144,217,.5) 50%, transparent 100%), radial-gradient(1.2px 1.2px at 160px 40px, rgba(74,144,217,.7) 50%, transparent 100%), radial-gradient(1px 1px at 240px 140px, var(--accent-light) 50%, transparent 100%), radial-gradient(1.3px 1.3px at 30px 90px, rgba(74,144,217,.5) 50%, transparent 100%), radial-gradient(1px 1px at 300px 30px, rgba(74,144,217,.6) 50%, transparent 100%), radial-gradient(1.2px 1.2px at 350px 120px, var(--accent-light) 50%, transparent 100%), radial-gradient(1px 1px at 190px 160px, rgba(74,144,217,.55) 50%, transparent 100%); background-size: 380px 200px; }
+    header::after { content: none; }
+    html.night-mode header::after, .night-mode header::after { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.65; background-image: radial-gradient(1.2px 1.2px at 40px 20px, var(--accent-light) 50%, transparent 100%), radial-gradient(1px 1px at 120px 60px, rgba(74,144,217,.6) 50%, transparent 100%), radial-gradient(1.4px 1.4px at 200px 100px, var(--accent-light) 50%, transparent 100%), radial-gradient(1px 1px at 80px 120px, rgba(74,144,217,.5) 50%, transparent 100%), radial-gradient(1.2px 1.2px at 160px 40px, rgba(74,144,217,.7) 50%, transparent 100%), radial-gradient(1px 1px at 240px 140px, var(--accent-light) 50%, transparent 100%), radial-gradient(1.3px 1.3px at 30px 90px, rgba(74,144,217,.5) 50%, transparent 100%), radial-gradient(1px 1px at 300px 30px, rgba(74,144,217,.6) 50%, transparent 100%), radial-gradient(1.2px 1.2px at 350px 120px, var(--accent-light) 50%, transparent 100%), radial-gradient(1px 1px at 190px 160px, rgba(74,144,217,.55) 50%, transparent 100%); background-size: 380px 200px; }
     .header-content { display: flex; flex-direction: column; align-items: center; max-width: 1200px; margin: 0 auto; gap: 34px; position: relative; z-index: 2; }
     .logo-area { flex-shrink: 0; text-align: center; }
     header h1 { font-size: 44px; font-weight: 700; letter-spacing: 0.12em; background: var(--title-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin: 0; white-space: nowrap; }
     header h1 a { text-decoration: none; color: inherit; }
     header h1 a:hover { text-decoration: none; }
     .search-area { flex: 1; display: flex; justify-content: center; width: 100%; }
-    .header-quote { position: absolute; top: 22px; right: 28px; z-index: 2; font-family: 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', SimSun, serif; font-size: 14px; color: var(--primary); letter-spacing: 1px; cursor: pointer; user-select: none; opacity: 0.85; transition: opacity 0.3s, color 0.3s; max-width: 46vw; text-align: right; line-height: 1.4; }
+    .header-quote { position: absolute; top: 22px; right: 28px; z-index: 2; font-family: 'Songti SC', 'STSong', SimSun, 'Noto Serif SC', serif; font-size: 14px; color: var(--primary); letter-spacing: 1px; cursor: pointer; user-select: none; opacity: 0.85; transition: opacity 0.3s, color 0.3s; max-width: 46vw; text-align: right; line-height: 1.4; }
     .header-quote:hover { opacity: 1; color: var(--accent); }
     .header-quote .quote-text { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .header-quote .quote-source { font-size: 11px; color: var(--faint); display: block; letter-spacing: 2px; margin-top: 2px; }
@@ -534,8 +535,7 @@
       if (eager) eagerLeft--;
       const load = eager ? 'eager' : 'lazy';
       const prio = eager ? ' fetchpriority="high"' : '';
-      const fade = eager ? '' : ' fade-in';
-      return `<a href="${url}" class="site-card${fade}" target="_blank" rel="noopener">
+      return `<a href="${url}" class="site-card" target="_blank" rel="noopener">
         <img src="${escapeHtml(fixIconPath(item.icon))}" alt="${title}" width="40" height="40" loading="${load}" decoding="async"${prio} onerror="this.src='${fb}'">
         <div class="site-info" title="${desc}"><h3>${title}${item.badge ? `<span class="badge-new">${escapeHtml(item.badge)}</span>` : ''}</h3><p>${desc}</p></div>
         <button class="fav-btn${fav ? ' on' : ''}" data-url="${url}" title="${fav ? '取消收藏' : '收藏'}" aria-pressed="${fav}" aria-label="${fav ? '取消收藏' : '收藏'} ${title}">${fav ? '★' : '☆'}</button>
@@ -594,11 +594,11 @@
       const favSec = quickSectionHtml('我的收藏', favItems(), 'fav-section');
       const recentSec = quickSectionHtml('最近访问', recentItems(), 'recent-section');
       container.insertAdjacentHTML('afterbegin', favSec + recentSec);
-      document.querySelectorAll('.fade-in').forEach(el => el.classList.add('visible'));
     }
 
     function buildCategory(cat, catIdx) {
-      let html = `<section class="category" id="cat-${catIdx}"><h2>${iconSvg(cat.sidebarIcon)} ${escapeHtml(cat.category)}</h2>`;
+      const fade = catIdx < 2 ? '' : ' fade-in';
+      let html = `<section class="category${fade}" id="cat-${catIdx}"><h2>${iconSvg(cat.sidebarIcon)} ${escapeHtml(cat.category)}</h2>`;
       if (cat.items && cat.items.length) {
         html += `<div class="site-grid">${cat.items.map(item => cardHtml(item)).join('')}</div>`;
       }
@@ -1058,8 +1058,9 @@
     }
     
     function observeScroll() {
+      const targets = document.querySelectorAll('.category.fade-in');
       if (!('IntersectionObserver' in window)) {
-        document.querySelectorAll('.fade-in').forEach(el => el.classList.add('visible'));
+        targets.forEach(el => el.classList.add('visible'));
         return;
       }
       const io = new IntersectionObserver((entries) => {
@@ -1069,8 +1070,8 @@
             io.unobserve(en.target);
           }
         });
-      }, { rootMargin: '0px 0px -40px 0px' });
-      document.querySelectorAll('.fade-in').forEach(el => io.observe(el));
+      }, { rootMargin: '80px 0px' });
+      targets.forEach(el => io.observe(el));
     }
 
     if ('serviceWorker' in navigator) {
