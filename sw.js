@@ -1,4 +1,4 @@
-const CACHE = 'navsite-v47';
+const CACHE = 'navsite-v48';
 const CORE = [
   './',
   './index.html',
@@ -26,6 +26,12 @@ const CORE = [
   './tools/index.html',
   './dev/',
   './dev/index.html',
+  './jiashen/',
+  './jiashen/index.html',
+  './nanmingshi/',
+  './nanmingshi/index.html',
+  './shiji/',
+  './shiji/index.html',
   './nav.json',
   './assets/js/pinyin-map.js',
   './assets/js/quotes.js',
