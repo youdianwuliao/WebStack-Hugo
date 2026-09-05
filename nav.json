@@ -1417,6 +1417,12 @@
           "icon": "/assets/images/logos/zhangjiquan.png",
           "url": "https://zhangjiquan.com/",
           "description": "关注游戏掌机"
+        },
+        {
+          "title": "QtEasyTier",
+          "icon": "/assets/images/logos/qtet.png",
+          "url": "https://qtet.cn/",
+          "description": "基于 EasyTier 的异地组网与游戏联机工具"
         }
       ]
     },
