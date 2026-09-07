@@ -43,7 +43,7 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
      - 检查文件大小：必须 ≤ 10KB
      - 大于 10KB 必须压缩：
        ```bash
-       node -e "const sharp = require('sharp'); sharp('input.png').resize(64, 64).jpeg({quality: 75}).toFile('output.png');"
+        node -e "const sharp = require('sharp'); sharp('input.png').resize(64, 64).png({compressionLevel: 9}).toFile('output.png');"
        ```
   4. **编辑 nav.json**：在对应分类的 `items` 数组**末尾**添加新项（不放到第一项）
   5. **测试预览**：
@@ -93,7 +93,7 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - 使用 sharp 库压缩图标：
     ```bash
     npm install sharp --no-save  # 安装依赖
-    node -e "const sharp = require('sharp'); sharp('input.png').resize(64, 64).jpeg({quality: 75}).toFile('output.png');"
+     node -e "const sharp = require('sharp'); sharp('input.png').resize(64, 64).png({compressionLevel: 9}).toFile('output.png');"
     ```
   - 检查文件大小：
     ```bash
@@ -101,7 +101,7 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
     ```
   - 查找大于 10K 的文件：
     ```bash
-    find assets/images/logos -type f -name "*.png" -exec ls -lh {} \; | awk '$5 ~ /K/ && int($5) > 10'
+    find assets/images/logos -type f \( -name "*.png" -o -name "*.svg" -o -name "*.ico" \) -size +10k -printf '%p %kKB\n'
     ```
 
 [导航网站项目结构]

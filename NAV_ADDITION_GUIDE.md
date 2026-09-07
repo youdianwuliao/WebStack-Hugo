@@ -17,8 +17,8 @@ curl -sL "图标 URL" -o assets/images/logos/{网站名}.png
 # 检查大小
 ls -lh assets/images/logos/{网站名}.png
 
-# 如果 > 10KB，必须压缩
-node -e "const sharp = require('sharp'); sharp('assets/images/logos/{网站名}.png').resize(64, 64).jpeg({quality: 75}).toFile('assets/images/logos/{网站名}_icon.png');"
+# 如果 > 10KB，必须压缩（输出真 PNG，不要用 jpeg 编码器写 .png）
+node -e "const sharp = require('sharp'); sharp('assets/images/logos/{网站名}.png').resize(64, 64).png({compressionLevel: 9}).toFile('assets/images/logos/{网站名}_icon.png');"
 ```
 
 **要求**：
@@ -27,7 +27,7 @@ node -e "const sharp = require('sharp'); sharp('assets/images/logos/{网站名}.
 - 命名规范：`{网站名}.png` 或 `{网站名}_icon.png`
 
 ### 3. 编辑 nav.json
-在对应分类的 `items` 数组第一项位置添加：
+在对应分类的 `items` 数组**末尾**添加（不要插到第一项）：
 ```json
 {
   "title": "网站名称",
@@ -65,11 +65,11 @@ git push
 # 检查所有图标大小
 ls -lh assets/images/logos/*.png | awk '{print $9, $5}'
 
-# 查找大于 10K 的图标
-find assets/images/logos -type f -name "*.png" -exec ls -lh {} \; | awk '$5 ~ /K/ && int($5) > 10'
+# 查找大于 10KB 的图标
+find assets/images/logos -type f \( -name "*.png" -o -name "*.svg" -o -name "*.ico" \) -size +10k -printf '%p %kKB\n'
 
 # 压缩单个图标
-node -e "const sharp = require('sharp'); sharp('input.png').resize(64, 64).jpeg({quality: 75}).toFile('output.png');"
+node -e "const sharp = require('sharp'); sharp('input.png').resize(64, 64).png({compressionLevel: 9}).toFile('output.png');"
 
 # 查看分类列表
 node -e "const nav = require('./nav.json'); nav.navigation.forEach((c, i) => console.log((i+1) + '. ' + c.category));"
@@ -77,4 +77,4 @@ node -e "const nav = require('./nav.json'); nav.navigation.forEach((c, i) => con
 
 ---
 
-**最后更新**: 2026-06-05
+**最后更新**: 2026-09-07

@@ -301,6 +301,10 @@
     .fav-btn { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.05); border: none; width: 24px; height: 24px; line-height: 22px; border-radius: 50%; font-size: 14px; color: var(--faint); cursor: pointer; opacity: 0; transition: all 0.2s; z-index: 2; }
     .night-mode .fav-btn { background: rgba(255,255,255,0.07); }
     .site-card:hover .fav-btn, .fav-btn.on { opacity: 1; }
+    @media (hover: none) {
+      .fav-btn { opacity: 0.55; }
+      .fav-btn.on { opacity: 1; }
+    }
     .fav-btn:hover { background: var(--nav-hover); color: var(--accent); }
     .fav-btn.on { color: #f5b942; }
     .site-info { padding-right: 20px; }
@@ -473,17 +477,19 @@
         <a href="https://www.qianwen.com/" target="_blank" rel="noopener">通义千问</a>
         <a href="https://www.xiaohongshu.com/" target="_blank" rel="noopener">小红书</a>
         <a href="https://www.toutiao.com/" target="_blank" rel="noopener">今日头条</a>
-        <a href="./gushi/" target="_blank" rel="noopener">古诗文集</a>
-        <a href="./maoxuan/" target="_blank" rel="noopener">毛泽东选集</a>
-        <a href="./shiji/" target="_blank" rel="noopener">吴氏石头记</a>
-        <a href="./jiashen/" target="_blank" rel="noopener">甲申三百年祭</a>
-        <a href="./nanmingshi/" target="_blank" rel="noopener">南明史</a>
-        <a href="./jianfen/" target="_blank" rel="noopener">学法减分题库</a>
-        <a href="./json/" target="_blank" rel="noopener">JSON 工具箱</a>
-        <a href="./qrcode/" target="_blank" rel="noopener">二维码工具</a>
-        <a href="./markdown/" target="_blank" rel="noopener">Markdown 编辑器</a>
-        <a href="./encode/" target="_blank" rel="noopener">编码加密工具</a>
-        <a href="./image/" target="_blank" rel="noopener">图片工具</a>
+        <a href="./gushi/">古诗文集</a>
+        <a href="./maoxuan/">毛泽东选集</a>
+        <a href="./shiji/">吴氏石头记</a>
+        <a href="./jiashen/">甲申三百年祭</a>
+        <a href="./nanmingshi/">南明史</a>
+        <a href="./jianfen/">学法减分题库</a>
+        <a href="./json/">JSON 工具箱</a>
+        <a href="./qrcode/">二维码工具</a>
+        <a href="./markdown/">Markdown 编辑器</a>
+        <a href="./encode/">编码加密工具</a>
+        <a href="./image/">图片工具</a>
+        <a href="./tools/">实用工具箱</a>
+        <a href="./dev/">开发小工具</a>
       </div>
       <div class="share-bar">
         <span>分享本站</span>
@@ -563,7 +569,9 @@
       if (eager) eagerLeft--;
       const load = eager ? 'eager' : 'lazy';
       const prio = eager ? ' fetchpriority="high"' : '';
-      return `<a href="${url}" class="site-card" target="_blank" rel="noopener">
+      const ext = /^(https?:)?\/\//i.test(item.url);
+      const target = ext ? ' target="_blank" rel="noopener"' : '';
+      return `<a href="${url}" class="site-card"${target}>
         <img src="${escapeHtml(fixIconPath(item.icon))}" alt="${title}" width="40" height="40" loading="${load}" decoding="async"${prio} onerror="this.src='${fb}'">
         <div class="site-info" title="${desc}"><h3>${title}${item.badge ? `<span class="badge-new">${escapeHtml(item.badge)}</span>` : ''}</h3><p>${desc}</p></div>
         <button class="fav-btn${fav ? ' on' : ''}" data-url="${url}" title="${fav ? '取消收藏' : '收藏'}" aria-pressed="${fav}" aria-label="${fav ? '取消收藏' : '收藏'} ${title}">${fav ? '★' : '☆'}</button>
@@ -773,9 +781,9 @@
       if (items.length) {
         html += `<div class="sr-header"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg><span>站内匹配 <b>${items.length}</b> 个站点</span></div>`;
         html += items.map(it =>
-          `<a class="sr-item" href="${escapeHtml(it.url)}" target="_blank" rel="noopener">
+          `<a class="sr-item" href="${escapeHtml(it.url)}"${/^(https?:)?\/\//i.test(it.url) ? ' target="_blank" rel="noopener"' : ''}>
             <img src="${escapeHtml(fixIconPath(it.icon))}" width="26" height="26" loading="lazy" alt="" onerror="this.style.visibility='hidden'">
-            <span class="sr-item-main"><span class="sr-item-title">${highlight(it.title, q)}</span>${it.desc ? `<span class="sr-item-desc">${highlight(it.desc, q)}</span>` : ''}</span>
+            <span class="sr-item-main"><span class="sr-item-title">${highlight(it.title, q)}</span>${it.description ? `<span class="sr-item-desc">${highlight(it.description, q)}</span>` : ''}</span>
             <span class="sr-item-cat">${escapeHtml(it.cat)}</span>
           </a>`
         ).join('');
