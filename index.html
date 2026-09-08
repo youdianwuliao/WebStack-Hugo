@@ -331,15 +331,10 @@
     .cat-nav {
       position: sticky; top: 0; z-index: 150;
       display: flex; flex-wrap: wrap; justify-content: center;
-      gap: 2px 12px;
-      margin: 12px -20px 18px; padding: 10px 20px 8px;
-      background: var(--bg);
-    }
-    /* 底部淡出，弱化吸顶条的边界 */
-    .cat-nav::after {
-      content: ''; position: absolute; left: 0; right: 0; top: 100%; height: 16px;
-      background: linear-gradient(var(--bg), transparent);
-      pointer-events: none;
+      gap: 2px 8px;
+      max-width: 820px;
+      margin: 12px auto 18px; padding: 10px 0 8px;
+      background: transparent;
     }
     .cat-nav[hidden] { display: none; }
     .cat-chip {
@@ -360,11 +355,14 @@
       background: #c44536;
     }
     html.night-mode .cat-chip.active::after, .night-mode .cat-chip.active::after { background: #e15a4e; }
-    /* 吸顶静默：空闲时文字淡出，当前项保留一点痕迹；有动作立刻恢复。
-       只降文字透明度，背景条保持不透明，避免下方卡片透上来。 */
-    .cat-nav.dimmed .cat-chip { opacity: 0.16; }
-    .cat-nav.dimmed .cat-chip.active { opacity: 0.5; }
-    .cat-nav.dimmed:hover .cat-chip, .cat-nav.dimmed:focus-within .cat-chip { opacity: 1; }
+    /* 分类导航常驻清晰显示：当前项以主题色加底部红线标出 */
+    /* 导航吸顶后转为淡出：平时仅留淡字、不突出当前项，鼠标移上去才整体亮起并显示指示 */
+    .cat-nav.stuck .cat-chip { opacity: 0.25; }
+    .cat-nav.stuck .cat-chip.active { color: var(--faint); }
+    .cat-nav.stuck .cat-chip.active::after { opacity: 0; transition: opacity 0.3s ease; }
+    .cat-nav.stuck:hover .cat-chip, .cat-nav.stuck:focus-within .cat-chip { opacity: 1; }
+    .cat-nav.stuck:hover .cat-chip.active, .cat-nav.stuck:focus-within .cat-chip.active { color: var(--primary); }
+    .cat-nav.stuck:hover .cat-chip.active::after, .cat-nav.stuck:focus-within .cat-chip.active::after { opacity: 1; }
     @media (max-width: 768px) {
       .cat-nav {
         flex-wrap: nowrap; justify-content: flex-start;
@@ -488,6 +486,7 @@
   </header>
   
   <main class="container">
+    <div id="catNavSentinel" aria-hidden="true" style="height:1px"></div>
     <nav class="cat-nav" id="catNav" hidden aria-label="分类快捷跳转"></nav>
     <div id="siteContainer">
       <div class="skeleton-grid" id="skeleton" aria-hidden="true">
@@ -717,21 +716,16 @@
       update();
     }
 
-    // 吸顶静默：吸顶后空闲 2.5s 淡出文字，滚动/鼠标/触摸/键盘聚焦立刻恢复
-    function setupCatDim() {
+    function setupCatStuck() {
       const nav = document.getElementById('catNav');
-      if (!nav || nav.hidden) return;
-      let timer = 0, raf = 0;
-      const isStuck = () => nav.getBoundingClientRect().top <= 1;
-      const wake = () => {
-        nav.classList.remove('dimmed');
-        clearTimeout(timer);
-        timer = setTimeout(() => { if (isStuck()) nav.classList.add('dimmed'); }, 2500);
-      };
-      const schedule = () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; wake(); }); };
-      ['scroll', 'mousemove', 'touchstart', 'focusin'].forEach(ev =>
-        window.addEventListener(ev, schedule, { passive: true }));
-      wake();
+      const sentinel = document.getElementById('catNavSentinel');
+      if (!nav || !sentinel || nav.hidden) return;
+      if (nav._stuckBound) return;
+      nav._stuckBound = true;
+      const io = new IntersectionObserver((entries) => {
+        nav.classList.toggle('stuck', !entries[0].isIntersecting);
+      }, { threshold: 0 });
+      io.observe(sentinel);
     }
 
     function renderCatNav() {
@@ -1294,7 +1288,7 @@
       }, { rootMargin: '80px 0px' });
       targets.forEach(el => io.observe(el));
       setupCatSpy();
-      setupCatDim();
+      setupCatStuck();
     }
 
     if ('serviceWorker' in navigator) {
