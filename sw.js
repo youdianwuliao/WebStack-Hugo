@@ -1,4 +1,4 @@
-const CACHE = 'navsite-v57';
+const CACHE = 'navsite-v58';
 const CORE = [
   './',
   './index.html',
@@ -62,6 +62,13 @@ self.addEventListener('activate', (e) => {
   );
 });
 
+// HTML 文档网络优先：改版后刷新即生效，只有在断网时才回退缓存。
+// 静态资源仍走 stale-while-revalidate（见下方 fetch 处理），兼顾速度。
+function isHtmlRequest(request) {
+  if (request.mode === 'navigate' || request.destination === 'document') return true;
+  return /\.html?(?:[?#]|$)/.test(request.url);
+}
+
 self.addEventListener('fetch', (e) => {
   const { request } = e;
   if (request.method !== 'GET' || !request.url.startsWith(self.location.origin)) return;
@@ -69,6 +76,26 @@ self.addEventListener('fetch', (e) => {
   // ffmpeg 资源（31MB 分片等）不做 SW 缓存：体积大、更新频繁，
   // 缓存到旧版本会污染 wasmBinary 加载链路（详见 index.html vgLoadFFmpeg）。
   if (request.url.includes('/image/ffmpeg/')) return;
+
+  if (isHtmlRequest(request)) {
+    e.respondWith(
+      (async () => {
+        let cache, cached;
+        try {
+          cache = await caches.open(CACHE);
+          cached = await cache.match(request);
+        } catch (_) {}
+        try {
+          const res = await fetch(request);
+          if (res && res.status === 200 && cache) cache.put(request, res.clone()).catch(() => {});
+          return res;
+        } catch (_) {
+          return cached || Response.error();
+        }
+      })()
+    );
+    return;
+  }
 
   e.respondWith(
     (async () => {
