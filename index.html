@@ -331,7 +331,7 @@
     .cat-nav {
       position: sticky; top: 0; z-index: 150;
       display: flex; flex-wrap: wrap; justify-content: center;
-      gap: 2px 20px;
+      gap: 2px 12px;
       margin: 12px -20px 18px; padding: 10px 20px 8px;
       background: var(--bg);
     }
@@ -362,15 +362,15 @@
     html.night-mode .cat-chip.active::after, .night-mode .cat-chip.active::after { background: #e15a4e; }
     /* 吸顶静默：空闲时文字淡出，当前项保留一点痕迹；有动作立刻恢复。
        只降文字透明度，背景条保持不透明，避免下方卡片透上来。 */
-    .cat-nav.dimmed .cat-chip { opacity: 0.28; }
-    .cat-nav.dimmed .cat-chip.active { opacity: 0.7; }
+    .cat-nav.dimmed .cat-chip { opacity: 0.16; }
+    .cat-nav.dimmed .cat-chip.active { opacity: 0.5; }
     .cat-nav.dimmed:hover .cat-chip, .cat-nav.dimmed:focus-within .cat-chip { opacity: 1; }
     @media (max-width: 768px) {
       .cat-nav {
         flex-wrap: nowrap; justify-content: flex-start;
         overflow-x: auto; overscroll-behavior-x: contain;
         -webkit-overflow-scrolling: touch; scrollbar-width: none;
-        scroll-snap-type: x proximity; gap: 0 16px;
+        scroll-snap-type: x proximity; gap: 0 10px;
       }
       .cat-nav::-webkit-scrollbar { display: none; }
       .cat-chip { flex-shrink: 0; scroll-snap-align: center; }
