@@ -1,4 +1,4 @@
-const CACHE = 'navsite-v52';
+const CACHE = 'navsite-v56';
 const CORE = [
   './',
   './index.html',
@@ -37,8 +37,7 @@ const CORE = [
   './assets/js/quotes.js',
   './404.html',
   './manifest.webmanifest',
-  './assets/favicon.svg',
-  './assets/fonts/tiangong-xiaowei.woff2'
+  './assets/favicon.svg'
 ];
 
 self.addEventListener('install', (e) => {
