@@ -349,7 +349,7 @@
       color: var(--faint);
       font-size: 13px; letter-spacing: 0.02em;
       text-decoration: none; line-height: 1.4; white-space: nowrap;
-      transition: color 0.2s;
+      transition: color 0.2s, opacity 0.35s ease;
     }
     .cat-chip svg { display: none; }
     .cat-chip:hover { color: var(--primary); }
@@ -360,6 +360,11 @@
       background: #c44536;
     }
     html.night-mode .cat-chip.active::after, .night-mode .cat-chip.active::after { background: #e15a4e; }
+    /* 吸顶静默：空闲时文字淡出，当前项保留一点痕迹；有动作立刻恢复。
+       只降文字透明度，背景条保持不透明，避免下方卡片透上来。 */
+    .cat-nav.dimmed .cat-chip { opacity: 0.28; }
+    .cat-nav.dimmed .cat-chip.active { opacity: 0.7; }
+    .cat-nav.dimmed:hover .cat-chip, .cat-nav.dimmed:focus-within .cat-chip { opacity: 1; }
     @media (max-width: 768px) {
       .cat-nav {
         flex-wrap: nowrap; justify-content: flex-start;
@@ -710,6 +715,23 @@
       window.addEventListener('scroll', onScroll, { passive: true });
       window.addEventListener('resize', onScroll, { passive: true });
       update();
+    }
+
+    // 吸顶静默：吸顶后空闲 2.5s 淡出文字，滚动/鼠标/触摸/键盘聚焦立刻恢复
+    function setupCatDim() {
+      const nav = document.getElementById('catNav');
+      if (!nav || nav.hidden) return;
+      let timer = 0, raf = 0;
+      const isStuck = () => nav.getBoundingClientRect().top <= 1;
+      const wake = () => {
+        nav.classList.remove('dimmed');
+        clearTimeout(timer);
+        timer = setTimeout(() => { if (isStuck()) nav.classList.add('dimmed'); }, 2500);
+      };
+      const schedule = () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; wake(); }); };
+      ['scroll', 'mousemove', 'touchstart', 'focusin'].forEach(ev =>
+        window.addEventListener(ev, schedule, { passive: true }));
+      wake();
     }
 
     function renderCatNav() {
@@ -1272,6 +1294,7 @@
       }, { rootMargin: '80px 0px' });
       targets.forEach(el => io.observe(el));
       setupCatSpy();
+      setupCatDim();
     }
 
     if ('serviceWorker' in navigator) {
