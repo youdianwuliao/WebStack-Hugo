@@ -308,7 +308,8 @@
 
     /* ===== 电子书阅读专区 ===== */
     .reading-zone { margin-bottom: 28px; }
-    .category { scroll-margin-top: 16px; }
+    .category { scroll-margin-top: 60px; }
+    .subcategory { scroll-margin-top: 60px; }
     .reading-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
     .reading-card { display: flex; align-items: center; gap: 14px; padding: 14px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; text-decoration: none; color: inherit; transition: all 0.25s; }
     .reading-card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px var(--shadow); border-color: var(--accent); }
@@ -326,12 +327,49 @@
     .seo-links a { color: var(--muted); text-decoration: none; padding: 4px 10px; border: 1px solid var(--card-border); border-radius: 999px; background: var(--card-bg); transition: color 0.2s, border-color 0.2s, background 0.2s; }
     .seo-links a:hover { color: var(--accent); border-color: var(--accent); }
 
-    /* 分类胶囊锚点 */
-    .cat-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 20px 0 22px; }
-    .cat-chip { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--card-border); background: var(--card-bg); color: var(--muted); font-size: 12px; text-decoration: none; line-height: 1.3; transition: color 0.2s, border-color 0.2s, background 0.2s, box-shadow 0.2s; }
-    .cat-chip:hover { color: var(--accent); border-color: var(--accent); box-shadow: 0 2px 8px var(--shadow); }
-    .cat-chip svg { width: 12px; height: 12px; flex-shrink: 0; }
-    html.night-mode .cat-chip, .night-mode .cat-chip { background: var(--card-bg); }
+    /* 分类快捷导航：吸顶 + 目录式（无框无底，仅文字与细指示线） */
+    .cat-nav {
+      position: sticky; top: 0; z-index: 150;
+      display: flex; flex-wrap: wrap; justify-content: center;
+      gap: 2px 20px;
+      margin: 12px -20px 18px; padding: 10px 20px 8px;
+      background: var(--bg);
+    }
+    /* 底部淡出，弱化吸顶条的边界 */
+    .cat-nav::after {
+      content: ''; position: absolute; left: 0; right: 0; top: 100%; height: 16px;
+      background: linear-gradient(var(--bg), transparent);
+      pointer-events: none;
+    }
+    .cat-nav[hidden] { display: none; }
+    .cat-chip {
+      position: relative;
+      padding: 1px 1px 7px;
+      border: none; background: none;
+      color: var(--faint);
+      font-size: 13px; letter-spacing: 0.02em;
+      text-decoration: none; line-height: 1.4; white-space: nowrap;
+      transition: color 0.2s;
+    }
+    .cat-chip svg { display: none; }
+    .cat-chip:hover { color: var(--primary); }
+    .cat-chip.active { color: var(--primary); font-weight: 600; }
+    .cat-chip.active::after {
+      content: ''; position: absolute; left: 50%; bottom: 0;
+      width: 14px; height: 2px; margin-left: -7px; border-radius: 1px;
+      background: #c44536;
+    }
+    html.night-mode .cat-chip.active::after, .night-mode .cat-chip.active::after { background: #e15a4e; }
+    @media (max-width: 768px) {
+      .cat-nav {
+        flex-wrap: nowrap; justify-content: flex-start;
+        overflow-x: auto; overscroll-behavior-x: contain;
+        -webkit-overflow-scrolling: touch; scrollbar-width: none;
+        scroll-snap-type: x proximity; gap: 0 16px;
+      }
+      .cat-nav::-webkit-scrollbar { display: none; }
+      .cat-chip { flex-shrink: 0; scroll-snap-align: center; }
+    }
 
     /* 触屏关掉抬升 hover，避免点完还漂着 */
     @media (hover: none) {
@@ -634,6 +672,46 @@
       imgs.forEach(img => hydrateIcons.io.observe(img));
     }
 
+    function setActiveChip(i) {
+      const nav = document.getElementById('catNav');
+      if (!nav) return;
+      const chips = nav.querySelectorAll('.cat-chip');
+      chips.forEach((c, k) => {
+        const on = k === i;
+        c.classList.toggle('active', on);
+        if (on) c.setAttribute('aria-current', 'true'); else c.removeAttribute('aria-current');
+      });
+      const act = chips[i];
+      if (act && nav.scrollWidth > nav.clientWidth + 4) {
+        const l = act.offsetLeft, r = l + act.offsetWidth;
+        if (l < nav.scrollLeft + 8) nav.scrollTo({ left: Math.max(0, l - 16), behavior: 'smooth' });
+        else if (r > nav.scrollLeft + nav.clientWidth - 8) nav.scrollTo({ left: r - nav.clientWidth + 16, behavior: 'smooth' });
+      }
+    }
+
+    function setupCatSpy() {
+      const nav = document.getElementById('catNav');
+      if (!nav || nav.hidden) return;
+      const chips = nav.querySelectorAll('.cat-chip');
+      if (!chips.length) return;
+      let cur = -1, raf = 0;
+      const update = () => {
+        raf = 0;
+        const line = nav.getBoundingClientRect().bottom + 40;
+        let idx = -1;
+        for (let i = 0; i < chips.length; i++) {
+          const sec = document.getElementById('cat-' + i);
+          if (sec && sec.getBoundingClientRect().top <= line) idx = i;
+        }
+        if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 8) idx = chips.length - 1;
+        if (idx !== cur) { cur = idx; setActiveChip(idx); }
+      };
+      const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+
     function renderCatNav() {
       const nav = document.getElementById('catNav');
       if (!nav) return;
@@ -652,6 +730,8 @@
           const el = id && document.getElementById(id);
           if (!el) return;
           e.preventDefault();
+          const i = parseInt(id.replace('cat-', ''), 10);
+          if (!isNaN(i)) setActiveChip(i);
           el.scrollIntoView({ behavior: 'smooth', block: 'start' });
           history.replaceState(null, '', '#' + id);
         });
@@ -1191,6 +1271,7 @@
         });
       }, { rootMargin: '80px 0px' });
       targets.forEach(el => io.observe(el));
+      setupCatSpy();
     }
 
     if ('serviceWorker' in navigator) {
