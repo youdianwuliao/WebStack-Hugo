@@ -50,16 +50,7 @@
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="nav.json" as="fetch" crossorigin="anonymous">
   <link rel="preload" href="assets/favicon.svg" as="image">
-  <link rel="preload" href="assets/fonts/tiangong-xiaowei.woff2" as="font" type="font/woff2" crossorigin>
   <style>
-    @font-face {
-      font-family: 'TianGong Title';
-      src: url('assets/fonts/tiangong-xiaowei.woff2') format('woff2');
-      font-weight: 400;
-      font-style: normal;
-      font-display: swap;
-      unicode-range: U+5929, U+5DE5, U+9601;
-    }
     :root {
       --bg: #f0f2f5;
       --text: #333;
@@ -121,26 +112,26 @@
     html.night-mode { color-scheme: dark; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
     body::before { content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0; background-image: radial-gradient(1px 1px at 25px 8px, rgba(255,255,255,.7), transparent 100%), radial-gradient(1px 1px at 85px 48px, rgba(255,255,255,.55), transparent 100%), radial-gradient(1.6px 1.6px at 120px 82px, rgba(255,255,255,.5), transparent 100%), radial-gradient(1px 1px at 175px 28px, rgba(255,255,255,.6), transparent 100%), radial-gradient(1px 1px at 50px 98px, rgba(255,255,255,.45), transparent 100%), radial-gradient(1.3px 1.3px at 150px 120px, rgba(255,255,255,.55), transparent 100%), radial-gradient(1px 1px at 200px 70px, rgba(255,255,255,.4), transparent 100%), radial-gradient(1.2px 1.2px at 95px 140px, rgba(255,255,255,.5), transparent 100%); background-size: 220px 220px; }
-    html.night-mode body::before, body.night-mode::before { opacity: 0.65; animation: starTwinkle 5s ease-in-out infinite; }
-    @keyframes starTwinkle { 0%, 100% { opacity: 0.45; } 50% { opacity: 0.65; } }
+    html.night-mode body::before, body.night-mode::before { opacity: 0.38; animation: starTwinkle 8s ease-in-out infinite; }
+    @keyframes starTwinkle { 0%, 100% { opacity: 0.28; } 50% { opacity: 0.42; } }
     .star-dust { position: fixed; border-radius: 50%; pointer-events: none; z-index: 249; }
     .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 1; }
     
-    header { background: linear-gradient(135deg, var(--header-bg1) 0%, var(--header-bg2) 100%); border-bottom: 1px solid var(--header-border); padding: 48px 20px 44px; position: relative; }
+    header { background: linear-gradient(135deg, var(--header-bg1) 0%, var(--header-bg2) 100%); border-bottom: 1px solid var(--header-border); padding: 36px 20px 28px; position: relative; }
     header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--primary), var(--accent), var(--primary)); }
     header::after { content: none; }
-    html.night-mode header::after, .night-mode header::after { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.65; background-image: radial-gradient(1.2px 1.2px at 40px 20px, var(--accent-light) 50%, transparent 100%), radial-gradient(1px 1px at 120px 60px, rgba(74,144,217,.6) 50%, transparent 100%), radial-gradient(1.4px 1.4px at 200px 100px, var(--accent-light) 50%, transparent 100%), radial-gradient(1px 1px at 80px 120px, rgba(74,144,217,.5) 50%, transparent 100%), radial-gradient(1.2px 1.2px at 160px 40px, rgba(74,144,217,.7) 50%, transparent 100%), radial-gradient(1px 1px at 240px 140px, var(--accent-light) 50%, transparent 100%), radial-gradient(1.3px 1.3px at 30px 90px, rgba(74,144,217,.5) 50%, transparent 100%), radial-gradient(1px 1px at 300px 30px, rgba(74,144,217,.6) 50%, transparent 100%), radial-gradient(1.2px 1.2px at 350px 120px, var(--accent-light) 50%, transparent 100%), radial-gradient(1px 1px at 190px 160px, rgba(74,144,217,.55) 50%, transparent 100%); background-size: 380px 200px; }
-    .header-content { display: flex; flex-direction: column; align-items: center; max-width: 1200px; margin: 0 auto; gap: 34px; position: relative; z-index: 2; }
-    .logo-area { flex-shrink: 0; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    html.night-mode header::after, .night-mode header::after { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.32; background-image: radial-gradient(1.2px 1.2px at 40px 20px, var(--accent-light) 50%, transparent 100%), radial-gradient(1px 1px at 120px 60px, rgba(74,144,217,.6) 50%, transparent 100%), radial-gradient(1.4px 1.4px at 200px 100px, var(--accent-light) 50%, transparent 100%), radial-gradient(1px 1px at 80px 120px, rgba(74,144,217,.5) 50%, transparent 100%), radial-gradient(1.2px 1.2px at 160px 40px, rgba(74,144,217,.7) 50%, transparent 100%), radial-gradient(1px 1px at 240px 140px, var(--accent-light) 50%, transparent 100%), radial-gradient(1.3px 1.3px at 30px 90px, rgba(74,144,217,.5) 50%, transparent 100%), radial-gradient(1px 1px at 300px 30px, rgba(74,144,217,.6) 50%, transparent 100%), radial-gradient(1.2px 1.2px at 350px 120px, var(--accent-light) 50%, transparent 100%), radial-gradient(1px 1px at 190px 160px, rgba(74,144,217,.55) 50%, transparent 100%); background-size: 380px 200px; }
+    .header-content { display: flex; flex-direction: column; align-items: center; max-width: 1200px; margin: 0 auto; gap: 22px; position: relative; z-index: 2; }
+    .logo-area { flex-shrink: 0; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; }
     .brand { display: inline-flex; align-items: flex-start; position: relative; }
-    header h1 { font-family: 'TianGong Title', 'Kaiti SC', KaiTi, serif; font-size: 82px; font-weight: 400; letter-spacing: 0.22em; color: var(--primary); margin: 0; white-space: nowrap; font-synthesis: none; line-height: 1; }
+    header h1 { font-family: 'Kaiti SC', 'STKaiti', KaiTi, 'KaiTi_GB2312', serif; font-size: 68px; font-weight: 400; letter-spacing: 0.22em; color: var(--primary); margin: 0; white-space: nowrap; font-synthesis: none; line-height: 1; }
     header h1 a { text-decoration: none; color: inherit; display: inline-block; margin-right: -0.22em; }
     header h1 a:hover { text-decoration: none; color: var(--accent); }
-    .brand-seal { position: absolute; top: -13px; right: -22px; width: 42px; height: 42px; color: #c44536; transform: rotate(-9deg); filter: drop-shadow(0 1px 0 rgba(140,32,28,.18)); }
-    html.night-mode .brand-seal, .night-mode .brand-seal { color: #e15a4e; filter: drop-shadow(0 0 6px rgba(225,90,78,.28)); }
-    .brand-tagline { margin: 0; font-family: 'Kaiti SC', 'STKaiti', KaiTi, 'KaiTi_GB2312', serif; font-size: 15px; letter-spacing: 0.42em; color: var(--faint); text-indent: 0.42em; }
+    .brand-seal { position: absolute; top: -10px; right: -20px; width: 36px; height: 36px; color: #c44536; transform: rotate(-9deg); filter: drop-shadow(0 1px 0 rgba(140,32,28,.18)); }
+    html.night-mode .brand-seal, .night-mode .brand-seal { color: #e15a4e; filter: drop-shadow(0 0 4px rgba(225,90,78,.22)); }
+    .brand-tagline { margin: 0; font-family: 'Kaiti SC', 'STKaiti', KaiTi, 'KaiTi_GB2312', serif; font-size: 14px; letter-spacing: 0.38em; color: var(--faint); text-indent: 0.38em; }
     .search-area { flex: 1; display: flex; justify-content: center; width: 100%; }
-    .header-quote { position: absolute; top: 22px; right: 28px; z-index: 2; font-family: 'Kaiti SC', 'STKaiti', KaiTi, 'KaiTi_GB2312', serif; font-size: 15px; color: var(--primary); letter-spacing: 1.5px; cursor: pointer; user-select: none; opacity: 0.85; transition: opacity 0.3s, color 0.3s; max-width: 46vw; text-align: right; line-height: 1.5; }
+    .header-quote { position: absolute; top: 16px; right: 24px; z-index: 2; font-family: 'Kaiti SC', 'STKaiti', KaiTi, 'KaiTi_GB2312', serif; font-size: 14px; color: var(--primary); letter-spacing: 1.5px; cursor: pointer; user-select: none; opacity: 0.8; transition: opacity 0.3s, color 0.3s; max-width: 42vw; text-align: right; line-height: 1.5; }
     .header-quote:hover { opacity: 1; color: var(--accent); }
     .header-quote .quote-text { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .header-quote .quote-source { font-size: 11px; color: var(--faint); display: block; letter-spacing: 2px; margin-top: 2px; }
@@ -153,14 +144,13 @@
     .search-wrapper button { height: 40px; padding: 0 24px; background: var(--btn-bg); color: #fff; border: none; border-radius: 999px; cursor: pointer; font-size: 13px; transition: opacity 0.2s, transform 0.2s; white-space: nowrap; flex-shrink: 0; box-shadow: 0 2px 8px var(--shadow); }
     .search-wrapper button:hover { opacity: 0.9; transform: translateY(-1px); }
     
-    main { padding: 48px 0 30px; }
+    main { padding: 28px 0 30px; }
     #siteContainer > .category:first-child { margin-top: 8px; }
-    .category { margin-bottom: 35px; }
+    .category { margin-bottom: 32px; }
     .category h2 { font-size: 1.2rem; font-weight: 600; letter-spacing: 0.04em; color: var(--primary); margin-bottom: 18px; padding: 0 0 8px 10px; border-left: 3px solid var(--accent); border-bottom: 2px solid var(--accent); display: inline-flex; align-items: center; }
     .category h2 i, .category h2 svg { margin-right: 8px; color: var(--accent); width: 16px; height: 16px; vertical-align: -2px; }
     .site-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
-    .site-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 10px; padding: 16px; text-decoration: none; color: inherit; transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s; display: flex; align-items: flex-start; gap: 12px; }
-    .site-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 3px 10px var(--shadow); }
+    .site-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 14px; text-decoration: none; color: inherit; transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease; display: flex; align-items: flex-start; gap: 12px; contain: layout paint; }
     .site-card img { width: 40px; height: 40px; border-radius: 10px; object-fit: contain; flex-shrink: 0; background: #fff; padding: 5px; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05); }
     .site-info { min-width: 0; flex: 1; text-align: left; padding-top: 2px; }
     .site-info h3 { font-size: 13px; font-weight: 500; margin-bottom: 4px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -169,7 +159,7 @@
     .subcategory h3 { font-size: 13px; font-weight: 500; color: var(--primary); margin-bottom: 15px; padding-left: 10px; border-left: 3px solid var(--accent); }
     @supports (content-visibility: auto) {
       .category { content-visibility: auto; contain-intrinsic-size: auto 300px; }
-      #siteContainer > .category:first-child, .reading-zone { content-visibility: visible; contain-intrinsic-size: auto; }
+      #siteContainer > .category:first-child, .reading-zone, .quick-section { content-visibility: visible; contain-intrinsic-size: auto; }
     }
     
     footer { text-align: center; padding: 25px 0; border-top: 1px solid var(--card-border); color: var(--footer-text); font-size: 11px; background: var(--footer-bg); position: relative; z-index: 1; }
@@ -205,11 +195,11 @@
       .search-area { justify-content: center; }
       .search-wrapper { max-width: 100%; width: 100%; height: 48px; }
       .search-wrapper button { height: 36px; padding: 0 18px; font-size: 12px; }
-      header h1 { font-size: 54px; letter-spacing: 0.16em; }
+      header h1 { font-size: 44px; letter-spacing: 0.16em; }
       header h1 a { margin-right: -0.16em; }
-      .brand-seal { top: -8px; right: -14px; width: 27px; height: 27px; }
+      .brand-seal { top: -6px; right: -12px; width: 24px; height: 24px; }
       .brand-tagline { font-size: 12px; letter-spacing: 0.28em; text-indent: 0.28em; }
-      header { padding: 40px 15px 36px; }
+      header { padding: 28px 15px 22px; }
       .header-quote { display: none; }
       .site-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
       .site-card { padding: 14px; }
@@ -223,33 +213,29 @@
     body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
 
     /* 页面入场与滚动淡入动画 */
-    @keyframes fadeInUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     .fade-in { opacity: 0; }
-    .fade-in.visible { animation: fadeInUp 0.55s ease forwards; }
+    .fade-in.visible { animation: fadeInUp 0.4s ease forwards; }
 
     /* 站点卡片增强 */
     .site-card { position: relative; overflow: hidden; }
-    .site-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, var(--accent), transparent); opacity: 0; transition: opacity 0.3s; pointer-events: none; }
-    .site-card:hover::after { opacity: 0.06; }
-    .site-card:hover { transform: translateY(-4px); box-shadow: 0 10px 24px var(--shadow); border-color: var(--accent); }
-    .site-card:focus-visible, .action-btn:focus-visible, .fav-btn:focus-visible, .share-btn:focus-visible, .search-wrapper button:focus-visible, .popup-btn:focus-visible, .close-btn:focus-visible, .sr-item:focus-visible {
+    .site-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, var(--accent), transparent); opacity: 0; transition: opacity 0.25s; pointer-events: none; }
+    .site-card:hover::after { opacity: 0.05; }
+    .site-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px var(--shadow); border-color: var(--accent); }
+    .site-card:focus-visible, .action-btn:focus-visible, .fav-btn:focus-visible, .share-btn:focus-visible, .search-wrapper button:focus-visible, .popup-btn:focus-visible, .close-btn:focus-visible, .sr-item:focus-visible, .cat-chip:focus-visible {
       outline: 2px solid var(--accent);
       outline-offset: 2px;
     }
-    .site-card img { transition: transform 0.3s ease; }
-    .site-card:hover img { transform: scale(1.12) rotate(-3deg); }
-    .site-card h3 { transition: color 0.25s; }
+    .site-card h3 { transition: color 0.2s; }
     .site-card:hover h3 { color: var(--accent); }
 
     /* 夜间模式卡片层次增强 */
-    .night-mode .site-card { box-shadow: 0 2px 10px rgba(0,0,0,0.35); }
-    .night-mode .site-card:hover { box-shadow: 0 12px 26px rgba(0,0,0,0.6); border-color: var(--accent); }
+    .night-mode .site-card { box-shadow: 0 1px 8px rgba(0,0,0,0.28); }
+    .night-mode .site-card:hover { box-shadow: 0 8px 20px rgba(0,0,0,0.45); border-color: var(--accent); }
     .night-mode .site-card img { background: var(--card-border); }
 
     /* 分类标题装饰 */
     .category h2 { position: relative; }
-    .category h2::after { content: ''; position: absolute; left: 0; bottom: -2px; width: 0; height: 2px; background: linear-gradient(90deg, var(--primary), var(--accent)); transition: width 0.35s ease; }
-    .category:hover h2::after { width: 100%; }
 
     /* 搜索框与按钮增强 */
     .popup-input { box-shadow: inset 0 1px 3px rgba(0,0,0,0.06); }
@@ -313,7 +299,7 @@
     .badge-new { display: inline-block; margin-left: 6px; vertical-align: 2px; background: linear-gradient(135deg, #ff6b6b, #ff4757); color: #fff; font-size: 10px; font-weight: 700; line-height: 1; padding: 3px 7px; border-radius: 8px 2px 8px 2px; letter-spacing: 0.5px; box-shadow: 0 2px 6px rgba(255, 71, 87, 0.4); }
 
     /* 分享栏 */
-    .share-bar { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--card-border); flex-wrap: wrap; }
+    .share-bar { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--card-border); flex-wrap: wrap; }
     .share-bar span { font-size: 12px; color: var(--footer-text); }
     .share-btn { display: inline-flex; align-items: center; gap: 5px; padding: 6px 16px; border-radius: 999px; border: 1px solid var(--card-border); background: var(--card-bg); color: var(--muted); font-size: 12px; cursor: pointer; transition: all 0.25s; text-decoration: none; }
     .share-btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); box-shadow: 0 4px 12px var(--shadow); }
@@ -321,7 +307,8 @@
     .share-sep { color: var(--card-border); font-size: 13px; }
 
     /* ===== 电子书阅读专区 ===== */
-    .reading-zone { margin-bottom: 40px; }
+    .reading-zone { margin-bottom: 28px; }
+    .category { scroll-margin-top: 16px; }
     .reading-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
     .reading-card { display: flex; align-items: center; gap: 14px; padding: 14px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; text-decoration: none; color: inherit; transition: all 0.25s; }
     .reading-card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px var(--shadow); border-color: var(--accent); }
@@ -334,10 +321,25 @@
     @media (max-width: 640px) { .reading-grid { grid-template-columns: 1fr; } }
 
     /* 热门站点链接（SEO + 快捷入口） */
-    .seo-links { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px 16px; margin-top: 12px; font-size: 12px; }
-    .seo-label { color: var(--footer-text); font-size: 12px; }
-    .seo-links a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
-    .seo-links a:hover { color: var(--accent); }
+    .seo-links { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; margin-top: 14px; font-size: 12px; }
+    .seo-label { color: var(--footer-text); font-size: 12px; margin-right: 4px; }
+    .seo-links a { color: var(--muted); text-decoration: none; padding: 4px 10px; border: 1px solid var(--card-border); border-radius: 999px; background: var(--card-bg); transition: color 0.2s, border-color 0.2s, background 0.2s; }
+    .seo-links a:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* 分类胶囊锚点 */
+    .cat-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 0 0 22px; }
+    .cat-chip { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--card-border); background: var(--card-bg); color: var(--muted); font-size: 12px; text-decoration: none; line-height: 1.3; transition: color 0.2s, border-color 0.2s, background 0.2s, box-shadow 0.2s; }
+    .cat-chip:hover { color: var(--accent); border-color: var(--accent); box-shadow: 0 2px 8px var(--shadow); }
+    .cat-chip svg { width: 12px; height: 12px; flex-shrink: 0; }
+    html.night-mode .cat-chip, .night-mode .cat-chip { background: var(--card-bg); }
+
+    /* 触屏关掉抬升 hover，避免点完还漂着 */
+    @media (hover: none) {
+      .site-card:hover { transform: none; box-shadow: none; }
+      .site-card:hover::after { opacity: 0; }
+      .reading-card:hover { transform: none; }
+      .share-btn:hover { transform: none; }
+    }
 
     /* 首屏骨架屏 */
     .skeleton-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
@@ -350,6 +352,29 @@
     .skeleton-line.short { width: 55%; }
     @keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
     @media (prefers-reduced-motion: reduce) { .skeleton-icon, .skeleton-line { animation: none; } }
+
+    /* 跟随鼠标的描述气泡 */
+    .desc-tip {
+      position: fixed;
+      z-index: 500;
+      max-width: min(320px, calc(100vw - 24px));
+      padding: 8px 12px;
+      border-radius: 10px;
+      background: var(--popup-bg);
+      color: var(--text);
+      border: 1px solid var(--popup-input-border);
+      box-shadow: 0 10px 28px var(--shadow);
+      font-size: 12px;
+      line-height: 1.55;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.12s ease, transform 0.12s ease;
+      word-break: break-word;
+    }
+    .desc-tip.show { opacity: 1; transform: none; }
+    html.night-mode .desc-tip, .night-mode .desc-tip { box-shadow: 0 10px 28px rgba(0,0,0,0.5); }
+    @media (hover: none) { .desc-tip { display: none; } }
 
     /* 滚动条美化 */
     ::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -420,18 +445,6 @@
   </header>
   
   <main class="container">
-    <div id="siteContainer">
-      <div class="skeleton-grid" id="skeleton" aria-hidden="true">
-        <div class="skeleton-card"><div class="skeleton-icon"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
-        <div class="skeleton-card"><div class="skeleton-icon"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
-        <div class="skeleton-card"><div class="skeleton-icon"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
-        <div class="skeleton-card"><div class="skeleton-icon"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
-        <div class="skeleton-card"><div class="skeleton-icon"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
-        <div class="skeleton-card"><div class="skeleton-icon"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
-        <div class="skeleton-card"><div class="skeleton-icon"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
-        <div class="skeleton-card"><div class="skeleton-icon"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
-      </div>
-    </div>
     <section class="category reading-zone">
       <h2><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg> 电子书阅读</h2>
       <div class="reading-grid">
@@ -451,12 +464,21 @@
           <div class="rc-cover" style="background:linear-gradient(160deg,#6d5210,#8b6914 55%,#4a370a)"><span class="rc-title">甲申</span></div>
           <div class="rc-info"><h3>甲申三百年祭</h3><p>郭沫若 · 全文在线阅读</p></div>
         </a>
-        <a class="reading-card" href="./gushi/">
-          <div class="rc-cover" style="background:linear-gradient(160deg,#2f6b4c,#3f7d5c 55%,#214d35)"><span class="rc-title">古诗文</span></div>
-          <div class="rc-info"><h3>古诗文集</h3><p>经典古诗文在线阅读</p></div>
-        </a>
       </div>
     </section>
+    <nav class="cat-nav" id="catNav" hidden aria-label="分类快捷跳转"></nav>
+    <div id="siteContainer">
+      <div class="skeleton-grid" id="skeleton" aria-hidden="true">
+        <div class="skeleton-card"><div class="skeleton-icon"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
+        <div class="skeleton-card"><div class="skeleton-icon"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
+        <div class="skeleton-card"><div class="skeleton-icon"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
+        <div class="skeleton-card"><div class="skeleton-icon"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
+        <div class="skeleton-card"><div class="skeleton-icon"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
+        <div class="skeleton-card"><div class="skeleton-icon"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
+        <div class="skeleton-card"><div class="skeleton-icon"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
+        <div class="skeleton-card"><div class="skeleton-icon"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
+      </div>
+    </div>
   </main>
   
   <footer>
@@ -466,7 +488,7 @@
       <p>本站资源全部来源于网络，仅供学习研究，请于下载后24小时内删除，如有侵犯您的权益请致邮409304201#qq.com(#替换成@)撤下.</p>
       <p><a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener">冀ICP备2021020841号-2</a></p>
       <div class="seo-links">
-        <span class="seo-label">热门站点</span>
+        <span class="seo-label">热门</span>
         <a href="https://tool.justgame.top" target="_blank" rel="noopener">小工具</a>
         <a href="https://chat.deepseek.com/" target="_blank" rel="noopener">DeepSeek</a>
         <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a>
@@ -565,22 +587,75 @@
       const url = escapeHtml(item.url), title = escapeHtml(item.title), desc = escapeHtml(item.description || '');
       const fav = isFav(item.url);
       const fb = iconFallback(item.title);
-      const eager = eagerLeft > 0;
-      if (eager) eagerLeft--;
-      const load = eager ? 'eager' : 'lazy';
-      const prio = eager ? ' fetchpriority="high"' : '';
+      const eager = (item && item._eager) || eagerLeft > 0;
+      if (eagerLeft > 0 && !item._eager) eagerLeft--;
+      const iconSrc = escapeHtml(fixIconPath(item.icon));
+      const img = eager
+        ? `<img src="${iconSrc}" alt="${title}" width="40" height="40" loading="eager" decoding="async" fetchpriority="high" onerror="this.src='${fb}'">`
+        : `<img data-src="${iconSrc}" src="${fb}" alt="${title}" width="40" height="40" loading="lazy" decoding="async" onerror="this.src='${fb}'">`;
       const ext = /^(https?:)?\/\//i.test(item.url);
       const target = ext ? ' target="_blank" rel="noopener"' : '';
       return `<a href="${url}" class="site-card"${target}>
-        <img src="${escapeHtml(fixIconPath(item.icon))}" alt="${title}" width="40" height="40" loading="${load}" decoding="async"${prio} onerror="this.src='${fb}'">
-        <div class="site-info" title="${desc}"><h3>${title}${item.badge ? `<span class="badge-new">${escapeHtml(item.badge)}</span>` : ''}</h3><p>${desc}</p></div>
+        ${img}
+        <div class="site-info"><h3>${title}${item.badge ? `<span class="badge-new">${escapeHtml(item.badge)}</span>` : ''}</h3><p>${desc}</p></div>
         <button class="fav-btn${fav ? ' on' : ''}" data-url="${url}" title="${fav ? '取消收藏' : '收藏'}" aria-pressed="${fav}" aria-label="${fav ? '取消收藏' : '收藏'} ${title}">${fav ? '★' : '☆'}</button>
       </a>`;
     }
 
+    function hydrateIcons(root) {
+      const scope = root && root.querySelectorAll ? root : document;
+      const imgs = scope.querySelectorAll ? scope.querySelectorAll('img[data-src]') : [];
+      if (!imgs.length) return;
+      const load = img => {
+        const src = img.getAttribute('data-src');
+        if (!src) return;
+        img.src = src;
+        img.removeAttribute('data-src');
+      };
+      if (!('IntersectionObserver' in window)) {
+        imgs.forEach(load);
+        return;
+      }
+      if (!hydrateIcons.io) {
+        hydrateIcons.io = new IntersectionObserver((entries) => {
+          entries.forEach(en => {
+            if (en.isIntersecting) {
+              load(en.target);
+              hydrateIcons.io.unobserve(en.target);
+            }
+          });
+        }, { rootMargin: '240px 0px' });
+      }
+      imgs.forEach(img => hydrateIcons.io.observe(img));
+    }
+
+    function renderCatNav() {
+      const nav = document.getElementById('catNav');
+      if (!nav) return;
+      const cats = navData.navigation || [];
+      if (!cats.length) { nav.hidden = true; return; }
+      nav.innerHTML = cats.map((cat, i) =>
+        `<a class="cat-chip" href="#cat-${i}">${iconSvg(cat.sidebarIcon)}${escapeHtml(cat.category)}</a>`
+      ).join('');
+      nav.hidden = false;
+      if (!nav._bound) {
+        nav._bound = true;
+        nav.addEventListener('click', (e) => {
+          const a = e.target.closest('a.cat-chip');
+          if (!a) return;
+          const id = (a.getAttribute('href') || '').slice(1);
+          const el = id && document.getElementById(id);
+          if (!el) return;
+          e.preventDefault();
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          history.replaceState(null, '', '#' + id);
+        });
+      }
+    }
+
     function quickSectionHtml(title, items, id) {
       if (!items.length) return '';
-      const cardList = items.map(cardHtml).join('');
+      const cardList = items.map(it => cardHtml(Object.assign({ _eager: true }, it))).join('');
       return `<section class="category quick-section" id="${id}"><h2><span>${escapeHtml(title)}</span><em style="font-style:normal;font-size:11px;color:var(--faint);margin-left:8px;font-weight:400;">${items.length}</em></h2><div class="site-grid">${cardList}</div></section>`;
     }
 
@@ -630,6 +705,7 @@
       const favSec = quickSectionHtml('我的收藏', favItems(), 'fav-section');
       const recentSec = quickSectionHtml('最近访问', recentItems(), 'recent-section');
       container.insertAdjacentHTML('afterbegin', favSec + recentSec);
+      hydrateIcons(container);
     }
 
     function buildCategory(cat, catIdx) {
@@ -652,6 +728,7 @@
       const container = document.getElementById('siteContainer');
       container.innerHTML = '';
       eagerLeft = 8;
+      renderCatNav();
       const quick = quickSectionHtml('我的收藏', favItems(), 'fav-section') + quickSectionHtml('最近访问', recentItems(), 'recent-section');
       container.insertAdjacentHTML('beforeend', quick);
 
@@ -661,6 +738,7 @@
         let html = '';
         for (; i < end; i++) html += buildCategory(navData.navigation[i], i);
         if (html) container.insertAdjacentHTML('beforeend', html);
+        hydrateIcons(container);
       };
       flush(2);
       if (i < navData.navigation.length) {
@@ -1045,7 +1123,7 @@
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = 'tiangong-nav-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+      a.download = 'jisi-nav-backup-' + new Date().toISOString().slice(0, 10) + '.json';
       document.body.appendChild(a);
       a.click();
       setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
@@ -1136,6 +1214,62 @@
     
     setupSiteSearch('searchInput', 'siteResults', 'searchEngine', doSearch);
     setupSiteSearch('popupSearchInput', 'popupSiteResults', 'popupSearchEngine', doPopupSearch);
+
+    (function initDescTip() {
+      if (window.matchMedia && window.matchMedia('(hover: none)').matches) return;
+      let tip = document.getElementById('descTip');
+      if (!tip) {
+        tip = document.createElement('div');
+        tip.id = 'descTip';
+        tip.className = 'desc-tip';
+        tip.setAttribute('role', 'tooltip');
+        document.body.appendChild(tip);
+      }
+      let active = null, raf = 0, mx = 0, my = 0;
+      const GAP = 14;
+      const place = () => {
+        raf = 0;
+        if (!active) return;
+        const w = tip.offsetWidth, h = tip.offsetHeight;
+        let x = mx + GAP, y = my + GAP;
+        if (x + w > window.innerWidth - 8) x = mx - w - GAP;
+        if (y + h > window.innerHeight - 8) y = my - h - GAP;
+        if (x < 8) x = 8;
+        if (y < 8) y = 8;
+        tip.style.left = x + 'px';
+        tip.style.top = y + 'px';
+      };
+      const hide = () => {
+        active = null;
+        tip.classList.remove('show');
+      };
+      document.addEventListener('pointerover', (e) => {
+        const card = e.target.closest('.site-card');
+        if (!card || e.target.closest('.fav-btn')) { if (active) hide(); return; }
+        const p = card.querySelector('.site-info p');
+        const text = p && p.textContent.trim();
+        if (!text) { hide(); return; }
+        mx = e.clientX;
+        my = e.clientY;
+        if (active === card) return;
+        active = card;
+        tip.textContent = text;
+        tip.classList.add('show');
+        place();
+      });
+      document.addEventListener('pointermove', (e) => {
+        if (!active) return;
+        mx = e.clientX;
+        my = e.clientY;
+        if (!raf) raf = requestAnimationFrame(place);
+      });
+      document.addEventListener('pointerout', (e) => {
+        if (!active) return;
+        if (e.relatedTarget && active.contains(e.relatedTarget)) return;
+        hide();
+      });
+      document.addEventListener('scroll', hide, { capture: true, passive: true });
+    })();
     
     initNightMode();
     initStarDust();
