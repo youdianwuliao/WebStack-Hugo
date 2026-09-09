@@ -49,7 +49,6 @@
   </script>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="nav.json" as="fetch" crossorigin="anonymous">
-  <link rel="preload" href="assets/favicon.svg" as="image">
   <style>
     :root {
       --bg: #f0f2f5;
@@ -575,6 +574,7 @@
   </footer>
 
   <script>
+    const NAV_FETCH = fetch('nav.json', { credentials: 'omit' });
     const BASE_URL = '';
     const SEARCH_URLS = {
       google: 'https://www.google.com/search?q=',
@@ -623,8 +623,9 @@
     function refreshFavSet() { favSet = new Set(getFavs()); }
     function isFav(url) { return favSet.has(url); }
 
+    const ICON_PLACEHOLDER = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" rx="10" fill="#eef2f7"/></svg>');
     function iconFallback(title) {
-      const ch = (title || '').trim().charAt(0) || '🔗';
+      const ch = (title || '').trim().charAt(0) || '?';
       const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" rx="10" fill="#eef2f7"/><text x="20" y="21" font-size="17" font-family="system-ui, sans-serif" font-weight="600" text-anchor="middle" dominant-baseline="central" fill="#5a7a9a">' + ch + '</text></svg>';
       return 'data:image/svg+xml,' + encodeURIComponent(svg);
     }
@@ -634,12 +635,12 @@
       const url = escapeHtml(item.url), title = escapeHtml(item.title), desc = escapeHtml(item.description || '');
       const fav = isFav(item.url);
       const fb = iconFallback(item.title);
-      const eager = (item && item._eager) || eagerLeft > 0;
-      if (eagerLeft > 0 && !item._eager) eagerLeft--;
+      const eager = eagerLeft > 0;
+      if (eager) eagerLeft--;
       const iconSrc = escapeHtml(fixIconPath(item.icon));
       const img = eager
-        ? `<img src="${iconSrc}" alt="${title}" width="40" height="40" loading="eager" decoding="async" fetchpriority="high" onerror="this.src='${fb}'">`
-        : `<img data-src="${iconSrc}" src="${fb}" alt="${title}" width="40" height="40" loading="lazy" decoding="async" onerror="this.src='${fb}'">`;
+        ? `<img src="${iconSrc}" alt="${title}" width="40" height="40" loading="eager" decoding="async" onerror="this.src='${fb}'">`
+        : `<img data-src="${iconSrc}" src="${ICON_PLACEHOLDER}" alt="${title}" width="40" height="40" loading="lazy" decoding="async" onerror="this.src='${fb}'">`;
       const ext = /^(https?:)?\/\//i.test(item.url);
       const target = ext ? ' target="_blank" rel="noopener"' : '';
       return `<a href="${url}" class="site-card"${target}>
@@ -756,7 +757,7 @@
 
     function quickSectionHtml(title, items, id) {
       if (!items.length) return '';
-      const cardList = items.map(it => cardHtml(Object.assign({ _eager: true }, it))).join('');
+      const cardList = items.map(it => cardHtml(it)).join('');
       return `<section class="category quick-section" id="${id}"><h2><span>${escapeHtml(title)}</span><em style="font-style:normal;font-size:11px;color:var(--faint);margin-left:8px;font-weight:400;">${items.length}</em></h2><div class="site-grid">${cardList}</div></section>`;
     }
 
@@ -1299,7 +1300,7 @@
 
     async function loadData() {
       try {
-        const res = await fetch('/nav.json');
+        const res = await NAV_FETCH;
         navData = await res.json();
         buildSearchIndex();
         refreshFavSet();
