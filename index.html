@@ -1191,6 +1191,13 @@
       const card = e.target.closest('.site-card');
       if (card) {
         recordVisit(card.getAttribute('href'));
+        return;
+      }
+      const sr = e.target.closest('.sr-item');
+      if (sr) {
+        const box = sr.closest('.site-search-results');
+        if (box) box.classList.remove('show');
+        recordVisit(sr.getAttribute('href'));
       }
     });
 
