@@ -660,7 +660,6 @@ window.qrcode = function(typeNumber, errorCorrectionLevel) {
 };
 
 </script>
-<script src="jsqr.js"></script>
 <script>
 (function(){
   var THEME_KEY='qrToolTheme';
@@ -683,9 +682,23 @@ function toast(msg){
   t.textContent=msg;t.style.opacity='1';
   clearTimeout(t._t);t._t=setTimeout(function(){t.style.opacity='0'},2000);
 }
+var jsqrPromise=null;
+function ensureJsQR(){
+  if(typeof jsQR==='function')return Promise.resolve();
+  if(jsqrPromise)return jsqrPromise;
+  jsqrPromise=new Promise(function(resolve,reject){
+    var s=document.createElement('script');
+    s.src='jsqr.js';
+    s.onload=function(){resolve()};
+    s.onerror=function(){jsqrPromise=null;reject(new Error('jsqr'))};
+    document.head.appendChild(s);
+  });
+  return jsqrPromise;
+}
 function switchTab(name){
   document.querySelectorAll('.tab').forEach(function(b){b.classList.toggle('active',b.dataset.tab===name)});
   document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('active',p.id==='panel-'+name)});
+  if(name==='scan')ensureJsQR().catch(function(){toast('二维码解析库加载失败，请刷新重试')});
 }
 
 /* ---------- 生成 ---------- */
@@ -892,6 +905,11 @@ function processImageFile(file){
     showScanStatus(false,'<b>错误：</b>请选择图片文件');
     return;
   }
+  ensureJsQR().then(function(){readScanFile(file)}).catch(function(){
+    showScanStatus(false,'<b>错误：</b>二维码解析库加载失败，请检查网络后重试');
+  });
+}
+function readScanFile(file){
   var reader=new FileReader();
   reader.onload=function(e){
     var src=e.target.result;
