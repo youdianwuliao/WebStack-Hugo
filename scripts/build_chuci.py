@@ -10,8 +10,12 @@
 """
 
 import json
+import sys
 from html import escape
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from zh_toggle import TOGGLE_BTN, TOGGLE_CSS, TOGGLE_JS, s, zh_attrs  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = Path("/tmp/chuci_data.json")
@@ -69,9 +73,11 @@ def build_index(data):
     total = len(arts)
     links = "".join(
         '<a class="chapter-item" href="{slug}.html" title="{tt}">'
-        '<span class="ch-num">第{no}篇</span>{title}</a>'.format(
-            slug=a["slug"], tt=escape(a["title"]),
-            no=i + 1, title=escape(a["title"]),
+        '<span class="ch-num">第{no}篇</span>'
+        '<span class="ch-title"{t_att}>{title}</span></a>'.format(
+            slug=a["slug"], tt=escape(s(a["title"])),
+            no=i + 1, title=escape(s(a["title"])),
+            t_att=zh_attrs(a["title"]),
         )
         for i, a in enumerate(arts)
     )
@@ -99,13 +105,13 @@ def build_index(data):
   "@type": "Book",
   "name": "楚辞",
   "url": "{SITE}{DOMAIN_PATH}/",
-  "inLanguage": "zh-Hant",
+  "inLanguage": "zh-Hans",
   "author": {{ "@type": "Person", "name": "屈原 等（西汉刘向辑）" }},
   "isPartOf": {{ "@type": "WebSite", "name": "集思阁", "url": "{SITE}/" }},
   "numberOfPages": {total}
 }}
 </script>
-<style>{load_index_style()}</style>
+<style>{load_index_style()}{TOGGLE_CSS}</style>
 </head>
 <body>
 <div class="container">
@@ -116,11 +122,12 @@ def build_index(data):
 楚辞
 </div>
 <a class="back-link" href="../index.html">← 返回首页</a>
+{TOGGLE_BTN}
 </div>
 <div class="header-subtitle">西汉刘向辑 · 战国楚地诗歌总集 · 共 {total} 篇</div>
 </div>
 <div class="vol-block">
-<div class="vol-desc">{escape(DESC)}</div>
+<div class="vol-desc"{zh_attrs(DESC)}>{escape(s(DESC))}</div>
 <div class="section-block">
 <div class="section-head"><span class="section-title">楚辞</span>
 <span class="section-count">{total} 篇</span></div>
@@ -131,13 +138,16 @@ def build_index(data):
 </div>
 <button class="top-btn" id="topBtn" onclick="window.scrollTo({{top:0,behavior:'smooth'}})" title="返回顶部">↑</button>
 <script src="../gushi/gushi.js"></script>
-</body>
+{TOGGLE_JS}</body>
 </html>
 """
 
 
 def build_article(a, prev_a, next_a, meta):
-    body = "".join(f"<p>{escape(p)}</p>" for p in a["paras"])
+    body = "".join(
+        '<p{p_att}>{text}</p>'.format(p_att=zh_attrs(p), text=escape(s(p)))
+        for p in a["paras"]
+    )
     prev_link = (
         f'<a href="{prev_a["slug"]}.html" class="prev">← 上一篇</a>'
         if prev_a else '<a class="prev empty" href="#">← 上一篇</a>'
@@ -151,11 +161,11 @@ def build_article(a, prev_a, next_a, meta):
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{escape(a['title'])} - 楚辞</title>
-<meta name="description" content="{escape(a['title'])}：{escape(''.join(a['paras'])[:76])}">
-<meta name="keywords" content="楚辞,{escape(a['title'])},屈原,楚辞体,集思阁">
-<meta property="og:title" content="{escape(a['title'])}">
-<meta property="og:description" content="{escape(''.join(a['paras'])[:76])}">
+<title>{escape(s(a['title']))} - 楚辞</title>
+<meta name="description" content="{escape(s(a['title']))}：{escape(s(''.join(a['paras'])[:76]))}">
+<meta name="keywords" content="楚辞,{escape(s(a['title']))},屈原,楚辞体,集思阁">
+<meta property="og:title" content="{escape(s(a['title']))}">
+<meta property="og:description" content="{escape(s(''.join(a['paras'])[:76]))}">
 <meta property="og:type" content="article">
 <meta property="og:url" content="{SITE}{DOMAIN_PATH}/{a['slug']}.html">
 <meta property="og:image" content="{SITE}/assets/images/og-cover.png">
@@ -165,6 +175,7 @@ def build_article(a, prev_a, next_a, meta):
 <link rel="canonical" href="{SITE}{DOMAIN_PATH}/{a['slug']}.html">
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../gushi/gushi.css">
+<style>{TOGGLE_CSS}</style>
 </head>
 <body>
 <div class="container">
@@ -172,8 +183,9 @@ def build_article(a, prev_a, next_a, meta):
     <div class="top-bar">
       <a href="./" class="back-link">← 返回楚辞</a>
       <span class="meta">楚辞</span>
+      {TOGGLE_BTN}
     </div>
-    <h1>{escape(a['title'])}</h1>
+    <h1{zh_attrs(a['title'])}>{escape(s(a['title']))}</h1>
     <div class="meta">楚辞 · 集思阁</div>
     <div class="article-body">
 {body}
@@ -186,7 +198,7 @@ def build_article(a, prev_a, next_a, meta):
 </div>
 <button class="top-btn" id="topBtn" onclick="window.scrollTo({{top:0,behavior:'smooth'}})" title="返回顶部">↑</button>
 <script src="../gushi/gushi.js"></script>
-</body>
+{TOGGLE_JS}</body>
 </html>
 """
 

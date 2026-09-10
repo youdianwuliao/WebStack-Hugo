@@ -32,3 +32,4 @@ yarn-error.log*
 tmp/
 temp/
 failed_urls.json
+__pycache__
