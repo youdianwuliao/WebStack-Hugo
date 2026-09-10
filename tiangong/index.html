@@ -22,7 +22,7 @@
   "@type": "Book",
   "name": "天工开物",
   "url": "https://www.justgame.top/tiangong/",
-  "inLanguage": "zh-Hant",
+  "inLanguage": "zh-Hans",
   "author": { "@type": "Person", "name": "宋应星" },
   "isPartOf": { "@type": "WebSite", "name": "集思阁", "url": "https://www.justgame.top/" },
   "numberOfPages": 19
@@ -131,6 +131,17 @@
             .section-count { color: #94a3b8; }
             .section-head { border-color: rgba(148,163,184,0.3); }
         }
+
+        .zh-toggle {
+            display: inline-flex; align-items: center; justify-content: center;
+            min-width: 30px; height: 26px; padding: 0 8px; margin-left: 10px;
+            font-size: 13px; line-height: 1; cursor: pointer;
+            background: transparent; color: inherit;
+            border: 1px solid currentColor; border-radius: 6px;
+            opacity: 0.65; transition: opacity 0.18s ease;
+            vertical-align: middle;
+        }
+        .zh-toggle:hover { opacity: 1; }
 </style>
 </head>
 <body>
@@ -142,26 +153,54 @@
 天工开物
 </div>
 <a class="back-link" href="../index.html">← 返回首页</a>
+<button class="zh-toggle" id="zhToggle" type="button" title="简体/繁体切换" aria-label="切换为繁体">简</button>
 </div>
 <div class="header-subtitle">明 宋应星 撰 · 上中下三卷 · 共 19 篇</div>
 </div>
-<div class="vol-block"><div class="vol-desc">明宋应星撰，世界上第一部关于农业和手工业生产技术的综合性百科全书，分上中下三卷十八篇，兼及序说，凡十九目。</div></div>
+<div class="vol-block"><div class="vol-desc" data-t2t="明宋应星撰，世界上第一部关于农业和手工业生产技术的综合性百科全书，分上中下三卷十八篇，兼及序说，凡十九目。">明宋应星撰，世界上第一部关于农业和手工业生产技术的综合性百科全书，分上中下三卷十八篇，兼及序说，凡十九目。</div></div>
 <div class="vol-block">
-<div class="vol-head"><span class="vol-title">卷首</span><span class="vol-count">1 篇</span></div>
+<div class="vol-head"><span class="vol-title" data-t2t="卷首">卷首</span><span class="vol-count">1 篇</span></div>
 <div class="section-block">
-<div class="chapter-grid"><a class="chapter-item" href="tg01.html" title="序第一"><span class="ch-num">序第一</span></a></div></div></div><div class="vol-block">
-<div class="vol-head"><span class="vol-title">上卷</span><span class="vol-count">6 篇</span></div>
+<div class="chapter-grid"><a class="chapter-item" href="tg01.html" title="序第一"><span class="ch-num" data-t2t="序第一">序第一</span></a></div></div></div><div class="vol-block">
+<div class="vol-head"><span class="vol-title" data-t2t="上卷">上卷</span><span class="vol-count">6 篇</span></div>
 <div class="section-block">
-<div class="chapter-grid"><a class="chapter-item" href="tg02.html" title="乃粒第二"><span class="ch-num">乃粒第二</span></a><a class="chapter-item" href="tg03.html" title="乃服第三"><span class="ch-num">乃服第三</span></a><a class="chapter-item" href="tg04.html" title="彰施第四"><span class="ch-num">彰施第四</span></a><a class="chapter-item" href="tg05.html" title="粹精第五"><span class="ch-num">粹精第五</span></a><a class="chapter-item" href="tg06.html" title="作鹹第六"><span class="ch-num">作鹹第六</span></a><a class="chapter-item" href="tg07.html" title="甘嗜第七"><span class="ch-num">甘嗜第七</span></a></div></div></div><div class="vol-block">
-<div class="vol-head"><span class="vol-title">中卷</span><span class="vol-count">7 篇</span></div>
+<div class="chapter-grid"><a class="chapter-item" href="tg02.html" title="乃粒第二"><span class="ch-num" data-t2t="乃粒第二">乃粒第二</span></a><a class="chapter-item" href="tg03.html" title="乃服第三"><span class="ch-num" data-t2t="乃服第三">乃服第三</span></a><a class="chapter-item" href="tg04.html" title="彰施第四"><span class="ch-num" data-t2t="彰施第四">彰施第四</span></a><a class="chapter-item" href="tg05.html" title="粹精第五"><span class="ch-num" data-t2t="粹精第五">粹精第五</span></a><a class="chapter-item" href="tg06.html" title="作咸第六"><span class="ch-num" data-t2t="作鹹第六">作咸第六</span></a><a class="chapter-item" href="tg07.html" title="甘嗜第七"><span class="ch-num" data-t2t="甘嗜第七">甘嗜第七</span></a></div></div></div><div class="vol-block">
+<div class="vol-head"><span class="vol-title" data-t2t="中卷">中卷</span><span class="vol-count">7 篇</span></div>
 <div class="section-block">
-<div class="chapter-grid"><a class="chapter-item" href="tg08.html" title="陶埏第八"><span class="ch-num">陶埏第八</span></a><a class="chapter-item" href="tg09.html" title="冶鑄第九"><span class="ch-num">冶鑄第九</span></a><a class="chapter-item" href="tg10.html" title="舟車第十"><span class="ch-num">舟車第十</span></a><a class="chapter-item" href="tg11.html" title="錘鍛第十一"><span class="ch-num">錘鍛第十一</span></a><a class="chapter-item" href="tg12.html" title="燔石第十二"><span class="ch-num">燔石第十二</span></a><a class="chapter-item" href="tg13.html" title="膏液第十三"><span class="ch-num">膏液第十三</span></a><a class="chapter-item" href="tg14.html" title="殺青第十四"><span class="ch-num">殺青第十四</span></a></div></div></div><div class="vol-block">
-<div class="vol-head"><span class="vol-title">下卷</span><span class="vol-count">5 篇</span></div>
+<div class="chapter-grid"><a class="chapter-item" href="tg08.html" title="陶埏第八"><span class="ch-num" data-t2t="陶埏第八">陶埏第八</span></a><a class="chapter-item" href="tg09.html" title="冶铸第九"><span class="ch-num" data-t2t="冶鑄第九">冶铸第九</span></a><a class="chapter-item" href="tg10.html" title="舟车第十"><span class="ch-num" data-t2t="舟車第十">舟车第十</span></a><a class="chapter-item" href="tg11.html" title="锤锻第十一"><span class="ch-num" data-t2t="錘鍛第十一">锤锻第十一</span></a><a class="chapter-item" href="tg12.html" title="燔石第十二"><span class="ch-num" data-t2t="燔石第十二">燔石第十二</span></a><a class="chapter-item" href="tg13.html" title="膏液第十三"><span class="ch-num" data-t2t="膏液第十三">膏液第十三</span></a><a class="chapter-item" href="tg14.html" title="杀青第十四"><span class="ch-num" data-t2t="殺青第十四">杀青第十四</span></a></div></div></div><div class="vol-block">
+<div class="vol-head"><span class="vol-title" data-t2t="下卷">下卷</span><span class="vol-count">5 篇</span></div>
 <div class="section-block">
-<div class="chapter-grid"><a class="chapter-item" href="tg15.html" title="五金第十五"><span class="ch-num">五金第十五</span></a><a class="chapter-item" href="tg16.html" title="佳兵第十六"><span class="ch-num">佳兵第十六</span></a><a class="chapter-item" href="tg17.html" title="丹青第十七"><span class="ch-num">丹青第十七</span></a><a class="chapter-item" href="tg18.html" title="麴櫱第十八"><span class="ch-num">麴櫱第十八</span></a><a class="chapter-item" href="tg19.html" title="珠玉第十九"><span class="ch-num">珠玉第十九</span></a></div></div></div>
+<div class="chapter-grid"><a class="chapter-item" href="tg15.html" title="五金第十五"><span class="ch-num" data-t2t="五金第十五">五金第十五</span></a><a class="chapter-item" href="tg16.html" title="佳兵第十六"><span class="ch-num" data-t2t="佳兵第十六">佳兵第十六</span></a><a class="chapter-item" href="tg17.html" title="丹青第十七"><span class="ch-num" data-t2t="丹青第十七">丹青第十七</span></a><a class="chapter-item" href="tg18.html" title="曲蘖第十八"><span class="ch-num" data-t2t="麴櫱第十八">曲蘖第十八</span></a><a class="chapter-item" href="tg19.html" title="珠玉第十九"><span class="ch-num" data-t2t="珠玉第十九">珠玉第十九</span></a></div></div></div>
 <div class="footer-count">天工开物 · 集思阁 · 共 19 篇</div>
 </div>
 <button class="top-btn" id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="返回顶部">↑</button>
 <script src="../gushi/gushi.js"></script>
+
+<script>
+(function () {
+  var KEY = 'jisi-zh-pref';
+  var btn = document.getElementById('zhToggle');
+  function apply(trad) {
+    var els = document.querySelectorAll('[data-t2t]');
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      if (el.getAttribute('data-zh-simp') === null) el.setAttribute('data-zh-simp', el.textContent);
+      el.textContent = trad ? el.getAttribute('data-t2t') : el.getAttribute('data-zh-simp');
+    }
+    document.documentElement.classList.toggle('zh-trad', trad);
+    if (btn) {
+      btn.textContent = trad ? '繁' : '简';
+      btn.setAttribute('aria-label', trad ? '切换为简体' : '切换为繁体');
+    }
+    try { localStorage.setItem(KEY, trad ? 't' : 's'); } catch (e) {}
+  }
+  var pref = null;
+  try { pref = localStorage.getItem(KEY); } catch (e) {}
+  apply(pref === 't');
+  if (btn) btn.addEventListener('click', function () {
+    apply(!document.documentElement.classList.contains('zh-trad'));
+  });
+})();
+</script>
 </body>
 </html>

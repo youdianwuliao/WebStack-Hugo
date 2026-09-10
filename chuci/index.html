@@ -22,7 +22,7 @@
   "@type": "Book",
   "name": "楚辞",
   "url": "https://www.justgame.top/chuci/",
-  "inLanguage": "zh-Hant",
+  "inLanguage": "zh-Hans",
   "author": { "@type": "Person", "name": "屈原 等（西汉刘向辑）" },
   "isPartOf": { "@type": "WebSite", "name": "集思阁", "url": "https://www.justgame.top/" },
   "numberOfPages": 17
@@ -131,6 +131,17 @@
             .section-count { color: #94a3b8; }
             .section-head { border-color: rgba(148,163,184,0.3); }
         }
+
+        .zh-toggle {
+            display: inline-flex; align-items: center; justify-content: center;
+            min-width: 30px; height: 26px; padding: 0 8px; margin-left: 10px;
+            font-size: 13px; line-height: 1; cursor: pointer;
+            background: transparent; color: inherit;
+            border: 1px solid currentColor; border-radius: 6px;
+            opacity: 0.65; transition: opacity 0.18s ease;
+            vertical-align: middle;
+        }
+        .zh-toggle:hover { opacity: 1; }
 </style>
 </head>
 <body>
@@ -142,20 +153,48 @@
 楚辞
 </div>
 <a class="back-link" href="../index.html">← 返回首页</a>
+<button class="zh-toggle" id="zhToggle" type="button" title="简体/繁体切换" aria-label="切换为繁体">简</button>
 </div>
 <div class="header-subtitle">西汉刘向辑 · 战国楚地诗歌总集 · 共 17 篇</div>
 </div>
 <div class="vol-block">
-<div class="vol-desc">战国时期楚地诗歌总集，西汉刘向辑。以屈原《离骚》为代表，开浪漫主义的「楚辞体」，与《诗经》并称风骚。</div>
+<div class="vol-desc" data-t2t="战国时期楚地诗歌总集，西汉刘向辑。以屈原《离骚》为代表，开浪漫主义的「楚辞体」，与《诗经》并称风骚。">战国时期楚地诗歌总集，西汉刘向辑。以屈原《离骚》为代表，开浪漫主义的「楚辞体」，与《诗经》并称风骚。</div>
 <div class="section-block">
 <div class="section-head"><span class="section-title">楚辞</span>
 <span class="section-count">17 篇</span></div>
-<div class="chapter-grid"><a class="chapter-item" href="cc01.html" title="離騷"><span class="ch-num">第1篇</span>離騷</a><a class="chapter-item" href="cc02.html" title="九歌"><span class="ch-num">第2篇</span>九歌</a><a class="chapter-item" href="cc03.html" title="天問"><span class="ch-num">第3篇</span>天問</a><a class="chapter-item" href="cc04.html" title="九章"><span class="ch-num">第4篇</span>九章</a><a class="chapter-item" href="cc05.html" title="遠遊"><span class="ch-num">第5篇</span>遠遊</a><a class="chapter-item" href="cc06.html" title="卜居"><span class="ch-num">第6篇</span>卜居</a><a class="chapter-item" href="cc07.html" title="漁父"><span class="ch-num">第7篇</span>漁父</a><a class="chapter-item" href="cc08.html" title="九辯"><span class="ch-num">第8篇</span>九辯</a><a class="chapter-item" href="cc09.html" title="招魂"><span class="ch-num">第9篇</span>招魂</a><a class="chapter-item" href="cc10.html" title="大招"><span class="ch-num">第10篇</span>大招</a><a class="chapter-item" href="cc11.html" title="惜誓"><span class="ch-num">第11篇</span>惜誓</a><a class="chapter-item" href="cc12.html" title="招隱士"><span class="ch-num">第12篇</span>招隱士</a><a class="chapter-item" href="cc13.html" title="七諫"><span class="ch-num">第13篇</span>七諫</a><a class="chapter-item" href="cc14.html" title="哀時命"><span class="ch-num">第14篇</span>哀時命</a><a class="chapter-item" href="cc15.html" title="九懷"><span class="ch-num">第15篇</span>九懷</a><a class="chapter-item" href="cc16.html" title="九嘆"><span class="ch-num">第16篇</span>九嘆</a><a class="chapter-item" href="cc17.html" title="九思"><span class="ch-num">第17篇</span>九思</a></div>
+<div class="chapter-grid"><a class="chapter-item" href="cc01.html" title="离骚"><span class="ch-num">第1篇</span><span class="ch-title" data-t2t="離騷">离骚</span></a><a class="chapter-item" href="cc02.html" title="九歌"><span class="ch-num">第2篇</span><span class="ch-title" data-t2t="九歌">九歌</span></a><a class="chapter-item" href="cc03.html" title="天问"><span class="ch-num">第3篇</span><span class="ch-title" data-t2t="天問">天问</span></a><a class="chapter-item" href="cc04.html" title="九章"><span class="ch-num">第4篇</span><span class="ch-title" data-t2t="九章">九章</span></a><a class="chapter-item" href="cc05.html" title="远游"><span class="ch-num">第5篇</span><span class="ch-title" data-t2t="遠遊">远游</span></a><a class="chapter-item" href="cc06.html" title="卜居"><span class="ch-num">第6篇</span><span class="ch-title" data-t2t="卜居">卜居</span></a><a class="chapter-item" href="cc07.html" title="渔父"><span class="ch-num">第7篇</span><span class="ch-title" data-t2t="漁父">渔父</span></a><a class="chapter-item" href="cc08.html" title="九辩"><span class="ch-num">第8篇</span><span class="ch-title" data-t2t="九辯">九辩</span></a><a class="chapter-item" href="cc09.html" title="招魂"><span class="ch-num">第9篇</span><span class="ch-title" data-t2t="招魂">招魂</span></a><a class="chapter-item" href="cc10.html" title="大招"><span class="ch-num">第10篇</span><span class="ch-title" data-t2t="大招">大招</span></a><a class="chapter-item" href="cc11.html" title="惜誓"><span class="ch-num">第11篇</span><span class="ch-title" data-t2t="惜誓">惜誓</span></a><a class="chapter-item" href="cc12.html" title="招隐士"><span class="ch-num">第12篇</span><span class="ch-title" data-t2t="招隱士">招隐士</span></a><a class="chapter-item" href="cc13.html" title="七谏"><span class="ch-num">第13篇</span><span class="ch-title" data-t2t="七諫">七谏</span></a><a class="chapter-item" href="cc14.html" title="哀时命"><span class="ch-num">第14篇</span><span class="ch-title" data-t2t="哀時命">哀时命</span></a><a class="chapter-item" href="cc15.html" title="九怀"><span class="ch-num">第15篇</span><span class="ch-title" data-t2t="九懷">九怀</span></a><a class="chapter-item" href="cc16.html" title="九叹"><span class="ch-num">第16篇</span><span class="ch-title" data-t2t="九嘆">九叹</span></a><a class="chapter-item" href="cc17.html" title="九思"><span class="ch-num">第17篇</span><span class="ch-title" data-t2t="九思">九思</span></a></div>
 </div>
 </div>
 <div class="footer-count">楚辞 · 集思阁 · 共 17 篇</div>
 </div>
 <button class="top-btn" id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="返回顶部">↑</button>
 <script src="../gushi/gushi.js"></script>
+
+<script>
+(function () {
+  var KEY = 'jisi-zh-pref';
+  var btn = document.getElementById('zhToggle');
+  function apply(trad) {
+    var els = document.querySelectorAll('[data-t2t]');
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      if (el.getAttribute('data-zh-simp') === null) el.setAttribute('data-zh-simp', el.textContent);
+      el.textContent = trad ? el.getAttribute('data-t2t') : el.getAttribute('data-zh-simp');
+    }
+    document.documentElement.classList.toggle('zh-trad', trad);
+    if (btn) {
+      btn.textContent = trad ? '繁' : '简';
+      btn.setAttribute('aria-label', trad ? '切换为简体' : '切换为繁体');
+    }
+    try { localStorage.setItem(KEY, trad ? 't' : 's'); } catch (e) {}
+  }
+  var pref = null;
+  try { pref = localStorage.getItem(KEY); } catch (e) {}
+  apply(pref === 't');
+  if (btn) btn.addEventListener('click', function () {
+    apply(!document.documentElement.classList.contains('zh-trad'));
+  });
+})();
+</script>
 </body>
 </html>

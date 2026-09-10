@@ -2,17 +2,23 @@
 # -*- coding: utf-8 -*-
 """生成《檄文》阅读模块（xiwen/）。
 
-数据源：/tmp/xu_data.json（三篇讨胡檄文：朱元璋《谕中原檄》、洪秀全《奉天讨胡檄》、
-孙中山《奉天讨满檄文》，均简→繁）。
+数据源：/tmp/xu_data.json（三篇讨胡檄文，存繁体原文）。
 页面结构参考 chuci/：目录页（3 篇平铺）+ 每篇独立正文页，复用 ../gushi/gushi.css 与 ../gushi/gushi.js。
+
+正文默认以**简体**呈现（数据原文为繁体，构建时繁→简），
+并在元素上用 data-t2t 保留繁体，可一键切回（见 zh_toggle.py）。
 
 用法：python3 scripts/build_xiwen.py
 """
 
 import json
 import re
+import sys
 from html import escape
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from zh_toggle import TOGGLE_BTN, TOGGLE_CSS, TOGGLE_JS, s, zh_attrs  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = Path("/tmp/xu_data.json")
@@ -20,6 +26,7 @@ OUT = ROOT / "xiwen"
 SITE = "https://www.justgame.top"
 BOOK = "檄文"
 DOMAIN_PATH = "/xiwen"
+# 繁体源文本；输出统一经 s() 转简体，繁体由 zh_attrs() 保留供切换
 DESC = "歷代討胡檄文三篇：朱元璋《諭中原檄》（1367）驅元、楊秀清與蕭朝貴奉天王洪秀全命頒《奉天討胡檄布四方諭》（1852）反清、孫中山《奉天討滿檄文》（1911）革命，皆以「驅逐異族、恢復中華」為幟。"
 
 HEAD_ICON = (
@@ -64,7 +71,6 @@ def split_paras(body):
     """将连续正文按句读切分为若干段落（每约两句一段）。"""
     if not body:
         return []
-    # 以 。！？!? 切句并保留标点
     parts = re.split(r"(?<=[。！？!?])", body)
     parts = [p.strip() for p in parts if p.strip()]
     paras = []
@@ -92,11 +98,14 @@ def build_index(data):
     total = len(arts)
     links = "".join(
         '<a class="chapter-item" href="{slug}.html" title="{tt}">'
-        '<span class="ch-num">第{no}篇</span>{title}'
-        '<span class="chapter-meta">{author} · {year}</span></a>'.format(
-            slug=a["slug"], tt=escape(a["title"]),
-            no=i + 1, title=escape(a["title"]),
-            author=escape(a["author"]), year=escape(a["year"]),
+        '<span class="ch-num">第{no}篇</span>'
+        '<span class="ch-title"{t_att}>{title}</span>'
+        '<span class="chapter-meta"{a_att}>{author} · {year}</span></a>'.format(
+            slug=a["slug"], tt=escape(s(a["title"])),
+            no=i + 1, title=escape(s(a["title"])),
+            author=escape(s(a["author"])), year=a["year"],
+            t_att=zh_attrs(a["title"]),
+            a_att=zh_attrs("{} · {}".format(a["author"], a["year"])),
         )
         for i, a in enumerate(arts)
     )
@@ -105,11 +114,11 @@ def build_index(data):
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>檄文 · 歷代討胡檄文 全文在線閱讀</title>
-<meta name="description" content="《檄文》集歷代討胡三檄：朱元璋《諭中原檄》、楊秀清與蕭朝貴《奉天討胡檄布四方諭》、孫中山《奉天討滿檄文》，全文在線閱讀。">
-<meta name="keywords" content="檄文,諭中原檄,奉天討胡檄,奉天討胡檄布四方諭,奉天討滿檄文,朱元璋,洪秀全,楊秀清,蕭朝貴,孫中山,集思阁">
-<meta property="og:title" content="檄文 · 歷代討胡檄文">
-<meta property="og:description" content="集歷代討胡三檄，全文在線閱讀。">
+<title>{escape(s('檄文 · 歷代討胡檄文 全文在線閱讀'))}</title>
+<meta name="description" content="{escape(s('《檄文》集歷代討胡三檄：朱元璋《諭中原檄》、楊秀清與蕭朝貴《奉天討胡檄布四方諭》、孫中山《奉天討滿檄文》，全文在線閱讀。'))}">
+<meta name="keywords" content="{escape(s('檄文,諭中原檄,奉天討胡檄,奉天討胡檄布四方諭,奉天討滿檄文,朱元璋,洪秀全,楊秀清,蕭朝貴,孫中山,集思阁'))}">
+<meta property="og:title" content="{escape(s('檄文 · 歷代討胡檄文'))}">
+<meta property="og:description" content="{escape(s('集歷代討胡三檄，全文在線閱讀。'))}">
 <meta property="og:type" content="website">
 <meta property="og:url" content="{SITE}{DOMAIN_PATH}/">
 <meta property="og:image" content="{SITE}/assets/images/og-cover.png">
@@ -124,13 +133,13 @@ def build_index(data):
   "@type": "Book",
   "name": "檄文",
   "url": "{SITE}{DOMAIN_PATH}/",
-  "inLanguage": "zh-Hant",
+  "inLanguage": "zh-Hans",
   "author": {{ "@type": "Person", "name": "朱元璋 等" }},
   "isPartOf": {{ "@type": "WebSite", "name": "集思阁", "url": "{SITE}/" }},
   "numberOfPages": {total}
 }}
 </script>
-<style>{load_index_style()}</style>
+<style>{load_index_style()}{TOGGLE_CSS}</style>
 </head>
 <body>
 <div class="container">
@@ -141,11 +150,12 @@ def build_index(data):
 檄文
 </div>
 <a class="back-link" href="../index.html">← 返回首页</a>
+{TOGGLE_BTN}
 </div>
-<div class="header-subtitle">歷代討胡檄文 · 共 {total} 篇</div>
+<div class="header-subtitle">{escape(s('歷代討胡檄文'))} · 共 {total} 篇</div>
 </div>
 <div class="vol-block">
-<div class="vol-desc">{escape(DESC)}</div>
+<div class="vol-desc"{zh_attrs(DESC)}>{escape(s(DESC))}</div>
 <div class="section-block">
 <div class="section-head"><span class="section-title">檄文</span>
 <span class="section-count">{total} 篇</span></div>
@@ -156,14 +166,17 @@ def build_index(data):
 </div>
 <button class="top-btn" id="topBtn" onclick="window.scrollTo({{top:0,behavior:'smooth'}})" title="返回顶部">↑</button>
 <script src="../gushi/gushi.js"></script>
-</body>
+{TOGGLE_JS}</body>
 </html>
 """
 
 
 def build_article(a, prev_a, next_a, meta):
     paras = a.get("paras") or split_paras(a.get("body"))
-    body = "".join(f"<p>{escape(p)}</p>" for p in paras)
+    body = "".join(
+        '<p{p_att}>{text}</p>'.format(p_att=zh_attrs(p), text=escape(s(p)))
+        for p in paras
+    )
     prev_link = (
         f'<a href="{prev_a["slug"]}.html" class="prev">← 上一篇</a>'
         if prev_a else '<a class="prev empty" href="#">← 上一篇</a>'
@@ -172,17 +185,18 @@ def build_article(a, prev_a, next_a, meta):
         f'<a href="{next_a["slug"]}.html" class="next">下一篇 →</a>'
         if next_a else '<a class="next empty" href="#">下一篇 →</a>'
     )
-    meta_line = f'{escape(a["author"])} · {escape(a["year"])}'
+    meta_trad = f'{a["author"]} · {a["year"]}'
+    meta_line = escape(s(meta_trad))
     return f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{escape(a['title'])} - 檄文</title>
-<meta name="description" content="{escape(a['title'])}：{escape(''.join(paras)[:76])}">
-<meta name="keywords" content="檄文,{escape(a['title'])},{escape(a['author'])},集思阁">
-<meta property="og:title" content="{escape(a['title'])}">
-<meta property="og:description" content="{escape(''.join(paras)[:76])}">
+<title>{escape(s(a['title']))} - 檄文</title>
+<meta name="description" content="{escape(s(a['title']))}：{escape(s(''.join(paras)[:76]))}">
+<meta name="keywords" content="{escape(s('檄文,' + a['title'] + ',' + a['author'] + ',集思阁'))}">
+<meta property="og:title" content="{escape(s(a['title']))}">
+<meta property="og:description" content="{escape(s(''.join(paras)[:76]))}">
 <meta property="og:type" content="article">
 <meta property="og:url" content="{SITE}{DOMAIN_PATH}/{a['slug']}.html">
 <meta property="og:image" content="{SITE}/assets/images/og-cover.png">
@@ -192,6 +206,7 @@ def build_article(a, prev_a, next_a, meta):
 <link rel="canonical" href="{SITE}{DOMAIN_PATH}/{a['slug']}.html">
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../gushi/gushi.css">
+<style>{TOGGLE_CSS}</style>
 </head>
 <body>
 <div class="container">
@@ -199,9 +214,10 @@ def build_article(a, prev_a, next_a, meta):
     <div class="top-bar">
       <a href="./" class="back-link">← 返回檄文</a>
       <span class="meta">檄文</span>
+      {TOGGLE_BTN}
     </div>
-    <h1>{escape(a['title'])}</h1>
-    <div class="meta">{meta_line} · 集思阁</div>
+    <h1{zh_attrs(a['title'])}>{escape(s(a['title']))}</h1>
+    <div class="meta"{zh_attrs(meta_trad + ' · 集思阁')}>{meta_line} · 集思阁</div>
     <div class="article-body">
 {body}
     </div>
@@ -213,7 +229,7 @@ def build_article(a, prev_a, next_a, meta):
 </div>
 <button class="top-btn" id="topBtn" onclick="window.scrollTo({{top:0,behavior:'smooth'}})" title="返回顶部">↑</button>
 <script src="../gushi/gushi.js"></script>
-</body>
+{TOGGLE_JS}</body>
 </html>
 """
 
@@ -222,7 +238,6 @@ def main():
     data = json.loads(DATA.read_text(encoding="utf-8"))
     OUT.mkdir(exist_ok=True)
     arts = data["articles"]
-    # 缺少正文的篇目跳过生成（等待用户提供）
     missing = [a["slug"] for a in arts if not a.get("body")]
     (OUT / "index.html").write_text(build_index(data), encoding="utf-8")
     for idx, a in enumerate(arts):

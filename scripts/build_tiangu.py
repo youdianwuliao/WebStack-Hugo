@@ -10,8 +10,12 @@
 """
 
 import json
+import sys
 from html import escape
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from zh_toggle import TOGGLE_BTN, TOGGLE_CSS, TOGGLE_JS, s, zh_attrs  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = Path("/tmp/tiangu_data.json")
@@ -71,18 +75,20 @@ def build_index(data):
     for v in vols:
         links = "".join(
             '<a class="chapter-item" href="{slug}.html" title="{tt}">'
-            '<span class="ch-num">{title}</span></a>'.format(
-                slug=a["slug"], tt=escape(a["title"]), title=escape(a["title"]),
+            '<span class="ch-num"{t_att}>{title}</span></a>'.format(
+                slug=a["slug"], tt=escape(s(a["title"])), title=escape(s(a["title"])),
+                t_att=zh_attrs(a["title"]),
             )
             for a in v["articles"]
         )
         blocks.append(
             '<div class="vol-block">\n'
-            '<div class="vol-head"><span class="vol-title">{vol}</span>'
+            '<div class="vol-head"><span class="vol-title"{v_att}>{vol}</span>'
             '<span class="vol-count">{n} 篇</span></div>\n'
             '<div class="section-block">\n'
             '<div class="chapter-grid">{links}</div></div></div>'.format(
-                vol=escape(v["vol"]), n=len(v["articles"]), links=links
+                vol=escape(s(v["vol"])), v_att=zh_attrs(v["vol"]),
+                n=len(v["articles"]), links=links
             )
         )
 
@@ -110,13 +116,13 @@ def build_index(data):
   "@type": "Book",
   "name": "天工开物",
   "url": "{SITE}{DOMAIN_PATH}/",
-  "inLanguage": "zh-Hant",
+  "inLanguage": "zh-Hans",
   "author": {{ "@type": "Person", "name": "宋应星" }},
   "isPartOf": {{ "@type": "WebSite", "name": "集思阁", "url": "{SITE}/" }},
   "numberOfPages": {total}
 }}
 </script>
-<style>{load_index_style()}</style>
+<style>{load_index_style()}{TOGGLE_CSS}</style>
 </head>
 <body>
 <div class="container">
@@ -127,22 +133,26 @@ def build_index(data):
 天工开物
 </div>
 <a class="back-link" href="../index.html">← 返回首页</a>
+{TOGGLE_BTN}
 </div>
 <div class="header-subtitle">明 宋应星 撰 · 上中下三卷 · 共 {total} 篇</div>
 </div>
-<div class="vol-block"><div class="vol-desc">{escape(DESC)}</div></div>
+<div class="vol-block"><div class="vol-desc"{zh_attrs(DESC)}>{escape(s(DESC))}</div></div>
 {''.join(blocks)}
 <div class="footer-count">天工开物 · 集思阁 · 共 {total} 篇</div>
 </div>
 <button class="top-btn" id="topBtn" onclick="window.scrollTo({{top:0,behavior:'smooth'}})" title="返回顶部">↑</button>
 <script src="../gushi/gushi.js"></script>
-</body>
+{TOGGLE_JS}</body>
 </html>
 """
 
 
 def build_article(a, prev_a, next_a, meta):
-    body = "".join(f"<p>{escape(p)}</p>" for p in a["paras"])
+    body = "".join(
+        '<p{p_att}>{text}</p>'.format(p_att=zh_attrs(p), text=escape(s(p)))
+        for p in a["paras"]
+    )
     prev_link = (
         f'<a href="{prev_a["slug"]}.html" class="prev">← 上一篇</a>'
         if prev_a else '<a class="prev empty" href="#">← 上一篇</a>'
@@ -156,11 +166,11 @@ def build_article(a, prev_a, next_a, meta):
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{escape(a['title'])} - 天工开物</title>
-<meta name="description" content="{escape(a['title'])}：{escape(''.join(a['paras'])[:76])}">
-<meta name="keywords" content="天工开物,{escape(meta)},{escape(a['title'])},宋应星,古代科技,集思阁">
-<meta property="og:title" content="{escape(a['title'])}">
-<meta property="og:description" content="{escape(''.join(a['paras'])[:76])}">
+<title>{escape(s(a['title']))} - 天工开物</title>
+<meta name="description" content="{escape(s(a['title']))}：{escape(s(''.join(a['paras'])[:76]))}">
+<meta name="keywords" content="天工开物,{escape(s(meta))},{escape(s(a['title']))},宋应星,古代科技,集思阁">
+<meta property="og:title" content="{escape(s(a['title']))}">
+<meta property="og:description" content="{escape(s(''.join(a['paras'])[:76]))}">
 <meta property="og:type" content="article">
 <meta property="og:url" content="{SITE}{DOMAIN_PATH}/{a['slug']}.html">
 <meta property="og:image" content="{SITE}/assets/images/og-cover.png">
@@ -170,15 +180,17 @@ def build_article(a, prev_a, next_a, meta):
 <link rel="canonical" href="{SITE}{DOMAIN_PATH}/{a['slug']}.html">
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../gushi/gushi.css">
+<style>{TOGGLE_CSS}</style>
 </head>
 <body>
 <div class="container">
   <div class="article">
     <div class="top-bar">
       <a href="./" class="back-link">← 返回天工开物</a>
-      <span class="meta">{escape(meta)}</span>
+      <span class="meta"{zh_attrs(meta)}>{escape(s(meta))}</span>
+      {TOGGLE_BTN}
     </div>
-    <h1>{escape(a['title'])}</h1>
+    <h1{zh_attrs(a['title'])}>{escape(s(a['title']))}</h1>
     <div class="meta">天工开物 · 集思阁</div>
     <div class="article-body">
 {body}
@@ -191,7 +203,7 @@ def build_article(a, prev_a, next_a, meta):
 </div>
 <button class="top-btn" id="topBtn" onclick="window.scrollTo({{top:0,behavior:'smooth'}})" title="返回顶部">↑</button>
 <script src="../gushi/gushi.js"></script>
-</body>
+{TOGGLE_JS}</body>
 </html>
 """
 
