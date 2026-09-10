@@ -1170,6 +1170,10 @@
   <url><loc>https://www.justgame.top/tiangong/tg17.html</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://www.justgame.top/tiangong/tg18.html</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://www.justgame.top/tiangong/tg19.html</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://www.justgame.top/xiwen/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.justgame.top/xiwen/zhu.html</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://www.justgame.top/xiwen/hxh.html</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://www.justgame.top/xiwen/sun.html</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://www.justgame.top/json/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://www.justgame.top/qrcode/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://www.justgame.top/markdown/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
