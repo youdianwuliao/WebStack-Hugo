@@ -20,7 +20,7 @@ OUT = ROOT / "xiwen"
 SITE = "https://www.justgame.top"
 BOOK = "檄文"
 DOMAIN_PATH = "/xiwen"
-DESC = "歷代討胡檄文三篇：朱元璋《諭中原檄》（1367）驅元、洪秀全《奉天討胡檄》（1852）反清、孫中山《奉天討滿檄文》（1911）革命，皆以「驅逐異族、恢復中華」為幟。"
+DESC = "歷代討胡檄文三篇：朱元璋《諭中原檄》（1367）驅元、楊秀清與蕭朝貴奉天王洪秀全命頒《奉天討胡檄布四方諭》（1852）反清、孫中山《奉天討滿檄文》（1911）革命，皆以「驅逐異族、恢復中華」為幟。"
 
 HEAD_ICON = (
     '<svg fill="none" height="30" stroke="currentColor" stroke-linecap="round" '
@@ -106,8 +106,8 @@ def build_index(data):
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>檄文 · 歷代討胡檄文 全文在線閱讀</title>
-<meta name="description" content="《檄文》集歷代討胡三檄：朱元璋《諭中原檄》、洪秀全《奉天討胡檄》、孫中山《奉天討滿檄文》，全文在線閱讀。">
-<meta name="keywords" content="檄文,諭中原檄,奉天討胡檄,奉天討滿檄文,朱元璋,洪秀全,孫中山,集思閣">
+<meta name="description" content="《檄文》集歷代討胡三檄：朱元璋《諭中原檄》、楊秀清與蕭朝貴《奉天討胡檄布四方諭》、孫中山《奉天討滿檄文》，全文在線閱讀。">
+<meta name="keywords" content="檄文,諭中原檄,奉天討胡檄,奉天討胡檄布四方諭,奉天討滿檄文,朱元璋,洪秀全,楊秀清,蕭朝貴,孫中山,集思阁">
 <meta property="og:title" content="檄文 · 歷代討胡檄文">
 <meta property="og:description" content="集歷代討胡三檄，全文在線閱讀。">
 <meta property="og:type" content="website">
