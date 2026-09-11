@@ -54,7 +54,7 @@
       --bg: #f0f2f5;
       --text: #333;
       --muted: #666;
-      --faint: #999;
+      --faint: #666e78;
       --card-bg: #fff;
       --card-border: #e0e0e0;
       --primary: #1e3a5f;
@@ -575,7 +575,9 @@
   </footer>
 
   <script>
-    const NAV_FETCH = fetch('nav.json', { credentials: 'omit' });
+    // 凭据模式需与 <link rel="preload" as="fetch" crossorigin> 一致，
+    // 否则浏览器认为两次请求不匹配，nav.json 会被重复下载。
+    const NAV_FETCH = fetch('nav.json');
     const BASE_URL = '';
     const SEARCH_URLS = {
       google: 'https://www.google.com/search?q=',
@@ -619,6 +621,11 @@
     const FAV_KEY = 'navFavs', RECENT_KEY = 'navRecents';
     let favCache = null, recentCache = null, favSet = new Set();
     function getJson(key) { try { return JSON.parse(localStorage.getItem(key)) || []; } catch(e) { return []; } }
+    // 无痕模式/禁用存储时 setItem 会抛错，统一兜底：写失败不影响内存态与界面
+    function setStore(key, value) {
+      try { localStorage.setItem(key, typeof value === 'string' ? value : JSON.stringify(value)); return true; }
+      catch (e) { return false; }
+    }
     function getFavs() { if (favCache === null) favCache = getJson(FAV_KEY); return favCache; }
     function getRecents() { if (recentCache === null) recentCache = getJson(RECENT_KEY); return recentCache; }
     function refreshFavSet() { favSet = new Set(getFavs()); }
@@ -774,7 +781,7 @@
       let favs = getJson(FAV_KEY);
       const i = favs.indexOf(url);
       if (i >= 0) favs.splice(i, 1); else favs.push(url);
-      localStorage.setItem(FAV_KEY, JSON.stringify(favs));
+      setStore(FAV_KEY, favs);
       favCache = null;
       refreshFavSet();
       document.querySelectorAll('.fav-btn').forEach(btn => {
@@ -788,15 +795,15 @@
           btn.setAttribute('aria-label', (on ? '取消收藏' : '收藏') + ' ' + t);
         }
       });
-      rerenderQuick();
+      scheduleQuickRender();
     }
 
     function recordVisit(url) {
       let r = getJson(RECENT_KEY);
       r = [url].concat(r.filter(x => x !== url)).slice(0, 10);
-      localStorage.setItem(RECENT_KEY, JSON.stringify(r));
+      setStore(RECENT_KEY, r);
       recentCache = null;
-      rerenderQuick();
+      scheduleQuickRender();
     }
 
     function rerenderQuick() {
@@ -809,6 +816,19 @@
       const recentSec = quickSectionHtml('最近访问', recentItems(), 'recent-section');
       container.insertAdjacentHTML('afterbegin', favSec + recentSec);
       hydrateIcons(container);
+    }
+
+    // 首屏区块重建代价不小（重排 + 重新 observe 图标），收藏/访问后同步做会
+    // 让点击时页面抖一下。挂到空闲时段执行，多次触发合并为一次。
+    let quickRenderHandle = null;
+    function scheduleQuickRender() {
+      if (quickRenderHandle) return;
+      const run = () => { quickRenderHandle = null; rerenderQuick(); };
+      if (typeof requestIdleCallback === 'function') {
+        quickRenderHandle = requestIdleCallback(run, { timeout: 1000 });
+      } else {
+        quickRenderHandle = setTimeout(run, 200);
+      }
     }
 
     function buildCategory(cat, catIdx) {
@@ -946,7 +966,9 @@
           else if (e.dpi.includes(qpi)) score = Math.max(score, 28);
         }
         return score ? { it: e.it, cat: e.cat, score } : null;
-      }).filter(Boolean).sort((a, b) => b.score - a.score).slice(0, 7).map(x => { x.it.cat = x.cat; return x.it; });
+      }).filter(Boolean).sort((a, b) => b.score - a.score).slice(0, 7)
+        // 不能直接写 x.it.cat：it 是 navData 里的原对象，会污染共享数据
+        .map(x => ({ ...x.it, cat: x.cat }));
     }
 
     function highlight(text, q) {
@@ -1043,7 +1065,7 @@
     function setNightMode(on) {
       document.documentElement.classList.toggle('night-mode', on);
       document.body.classList.toggle('night-mode', on);
-      localStorage.setItem('nightMode', on);
+      setStore('nightMode', on);
       applyThemeColor();
     }
 
@@ -1249,13 +1271,13 @@
         try {
           const data = JSON.parse(reader.result);
           if (data && Array.isArray(data.favs) && Array.isArray(data.recents)) {
-            localStorage.setItem(FAV_KEY, JSON.stringify(data.favs));
-            localStorage.setItem(RECENT_KEY, JSON.stringify(data.recents.slice(0, 10)));
-            if (typeof data.nightMode === 'boolean') localStorage.setItem('nightMode', data.nightMode);
+            setStore(FAV_KEY, data.favs);
+            setStore(RECENT_KEY, data.recents.slice(0, 10));
+            if (typeof data.nightMode === 'boolean') setStore('nightMode', data.nightMode);
             favCache = null;
             recentCache = null;
             refreshFavSet();
-            rerenderQuick();
+            scheduleQuickRender();
             toast('数据导入成功');
           } else {
             toast('文件格式不正确，导入失败');
