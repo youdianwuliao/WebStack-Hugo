@@ -25,6 +25,7 @@ node -e "const sharp = require('sharp'); sharp('assets/images/logos/{网站名}.
 - 图标必须下载到 `assets/images/logos/` 目录
 - 文件大小必须 ≤ 10KB
 - 命名规范：`{网站名}.png` 或 `{网站名}_icon.png`
+- 文件名一律使用 ASCII（小写字母、数字、连字符），避免中文、空格与特殊字符
 
 ### 3. 编辑 nav.json
 在对应分类的 `items` 数组**末尾**添加（不要插到第一项）：

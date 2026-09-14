@@ -1,4 +1,4 @@
-const CACHE = 'navsite-v62';
+const CACHE = 'navsite-v63';
 // 安装时只预缓存首页冷启动路径。拼音/金句按需加载；子站 HTML / 题库 / jsqr
 // 仍由下方 fetch 在首次访问时写入同一 CACHE，访问过的页面离线可用。
 const CORE = [
