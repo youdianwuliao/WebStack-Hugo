@@ -320,7 +320,9 @@ SHUYING_CSS = """
         padding-bottom: 8px; border-bottom: 1px dashed rgba(62,74,82,0.22); }
     h2 .cnt { font-size: 11.5px; font-weight: 400; color: #8a9a90; margin-left: 8px; }
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 10px; }
-    .leaf { display: block; position: relative; text-decoration: none; }
+    /* 247 格一次铺开，让视口外的格子跳过布局与绘制，滚动更顺 */
+    .leaf { display: block; position: relative; text-decoration: none;
+        content-visibility: auto; contain-intrinsic-size: auto 96px; }
     .leaf img { width: 100%; display: block; border: 1px solid rgba(62,74,82,0.18);
         border-radius: 3px; background: #ebedee; }
     .leaf span { display: block; text-align: center; font-size: 11px; color: #8494a2; padding-top: 3px; }
@@ -407,8 +409,9 @@ def build_shuying(counts):
         cells = "".join(
             '<a class="leaf" href="scans/{p}-{n:03d}.webp" '
             'data-src="scans/{p}-{n:03d}.webp" data-alt="冊{v} 第 {n} 叶" id="{p}-{n:03d}">'
-            '<img src="scans/thumb/{p}-{n:03d}.webp" alt="心史 冊{v} 第 {n} 叶" loading="lazy" '
-            'width="320" height="232"><span>第 {n} 叶</span></a>'.format(
+            '<img src="scans/thumb/{p}-{n:03d}.webp" alt="心史 冊{v} 第 {n} 叶" '
+            'loading="lazy" decoding="async" width="256" height="186">'
+            '<span>第 {n} 叶</span></a>'.format(
                 p=prefix, n=n, v=cn(vol)
             )
             for n in range(1, count + 1)

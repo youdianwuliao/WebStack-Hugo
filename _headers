@@ -10,12 +10,17 @@
 /sw.js
   Cache-Control: public, max-age=0, must-revalidate
 
-# HTML 页面与导航数据：短缓存 + 协商验证，SW 负责离线兜底
+# HTML 页面：短缓存 + 协商验证，SW 负责离线兜底
 /
 /index.html
-/nav.json
 /*/index.html
   Cache-Control: public, max-age=0, must-revalidate
+
+# 导航数据是 JSON 数据而非文档，单独一档：短缓存 + SWR。
+# SW 侧本就是 stale-while-revalidate（重复访问缓存直出），这里再给一层 HTTP 缓存，
+# 省掉无 SW / 首次访问时的条件请求；导航更新靠推代码时的 SW CACHE 版本号即时生效。
+/nav.json
+  Cache-Control: public, max-age=300, stale-while-revalidate=86400
 
 # 站内图标与静态脚本：长缓存（文件名或内容变更通过 SW 版本刷新）
 /assets/*
@@ -27,6 +32,12 @@
 /gushi/gushi.css
 /gushi/gushi.js
   Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+# 心史原书书影（247 叶扫描 + 缩略图，约 60MB）：内容是历史影像，不会变，
+# 给长缓存。否则宿主默认 max-age=14400 + must-revalidate，超过 4 小时重访
+# 书影页会打出 247 个条件请求。日后若替换图片，需改名或接受最长 7 天陈旧。
+/xinshi/scans/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
 
 # 工具页静态库：长缓存，内容变更靠 SW CACHE 版本刷新
 /qrcode/jsqr.js
