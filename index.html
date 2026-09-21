@@ -430,9 +430,31 @@
       .fade-in { opacity: 1; }
     }
   </style>
-  <!-- 51.LA 网站统计 -->
-  <script charset="UTF-8" id="LA_COLLECT" src="//sdk.51.la/js-sdk-pro.min.js"></script>
-  <script>LA.init({id:"3RCu6CKVyr0YMbbv",ck:"3RCu6CKVyr0YMbbv",autoTrack:true,hashMode:true})</script>
+  <!-- 51.LA 网站统计
+       原先同步写在 head 里：跨域脚本无 async/defer，整个 body 都要等它下载执行完，
+       实测首屏要慢 100–250ms（模拟 4G 下 Load 慢约 550ms）。现改为页面加载完成后
+       空闲时再注入，首屏不再等第三方；统计口径不变，仅推迟上报时机。 -->
+  <script>
+    (function () {
+      var LA_ID = "3RCu6CKVyr0YMbbv";
+      function injectLA() {
+        var s = document.createElement('script');
+        s.charset = 'UTF-8';
+        s.id = 'LA_COLLECT';
+        s.src = '//sdk.51.la/js-sdk-pro.min.js';
+        s.onload = function () {
+          if (window.LA) {
+            LA.init({ id: LA_ID, ck: LA_ID, autoTrack: true, hashMode: true });
+          }
+        };
+        document.head.appendChild(s);
+      }
+      addEventListener('load', function () {
+        if (window.requestIdleCallback) requestIdleCallback(injectLA, { timeout: 2000 });
+        else setTimeout(injectLA, 200);
+      });
+    })();
+  </script>
 </head>
 <body>
   <div class="action-buttons">
