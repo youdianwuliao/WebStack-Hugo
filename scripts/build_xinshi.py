@@ -4,17 +4,18 @@
 
 数据源
   正文：/tmp/xinshi_data.json
-    由 /tmp/fetch_xinshi.py 抓取识典古籍（shidianguji.com）《宋郑所南先生心史》NA11198
-    的 21 个章节页。该站 /api/ancientlib/read/* 被字节 argus 反爬全面拦截，但章节页 HTML
-    内嵌 window._ROUTER_DATA，其中的 paragraphList 就是该章完整正文（段数与目录声明的
-    paragraphCount 一致），无需鉴权即可取全。
+    由 scripts/fetch_xinshi.py 抓取识典古籍（shidianguji.com）《宋郑所南先生心史》
+    NA11198 的 21 个章节页。该站 /api/ancientlib/read/* 被字节 argus 反爬全面拦截，
+    但章节页 HTML 内嵌 window._ROUTER_DATA，其中的 paragraphList 就是该章完整正文
+    （段数与目录声明的 paragraphCount 一致），无需鉴权即可取全。
   书影：xinshi/scans/ 下 247 叶 —— 原书为明崇祯刊本，日本内阁文库藏，
     影像来自国立公文書館デジタルアーカイブ（公开、免费、可下载）：
       簿册 https://www.digital.archives.go.jp/file/1083674
       冊一 https://www.digital.archives.go.jp/img/2844069 （122 叶）
       冊二 https://www.digital.archives.go.jp/img/2844071 （125 叶）
     每叶为双叶展开图，取 IIIF 3000px 上限后转 WebP（1600px 主图 + 320px 缩略图），
-    由 /tmp/dl_xinshi_scans.py 与 /tmp/prep_scans.py 完成，产物落在 xinshi/scans/。
+    由 scripts/fetch_xinshi_scans.py 与 scripts/prep_xinshi_scans.py 完成，
+    产物落在 xinshi/scans/。
     注意：识典页码是「半叶」连续计数（第 L 半叶 = 第 L//2+1 叶，偶数取右版），
     冊一与源站叶号对得上，冊二起有累积偏移（实测 3 叶），故正文页只挂书影总入口，
     不标注每篇的叶号，以免给错。
