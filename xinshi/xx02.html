@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>目录 - 心史</title>
+<meta name="description" content="目录：宋郑所南先生心史目录，明同郡后学林古度、茂之、叶益荪、雁湖高拱京、钟陵、新安后学汪骏声权竒同挍。">
+<meta name="keywords" content="心史,目录,郑思肖,铁函心史,宋遗民,集思阁">
+<meta property="og:title" content="目录 · 心史">
+<meta property="og:description" content="宋郑所南先生心史目录，明同郡后学林古度、茂之、叶益荪、雁湖高拱京、钟陵、新安后学汪骏声权竒同挍。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.justgame.top/xinshi/xx02.html">
+<meta property="og:image" content="https://www.justgame.top/assets/images/og-cover.png">
+<meta property="og:site_name" content="集思阁">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#3e4a52">
+<link rel="canonical" href="https://www.justgame.top/xinshi/xx02.html">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../gushi/gushi.css">
+<style>
+        .zh-toggle {
+            display: inline-flex; align-items: center; justify-content: center;
+            min-width: 30px; height: 26px; padding: 0 8px; margin-left: 10px;
+            font-size: 13px; line-height: 1; cursor: pointer;
+            background: transparent; color: inherit;
+            border: 1px solid currentColor; border-radius: 6px;
+            opacity: 0.65; transition: opacity 0.18s ease;
+            vertical-align: middle;
+        }
+        .zh-toggle:hover { opacity: 1; }
+
+        .scan-line { margin-top: 26px; padding-top: 12px; border-top: 1px dashed rgba(62,74,82,0.25);
+            font-size: 13px; color: #6b7784; }
+        .scan-line a { color: #3e4a52; text-decoration: none; }
+        .scan-line a:hover { color: #a8432b; }
+        @media (prefers-color-scheme: dark) {
+            .scan-line { color: #94a3b8; border-color: rgba(148,163,184,0.3); }
+            .scan-line a { color: #cbd5e1; }
+        }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="article">
+    <div class="top-bar">
+      <a href="./" class="back-link">← 返回心史</a>
+      <span class="meta">心史</span>
+      <button class="zh-toggle" id="zhToggle" type="button" title="简体/繁体切换" aria-label="切换为繁体">简</button>
+    </div>
+    <h1 data-t2t="目錄">目录</h1>
+    <div class="meta">心史 · 集思阁</div>
+    <div class="article-body">
+<p data-t2t="宋鄭所南先生心史目録，明同郡後學林古度、茂之、葉益蓀、雁湖高拱京、鍾陵、新安後學汪駿聲權竒同挍。">宋郑所南先生心史目录，明同郡后学林古度、茂之、叶益荪、雁湖高拱京、钟陵、新安后学汪骏声权竒同挍。</p>
+<p data-t2t="咸淳集一卷、大義集一卷、中興集二卷、久久書一卷，雜文一卷，大義略敍一卷，總後序後附七言律二首。前後自序七篇，自跋盟言正覺摩醯首羅天王王療二切病呪。">咸淳集一卷、大义集一卷、中兴集二卷、久久书一卷，杂文一卷，大义略敍一卷，总后序后附七言律二首。前后自序七篇，自跋盟言正觉摩醯首罗天王王疗二切病咒。</p>
+    </div>
+    <div class="scan-line">原书书影：<a href="shuying.html">明崇祯刊本 · 全 247 叶（日本内阁文库藏）</a></div>
+    <div class="pager">
+      <a href="xx01.html" class="prev">← 卷首</a>
+      <a href="xx03.html" class="next">自序一 →</a>
+    </div>
+  </div>
+</div>
+<button class="top-btn" id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="返回顶部">↑</button>
+<script src="../gushi/gushi.js"></script>
+
+<script>
+(function () {
+  var KEY = 'jisi-zh-pref';
+  var btn = document.getElementById('zhToggle');
+  function apply(trad) {
+    var els = document.querySelectorAll('[data-t2t]');
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      if (el.getAttribute('data-zh-simp') === null) el.setAttribute('data-zh-simp', el.textContent);
+      el.textContent = trad ? el.getAttribute('data-t2t') : el.getAttribute('data-zh-simp');
+    }
+    document.documentElement.classList.toggle('zh-trad', trad);
+    if (btn) {
+      btn.textContent = trad ? '繁' : '简';
+      btn.setAttribute('aria-label', trad ? '切换为简体' : '切换为繁体');
+    }
+    try { localStorage.setItem(KEY, trad ? 't' : 's'); } catch (e) {}
+  }
+  var pref = null;
+  try { pref = localStorage.getItem(KEY); } catch (e) {}
+  apply(pref === 't');
+  if (btn) btn.addEventListener('click', function () {
+    apply(!document.documentElement.classList.contains('zh-trad'));
+  });
+})();
+</script>
+</body>
+</html>
