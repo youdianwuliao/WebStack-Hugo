@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b1220"/>
+      <stop offset="1" stop-color="#05070b"/>
+    </linearGradient>
+    <linearGradient id="road" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3a4757"/>
+      <stop offset="1" stop-color="#1a2330"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9ff8ff" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#5fe6f7" stop-opacity="1"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="512" height="512" fill="url(#bg)"/>
+
+  <path d="M226 172 L286 172 L436 472 L76 472 Z" fill="url(#road)"/>
+  <path d="M226 172 L76 472" stroke="url(#edge)" stroke-width="34" stroke-linecap="round"/>
+  <path d="M286 172 L436 472" stroke="url(#edge)" stroke-width="34" stroke-linecap="round"/>
+
+  <path d="M256 438 L256 398" stroke="#eafcff" stroke-width="20" stroke-linecap="round" opacity="0.95"/>
+  <path d="M256 354 L256 324" stroke="#eafcff" stroke-width="13" stroke-linecap="round" opacity="0.78"/>
+  <path d="M256 286 L256 264" stroke="#eafcff" stroke-width="9" stroke-linecap="round" opacity="0.62"/>
+</svg>
