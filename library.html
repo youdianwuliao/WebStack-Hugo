@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>集思阁 · 天书</title>
+<style>
+  :root { --ink: #e9dcc3; --warm: #ffb86b; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: #05040a; overflow: hidden;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif; color: var(--ink); }
+  #scene { position: fixed; inset: 0; display: block; }
+
+  /* 准星 */
+  #reticle { position: fixed; left: 50%; top: 50%; width: 8px; height: 8px; margin: -4px 0 0 -4px;
+    border: 1px solid rgba(233,220,195,.7); border-radius: 50%; pointer-events: none; opacity: 0;
+    transition: opacity .3s, transform .15s, border-color .15s; z-index: 5; }
+  #reticle.active { opacity: 1; }
+  #reticle.hot { transform: scale(1.8); border-color: var(--warm); }
+
+  /* 信息面板 */
+  #info { position: fixed; left: 50%; bottom: 7%; transform: translateX(-50%); width: min(560px, 86vw);
+    text-align: center; pointer-events: none; opacity: 0; transition: opacity .25s; z-index: 5;
+    text-shadow: 0 2px 12px #000; }
+  #info.show { opacity: 1; }
+  #info .t { font-size: 20px; letter-spacing: .12em; color: var(--warm); margin-bottom: 6px; }
+  #info .d { font-size: 14px; line-height: 1.6; opacity: .82; }
+  #info .go { margin-top: 8px; font-size: 12px; opacity: .55; letter-spacing: .2em; }
+
+  /* 自由视角提示 */
+  #hint { position: fixed; left: 50%; bottom: 18%; transform: translateX(-50%); z-index: 5;
+    font-size: 13px; letter-spacing: .12em; color: var(--ink); opacity: 0;
+    padding: 9px 18px; background: rgba(20,16,28,.5); border: 1px solid rgba(233,220,195,.18);
+    border-radius: 999px; pointer-events: none; transition: opacity .4s; text-shadow: 0 2px 10px #000; }
+
+  /* 顶部按钮 */
+  .topbtn { position: fixed; top: 18px; z-index: 6; padding: 9px 16px; font-size: 13px; letter-spacing: .14em;
+    color: var(--ink); background: rgba(20,16,28,.55); border: 1px solid rgba(233,220,195,.22);
+    border-radius: 999px; cursor: pointer; backdrop-filter: blur(6px); transition: .2s; text-decoration: none; }
+  .topbtn:hover { border-color: var(--warm); color: var(--warm); }
+  #back { left: 18px; }
+  #mute { right: 18px; display: none; }
+
+  /* 遮罩 */
+  .overlay { position: fixed; inset: 0; z-index: 20; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center; gap: 22px;
+    background: radial-gradient(120% 120% at 50% 40%, rgba(22,20,46,.72), rgba(3,4,10,.96));
+    backdrop-filter: blur(3px); }
+  .overlay.hidden { display: none; }
+  .overlay h1 { font-size: clamp(30px, 6vw, 56px); margin: 0; letter-spacing: .35em; font-weight: 500;
+    color: var(--ink); text-shadow: 0 0 34px rgba(150,190,255,.4); }
+  .overlay .sub { font-size: 14px; opacity: .7; letter-spacing: .25em; max-width: 80vw; }
+  .overlay .keys { font-size: 13px; opacity: .6; line-height: 2; letter-spacing: .1em; }
+  .overlay .keys b { color: var(--warm); font-weight: 600; }
+  .enter { margin-top: 6px; padding: 14px 38px; font-size: 16px; letter-spacing: .3em; color: #1a1206;
+    background: linear-gradient(180deg, #ffd9a0, #ffb86b); border: none; border-radius: 999px; cursor: pointer;
+    box-shadow: 0 0 40px rgba(255,184,107,.45); transition: transform .15s; }
+  .enter:hover { transform: translateY(-2px); }
+  #loading { font-size: 13px; opacity: .6; letter-spacing: .3em; }
+  #unsupported { display: none; }
+
+  /* 搜索 */
+  #searchOv { background: rgba(8,6,12,.93); }
+  .searchbox { width: min(680px, 92vw); display: flex; flex-direction: column; gap: 14px; }
+  #searchInput { width: 100%; padding: 16px 20px; font-size: 18px; color: var(--ink);
+    background: rgba(30,22,14,.9); border: 1px solid rgba(233,220,195,.3); border-radius: 14px;
+    outline: none; font-family: inherit; letter-spacing: .05em; box-sizing: border-box; }
+  #searchInput:focus { border-color: var(--warm); }
+  #searchResults { max-height: 46vh; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+  .res { padding: 12px 16px; border: 1px solid rgba(233,220,195,.14); border-radius: 10px; cursor: pointer;
+    background: rgba(30,22,14,.5); transition: .15s; text-align: left; }
+  .res:hover { border-color: var(--warm); background: rgba(60,44,26,.7); }
+  .res .rt { font-size: 15px; color: var(--warm); letter-spacing: .08em; }
+  .res .rd { font-size: 12px; opacity: .7; margin-top: 4px; line-height: 1.5; }
+  .res .rk { font-size: 11px; opacity: .5; margin-left: 8px; }
+</style>
+</head>
+<body>
+  <canvas id="scene"></canvas>
+
+  <a id="back" class="topbtn" href="index.html">← 返回平面</a>
+  <button id="searchBtn" class="topbtn" type="button" style="right:96px;display:none">搜索</button>
+  <button id="mute" class="topbtn" type="button" style="display:none">♪ 声音</button>
+
+  <div id="reticle"></div>
+  <div id="info">
+    <div class="t"></div>
+    <div class="d"></div>
+    <div class="go">单击展卷 · 按 / 搜索</div>
+  </div>
+
+  <div id="hint">点击空地进入自由视角 · 移动鼠标环顾 · Esc 退出</div>
+
+  <!-- 进入遮罩 -->
+  <div id="overlay-intro" class="overlay">
+    <h1>集思阁 · 天书</h1>
+    <div class="sub">书卷悬浮于虚空，如星海之中的天书。振翼飞览，寻你要的那一页。</div>
+    <div class="keys"><b>点击空地</b> 进入自由视角 &nbsp;·&nbsp; <b>移动鼠标</b> 环顾 &nbsp;·&nbsp; <b>滚轮</b> 远近 &nbsp;·&nbsp; <b>单击书卷</b> 展卷 &nbsp;·&nbsp; <b>WASD</b> 飞行 (Shift 加速) &nbsp;·&nbsp; <b>Esc</b> 退出视角</div>
+    <button id="enter" class="enter" type="button">点 击 进 入</button>
+    <div id="loading">正在铺展星海…</div>
+  </div>
+
+  <!-- 暂停遮罩 -->
+  <div id="overlay-pause" class="overlay hidden">
+    <h1 style="font-size:clamp(24px,5vw,40px)">已 暂 歇</h1>
+    <div class="sub">点击任意处，继续游走。</div>
+    <button id="resume" class="enter" type="button">继 续</button>
+  </div>
+
+  <!-- 移动端不支持 -->
+  <div id="unsupported" class="overlay">
+    <h1 style="font-size:clamp(24px,5vw,38px)">此间需desktop</h1>
+    <div class="sub">天书以自由飞览呈现，请在电脑浏览器中进入。<br/>平面导航在任何设备都可使用。</div>
+    <a class="enter" href="index.html" style="text-decoration:none">← 返回平面</a>
+  </div>
+
+  <!-- 搜索遮罩 -->
+  <div id="searchOv" class="overlay hidden">
+    <div class="searchbox">
+      <input id="searchInput" type="text" placeholder="搜分类或网站名、简介…   (按 / 打开)" autocomplete="off" spellcheck="false" />
+      <div id="searchResults"></div>
+    </div>
+    <button id="searchClose" class="enter" type="button">关 闭 (Esc)</button>
+  </div>
+
+  <script type="module" src="assets/js/library.js"></script>
+</body>
+</html>
