@@ -170,6 +170,17 @@
     .action-buttons { position: fixed; bottom: 20px; right: 20px; z-index: 200; display: flex; flex-direction: column; gap: 8px; }
     .action-btn { width: 36px; height: 36px; background: var(--card-bg); border: 2px solid var(--card-border); border-radius: 50%; cursor: pointer; transition: transform 0.25s, box-shadow 0.25s, background 0.25s, border-color 0.25s, color 0.25s; display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); color: var(--primary); }
     .action-btn:hover { transform: scale(1.1); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    /* 天书入口：默认单字，悬停展开全名 */
+    .action-btn.go-lib { width: 36px; overflow: hidden; white-space: nowrap;
+      font-family: 'Kaiti SC', 'STKaiti', KaiTi, serif; font-weight: 700;
+      transition: width .3s ease, border-radius .3s ease, transform .25s, box-shadow .25s,
+        background .25s, border-color .25s, color .25s; }
+    .action-btn.go-lib:hover { width: 96px; border-radius: 999px; }
+    .go-lib .gl-ch { font-size: 16px; }
+    .go-lib .gl-tx { max-width: 0; opacity: 0; overflow: hidden; font-size: 13px; letter-spacing: .1em;
+      transition: max-width .3s ease, opacity .25s ease; }
+    .action-btn.go-lib:hover .gl-ch { display: none; }
+    .action-btn.go-lib:hover .gl-tx { max-width: 80px; opacity: 1; }
     .night-toggle .icon-moon { display: none; }
     html.night-mode .night-toggle .icon-sun, .night-mode .night-toggle .icon-sun { display: none; }
     html.night-mode .night-toggle .icon-moon, .night-mode .night-toggle .icon-moon { display: block; }
@@ -464,7 +475,7 @@
       <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>
       <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 14.3A8.5 8.5 0 0 1 9.7 3 7 7 0 1 0 21 14.3z"></path></svg>
     </button>
-    <a class="action-btn" href="library.html" title="进入天书" aria-label="进入天书" style="text-decoration:none;font-family:'Kaiti SC','STKaiti',KaiTi,serif;font-size:16px;font-weight:700;">书</a>
+    <a class="action-btn go-lib" href="library.html" title="进入天书" aria-label="进入天书" style="text-decoration:none;"><span class="gl-ch">书</span><span class="gl-tx">进入天书</span></a>
   </div>
   
   <div class="search-popup" id="searchPopup">

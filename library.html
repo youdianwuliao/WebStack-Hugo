@@ -18,16 +18,27 @@
   #reticle.active { opacity: 1; }
   #reticle.hot { transform: scale(1.8); border-color: var(--warm); }
 
-  /* 信息面板 */
-  #info { position: fixed; left: 50%; bottom: 7%; transform: translateX(-50%); width: min(560px, 86vw);
-    text-align: center; pointer-events: none; opacity: 0; transition: opacity .25s; z-index: 5;
-    text-shadow: 0 2px 12px #000; }
-  #info.show { opacity: 1; }
-  #info .t { font-size: 20px; letter-spacing: .12em; color: var(--warm); margin-bottom: 6px; }
-  #info .d { font-size: 14px; line-height: 1.6; opacity: .82; }
-  #info .go { margin-top: 8px; font-size: 12px; opacity: .55; letter-spacing: .2em; }
+  /* 当前位置 */
+  #where { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 6;
+    font-size: 13px; letter-spacing: .22em; color: rgba(233,220,195,.78); opacity: 0;
+    transition: opacity .6s; pointer-events: none; text-shadow: 0 2px 12px #000; }
+  #where.show { opacity: 1; }
 
-  /* 自由视角提示 */
+  /* 分类直达栏 */
+  #catrail { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); z-index: 6;
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; max-width: 94vw;
+    opacity: 0; pointer-events: none; transition: opacity .6s; }
+  #catrail.show { opacity: 1; pointer-events: auto; }
+  .cr-chip { padding: 6px 13px; font-size: 12px; letter-spacing: .08em; color: rgba(233,220,195,.82);
+    background: rgba(14,12,28,.55); border: 1px solid rgba(233,220,195,.16); border-radius: 999px;
+    cursor: pointer; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    transition: .2s; font-family: inherit; white-space: nowrap; }
+  .cr-chip:hover { border-color: var(--warm); color: var(--warm); transform: translateY(-2px); }
+  .cr-chip.active { border-color: var(--warm); color: #1a1206;
+    background: linear-gradient(180deg, #ffd9a0, #ffb86b); }
+  .cr-home { color: var(--warm); border-color: rgba(255,184,107,.4); }
+
+  /* 操作提示（进入后短暂浮出） */
   #hint { position: fixed; left: 50%; bottom: 18%; transform: translateX(-50%); z-index: 5;
     font-size: 13px; letter-spacing: .12em; color: var(--ink); opacity: 0;
     padding: 9px 18px; background: rgba(20,16,28,.5); border: 1px solid rgba(233,220,195,.18);
@@ -83,19 +94,16 @@
   <button id="mute" class="topbtn" type="button" style="display:none">♪ 声音</button>
 
   <div id="reticle"></div>
-  <div id="info">
-    <div class="t"></div>
-    <div class="d"></div>
-    <div class="go">单击展卷 · 按 / 搜索</div>
-  </div>
+  <div id="where"></div>
+  <div id="catrail"></div>
 
-  <div id="hint">拖拽空地环顾 · 单击书卷展卷 · 滚轮远近</div>
+  <div id="hint">拖拽环顾 · 单击展卷 · 滚轮远近 · 下方分类直达 · 归位回星图</div>
 
   <!-- 进入遮罩 -->
   <div id="overlay-intro" class="overlay">
     <h1>集思阁 · 天书</h1>
-    <div class="sub">书卷悬浮于虚空，如星海之中的天书。振翼飞览，寻你要的那一页。</div>
-    <div class="keys"><b>拖拽</b> 环顾 &nbsp;·&nbsp; <b>滚轮</b> 远近 &nbsp;·&nbsp; <b>单击书卷</b> 展卷 &nbsp;·&nbsp; <b>WASD</b> 飞行 (Shift 加速)</div>
+    <div class="sub">书卷悬浮于虚空，如星海列宿。循分类星团飞览，悬停即显全名，寻你要的那一页。</div>
+    <div class="keys"><b>拖拽</b> 环顾 &nbsp;·&nbsp; <b>滚轮</b> 远近 &nbsp;·&nbsp; <b>单击书卷</b> 展卷（远者先拉近） &nbsp;·&nbsp; <b>悬停</b> 显全名 &nbsp;·&nbsp; <b>下方分类</b> 直达 &nbsp;·&nbsp; <b>归位</b> 回星图 &nbsp;·&nbsp; <b>WASD</b> 飞行 (Shift 加速) &nbsp;·&nbsp; <b>/</b> 搜索</div>
     <button id="enter" class="enter" type="button">点 击 进 入</button>
     <div id="loading">正在铺展星海…</div>
   </div>
