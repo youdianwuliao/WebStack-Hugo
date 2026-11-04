@@ -336,12 +336,11 @@ function addRecent(inst) {
   saveRecents();
 }
 
-// ---------- 控制：指针锁定自由视角（拖拽为降级）----------
+// ---------- 控制：拖拽环顾（像平板/触控，光标常驻，悬停显名）----------
 const keys = Object.create(null);
 let yaw = 0, pitch = 0;
 let started = false;
 let walkRemaining = 0;
-let pointerLocked = false;
 const STEP = 10, WALK_CLAMP = 50, MOVE_SPEED = 10.0, MAX_R = 500;
 let mouseNDC = new THREE.Vector2(0, 0);
 let pointerActive = false, dragMoved = false, downX = 0, downY = 0;
@@ -355,57 +354,34 @@ document.addEventListener('keyup',   (e) => onKey(e, false));
 
 function updateHint() {
   if (!hintEl) return;
-  hintEl.style.opacity = (started && !searchOpen && !pointerLocked) ? '1' : '0';
+  hintEl.style.opacity = (started && !searchOpen) ? '1' : '0';
 }
 canvas.addEventListener('pointerdown', (e) => {
   if (e.button !== 0 || searchOpen) return;
   pointerActive = true; dragMoved = false; downX = e.clientX; downY = e.clientY;
 });
 window.addEventListener('pointermove', (e) => {
-  if (pointerLocked) {
-    yaw   -= (e.movementX || 0) * 0.0022;
-    pitch -= (e.movementY || 0) * 0.0022;
-    pitch = Math.max(-1.4, Math.min(1.4, pitch));
-    mouseNDC.set(0, 0);
-  } else {
-    mouseNDC.x = (e.clientX / window.innerWidth) * 2 - 1;
-    mouseNDC.y = -(e.clientY / window.innerHeight) * 2 + 1;
-    if (!pointerActive) return;
-    if (Math.hypot(e.clientX - downX, e.clientY - downY) > 6) dragMoved = true;
-    yaw   -= (e.movementX || 0) * 0.0024;
-    pitch -= (e.movementY || 0) * 0.0024;
-    pitch = Math.max(-1.4, Math.min(1.4, pitch));
-  }
+  // 光标位置用于悬停拾取
+  mouseNDC.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouseNDC.y = -(e.clientY / window.innerHeight) * 2 + 1;
+  if (!pointerActive) return;
+  if (Math.hypot(e.clientX - downX, e.clientY - downY) > 6) dragMoved = true;
+  yaw   -= (e.movementX || 0) * 0.0024;
+  pitch -= (e.movementY || 0) * 0.0024;
+  pitch = Math.max(-1.4, Math.min(1.4, pitch));
 });
 window.addEventListener('pointerup', () => {
   if (!pointerActive) return;
   pointerActive = false;
-  if (dragMoved && !pointerLocked) return;  // 未锁定时拖拽=环顾
+  if (dragMoved) return;   // 拖拽=环顾，松手即停，不触发点击
   updatePick(true);
-  if (pointerLocked) {
-    if (pendingOpen !== -1 && hoveredIdx === pendingOpen) { openBook(pendingOpen); pendingOpen = -1; return; }
-    pendingOpen = -1;
-    if (hoveredIdx >= 0) {
-      const bp = bookSprites[hoveredIdx].position;
-      if (camera.position.distanceTo(bp) <= OPEN_DIST) openBook(hoveredIdx);
-      else teleportToBook(hoveredIdx);
-    } else {
-      walkRemaining = Math.max(-WALK_CLAMP, Math.min(WALK_CLAMP, walkRemaining + STEP));
-    }
+  if (hoveredIdx >= 0) {
+    const bp = bookSprites[hoveredIdx].position;
+    if (camera.position.distanceTo(bp) <= OPEN_DIST) openBook(hoveredIdx);
+    else teleportToBook(hoveredIdx);
   } else {
-    if (hoveredIdx >= 0) {
-      const bp = bookSprites[hoveredIdx].position;
-      if (camera.position.distanceTo(bp) <= OPEN_DIST) openBook(hoveredIdx);
-      else teleportToBook(hoveredIdx);
-    } else if (canvas.requestPointerLock) {
-      canvas.requestPointerLock();
-    }
+    walkRemaining = Math.max(-WALK_CLAMP, Math.min(WALK_CLAMP, walkRemaining + STEP));
   }
-});
-document.addEventListener('pointerlockchange', () => {
-  pointerLocked = (document.pointerLockElement === canvas);
-  if (pointerLocked) mouseNDC.set(0, 0);
-  updateHint();
 });
 
 window.addEventListener('wheel', (e) => {
@@ -653,7 +629,6 @@ function openSearch() {
   if (!started) return;
   searchOpen = true;
   pauseOv.classList.add('hidden');
-  if (document.pointerLockElement) document.exitPointerLock();
   searchOv.classList.remove('hidden');
   updateHint();
   searchInput.value = '';
