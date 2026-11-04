@@ -598,6 +598,12 @@
           "icon": "/assets/images/logos/godot.png",
           "url": "https://godotengine.org/zh-cn/",
           "description": "免费开源的 2D 与 3D 游戏引擎"
+        },
+        {
+          "title": "如梦技术",
+          "icon": "/assets/images/logos/dreamlu.png",
+          "url": "https://www.dreamlu.net/",
+          "description": "Java 开源基础设施套件，mica 系列微服务与 AI 组件"
         }
       ],
       "subcategories": [
