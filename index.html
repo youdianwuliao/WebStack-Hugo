@@ -48,7 +48,7 @@
   }
   </script>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="preload" href="nav.json" as="fetch" crossorigin="anonymous">
+  <link rel="preload" href="nav.json" as="fetch" crossorigin="anonymous" fetchpriority="high">
   <style>
     :root {
       --bg: #f0f2f5;
@@ -151,10 +151,10 @@
     .site-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
     .site-card-wrap { position: relative; display: flex; }
     .site-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 14px; text-decoration: none; color: inherit; transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease; display: flex; align-items: flex-start; gap: 12px; flex: 1; min-width: 0; contain: layout paint; }
-    .site-card img { width: 40px; height: 40px; border-radius: 10px; object-fit: contain; flex-shrink: 0; background: #fff; padding: 5px; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05); }
-    .site-info { min-width: 0; flex: 1; text-align: left; padding-top: 2px; }
-    .site-info h3 { font-size: 13px; font-weight: 500; margin-bottom: 4px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .site-info p { font-size: 11px; color: var(--muted); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+    .site-card img { width: 44px; height: 44px; border-radius: 12px; object-fit: contain; flex-shrink: 0; background: #fff; padding: 5px; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05); }
+    .site-info { min-width: 0; flex: 1; text-align: left; padding-top: 1px; }
+    .site-info h3 { font-size: 14px; font-weight: 600; line-height: 1.4; letter-spacing: .01em; margin: 0 0 5px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .site-info p { font-size: 12px; color: var(--muted); line-height: 1.5; margin: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     .subcategory { margin-top: 25px; }
     .subcategory > h3 { font-size: 13px; font-weight: 500; color: var(--primary); margin-bottom: 15px; padding-left: 10px; border-left: 3px solid var(--accent); }
     @supports (content-visibility: auto) {
@@ -230,9 +230,7 @@
 
     /* 站点卡片增强 */
     .site-card { position: relative; overflow: hidden; }
-    .site-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, var(--accent), transparent); opacity: 0; transition: opacity 0.25s; pointer-events: none; }
-    .site-card:hover::after { opacity: 0.05; }
-    .site-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px var(--shadow); border-color: var(--accent); }
+    .site-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px var(--shadow); border-color: var(--accent); }
     .site-card:focus-visible, .action-btn:focus-visible, .fav-btn:focus-visible, .share-btn:focus-visible, .search-wrapper button:focus-visible, .popup-btn:focus-visible, .close-btn:focus-visible, .sr-item:focus-visible, .cat-chip:focus-visible {
       outline: 2px solid var(--accent);
       outline-offset: 2px;
@@ -388,7 +386,6 @@
     /* 触屏关掉抬升 hover，避免点完还漂着 */
     @media (hover: none) {
       .site-card:hover { transform: none; box-shadow: none; }
-      .site-card:hover::after { opacity: 0; }
       .reading-card:hover { transform: none; }
       .share-btn:hover { transform: none; }
     }
@@ -397,7 +394,7 @@
     .skeleton-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
     .skeleton-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 10px; padding: 16px; display: flex; align-items: flex-start; gap: 12px; }
     .skeleton-icon, .skeleton-line { background: linear-gradient(90deg, var(--card-border) 25%, var(--nav-hover) 37%, var(--card-border) 63%); background-size: 400% 100%; animation: shimmer 1.4s ease infinite; }
-    .skeleton-icon { width: 40px; height: 40px; border-radius: 8px; flex-shrink: 0; }
+    .skeleton-icon { width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0; }
     .skeleton-body { flex: 1; min-width: 0; }
     .skeleton-line { height: 12px; border-radius: 6px; margin-bottom: 8px; }
     .skeleton-line:last-child { margin-bottom: 0; }
@@ -686,8 +683,8 @@
       if (eager) eagerLeft--;
       const iconSrc = escapeHtml(fixIconPath(item.icon));
       const img = eager
-        ? `<img src="${iconSrc}" alt="${title}" width="40" height="40" loading="eager" decoding="async" onerror="this.src='${fb}'">`
-        : `<img data-src="${iconSrc}" src="${ICON_PLACEHOLDER}" alt="${title}" width="40" height="40" loading="lazy" decoding="async" onerror="this.src='${fb}'">`;
+        ? `<img src="${iconSrc}" alt="${title}" width="44" height="44" loading="eager" decoding="async" onerror="this.src='${fb}'">`
+        : `<img data-src="${iconSrc}" src="${ICON_PLACEHOLDER}" alt="${title}" width="44" height="44" loading="lazy" decoding="async" onerror="this.src='${fb}'">`;
       const ext = /^(https?:)?\/\//i.test(item.url);
       const target = ext ? ' target="_blank" rel="noopener"' : '';
       return `<div class="site-card-wrap">
@@ -1368,6 +1365,22 @@
         navigator.serviceWorker.register('sw.js').catch(() => {});
       });
     }
+
+    // 与 3D 天书共用 navRecents / navFavs：另一页面/标签页改动时即时同步
+    window.addEventListener('storage', (ev) => {
+      if (ev.key === RECENT_KEY) { recentCache = null; scheduleQuickRender(); }
+      else if (ev.key === FAV_KEY) {
+        favCache = null; refreshFavSet();
+        document.querySelectorAll('.fav-btn').forEach((btn) => {
+          const on = isFav(btn.dataset.url);
+          btn.classList.toggle('on', on);
+          btn.textContent = on ? '★' : '☆';
+          btn.title = on ? '取消收藏' : '收藏';
+          btn.setAttribute('aria-pressed', String(on));
+        });
+        scheduleQuickRender();
+      }
+    });
 
     async function loadData() {
       try {

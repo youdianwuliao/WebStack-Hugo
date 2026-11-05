@@ -2,18 +2,22 @@ import * as THREE from '../three/three.module.min.js';
 
 /* ============================================================
  * 集思阁 · 天书 —— 星图式三维导航
- * 数据共用 nav.json，与 2D 站完全独立、互不影响。
+ * 数据与 2D 站共用同一份 nav.json（含子分类），并共用 navRecents / navFavs。
  *   · 阻尼相机：所有位移与转向都平滑过渡，不再瞬移
  *   · 分类直达栏 + 当前位置：永远知道自己在哪、随时归位
  *   · 浑天仪坐标环、流星、星闪、星云：更耐看的星海
  *   · 悬停：书卷放大、光晕浮起、名牌展开全名与简介（默认仅一字）
- *   · 最近访问：本地留存，独立星团
+ *   · 最近访问 / 我的收藏：与 2D 站双向同步的独立星团
+ *   · 高清贴图：高倍超采样 + 线性过滤，文字不再发虚
  * ============================================================ */
 
 const NAV_URL = 'nav.json';
-const RECENT_KEY = 'tianshuRecents';
-const RECENT_SLOTS = 12;
-const RECENTS_CENTER = new THREE.Vector3(0, 12, 64);
+const RECENT_KEY = 'navRecents';   // 与 2D 站共用（URL 数组）
+const FAV_KEY = 'navFavs';         // 与 2D 站共用（URL 数组）
+const OLD_RECENT_KEY = 'tianshuRecents';
+const CLUSTER_SLOTS = 12;
+const RECENTS_CENTER = new THREE.Vector3(120, 12, 0);
+const FAVS_CENTER = new THREE.Vector3(-120, 12, 0);
 
 // ---------- DOM ----------
 const $ = (id) => document.getElementById(id);
@@ -39,10 +43,15 @@ if (isTouch) {
   throw new Error('touch device: skip 3D');
 }
 
+// 与 2D 站一致：尽早发起 nav.json 请求，复用 HTTP / SW 缓存（不禁用缓存）
+const NAV_PROMISE = fetch(NAV_URL).then((r) => r.json());
+
 // ---------- 渲染器 / 场景 / 相机 ----------
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.25));
+const DPR_HIGH = Math.min(window.devicePixelRatio || 1, 2);
+renderer.setPixelRatio(DPR_HIGH);
 renderer.setSize(window.innerWidth, window.innerHeight);
+let perfFrames = 0, perfReal = 0, perfChecked = false;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.25;
@@ -62,15 +71,27 @@ function clipText(s, n) {
   s = (s || '').replace(/\s+/g, ' ').trim();
   return s.length > n ? s.slice(0, n) + '…' : s;
 }
+// 文字贴图统一高倍超采样绘制，再以线性过滤采样（禁用 mipmap），
+// 避免 3D 中文字因贴图分辨率不足 / mipmap 缩糊而发虚。
+const ICON_SS = 1.5, TEXT_SS = 2, CARD_SS = 3;
+function finishTex(c, aspect) {
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.minFilter = THREE.LinearFilter;
+  t.magFilter = THREE.LinearFilter;
+  t.generateMipmaps = false;
+  t.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+  if (aspect) t.aspect = aspect;
+  return t;
+}
 function radialTexture(stops, size) {
-  size = size || 256;
+  size = (size || 256) * TEXT_SS;
   const c = document.createElement('canvas'); c.width = c.height = size;
   const g = c.getContext('2d');
   const grd = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
   stops.forEach((s) => grd.addColorStop(s[0], s[1]));
   g.fillStyle = grd; g.fillRect(0, 0, size, size);
-  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
-  return t;
+  return finishTex(c);
 }
 function roundRect(g, x, y, w, h, r) {
   g.beginPath();
@@ -91,7 +112,7 @@ function makeSky() {
   grd.addColorStop(0.42, '#090816');
   grd.addColorStop(1.0, '#03030a');
   g.fillStyle = grd; g.fillRect(0, 0, 64, 512);
-  const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
+  const tex = finishTex(c);
   const mat = new THREE.MeshBasicMaterial({ map: tex, side: THREE.BackSide, depthWrite: false, fog: false });
   return new THREE.Mesh(new THREE.SphereGeometry(1300, 32, 16), mat);
 }
@@ -225,16 +246,15 @@ addRing(96,  0x8f7fd0, 0.10, [Math.PI / 2, 0.5, 0]);
 // ---------- 标题工具 ----------
 function makeTitleTexture(name, w, h, fs) {
   w = w || 560; h = h || 132; fs = fs || 60;
-  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const c = document.createElement('canvas'); c.width = w * TEXT_SS; c.height = h * TEXT_SS;
   const g = c.getContext('2d');
+  g.scale(TEXT_SS, TEXT_SS);
   g.textAlign = 'center'; g.textBaseline = 'middle';
   g.font = 'bold ' + fs + 'px ' + CN;
-  g.shadowColor = 'rgba(255,200,120,0.9)'; g.shadowBlur = 26;
+  g.shadowColor = 'rgba(255,200,120,0.9)'; g.shadowBlur = 26 * TEXT_SS;
   g.fillStyle = 'rgba(255,214,140,0.96)';
   g.fillText(name, w / 2, h / 2 + 2);
-  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
-  t.aspect = w / h;
-  return t;
+  return finishTex(c, w / h);
 }
 // 中枢地标
 const hubTex = makeTitleTexture('集思阁 · 天书', 760, 150, 66);
@@ -244,18 +264,23 @@ hub.scale.set(46, 46 / hubTex.aspect, 1);
 scene.add(hub);
 
 // ---------- 书卷贴图 ----------
+const iconTexCache = new Map();
 function makeIconTexture(ch, color) {
-  const s = 256;
-  const c = document.createElement('canvas'); c.width = c.height = s;
-  const g = c.getContext('2d');
-  const r = (color.r * 255) | 0, gg = (color.g * 255) | 0, b = (color.b * 255) | 0;
   const hex = '#' + color.getHexString();
+  const key = ch + '|' + hex;
+  const hit = iconTexCache.get(key);
+  if (hit) return hit;
+  const s = 256;
+  const c = document.createElement('canvas'); c.width = c.height = s * ICON_SS;
+  const g = c.getContext('2d');
+  g.scale(ICON_SS, ICON_SS);
+  const r = (color.r * 255) | 0, gg = (color.g * 255) | 0, b = (color.b * 255) | 0;
   const grd = g.createRadialGradient(s / 2, s / 2, 8, s / 2, s / 2, s / 2);
   grd.addColorStop(0, 'rgba(' + r + ',' + gg + ',' + b + ',0.34)');
   grd.addColorStop(0.6, 'rgba(' + r + ',' + gg + ',' + b + ',0.10)');
   grd.addColorStop(1, 'rgba(0,0,0,0)');
   g.fillStyle = grd; g.fillRect(0, 0, s, s);
-  g.strokeStyle = hex; g.lineWidth = 10; g.shadowColor = hex; g.shadowBlur = 24;
+  g.strokeStyle = hex; g.lineWidth = 10; g.shadowColor = hex; g.shadowBlur = 24 * ICON_SS;
   g.beginPath(); g.arc(s / 2, s / 2, 96, 0, Math.PI * 2); g.stroke();
   g.shadowBlur = 0;
   g.strokeStyle = 'rgba(255,255,255,0.32)'; g.lineWidth = 2;
@@ -266,33 +291,37 @@ function makeIconTexture(ch, color) {
   while (g.measureText(ch).width > s - 96 && fs > 56) {
     fs -= 8; g.font = 'bold ' + fs + 'px ' + CN;
   }
-  g.shadowColor = hex; g.shadowBlur = 14;
+  g.shadowColor = hex; g.shadowBlur = 14 * ICON_SS;
   g.fillText(ch, s / 2, s / 2 + 6);
-  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+  const t = finishTex(c);
+  iconTexCache.set(key, t);
   return t;
 }
 // 悬停名牌：默认只一个字，悬停后全名 + 简介 + 操作提示都展开
 function makeCardTexture(title, desc, hex, hint) {
   const fsT = 40, fsD = 23, fsH = 19, pad = 20, gap = 9;
   const ttl = clipText(title || '未命名', 22);
-  const dtxt = clipText(desc, 28);
+  const dtxt = clipText(desc, 30);
   const m = document.createElement('canvas').getContext('2d');
   m.font = 'bold ' + fsT + 'px ' + CN;
   const tw = Math.min(m.measureText(ttl).width, 700);
   m.font = fsD + 'px ' + CN;
   const dw = dtxt ? Math.min(m.measureText(dtxt).width, 700) : 0;
-  const w = Math.ceil(Math.max(tw, dw, 200) + pad * 2);
+  m.font = fsH + 'px ' + CN;
+  const hw = Math.min(m.measureText(hint).width, 700);
+  const w = Math.ceil(Math.max(tw, dw, hw, 200) + pad * 2);
   const hy = pad + fsT + (dtxt ? fsD + gap : 0) + gap + fsH / 2;
   const h = Math.ceil(hy + fsH / 2 + pad);
-  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const c = document.createElement('canvas'); c.width = w * CARD_SS; c.height = h * CARD_SS;
   const g = c.getContext('2d');
+  g.scale(CARD_SS, CARD_SS);
   g.fillStyle = 'rgba(8,10,22,0.88)';
   roundRect(g, 2, 2, w - 4, h - 4, 16); g.fill();
-  g.strokeStyle = hex; g.lineWidth = 2.5; g.shadowColor = hex; g.shadowBlur = 16;
+  g.strokeStyle = hex; g.lineWidth = 2.5; g.shadowColor = hex; g.shadowBlur = 16 * CARD_SS;
   roundRect(g, 2, 2, w - 4, h - 4, 16); g.stroke(); g.shadowBlur = 0;
   g.textAlign = 'center'; g.textBaseline = 'middle';
   g.fillStyle = '#ffe6b4'; g.font = 'bold ' + fsT + 'px ' + CN;
-  g.shadowColor = hex; g.shadowBlur = 10;
+  g.shadowColor = hex; g.shadowBlur = 10 * CARD_SS;
   g.fillText(ttl, w / 2, pad + fsT / 2); g.shadowBlur = 0;
   if (dtxt) {
     g.fillStyle = 'rgba(233,220,195,0.8)'; g.font = fsD + 'px ' + CN;
@@ -300,9 +329,7 @@ function makeCardTexture(title, desc, hex, hint) {
   }
   g.fillStyle = 'rgba(255,214,140,0.92)'; g.font = fsH + 'px ' + CN;
   g.fillText(hint, w / 2, hy);
-  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
-  t.aspect = w / h;
-  return t;
+  return finishTex(c, w / h);
 }
 
 // ---------- 悬停光晕 / 名牌 ----------
@@ -330,21 +357,44 @@ const HOVER_SCALE = 1.45;
 const OPEN_DIST = 15;
 const CARD_OFFSET = 3.9;
 
-let RECENT_CI = -1, recentBaseIdx = 0;
-const recentOrder = [];
-const recentSlotUrl = new Array(RECENT_SLOTS).fill('');
-const recentByUrl = new Map();
-let recentTitleSpr = null;
+const bookByUrl = new Map();   // URL -> { title, desc, sub, color }，供两个共享星团解析
+let favSet = new Set();
+function readUrlList(key) {
+  try {
+    const a = JSON.parse(localStorage.getItem(key));
+    return Array.isArray(a) ? a.filter((x) => typeof x === 'string' && x) : [];
+  } catch (e) { return []; }
+}
+function writeUrlList(key, arr) {
+  try { localStorage.setItem(key, JSON.stringify(arr)); } catch (e) {}
+}
+function makeUrlCluster(name, key, center) {
+  return { name, key, center, ci: -1, baseIdx: 0, count: 0, titleSpr: null };
+}
+const recents = makeUrlCluster('最近访问', RECENT_KEY, RECENTS_CENTER);
+const favs = makeUrlCluster('我的收藏', FAV_KEY, FAVS_CENTER);
+const urlClusters = [recents, favs];
+function reloadFavs() { favSet = new Set(readUrlList(FAV_KEY)); }
+
+// 与 2D 站 buildCategory 一致：直接 items + 各子分类 items 全部展开
+function collectItems(cat) {
+  const out = [];
+  (cat.items || []).forEach((it) => out.push({ it, sub: '' }));
+  (cat.subcategories || []).forEach((sub) => {
+    (sub.items || []).forEach((it) => out.push({ it, sub: sub.name || '' }));
+  });
+  return out;
+}
 
 function catColor(i, n) {
   return new THREE.Color().setHSL((i * 0.13 + 0.05) % 1, 0.65, 0.62);
 }
 
 function buildSky(nav) {
-  const cats = nav.filter((c) => c.items && c.items.length);
+  const cats = nav.filter((c) => collectItems(c).length);
   const n = cats.length;
   const perRow = Math.ceil(Math.sqrt(n));
-  const spacing = 46;
+  const spacing = 52;
 
   cats.forEach((cat, ci) => {
     const cx = (ci % perRow - (perRow - 1) / 2) * spacing;
@@ -359,8 +409,8 @@ function buildSky(nav) {
     titleSpr.position.copy(center).add(new THREE.Vector3(0, 14, 0));
     scene.add(titleSpr);
 
-    const items = cat.items;
-    const k = items.length;
+    const entries = collectItems(cat);
+    const k = entries.length;
     const golden = Math.PI * (3 - Math.sqrt(5));
     const pts = [];
     for (let j = 0; j < k; j++) {
@@ -368,7 +418,7 @@ function buildSky(nav) {
       const rad = Math.sqrt(Math.max(0, 1 - yy * yy));
       const theta = golden * j;
       const dir = new THREE.Vector3(Math.cos(theta) * rad, yy, Math.sin(theta) * rad);
-      const R = 11 + Math.random() * 5;
+      const R = 9 + Math.min(9, Math.sqrt(k) * 1.2) + Math.random() * 4;
       pts.push(center.clone().add(dir.multiplyScalar(R)));
     }
     const minDist = 4.8;
@@ -385,7 +435,8 @@ function buildSky(nav) {
       }
     }
     const linePts = [];
-    items.forEach((it, j) => {
+    entries.forEach((entry, j) => {
+      const it = entry.it, sub = entry.sub;
       const p = pts[j].clone();
       if (p.y > center.y + 9) p.y = center.y + 6;
       const ch = (it.title || '·').trim().charAt(0) || '·';
@@ -396,7 +447,8 @@ function buildSky(nav) {
       spr.userData.idx = bookData.length;
       scene.add(spr);
       bookSprites.push(spr);
-      bookData.push({ url: it.url, title: it.title || '', desc: it.description || '' });
+      bookData.push({ url: it.url, title: it.title || '', desc: it.description || '', sub });
+      bookByUrl.set(it.url, { title: it.title || '', desc: it.description || '', sub, color: col.clone() });
       bookColor.push(col.clone());
       bookCluster.push(ci);
       driftData.push({ base: p.clone(), phase: Math.random() * Math.PI * 2,
@@ -411,107 +463,107 @@ function buildSky(nav) {
     clusterInfo.push({ name: cat.category, center: center.clone() });
   });
 
-  RECENT_CI = clusterInfo.length;
-  clusterInfo.push({ name: '最近访问', center: RECENTS_CENTER.clone() });
-  recentBaseIdx = bookData.length;
-  for (let s = 0; s < RECENT_SLOTS; s++) {
-    const spr = new THREE.Sprite(new THREE.SpriteMaterial({ transparent: true, depthWrite: false }));
-    spr.visible = false; spr.userData.idx = bookData.length;
-    scene.add(spr);
-    bookSprites.push(spr);
-    bookData.push({ url: '', title: '', desc: '' });
-    bookColor.push(new THREE.Color(0xffffff));
-    bookCluster.push(RECENT_CI);
-    driftData.push({ base: RECENTS_CENTER.clone(), phase: Math.random() * 6.28, amp: 0.15, speed: 0.3 });
-    recentSlotUrl[s] = '';
-  }
-  loadRecents();
+  urlClusters.forEach((cl) => {
+    cl.ci = clusterInfo.length;
+    clusterInfo.push({ name: cl.name, center: cl.center.clone() });
+    cl.baseIdx = bookData.length;
+    for (let s = 0; s < CLUSTER_SLOTS; s++) {
+      const spr = new THREE.Sprite(new THREE.SpriteMaterial({ transparent: true, depthWrite: false }));
+      spr.visible = false; spr.userData.idx = bookData.length;
+      scene.add(spr);
+      bookSprites.push(spr);
+      bookData.push({ url: '', title: '', desc: '', sub: '' });
+      bookColor.push(new THREE.Color(0xffffff));
+      bookCluster.push(cl.ci);
+      driftData.push({ base: cl.center.clone(), phase: Math.random() * 6.28, amp: 0.15, speed: 0.3 });
+    }
+  });
+  migrateOldRecents();
+  reloadFavs();
+  refreshCluster(recents);
+  refreshCluster(favs);
 
   searchIndex = [];
   clusterInfo.forEach((c, ci) => searchIndex.push({ type: 'cat', name: c.name, cluster: ci }));
   bookData.forEach((d, i) => {
-    if (d && d.url) searchIndex.push({ type: 'item', title: d.title, desc: d.desc, url: d.url, inst: i });
+    if (d && d.url) searchIndex.push({ type: 'item', title: d.title, desc: d.desc, sub: d.sub, url: d.url, inst: i });
   });
 }
 
-// ---------- 最近访问 ----------
-function placeRecent(url, title, colorHex) {
-  if (!url) return;
-  let slot;
-  if (recentByUrl.has(url)) {
-    slot = recentByUrl.get(url);
-  } else {
-    slot = recentSlotUrl.indexOf('');
-    if (slot === -1) {
-      slot = recentOrder[recentOrder.length - 1];
-      const old = recentSlotUrl[slot];
-      if (old) recentByUrl.delete(old);
-      recentSlotUrl[slot] = '';
-      bookSprites[recentBaseIdx + slot].visible = false;
-    }
-  }
-  recentSlotUrl[slot] = url;
-  recentByUrl.set(url, slot);
-  const idx = recentBaseIdx + slot;
-  bookData[idx] = { url, title: title || '', desc: '' };
-  bookColor[idx].set(colorHex);
-  const spr = bookSprites[idx];
-  if (spr.material.map) spr.material.map.dispose();
-  spr.material.map = makeIconTexture((title || '·').trim().charAt(0) || '·', bookColor[idx]);
-  spr.material.needsUpdate = true;
-  spr.visible = true;
-  spr.scale.set(baseScale.x, baseScale.y, 1);
-  const oi = recentOrder.indexOf(slot);
-  if (oi >= 0) recentOrder.splice(oi, 1);
-  recentOrder.unshift(slot);
+// ---------- 最近访问 / 我的收藏（与 2D 站共用 URL 数组）----------
+function migrateOldRecents() {
+  try {
+    const old = JSON.parse(localStorage.getItem(OLD_RECENT_KEY));
+    if (!Array.isArray(old) || !old.length || readUrlList(RECENT_KEY).length) return;
+    const urls = old.map((o) => (typeof o === 'string' ? o : o && o.url)).filter(Boolean).slice(0, 10);
+    if (urls.length) writeUrlList(RECENT_KEY, urls);
+  } catch (e) {}
 }
-function relayoutRecents() {
-  const k = recentOrder.length;
-  if (!recentTitleSpr) {
-    const t = makeTitleTexture('「最近访问」');
-    recentTitleSpr = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, transparent: true, depthWrite: false, fog: false }));
-    recentTitleSpr.scale.set(15, 15 / t.aspect, 1);
-    recentTitleSpr.position.copy(RECENTS_CENTER).add(new THREE.Vector3(0, 13, 0));
-    scene.add(recentTitleSpr);
+function refreshCluster(cl) {
+  if (!bookSprites.length) return;
+  const urls = readUrlList(cl.key).slice(0, CLUSTER_SLOTS);
+  for (let s = 0; s < CLUSTER_SLOTS; s++) {
+    const idx = cl.baseIdx + s;
+    bookSprites[idx].visible = false;
+    bookSprites[idx].scale.set(baseScale.x, baseScale.y, 1);
+    bookData[idx] = { url: '', title: '', desc: '', sub: '' };
   }
-  recentTitleSpr.visible = k > 0;
+  let count = 0;
+  for (const url of urls) {
+    const info = bookByUrl.get(url);
+    if (!info) continue;
+    const idx = cl.baseIdx + count;
+    bookData[idx] = { url, title: info.title, desc: info.desc, sub: info.sub };
+    bookColor[idx].copy(info.color);
+    const spr = bookSprites[idx];
+    spr.material.map = makeIconTexture((info.title || '·').trim().charAt(0) || '·', bookColor[idx]);
+    spr.material.needsUpdate = true;
+    spr.visible = true;
+    count++;
+  }
+  cl.count = count;
+  layoutCluster(cl);
+}
+function layoutCluster(cl) {
+  const k = cl.count;
+  if (!cl.titleSpr) {
+    const t = makeTitleTexture('「' + cl.name + '」');
+    cl.titleSpr = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, transparent: true, depthWrite: false, fog: false }));
+    cl.titleSpr.scale.set(15, 15 / t.aspect, 1);
+    cl.titleSpr.position.copy(cl.center).add(new THREE.Vector3(0, 13, 0));
+    scene.add(cl.titleSpr);
+  }
+  cl.titleSpr.visible = k > 0;
   if (k === 0) { hoveredIdx = -1; cardShown = false; return; }
   const golden = Math.PI * (3 - Math.sqrt(5));
   const R = 8 + Math.min(4, k * 0.3);
   for (let i = 0; i < k; i++) {
-    const slot = recentOrder[i];
     const yy = k > 1 ? 1 - (i / (k - 1)) * 2 : 0;
     const rad = Math.sqrt(Math.max(0, 1 - yy * yy));
     const theta = golden * i;
     const dir = new THREE.Vector3(Math.cos(theta) * rad, yy, Math.sin(theta) * rad);
-    const p = RECENTS_CENTER.clone().add(dir.multiplyScalar(R));
-    if (p.y > RECENTS_CENTER.y + 9) p.y = RECENTS_CENTER.y + 6;
-    bookSprites[recentBaseIdx + slot].position.copy(p);
-    driftData[recentBaseIdx + slot].base = p.clone();
+    const p = cl.center.clone().add(dir.multiplyScalar(R));
+    if (p.y > cl.center.y + 9) p.y = cl.center.y + 6;
+    bookSprites[cl.baseIdx + i].position.copy(p);
+    driftData[cl.baseIdx + i].base = p.clone();
   }
   hoveredIdx = -1; cardShown = false;
 }
-function saveRecents() {
-  const arr = recentOrder.map((slot) => ({
-    url: recentSlotUrl[slot], title: bookData[recentBaseIdx + slot].title,
-    color: '#' + bookColor[recentBaseIdx + slot].getHexString()
-  }));
-  try { localStorage.setItem(RECENT_KEY, JSON.stringify(arr)); } catch (e) {}
+// 写入格式与 2D 站 recordVisit 完全一致，两站互相可见
+function recordVisit(url) {
+  const r = [url].concat(readUrlList(RECENT_KEY).filter((x) => x !== url)).slice(0, 10);
+  writeUrlList(RECENT_KEY, r);
+  refreshCluster(recents);
+  buildCatRail();
+  whereCi = -2;
 }
-function loadRecents() {
-  let arr = [];
-  try { arr = JSON.parse(localStorage.getItem(RECENT_KEY)) || []; } catch (e) {}
-  (arr || []).slice(0, RECENT_SLOTS).forEach((r) => {
-    if (r && r.url) placeRecent(r.url, r.title, r.color || '#ffffff');
-  });
-  relayoutRecents();
-}
-function addRecent(inst) {
-  const d = bookData[inst];
-  if (!d || !d.url) return;
-  placeRecent(d.url, d.title, '#' + bookColor[inst].getHexString());
-  relayoutRecents();
-  saveRecents();
+function toggleFavUrl(url) {
+  const arr = readUrlList(FAV_KEY);
+  const i = arr.indexOf(url);
+  if (i >= 0) arr.splice(i, 1); else arr.push(url);
+  writeUrlList(FAV_KEY, arr);
+  reloadFavs();
+  refreshCluster(favs);
   buildCatRail();
   whereCi = -2;
 }
@@ -637,11 +689,14 @@ function updatePick() {
     const bp = bookSprites[hoveredIdx].position;
     const dist = camera.position.distanceTo(bp);
     const twoStep = (pendingOpen === hoveredIdx || dist > OPEN_DIST);
-    const key = hoveredIdx + '|' + (twoStep ? '再' : '开');
+    const isFav = favSet.has(d.url);
+    const key = hoveredIdx + '|' + (twoStep ? '再' : '开') + '|' + (isFav ? '★' : '☆');
     if (cardKey !== key) {
       cardKey = key;
-      const t = makeCardTexture(d.title, d.desc, '#' + col.getHexString(),
-        twoStep ? '再次单击 · 展卷' : '单击 · 展卷');
+      const desc = (d.sub ? '「' + d.sub + '」 ' : '') + d.desc;
+      const hint = (twoStep ? '再次单击 · 展卷' : '单击 · 展卷') +
+        (isFav ? '  ·  ★ 已收藏 (F 取消)' : '  ·  F 收藏');
+      const t = makeCardTexture(d.title, desc, '#' + col.getHexString(), hint);
       if (cardSprite.material.map) cardSprite.material.map.dispose();
       cardSprite.material.map = t;
       cardSprite.material.needsUpdate = true;
@@ -661,7 +716,7 @@ function openBook(idx) {
   const d = bookData[idx];
   if (d && d.url) {
     window.open(d.url, '_blank', 'noopener');
-    addRecent(idx);
+    recordVisit(d.url);
   }
 }
 
@@ -700,7 +755,7 @@ function buildCatRail() {
   home.addEventListener('click', (e) => { e.stopPropagation(); goHome(); });
   catrailEl.appendChild(home);
   clusterInfo.forEach((c, ci) => {
-    if (c.name === '最近访问' && recentOrder.length === 0) return;
+    if ((c.name === '最近访问' && recents.count === 0) || (c.name === '我的收藏' && favs.count === 0)) return;
     const b = document.createElement('button');
     b.className = 'cr-chip';
     b.textContent = c.name;
@@ -768,6 +823,7 @@ function renderSearch() {
       (r.name && r.name.toLowerCase().includes(q)) ||
       (r.title && r.title.toLowerCase().includes(q)) ||
       (r.desc && r.desc.toLowerCase().includes(q)) ||
+      (r.sub && r.sub.toLowerCase().includes(q)) ||
       (r.url && r.url.toLowerCase().includes(q))
     );
   }
@@ -826,14 +882,30 @@ document.addEventListener('keydown', (e) => {
   if (e.key === '/' && started && !searchOpen) { e.preventDefault(); openSearch(); }
   else if (e.key === 'Escape' && searchOpen) { closeSearch(); }
   else if ((e.key === 'Home' || e.key === 'h' || e.key === 'H') && started && !searchOpen) { goHome(); }
+  else if ((e.key === 'f' || e.key === 'F') && started && !searchOpen && hoveredIdx >= 0) {
+    const d = bookData[hoveredIdx];
+    if (d && d.url) toggleFavUrl(d.url);
+  }
 });
 
 // ---------- 主循环 ----------
 const clock = new THREE.Clock();
 function animate() {
   requestAnimationFrame(animate);
-  const dt = Math.min(clock.getDelta(), 0.05);
+  const rawDt = clock.getDelta();
+  const dt = Math.min(rawDt, 0.05);
   const t = clock.elapsedTime;
+  // 高 DPR 若拖慢帧率，自动回落到 1.25，兼顾清晰度与流畅
+  if (!perfChecked) {
+    perfFrames++; perfReal += rawDt;
+    if (perfReal > 2.5) {
+      perfChecked = true;
+      if (perfFrames / perfReal < 40 && DPR_HIGH > 1.25) {
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.25));
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+    }
+  }
 
   if (started && !searchOpen) {
     const fwd = new THREE.Vector3();
@@ -930,12 +1002,21 @@ window.addEventListener('resize', () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
+// 与 2D 站双向同步：另一页面/标签页改动记录时即时刷新星团
+window.addEventListener('storage', (e) => {
+  if (!bookSprites.length) return;
+  if (e.key === RECENT_KEY) refreshCluster(recents);
+  else if (e.key === FAV_KEY) { reloadFavs(); refreshCluster(favs); }
+  else return;
+  buildCatRail();
+  whereCi = -2;
+});
+
 // ---------- 启动 ----------
 async function boot() {
   try {
-    const res = await fetch(NAV_URL, { cache: 'no-cache' });
-    const data = await res.json();
-    const nav = (data.navigation || []).filter((c) => c.items && c.items.length);
+    const data = await NAV_PROMISE;
+    const nav = (data.navigation || []).filter((c) => collectItems(c).length);
     if (!nav.length) throw new Error('nav.json 为空');
     buildSky(nav);
     buildCatRail();

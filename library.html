@@ -4,6 +4,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>集思阁 · 天书</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="nav.json" as="fetch" crossorigin="anonymous" fetchpriority="high">
 <style>
   :root { --ink: #e9dcc3; --warm: #ffb86b; }
   * { box-sizing: border-box; }
@@ -97,13 +99,13 @@
   <div id="where"></div>
   <div id="catrail"></div>
 
-  <div id="hint">拖拽环顾 · 单击展卷 · 滚轮远近 · 下方分类直达 · 归位回星图</div>
+  <div id="hint">拖拽环顾 · 单击展卷 · 滚轮远近 · 悬停显全名 · F 收藏 · 归位回星图</div>
 
   <!-- 进入遮罩 -->
   <div id="overlay-intro" class="overlay">
     <h1>集思阁 · 天书</h1>
-    <div class="sub">书卷悬浮于虚空，如星海列宿。循分类星团飞览，悬停即显全名，寻你要的那一页。</div>
-    <div class="keys"><b>拖拽</b> 环顾 &nbsp;·&nbsp; <b>滚轮</b> 远近 &nbsp;·&nbsp; <b>单击书卷</b> 展卷（远者先拉近） &nbsp;·&nbsp; <b>悬停</b> 显全名 &nbsp;·&nbsp; <b>下方分类</b> 直达 &nbsp;·&nbsp; <b>归位</b> 回星图 &nbsp;·&nbsp; <b>WASD</b> 飞行 (Shift 加速) &nbsp;·&nbsp; <b>/</b> 搜索</div>
+    <div class="sub">书卷悬浮于虚空，如星海列宿。数据与平面导航同源，最近访问与收藏两处互通；悬停即显全名，寻你要的那一页。</div>
+    <div class="keys"><b>拖拽</b> 环顾 &nbsp;·&nbsp; <b>滚轮</b> 远近 &nbsp;·&nbsp; <b>单击书卷</b> 展卷（远者先拉近） &nbsp;·&nbsp; <b>悬停</b> 显全名 &nbsp;·&nbsp; <b>F</b> 收藏 &nbsp;·&nbsp; <b>下方分类</b> 直达 &nbsp;·&nbsp; <b>归位</b> 回星图 &nbsp;·&nbsp; <b>WASD</b> 飞行 (Shift 加速) &nbsp;·&nbsp; <b>/</b> 搜索</div>
     <button id="enter" class="enter" type="button">点 击 进 入</button>
     <div id="loading">正在铺展星海…</div>
   </div>
