@@ -269,8 +269,13 @@
         if (window.requestIdleCallback) requestIdleCallback(injectLA, { timeout: 2000 });
         else setTimeout(injectLA, 200);
       })();
+      // 首页在 head 同步跳走，index.html 的 load 事件注册来不及执行，这里补注册
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').catch(function () {});
+      }
+      // /assets/* 是 7 天长缓存且同名覆盖不会让 CDN 失效，主模块必须带版本号做 cache busting
       var s = document.createElement('script');
-      s.type = 'module'; s.src = 'assets/js/library.js';
+      s.type = 'module'; s.src = 'assets/js/library.js?v=108';
       document.body.appendChild(s);
     })();
   </script>
