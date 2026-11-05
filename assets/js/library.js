@@ -26,22 +26,15 @@ const reticle     = $('reticle');
 const hintEl      = $('hint');
 const introOv     = $('overlay-intro');
 const pauseOv     = $('overlay-pause');
-const unsupported = $('unsupported');
 const enterBtn    = $('enter');
+const resumeBtn   = $('resume');
 const muteBtn     = $('mute');
 const loadingEl   = $('loading');
 const catrailEl   = $('catrail');
 const whereEl     = $('where');
+const helpStatEl  = $('helpStat');
 
 canvas.style.touchAction = 'none';
-
-const isTouch = window.matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window
-  || navigator.maxTouchPoints > 0;
-if (isTouch) {
-  introOv.classList.add('hidden');
-  unsupported.style.display = 'flex';
-  throw new Error('touch device: skip 3D');
-}
 
 // 与 2D 站一致：尽早发起 nav.json 请求，复用 HTTP / SW 缓存（不禁用缓存）
 const NAV_PROMISE = fetch(NAV_URL).then((r) => r.json());
@@ -144,12 +137,19 @@ const starsFar  = makeStars(2400, 1.4, 0.9);
 const starsNear = makeStars(700, 2.9, 0.5);
 scene.add(starsFar, starsNear);
 
-// ---------- 流星 ----------
+// ---------- 流星（多段渐隐尾焰） ----------
 const meteors = [];
+const METEOR_SEG = 6;
 function createMeteor() {
   const g = new THREE.BufferGeometry();
-  g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(6), 3));
-  const m = new THREE.LineBasicMaterial({ color: 0xd6e4ff, transparent: true, opacity: 0,
+  g.setAttribute('position', new THREE.BufferAttribute(new Float32Array((METEOR_SEG + 1) * 3), 3));
+  const col = new Float32Array((METEOR_SEG + 1) * 3);
+  for (let k = 0; k <= METEOR_SEG; k++) {
+    const f = 1 - k / METEOR_SEG;
+    col[k * 3] = 0.85 * f * f; col[k * 3 + 1] = 0.92 * f * f; col[k * 3 + 2] = 1.0 * f * f;
+  }
+  g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  const m = new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0,
     blending: THREE.AdditiveBlending, depthWrite: false, fog: false });
   const line = new THREE.Line(g, m);
   line.frustumCulled = false;
@@ -176,12 +176,15 @@ function updateMeteors(dt) {
     if (m.life > 0) {
       m.life -= dt;
       const p = m.line.geometry.attributes.position.array;
-      const tail = m.head.clone().addScaledVector(m.dir, -m.len);
-      p[0] = m.head.x; p[1] = m.head.y; p[2] = m.head.z;
-      p[3] = tail.x;  p[4] = tail.y;  p[5] = tail.z;
+      for (let k = 0; k <= METEOR_SEG; k++) {
+        const f = k / METEOR_SEG;
+        p[k * 3]     = m.head.x - m.dir.x * m.len * f;
+        p[k * 3 + 1] = m.head.y - m.dir.y * m.len * f;
+        p[k * 3 + 2] = m.head.z - m.dir.z * m.len * f;
+      }
       m.line.geometry.attributes.position.needsUpdate = true;
       m.head.addScaledVector(m.dir, m.speed * dt);
-      m.line.material.opacity = 0.75 * Math.min(1, Math.max(0, m.life * 2.6));
+      m.line.material.opacity = 0.9 * Math.min(1, Math.max(0, m.life * 2.6));
       if (m.life <= 0) { m.line.material.opacity = 0; m.wait = 3 + Math.random() * 8; }
     } else {
       m.line.material.opacity = 0;
@@ -299,7 +302,8 @@ function makeIconTexture(ch, color) {
 }
 // 悬停名牌：默认只一个字，悬停后全名 + 简介 + 操作提示都展开
 function makeCardTexture(title, desc, hex, hint) {
-  const fsT = 40, fsD = 23, fsH = 19, pad = 20, gap = 9;
+  // 玉简式名牌：细边、左侧一道暖金指示线，文字左对齐、操作提示右对齐
+  const fsT = 40, fsD = 23, fsH = 19, padV = 16, gap = 8, padL = 32, padR = 18;
   const ttl = clipText(title || '未命名', 22);
   const dtxt = clipText(desc, 30);
   const m = document.createElement('canvas').getContext('2d');
@@ -309,26 +313,37 @@ function makeCardTexture(title, desc, hex, hint) {
   const dw = dtxt ? Math.min(m.measureText(dtxt).width, 700) : 0;
   m.font = fsH + 'px ' + CN;
   const hw = Math.min(m.measureText(hint).width, 700);
-  const w = Math.ceil(Math.max(tw, dw, hw, 200) + pad * 2);
-  const hy = pad + fsT + (dtxt ? fsD + gap : 0) + gap + fsH / 2;
-  const h = Math.ceil(hy + fsH / 2 + pad);
+  const w = Math.ceil(Math.max(tw, dw, hw, 190) + padL + padR);
+  let y = padV, descY = 0;
+  const titleY = y + fsT / 2; y += fsT;
+  if (dtxt) { y += gap; descY = y + fsD / 2; y += fsD; }
+  y += gap;
+  const hintY = y + fsH / 2; y += fsH;
+  const h = Math.ceil(y + padV);
   const c = document.createElement('canvas'); c.width = w * CARD_SS; c.height = h * CARD_SS;
   const g = c.getContext('2d');
   g.scale(CARD_SS, CARD_SS);
-  g.fillStyle = 'rgba(8,10,22,0.88)';
-  roundRect(g, 2, 2, w - 4, h - 4, 16); g.fill();
-  g.strokeStyle = hex; g.lineWidth = 2.5; g.shadowColor = hex; g.shadowBlur = 16 * CARD_SS;
-  roundRect(g, 2, 2, w - 4, h - 4, 16); g.stroke(); g.shadowBlur = 0;
-  g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.fillStyle = 'rgba(8,10,22,0.80)';
+  roundRect(g, 2, 2, w - 4, h - 4, 8); g.fill();
+  g.strokeStyle = hex; g.lineWidth = 1.5; g.shadowColor = hex; g.shadowBlur = 12 * CARD_SS;
+  roundRect(g, 2, 2, w - 4, h - 4, 8); g.stroke(); g.shadowBlur = 0;
+  // 左侧细指示线
+  g.fillStyle = 'rgba(255,214,140,0.9)';
+  g.shadowColor = 'rgba(255,200,120,0.85)'; g.shadowBlur = 8 * CARD_SS;
+  g.fillRect(13, 12, 3, h - 24);
+  g.shadowBlur = 0;
+  g.textBaseline = 'middle';
+  g.textAlign = 'left';
   g.fillStyle = '#ffe6b4'; g.font = 'bold ' + fsT + 'px ' + CN;
   g.shadowColor = hex; g.shadowBlur = 10 * CARD_SS;
-  g.fillText(ttl, w / 2, pad + fsT / 2); g.shadowBlur = 0;
+  g.fillText(ttl, padL, titleY); g.shadowBlur = 0;
   if (dtxt) {
     g.fillStyle = 'rgba(233,220,195,0.8)'; g.font = fsD + 'px ' + CN;
-    g.fillText(dtxt, w / 2, pad + fsT + gap + fsD / 2);
+    g.fillText(dtxt, padL, descY);
   }
+  g.textAlign = 'right';
   g.fillStyle = 'rgba(255,214,140,0.92)'; g.font = fsH + 'px ' + CN;
-  g.fillText(hint, w / 2, hy);
+  g.fillText(hint, w - padR, hintY);
   return finishTex(c, w / h);
 }
 
@@ -345,7 +360,110 @@ scene.add(halo);
 const cardSprite = new THREE.Sprite(new THREE.SpriteMaterial({ transparent: true, depthWrite: false, depthTest: false }));
 cardSprite.visible = false; cardSprite.renderOrder = 1000;
 scene.add(cardSprite);
+
+// ---------- 展卷光爆 / 悬停细环 / 连线流光 ----------
+const burstTex = radialTexture([
+  [0, 'rgba(255,255,255,0.95)'], [0.22, 'rgba(255,236,196,0.55)'],
+  [0.55, 'rgba(255,210,150,0.16)'], [1, 'rgba(255,255,255,0)']
+]);
+const bursts = [];
+function burstAt(pos, color, scaleTo, life) {
+  const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map: burstTex, color,
+    transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, fog: false, opacity: 0.95 }));
+  spr.position.copy(pos);
+  spr.scale.set(1, 1, 1);
+  spr.renderOrder = 900;
+  scene.add(spr);
+  bursts.push({ spr, age: 0, life: life || 0.7, scaleTo: scaleTo || 18 });
+}
+function makeRingTex() {
+  const s = 256;
+  const c = document.createElement('canvas'); c.width = c.height = s * TEXT_SS;
+  const g = c.getContext('2d');
+  g.scale(TEXT_SS, TEXT_SS);
+  g.strokeStyle = 'rgba(255,255,255,0.85)'; g.lineWidth = 2.5;
+  g.shadowColor = 'rgba(255,220,160,0.9)'; g.shadowBlur = 10 * TEXT_SS;
+  g.beginPath(); g.arc(s / 2, s / 2, 104, 0, Math.PI * 2); g.stroke();
+  g.shadowBlur = 0;
+  // 四道刻度，像浑天仪刻度环
+  g.lineWidth = 3;
+  for (let k = 0; k < 4; k++) {
+    const a = k * Math.PI / 2;
+    g.beginPath();
+    g.moveTo(s / 2 + Math.cos(a) * 96, s / 2 + Math.sin(a) * 96);
+    g.lineTo(s / 2 + Math.cos(a) * 116, s / 2 + Math.sin(a) * 116);
+    g.stroke();
+  }
+  return finishTex(c);
+}
+const hoverRing = new THREE.Sprite(new THREE.SpriteMaterial({ map: makeRingTex(), transparent: true,
+  blending: THREE.AdditiveBlending, depthWrite: false, fog: false, opacity: 0, color: 0xffffff }));
+hoverRing.renderOrder = 3;
+hoverRing.visible = false;
+scene.add(hoverRing);
+
+let flowGeo = null, flowPos = null, flowCol = null, flowPhase = null;
+function buildFlow() {
+  const n = bookSprites.length;
+  flowPos = new Float32Array(n * 3);
+  flowCol = new Float32Array(n * 3);
+  flowPhase = new Float32Array(n);
+  for (let i = 0; i < n; i++) flowPhase[i] = Math.random();
+  flowGeo = new THREE.BufferGeometry();
+  flowGeo.setAttribute('position', new THREE.BufferAttribute(flowPos, 3));
+  flowGeo.setAttribute('color', new THREE.BufferAttribute(flowCol, 3));
+  // 固定像素尺寸的圆形光斑：避免近距离时被 sizeAttenuation 放大成白色方块
+  const pts = new THREE.Points(flowGeo, new THREE.PointsMaterial({ size: 4, map: burstTex,
+    vertexColors: true, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending,
+    depthWrite: false, fog: false, sizeAttenuation: false }));
+  pts.frustumCulled = false;
+  scene.add(pts);
+}
+// 连线上流动的光点：沿「星团中心 → 书卷」循环往复
+function updateFlow(dt) {
+  if (!flowGeo) return;
+  for (let i = 0; i < bookSprites.length; i++) {
+    const spr = bookSprites[i];
+    const c = clusterInfo[bookCluster[i]];
+    if (!spr.visible || !bookData[i] || !bookData[i].url || !c) {
+      flowCol[i * 3] = flowCol[i * 3 + 1] = flowCol[i * 3 + 2] = 0;
+      continue;
+    }
+    flowPhase[i] = (flowPhase[i] + dt * 0.26) % 1;
+    const p = flowPhase[i], cen = c.center;
+    flowPos[i * 3]     = cen.x + (spr.position.x - cen.x) * p;
+    flowPos[i * 3 + 1] = cen.y + (spr.position.y - cen.y) * p;
+    flowPos[i * 3 + 2] = cen.z + (spr.position.z - cen.z) * p;
+    const col = bookColor[i];
+    flowCol[i * 3] = col.r; flowCol[i * 3 + 1] = col.g; flowCol[i * 3 + 2] = col.b;
+  }
+  flowGeo.attributes.position.needsUpdate = true;
+  flowGeo.attributes.color.needsUpdate = true;
+}
+function updateBursts(dt) {
+  for (let i = bursts.length - 1; i >= 0; i--) {
+    const b = bursts[i];
+    b.age += dt;
+    const p = b.age / b.life;
+    if (p >= 1) {
+      scene.remove(b.spr);
+      b.spr.material.dispose();
+      bursts.splice(i, 1);
+      continue;
+    }
+    const s = 2 + b.scaleTo * p;
+    b.spr.scale.set(s, s, 1);
+    b.spr.material.opacity = 0.9 * (1 - p) * (1 - p);
+  }
+}
 const cardBase = new THREE.Vector2(1, 1);
+const CARD_OFFSET = 3.2;
+const cardDown = new THREE.Vector3();
+// 沿「相机屏幕下方」偏移，而不是世界 Y：俯视/仰视时名牌也稳定在书卷下方，不遮住书卷
+function placeCard(bp) {
+  cardDown.set(0, -1, 0).applyQuaternion(camera.quaternion);
+  cardSprite.position.copy(bp).addScaledVector(cardDown, CARD_OFFSET);
+}
 let cardAlpha = 0, cardShown = false, cardKey = '';
 
 // ---------- 数据 ----------
@@ -355,7 +473,6 @@ const driftData = [];
 const baseScale = new THREE.Vector2(2.7, 2.7);
 const HOVER_SCALE = 1.45;
 const OPEN_DIST = 15;
-const CARD_OFFSET = 3.9;
 
 const bookByUrl = new Map();   // URL -> { title, desc, sub, color }，供两个共享星团解析
 let favSet = new Set();
@@ -369,7 +486,7 @@ function writeUrlList(key, arr) {
   try { localStorage.setItem(key, JSON.stringify(arr)); } catch (e) {}
 }
 function makeUrlCluster(name, key, center) {
-  return { name, key, center, ci: -1, baseIdx: 0, count: 0, titleSpr: null };
+  return { name, key, center, ci: -1, baseIdx: 0, count: 0, titleSpr: null, emptySpr: null };
 }
 const recents = makeUrlCluster('最近访问', RECENT_KEY, RECENTS_CENTER);
 const favs = makeUrlCluster('我的收藏', FAV_KEY, FAVS_CENTER);
@@ -390,13 +507,10 @@ function catColor(i, n) {
   return new THREE.Color().setHSL((i * 0.13 + 0.05) % 1, 0.65, 0.62);
 }
 
-function buildSky(nav) {
-  const cats = nav.filter((c) => collectItems(c).length);
-  const n = cats.length;
+// 逐批构建：星空先动起来，书卷分批浮现，避免 280 个 sprite 一次性同步创建卡住首屏
+function buildCategoryAt(cat, ci, n) {
   const perRow = Math.ceil(Math.sqrt(n));
   const spacing = 52;
-
-  cats.forEach((cat, ci) => {
     const cx = (ci % perRow - (perRow - 1) / 2) * spacing;
     const cz = (Math.floor(ci / perRow) - (Math.ceil(n / perRow) - 1) / 2) * spacing;
     const cy = Math.sin(ci * 1.3) * 10;
@@ -460,9 +574,10 @@ function buildSky(nav) {
     scene.add(new THREE.LineSegments(lg, new THREE.LineBasicMaterial({
       color: col, transparent: true, opacity: 0.16, depthWrite: false, fog: false
     })));
-    clusterInfo.push({ name: cat.category, center: center.clone() });
-  });
+    clusterInfo.push({ name: cat.category, center: center.clone(), titleSpr });
+}
 
+function finishSky() {
   urlClusters.forEach((cl) => {
     cl.ci = clusterInfo.length;
     clusterInfo.push({ name: cl.name, center: cl.center.clone() });
@@ -488,6 +603,7 @@ function buildSky(nav) {
   bookData.forEach((d, i) => {
     if (d && d.url) searchIndex.push({ type: 'item', title: d.title, desc: d.desc, sub: d.sub, url: d.url, inst: i });
   });
+  buildFlow();
 }
 
 // ---------- 最近访问 / 我的收藏（与 2D 站共用 URL 数组）----------
@@ -526,6 +642,17 @@ function refreshCluster(cl) {
 }
 function layoutCluster(cl) {
   const k = cl.count;
+  // 空态也给一行提示，让「最近访问 / 我的收藏」这两个星团始终可发现
+  if (!cl.emptySpr) {
+    const txt = cl.name === '最近访问' ? '暂无访问 · 去逛逛星图' : '暂无收藏 · 按 F 收藏书卷';
+    const t = makeTitleTexture(txt, 640, 120, 42);
+    cl.emptySpr = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, transparent: true,
+      depthWrite: false, fog: false, opacity: 0.5 }));
+    cl.emptySpr.scale.set(22, 22 / t.aspect, 1);
+    cl.emptySpr.position.copy(cl.center);
+    scene.add(cl.emptySpr);
+  }
+  cl.emptySpr.visible = k === 0;
   if (!cl.titleSpr) {
     const t = makeTitleTexture('「' + cl.name + '」');
     cl.titleSpr = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, transparent: true, depthWrite: false, fog: false }));
@@ -558,6 +685,7 @@ function recordVisit(url) {
   whereCi = -2;
 }
 function toggleFavUrl(url) {
+  blip(620, 0.09, 0.04);
   const arr = readUrlList(FAV_KEY);
   const i = arr.indexOf(url);
   if (i >= 0) arr.splice(i, 1); else arr.push(url);
@@ -569,6 +697,7 @@ function toggleFavUrl(url) {
 }
 
 // ---------- 控制：拖拽环顾 + 阻尼飞行 ----------
+let searchOpen = false, helpOpen = false;
 const keys = Object.create(null);
 let yaw = 0, pitch = 0;
 let tYaw = 0, tPitch = 0;
@@ -587,21 +716,42 @@ function onKey(e, down) {
   if (['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
     'ShiftLeft', 'ShiftRight'].includes(k)) keys[k] = down;
 }
-document.addEventListener('keydown', (e) => { if (!searchOpen) onKey(e, true); });
+document.addEventListener('keydown', (e) => { if (!searchOpen && !helpOpen) onKey(e, true); });
 document.addEventListener('keyup', (e) => onKey(e, false));
 
 function updateHint() {
   if (!hintEl) return;
-  hintEl.style.opacity = (started && !searchOpen && hintTimer < 8) ? '1' : '0';
+  hintEl.style.opacity = (started && !searchOpen && !helpOpen && hintTimer < 8) ? '1' : '0';
 }
+// Esc 指南：复活原先从未显示的暂停层，给出常驻操作说明与星图统计
+function openHelp() {
+  if (!started) return;
+  if (searchOpen) closeSearch();
+  helpOpen = true;
+  if (helpStatEl) {
+    helpStatEl.textContent = '星图共 ' + (clusterInfo.length - urlClusters.length) +
+      ' 分类 · ' + bookByUrl.size + ' 站点';
+  }
+  pauseOv.classList.remove('hidden');
+  updateHint();
+}
+function closeHelp() {
+  helpOpen = false;
+  pauseOv.classList.add('hidden');
+  updateHint();
+}
+resumeBtn.addEventListener('click', closeHelp);
 canvas.addEventListener('pointerdown', (e) => {
-  if (e.button !== 0 || searchOpen) return;
+  if (e.button !== 0 || searchOpen || helpOpen) return;
   pointerActive = true; dragMoved = false; downX = e.clientX; downY = e.clientY;
 });
 window.addEventListener('pointermove', (e) => {
   mouseNDC.x = (e.clientX / window.innerWidth) * 2 - 1;
   mouseNDC.y = -(e.clientY / window.innerHeight) * 2 + 1;
-  if (!pointerActive || searchOpen) return;
+  // 准星跟随光标：拾取本就按鼠标位置，别再让中心准星误导
+  reticle.style.left = e.clientX + 'px';
+  reticle.style.top = e.clientY + 'px';
+  if (!pointerActive || searchOpen || helpOpen) return;
   if (Math.hypot(e.clientX - downX, e.clientY - downY) > 6) dragMoved = true;
   yaw   -= (e.movementX || 0) * 0.0024;
   pitch -= (e.movementY || 0) * 0.0024;
@@ -611,7 +761,7 @@ window.addEventListener('pointermove', (e) => {
 window.addEventListener('pointerup', () => {
   if (!pointerActive) return;
   pointerActive = false;
-  if (dragMoved || searchOpen) return;
+  if (dragMoved || searchOpen || helpOpen) return;
   updatePick(true);
   if (hoveredIdx >= 0) {
     const bp = bookSprites[hoveredIdx].position;
@@ -622,7 +772,7 @@ window.addEventListener('pointerup', () => {
   }
 });
 window.addEventListener('wheel', (e) => {
-  if (!started || searchOpen) return;
+  if (!started || searchOpen || helpOpen) return;
   e.preventDefault();
   const f = new THREE.Vector3();
   camera.getWorldDirection(f);
@@ -645,6 +795,7 @@ function glideTo(pos, lookAt) {
   gliding = true;
 }
 function goHome() {
+  blip(300, 0.2, 0.035);
   pendingOpen = -1;
   glideTo(HOME_POS.clone(), new THREE.Vector3(0, 4, 0));
   mouseNDC.set(0, 0);
@@ -658,6 +809,8 @@ enterBtn.addEventListener('click', () => {
   muteBtn.style.display = 'block';
   searchBtn.style.display = 'block';
   reticle.classList.add('active');
+  reticle.style.left = (window.innerWidth / 2) + 'px';
+  reticle.style.top = (window.innerHeight / 2) + 'px';
   catrailEl.classList.add('show');
   whereEl.classList.add('show');
   startAudio();
@@ -682,6 +835,7 @@ function updatePick() {
     }
     hoveredIdx = nh;
     cardKey = '';
+    if (nh >= 0) blip(680, 0.05, 0.016);
   }
   if (hoveredIdx >= 0) {
     const d = bookData[hoveredIdx];
@@ -702,9 +856,9 @@ function updatePick() {
       cardSprite.material.needsUpdate = true;
       const sh = 1.8;
       cardBase.set(sh * t.aspect, sh);
-      cardSprite.scale.copy(cardBase);
+      cardSprite.scale.set(cardBase.x, cardBase.y, 1);
     }
-    cardSprite.position.set(bp.x, bp.y - CARD_OFFSET, bp.z);
+    placeCard(bp);
     reticle.classList.add('hot');
     cardShown = true;
   } else {
@@ -715,6 +869,11 @@ function updatePick() {
 function openBook(idx) {
   const d = bookData[idx];
   if (d && d.url) {
+    const bp = bookSprites[idx].position;
+    const col = bookColor[idx].clone();
+    burstAt(bp, col, 20, 0.72);
+    burstAt(bp, col, 11, 0.45);
+    blip(760, 0.18, 0.05);
     window.open(d.url, '_blank', 'noopener');
     recordVisit(d.url);
   }
@@ -722,6 +881,20 @@ function openBook(idx) {
 
 // ---------- 环境音 ----------
 let audioCtx = null, audioGain = null, audioOn = false;
+function blip(freq, dur, vol) {
+  if (!audioCtx || !audioOn) return;
+  try {
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    const now = audioCtx.currentTime;
+    o.type = 'sine'; o.frequency.setValueAtTime(freq, now);
+    o.frequency.exponentialRampToValueAtTime(freq * 1.35, now + dur);
+    g.gain.setValueAtTime(0.0001, now);
+    g.gain.exponentialRampToValueAtTime(vol, now + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(now); o.stop(now + dur + 0.02);
+  } catch (e) {}
+}
 function startAudio() {
   if (audioCtx) { audioCtx.resume(); audioGain.gain.value = 0.05; audioOn = true; muteBtn.textContent = '♪ 声音'; return; }
   try {
@@ -755,11 +928,14 @@ function buildCatRail() {
   home.addEventListener('click', (e) => { e.stopPropagation(); goHome(); });
   catrailEl.appendChild(home);
   clusterInfo.forEach((c, ci) => {
-    if ((c.name === '最近访问' && recents.count === 0) || (c.name === '我的收藏' && favs.count === 0)) return;
     const b = document.createElement('button');
     b.className = 'cr-chip';
     b.textContent = c.name;
     b.dataset.ci = ci;
+    if ((c.name === '最近访问' && recents.count === 0) || (c.name === '我的收藏' && favs.count === 0)) {
+      b.classList.add('empty');
+      b.title = '暂无记录，点此可看看';
+    }
     b.addEventListener('click', (e) => { e.stopPropagation(); teleportToCluster(ci); });
     catrailEl.appendChild(b);
   });
@@ -795,15 +971,29 @@ const searchOv = $('searchOv');
 const searchInput = $('searchInput');
 const searchResults = $('searchResults');
 const searchClose = $('searchClose');
-let searchOpen = false;
+// 拼音表与 2D 站共用同一份构建产物；异步加载，未就绪时自动退化为纯文本匹配
+const PINYIN_PROMISE = new Promise((resolve) => {
+  const s = document.createElement('script');
+  s.src = 'assets/js/pinyin-map.js'; s.async = true;
+  s.onload = resolve; s.onerror = resolve;
+  document.head.appendChild(s);
+});
+function py(text) {
+  const M = window.PINYIN_MAP || {};
+  return String(text || '').split('').map((ch) => M[ch] || ch).join('').toLowerCase();
+}
+function pyInitials(text) {
+  const M = window.PINYIN_MAP || {};
+  return String(text || '').split('').map((ch) => M[ch] ? M[ch][0] : ch).join('').toLowerCase();
+}
 function escHtml(s) {
   return (s || '').replace(/[&<>^"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 }
 function openSearch() {
   if (!started) return;
+  if (helpOpen) closeHelp();
   searchOpen = true;
   hoveredIdx = -1; cardShown = false;
-  pauseOv.classList.add('hidden');
   searchOv.classList.remove('hidden');
   updateHint();
   searchInput.value = '';
@@ -819,13 +1009,16 @@ function renderSearch() {
   const q = searchInput.value.trim().toLowerCase();
   let list = searchIndex;
   if (q) {
-    list = searchIndex.filter((r) =>
-      (r.name && r.name.toLowerCase().includes(q)) ||
-      (r.title && r.title.toLowerCase().includes(q)) ||
-      (r.desc && r.desc.toLowerCase().includes(q)) ||
-      (r.sub && r.sub.toLowerCase().includes(q)) ||
-      (r.url && r.url.toLowerCase().includes(q))
-    );
+    list = searchIndex.filter((r) => {
+      const name = r.name || '', title = r.title || '';
+      return (name.toLowerCase().includes(q)) ||
+        (title.toLowerCase().includes(q)) ||
+        (r.desc && r.desc.toLowerCase().includes(q)) ||
+        (r.sub && r.sub.toLowerCase().includes(q)) ||
+        (r.url && r.url.toLowerCase().includes(q)) ||
+        (name && (py(name).includes(q) || pyInitials(name).includes(q))) ||
+        (title && (py(title).includes(q) || pyInitials(title).includes(q)));
+    });
   }
   list = list.slice(0, 40);
   searchResults.innerHTML = '';
@@ -867,6 +1060,10 @@ function teleportToBook(inst) {
   const out = bp.clone().sub(c.center);
   if (out.lengthSq() < 1) out.set(0, 0, 1);
   out.normalize();
+  // 书卷落在星团正上/正下方时，纯垂直会让俯仰角撞到 clamp，书卷偏离准星；改从斜侧接近
+  if (Math.abs(out.y) > 0.75) {
+    out.x += 0.85; out.z += 0.55; out.normalize();
+  }
   const pos = bp.clone().addScaledVector(out, 10);
   pos.y += 1.5;
   glideTo(pos, bp);
@@ -878,9 +1075,41 @@ function teleportToBook(inst) {
 searchBtn.addEventListener('click', openSearch);
 searchClose.addEventListener('click', closeSearch);
 searchInput.addEventListener('input', renderSearch);
+let keyboardIdx = -1;
+function focusNextBook(dir) {
+  if (!bookData.length) return;
+  const n = bookData.length;
+  let i = keyboardIdx < 0 ? (dir > 0 ? -1 : 0) : keyboardIdx;
+  for (let step = 0; step < n; step++) {
+    i = (i + dir + n) % n;
+    if (bookSprites[i] && bookSprites[i].visible && bookData[i] && bookData[i].url) {
+      keyboardIdx = i;
+      // 即时反馈：选中处先炸开一圈光，再飞过去
+      burstAt(bookSprites[i].position, bookColor[i].clone(), 9, 0.5);
+      blip(520, 0.07, 0.05);
+      teleportToBook(i);
+      return;
+    }
+  }
+}
 document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    if (searchOpen) closeSearch();
+    else if (helpOpen) closeHelp();
+    else openHelp();
+    return;
+  }
+  if (helpOpen) return;
   if (e.key === '/' && started && !searchOpen) { e.preventDefault(); openSearch(); }
-  else if (e.key === 'Escape' && searchOpen) { closeSearch(); }
+  else if (e.key === 'Tab' && started && !searchOpen) { e.preventDefault(); focusNextBook(e.shiftKey ? -1 : 1); }
+  else if (e.key === 'Enter' && started && !searchOpen) {
+    e.preventDefault();
+    const idx = hoveredIdx >= 0 ? hoveredIdx : keyboardIdx;
+    if (idx < 0) return;
+    const bp = bookSprites[idx].position;
+    if (camera.position.distanceTo(bp) <= OPEN_DIST) openBook(idx);
+    else teleportToBook(idx);
+  }
   else if ((e.key === 'Home' || e.key === 'h' || e.key === 'H') && started && !searchOpen) { goHome(); }
   else if ((e.key === 'f' || e.key === 'F') && started && !searchOpen && hoveredIdx >= 0) {
     const d = bookData[hoveredIdx];
@@ -895,8 +1124,8 @@ function animate() {
   const rawDt = clock.getDelta();
   const dt = Math.min(rawDt, 0.05);
   const t = clock.elapsedTime;
-  // 高 DPR 若拖慢帧率，自动回落到 1.25，兼顾清晰度与流畅
-  if (!perfChecked) {
+  // 高 DPR 若拖慢帧率，自动回落到 1.25；只在完整星图就绪后测，避免误判
+  if (started && !perfChecked) {
     perfFrames++; perfReal += rawDt;
     if (perfReal > 2.5) {
       perfChecked = true;
@@ -907,7 +1136,7 @@ function animate() {
     }
   }
 
-  if (started && !searchOpen) {
+  if (started && !searchOpen && !helpOpen) {
     const fwd = new THREE.Vector3();
     camera.getWorldDirection(fwd);
     const right = new THREE.Vector3().crossVectors(fwd, new THREE.Vector3(0, 1, 0)).normalize();
@@ -970,17 +1199,36 @@ function animate() {
     halo.scale.set(baseScale.x * 2.7, baseScale.y * 2.7, 1);
     halo.material.color.copy(bookColor[hoveredIdx]);
     halo.material.opacity += (0.5 - halo.material.opacity) * Math.min(1, dt * 10);
-    cardSprite.position.set(bp.x, bp.y - CARD_OFFSET, bp.z);
+    hoverRing.position.copy(bp);
+    hoverRing.scale.set(baseScale.x * 2.15, baseScale.y * 2.15, 1);
+    hoverRing.material.color.copy(bookColor[hoveredIdx]);
+    hoverRing.material.opacity += (0.40 - hoverRing.material.opacity) * Math.min(1, dt * 10);
+    hoverRing.material.rotation += dt * 0.8;
+    placeCard(bp);
   } else {
     halo.material.opacity += (0 - halo.material.opacity) * Math.min(1, dt * 10);
+    hoverRing.material.opacity += (0 - hoverRing.material.opacity) * Math.min(1, dt * 10);
   }
   halo.visible = halo.material.opacity > 0.02;
+  hoverRing.visible = hoverRing.material.opacity > 0.02;
+
+  updateBursts(dt);
+  updateFlow(dt);
   cardAlpha += ((cardShown ? 1 : 0) - cardAlpha) * Math.min(1, dt * 12);
   if (cardAlpha < 0.02) cardSprite.visible = false;
   else {
     cardSprite.visible = true;
     cardSprite.material.opacity = cardAlpha;
-    cardSprite.scale.copy(cardBase).multiplyScalar(0.86 + 0.14 * cardAlpha);
+    const k = 0.86 + 0.14 * cardAlpha;
+    cardSprite.scale.set(cardBase.x * k, cardBase.y * k, 1);
+  }
+
+  // 飞近星团时分类标题淡出，避免巨型标题糊在眼前
+  for (let ci = 0; ci < clusterInfo.length; ci++) {
+    const c = clusterInfo[ci];
+    if (!c.titleSpr) continue;
+    const d = camera.position.distanceTo(c.center);
+    c.titleSpr.material.opacity = Math.max(0, Math.min(1, (d - 20) / 26));
   }
 
   // 星海呼吸与缓转
@@ -1018,15 +1266,20 @@ async function boot() {
     const data = await NAV_PROMISE;
     const nav = (data.navigation || []).filter((c) => collectItems(c).length);
     if (!nav.length) throw new Error('nav.json 为空');
-    buildSky(nav);
-    buildCatRail();
     const a = faceFromTo(HOME_POS, new THREE.Vector3(0, 4, 0));
     yaw = tYaw = a.yaw; pitch = tPitch = a.pitch;
     camera.quaternion.setFromEuler(euler.set(pitch, yaw, 0, 'YXZ'));
+    animate();                       // 星空先动起来，不等书卷
+    for (let i = 0; i < nav.length; i++) {
+      buildCategoryAt(nav[i], i, nav.length);
+      loadingEl.textContent = '正在铺展星海… ' + (i + 1) + '/' + nav.length;
+      if (i % 2 === 1) await new Promise((r) => setTimeout(r, 0));
+    }
+    finishSky();
+    buildCatRail();
     loadingEl.textContent = '星海已列';
     enterBtn.disabled = false;
     started = true;
-    animate();
   } catch (err) {
     console.error(err);
     loadingEl.textContent = '天书未显：' + err.message;
