@@ -3,6 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    // 首页默认直达天书：在任何 2D 内容渲染前同步跳走，避免闪一下平面页。
+    // 逃生口：?view=2d（平面视图链接）、移动端/低配/无 WebGL 回落、爬虫（保索引）。
+    (function () {
+      var stay = /[?&]view=2d/.test(location.search) ||
+                 /[?&]from=(mobile|lowend|nowebgl)/.test(location.search) ||
+                 /bot|crawler|spider|slurp/i.test(navigator.userAgent);
+      if (stay) return;
+      try { localStorage.setItem('jgViewPref', '3d'); } catch (e) {}
+      location.replace('library.html?from=home');
+    })();
+  </script>
   <title>集思阁</title>
   <meta name="description" content="集思阁 - 精选 AI 工具、运维监控、开发设计、影音视频、网盘资源等 200+ 优质网站导航，涵盖 ChatGPT、GitHub、哔哩哔哩等实用站点，网址一键直达。">
   <meta name="keywords" content="集思阁,网址导航,网址大全,AI工具,人工智能,ChatGPT,ChatGLM,运维监控,安全工具,开发设计,影音视频,网盘资源,实用网站,好用的网站">
@@ -544,7 +556,7 @@
         <a class="intro-primary" href="library.html" id="introTo3d">入 天 书</a>
         <button class="intro-secondary" type="button" id="introTo2d">入 平 面</button>
       </div>
-      <div class="intro-skip">稍候自动进入天书 · 点空白处或按 Esc 留在平面</div>
+      <div class="intro-skip">稍候自动进入平面导航 · 点「入天书」可进星图</div>
     </div>
   </div>
   <div class="action-buttons">
@@ -1556,7 +1568,7 @@
     });
   </script>
   <script>
-    // 首页默认进天书；明确选过「平面」、被动回落、爬虫则留在 2D
+    // 首页保留 2D：开场只作视觉引导，进不进天书由用户点选，不强制跳转
     (function () {
       var KEY = 'jgIntroSeen', VIEW = 'jgViewPref';
       var intro = document.getElementById('intro');
@@ -1565,9 +1577,9 @@
       try { seen = localStorage.getItem(KEY) === '1'; pref = localStorage.getItem(VIEW); } catch (e) {}
       var to3d = document.getElementById('introTo3d');
       var to2d = document.getElementById('introTo2d');
-      if (pref === '2d' && to2d) to2d.classList.add('intro-pref');
-      else if (to3d) to3d.classList.add('intro-pref');
-      // 被动回落 / 明确要平面 / 爬虫：不跳转、不放开场，保留完整 2D 供索引
+      if (pref === '3d' && to3d) to3d.classList.add('intro-pref');
+      else if (pref === '2d' && to2d) to2d.classList.add('intro-pref');
+      // 被动回落 / 明确要平面 / 爬虫：不放开场，保留完整 2D 供索引
       var stay = /[?&]from=(mobile|lowend|nowebgl)/.test(location.search) ||
                  /[?&]view=2d/.test(location.search) ||
                  /bot|crawler|spider|slurp/i.test(navigator.userAgent);
@@ -1575,14 +1587,10 @@
         try { localStorage.setItem(KEY, '1'); localStorage.setItem(VIEW, '3d'); } catch (e) {}
         location.replace('library.html?from=home');
       }
-      if (stay) {
+      // 看过开场、或被动回落：直接留在平面导航，不再自动跳 3D
+      if (stay || seen) {
         try { localStorage.setItem(KEY, '1'); } catch (e) {}
         intro.remove();
-        return;
-      }
-      if (seen) {
-        intro.remove();
-        if (pref !== '2d') go3d();
         return;
       }
       document.documentElement.style.overflow = 'hidden';
@@ -1599,8 +1607,8 @@
         document.documentElement.style.overflow = '';
         setTimeout(function () { if (intro.parentNode) intro.remove(); }, 850);
       }
-      // 不操作 = 默认进天书
-      timer = setTimeout(function () { done = true; go3d(); }, 3200);
+      // 不操作 = 只淡出开场、留在平面导航
+      timer = setTimeout(function () { close('2d'); }, 3200);
       if (to2d) to2d.addEventListener('click', function () { close('2d'); });
       if (to3d) to3d.addEventListener('click', function () {
         clearTimeout(timer); done = true; go3d();
