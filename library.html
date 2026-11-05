@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>集思阁 · 天书</title>
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="modulepreload" href="assets/three/three.module.min.js">
 <link rel="preload" href="nav.json" as="fetch" crossorigin="anonymous" fetchpriority="high">
 <style>
   :root { --ink: #e9dcc3; --warm: #ffb86b; }
@@ -13,33 +14,82 @@
     font-family: -apple-system, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif; color: var(--ink); }
   #scene { position: fixed; inset: 0; display: block; }
 
-  /* 准星 */
-  #reticle { position: fixed; left: 0; top: 0; width: 8px; height: 8px;
-    border: 1px solid rgba(233,220,195,.7); border-radius: 50%; pointer-events: none; opacity: 0;
-    transform: translate(-50%, -50%); transition: opacity .3s, border-color .15s; z-index: 5; }
+  /* 准星：实心暖白点 + 命中扩散外环 */
+  #reticle { position: fixed; left: 0; top: 0; width: 7px; height: 7px;
+    background: rgba(255,236,200,.95); border: none; border-radius: 50%;
+    box-shadow: 0 0 0 1px rgba(8,6,16,.7), 0 0 9px rgba(255,214,140,.55);
+    pointer-events: none; opacity: 0; transform: translate(-50%, -50%);
+    transition: opacity .3s, background .15s, box-shadow .2s; z-index: 5; }
+  #reticle::after { content: ''; position: absolute; inset: -5px; border-radius: 50%;
+    border: 1px solid rgba(255,214,140,0); transition: border-color .2s, transform .28s; }
   #reticle.active { opacity: 1; }
-  #reticle.hot { transform: translate(-50%, -50%) scale(1.8); border-color: var(--warm); }
+  #reticle.hot { background: var(--warm); transform: translate(-50%, -50%) scale(1.55);
+    box-shadow: 0 0 0 2px rgba(255,214,140,.4), 0 0 16px rgba(255,184,107,.85); }
+  #reticle.hot::after { border-color: rgba(255,214,140,.6); transform: scale(1.6); }
+
+  /* 常驻快捷搜索：一道细线，不抢星空 */
+  #quickWrap { position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+    z-index: 7; width: min(220px, 34vw); opacity: .55; transition: opacity .3s; }
+  #quickWrap:hover, #quickWrap:focus-within { opacity: 1; }
+  #quickSearch { width: 100%; padding: 3px 2px; font-size: 12px; color: var(--ink);
+    background: none; border: none; border-bottom: 1px solid rgba(233,220,195,.2);
+    border-radius: 0; outline: none; font-family: inherit; letter-spacing: .08em; transition: .2s; }
+  #quickSearch::placeholder { color: rgba(233,220,195,.38); }
+  #quickSearch:focus { border-bottom-color: var(--warm); }
+  #quickResults { margin-top: 5px; max-height: 46vh; overflow-y: auto; display: none;
+    background: rgba(8,6,14,.9); border: 1px solid rgba(233,220,195,.12); border-radius: 6px; }
+  #quickResults.show { display: block; }
+  .qres { padding: 6px 10px; font-size: 11px; color: var(--ink); cursor: pointer;
+    border-bottom: 1px solid rgba(233,220,195,.07); text-align: left; }
+  .qres:last-child { border-bottom: none; }
+  .qres:hover { background: rgba(255,184,107,.1); color: var(--warm); }
+  .qres .qk { font-size: 10px; opacity: .45; margin-left: 8px; }
+
+  /* 首屏总览行 */
+  #overview { position: fixed; top: 72px; left: 50%; transform: translateX(-50%); z-index: 6;
+    font-size: 10px; letter-spacing: .22em; color: rgba(233,220,195,.3); opacity: 0;
+    transition: opacity .6s; pointer-events: none; text-shadow: 0 2px 10px #000; }
+  #overview.show { opacity: 1; }
+
+  /* 分类锚点卡 */
+  #anchors { position: fixed; inset: 0; z-index: 4; pointer-events: none; }
+  .anchor { position: absolute; transform: translate(-50%, -50%); pointer-events: auto;
+    padding: 1px 2px; font-size: 11px; letter-spacing: .14em; cursor: pointer;
+    color: rgba(233,220,195,.62); background: none; border: none;
+    border-bottom: 1px solid rgba(233,220,195,.16); border-radius: 0;
+    font-family: inherit; white-space: nowrap;
+    transition: opacity .3s, border-color .2s, color .2s; }
+  .anchor:hover { border-bottom-color: var(--warm); color: var(--warm); }
+  .anchor b { color: rgba(255,214,140,.62); font-weight: 400; margin-left: 5px; font-size: 10px; }
+  .anchor { animation: anchorIn .55s cubic-bezier(.22,.7,.3,1) backwards; }
+  @keyframes anchorIn { from { opacity: 0; transform: translate(-50%, -50%) translateY(12px); } }
+
+  /* 进入遮罩的「思」字印章 */
+  .intro-seal3d { width: 64px; height: 64px; margin: 0 auto 4px; color: rgba(255,214,140,.85);
+    filter: drop-shadow(0 0 18px rgba(255,184,107,.45));
+    animation: introSeal3d .9s .2s cubic-bezier(.2,.8,.3,1) backwards; }
+  .intro-seal3d svg { width: 100%; height: 100%; }
+  @keyframes introSeal3d { from { opacity: 0; transform: scale(.6) rotate(-12deg); } }
 
   /* 当前位置 */
-  #where { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 6;
-    font-size: 13px; letter-spacing: .22em; color: rgba(233,220,195,.78); opacity: 0;
+  #where { position: fixed; top: 50px; left: 50%; transform: translateX(-50%); z-index: 6;
+    font-size: 11px; letter-spacing: .22em; color: rgba(233,220,195,.48); opacity: 0;
     transition: opacity .6s; pointer-events: none; text-shadow: 0 2px 12px #000; }
   #where.show { opacity: 1; }
 
-  /* 分类直达栏 */
-  #catrail { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); z-index: 6;
-    display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; max-width: 94vw;
+  /* 分类直达栏：默认一排极淡小字，鼠标靠近才亮，保持宇宙的完整感 */
+  #catrail { position: fixed; left: 50%; bottom: 12px; transform: translateX(-50%); z-index: 6;
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; max-width: 94vw;
     opacity: 0; pointer-events: none; transition: opacity .6s; }
-  #catrail.show { opacity: 1; pointer-events: auto; }
-  .cr-chip { padding: 6px 13px; font-size: 12px; letter-spacing: .08em; color: rgba(233,220,195,.82);
-    background: rgba(14,12,28,.55); border: 1px solid rgba(233,220,195,.16); border-radius: 999px;
-    cursor: pointer; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-    transition: .2s; font-family: inherit; white-space: nowrap; }
-  .cr-chip:hover { border-color: var(--warm); color: var(--warm); transform: translateY(-2px); }
-  .cr-chip.empty { opacity: .5; }
-  .cr-chip.active { border-color: var(--warm); color: #1a1206;
-    background: linear-gradient(180deg, #ffd9a0, #ffb86b); }
-  .cr-home { color: var(--warm); border-color: rgba(255,184,107,.4); }
+  #catrail.show { opacity: .34; pointer-events: auto; }
+  #catrail.show:hover { opacity: 1; }
+  .cr-chip { padding: 1px 0; font-size: 10px; letter-spacing: .16em; color: rgba(233,220,195,.7);
+    background: none; border: none; border-bottom: 1px solid transparent; border-radius: 0;
+    cursor: pointer; transition: .2s; font-family: inherit; white-space: nowrap; }
+  .cr-chip:hover { color: var(--warm); border-bottom-color: rgba(255,184,107,.55); }
+  .cr-chip.empty { opacity: .4; }
+  .cr-chip.active { color: var(--warm); border-bottom-color: var(--warm); background: none; }
+  .cr-home { color: rgba(255,214,140,.7); }
 
   /* Esc 指南 */
   .help-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 26px;
@@ -48,24 +98,18 @@
   .help-grid b { color: var(--warm); font-weight: 600; margin-right: 8px; }
   #helpStat { font-size: 12px; letter-spacing: .18em; opacity: .55; }
 
-  /* 移动端星图导览 */
-  #mobileCats { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 90vw; }
-  #mobileCats a { padding: 7px 14px; font-size: 13px; letter-spacing: .08em; color: var(--ink);
-    border: 1px solid rgba(233,220,195,.22); border-radius: 999px; text-decoration: none;
-    background: rgba(20,16,28,.45); transition: .2s; }
-  #mobileCats a:hover { border-color: var(--warm); color: var(--warm); }
-
   /* 操作提示（进入后短暂浮出） */
-  #hint { position: fixed; left: 50%; bottom: 18%; transform: translateX(-50%); z-index: 5;
-    font-size: 13px; letter-spacing: .12em; color: var(--ink); opacity: 0;
-    padding: 9px 18px; background: rgba(20,16,28,.5); border: 1px solid rgba(233,220,195,.18);
-    border-radius: 999px; pointer-events: none; transition: opacity .4s; text-shadow: 0 2px 10px #000; }
+  #hint { position: fixed; left: 50%; bottom: 14%; transform: translateX(-50%); z-index: 5;
+    font-size: 11px; letter-spacing: .16em; color: rgba(233,220,195,.5); opacity: 0;
+    padding: 2px 0; background: none; border: none; border-bottom: 1px solid rgba(233,220,195,.12);
+    border-radius: 0; pointer-events: none; transition: opacity .4s; text-shadow: 0 2px 10px #000; }
 
   /* 顶部按钮 */
-  .topbtn { position: fixed; top: 18px; z-index: 6; padding: 9px 16px; font-size: 13px; letter-spacing: .14em;
-    color: var(--ink); background: rgba(20,16,28,.55); border: 1px solid rgba(233,220,195,.22);
-    border-radius: 999px; cursor: pointer; backdrop-filter: blur(6px); transition: .2s; text-decoration: none; }
-  .topbtn:hover { border-color: var(--warm); color: var(--warm); }
+  .topbtn { position: fixed; top: 16px; z-index: 6; padding: 3px 2px; font-size: 11px; letter-spacing: .16em;
+    color: rgba(233,220,195,.5); background: none; border: none;
+    border-bottom: 1px solid transparent; border-radius: 0;
+    cursor: pointer; transition: .2s; text-decoration: none; }
+  .topbtn:hover { border-bottom-color: rgba(255,184,107,.55); color: var(--warm); }
   #back { left: 18px; }
   #mute { right: 18px; display: none; }
 
@@ -97,7 +141,7 @@
     box-shadow: 0 0 40px rgba(255,184,107,.45); transition: transform .15s; }
   .enter:hover { transform: translateY(-2px); }
   #loading { font-size: 13px; opacity: .6; letter-spacing: .3em; }
-  #unsupported { display: none; }
+  .autohint { font-size: 11px; opacity: .38; letter-spacing: .22em; }
 
   /* 搜索 */
   #searchOv { background: rgba(8,6,12,.93); }
@@ -118,23 +162,38 @@
 <body>
   <canvas id="scene"></canvas>
 
-  <a id="back" class="topbtn" href="index.html">← 返回平面</a>
+  <a id="back" class="topbtn" href="index.html?view=2d" onclick="try{localStorage.setItem('jgViewPref','2d')}catch(e){}">⊞ 平面视图</a>
   <button id="searchBtn" class="topbtn" type="button" style="right:96px;display:none">搜索</button>
   <button id="mute" class="topbtn" type="button" style="display:none">♪ 声音</button>
 
+  <div id="anchors"></div>
+  <div id="quickWrap">
+    <input id="quickSearch" type="text" placeholder="搜站点 / 分类…" autocomplete="off" spellcheck="false" aria-label="快捷搜索" />
+    <div id="quickResults"></div>
+  </div>
   <div id="reticle"></div>
   <div id="where"></div>
+  <div id="overview"></div>
   <div id="catrail"></div>
 
   <div id="hint">拖拽环顾 · 单击展卷 · 滚轮远近 · 悬停显全名 · F 收藏 · Esc 指南</div>
 
   <!-- 进入遮罩 -->
   <div id="overlay-intro" class="overlay">
+    <div class="intro-seal3d" aria-hidden="true">
+      <svg viewBox="0 0 100 100">
+        <rect x="5" y="5" width="90" height="90" rx="3" fill="none" stroke="currentColor" stroke-width="7"/>
+        <rect x="15" y="15" width="70" height="70" rx="1.5" fill="none" stroke="currentColor" stroke-width="2"/>
+        <text x="50" y="51" text-anchor="middle" dominant-baseline="central" fill="currentColor" font-family="Kaiti SC, STKaiti, KaiTi, serif" font-size="47">思</text>
+      </svg>
+    </div>
     <h1>集思阁 · 天书</h1>
     <div class="sub">书卷悬浮于虚空，如星海列宿。数据与平面导航同源，最近访问与收藏两处互通；悬停即显全名，寻你要的那一页。</div>
+    <div id="introTotal" class="sub" style="font-size:12px;opacity:.5;letter-spacing:.2em"></div>
     <div class="keys"><b>拖拽</b> 环顾 &nbsp;·&nbsp; <b>滚轮</b> 远近 &nbsp;·&nbsp; <b>单击书卷</b> 展卷（远者先拉近） &nbsp;·&nbsp; <b>悬停</b> 显全名 &nbsp;·&nbsp; <b>F</b> 收藏 &nbsp;·&nbsp; <b>Esc</b> 指南 &nbsp;·&nbsp; <b>/</b> 搜索</div>
     <button id="enter" class="enter" type="button">点 击 进 入</button>
     <div id="loading">正在铺展星海…</div>
+    <div class="autohint">星海列毕 · 自动入阁</div>
   </div>
 
   <!-- Esc 指南 / 暂歇 -->
@@ -152,14 +211,6 @@
     <button id="resume" class="enter" type="button">继 续 游 览</button>
   </div>
 
-  <!-- 移动端：静态星图导览 -->
-  <div id="unsupported" class="overlay">
-    <h1 style="font-size:clamp(24px,5vw,38px)">星 图 导 览</h1>
-    <div class="sub">天书为桌面自由飞览而设，此处先列星图分类，点选可直达平面导航。</div>
-    <div id="mobileCats"></div>
-    <a class="enter" href="index.html" style="text-decoration:none">← 返回平面导航</a>
-  </div>
-
   <!-- 搜索遮罩 -->
   <div id="searchOv" class="overlay hidden">
     <div class="searchbox">
@@ -170,30 +221,53 @@
   </div>
 
   <script>
-    // 触屏设备不加载 WebGL 模块，改用静态星图导览，避免无谓报错与耗电
+    // 触屏 / 低配 / 无 WebGL 一律回落到完整 2D 目录，不再只给静态导览
+    // ?force=3d 可强制查看 3D（备用）
     (function () {
+      var force = /[?&]force=3d/.test(location.search);
       var touch = window.matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window
         || navigator.maxTouchPoints > 0;
-      if (touch) {
-        document.getElementById('overlay-intro').classList.add('hidden');
-        var ov = document.getElementById('unsupported');
-        ov.style.display = 'flex';
-        var box = document.getElementById('mobileCats');
-        fetch('nav.json').then(function (r) { return r.json(); }).then(function (d) {
-          var esc = function (s) {
-            return String(s).replace(/[&<>"]/g, function (c) {
-              return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
-            });
-          };
-          var html = '';
-          (d.navigation || []).forEach(function (c, i) {
-            if (!(c.items && c.items.length) && !(c.subcategories && c.subcategories.length)) return;
-            html += '<a href="index.html#cat-' + i + '">' + esc(c.category || '') + '</a>';
-          });
-          box.innerHTML = html || '<span class="sub">星图暂未显现</span>';
-        }).catch(function () { box.textContent = '星图暂未显现'; });
+      var lowEnd = false, hasGL = true;
+      try {
+        lowEnd = (navigator.deviceMemory && navigator.deviceMemory <= 2) ||
+                 (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2);
+        var c = document.createElement('canvas');
+        hasGL = !!(c.getContext('webgl2') || c.getContext('webgl'));
+      } catch (e) { hasGL = false; }
+      if (!force && (touch || lowEnd || !hasGL)) {
+        location.replace('index.html?from=' + (touch ? 'mobile' : lowEnd ? 'lowend' : 'nowebgl'));
         return;
       }
+      // 首页默认会跳到本页，统计必须在最终落地页补注入；sessionStorage 与 2D 幂等去重
+      (function () {
+        var LA_ID = "3RCu6CKVyr0YMbbv";
+        function injectLA() {
+          try {
+            if (sessionStorage.getItem('jgLA')) return;
+            sessionStorage.setItem('jgLA', '1');
+          } catch (e) {}
+          var a = document.createElement('script');
+          a.charset = 'UTF-8'; a.id = 'LA_COLLECT';
+          a.src = '//sdk.51.la/js-sdk-pro.min.js';
+          a.onload = function () {
+            if (window.LA) LA.init({ id: LA_ID, ck: LA_ID, autoTrack: true, hashMode: true });
+          };
+          document.head.appendChild(a);
+        }
+        try {
+          if (!sessionStorage.getItem('jgCounter')) {
+            sessionStorage.setItem('jgCounter', '1');
+            fetch('https://counter.justgame.top/api/counter', { method: 'POST' })
+              .then(function (r) { return r.json(); })
+              .then(function (d) {
+                var el = document.getElementById('visitor-count');
+                if (el) el.textContent = d.count;
+              }).catch(function () {});
+          }
+        } catch (e) {}
+        if (window.requestIdleCallback) requestIdleCallback(injectLA, { timeout: 2000 });
+        else setTimeout(injectLA, 200);
+      })();
       var s = document.createElement('script');
       s.type = 'module'; s.src = 'assets/js/library.js';
       document.body.appendChild(s);

@@ -33,6 +33,11 @@ const loadingEl   = $('loading');
 const catrailEl   = $('catrail');
 const whereEl     = $('where');
 const helpStatEl  = $('helpStat');
+const anchorsEl   = $('anchors');
+const quickInput  = $('quickSearch');
+const quickResEl  = $('quickResults');
+const overviewEl  = $('overview');
+const introTotal  = $('introTotal');
 
 canvas.style.touchAction = 'none';
 
@@ -40,8 +45,15 @@ canvas.style.touchAction = 'none';
 const NAV_PROMISE = fetch(NAV_URL).then((r) => r.json());
 
 // ---------- 渲染器 / 场景 / 相机 ----------
+// 低配设备降低贴图超采样与像素比，省显存；更弱的已在 library.html 直接回落 2D
+const LOW_END = (function () {
+  try {
+    return (navigator.deviceMemory && navigator.deviceMemory <= 4) ||
+      (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
+  } catch (e) { return false; }
+})();
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
-const DPR_HIGH = Math.min(window.devicePixelRatio || 1, 2);
+const DPR_HIGH = Math.min(window.devicePixelRatio || 1, LOW_END ? 1.5 : 2);
 renderer.setPixelRatio(DPR_HIGH);
 renderer.setSize(window.innerWidth, window.innerHeight);
 let perfFrames = 0, perfReal = 0, perfChecked = false;
@@ -53,9 +65,25 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x04050b);
 scene.fog = new THREE.FogExp2(0x04050b, 0.0032);
 
+// 时辰主题：按本地时间改星海底色与曝光，晨昏更暖、正午更清、深夜更沉
+function applyTimeTheme() {
+  const h = new Date().getHours();
+  let bg, expo;
+  if (h >= 5 && h < 9) { bg = 0x0d1126; expo = 1.34; }
+  else if (h >= 9 && h < 17) { bg = 0x050a18; expo = 1.18; }
+  else if (h >= 17 && h < 20) { bg = 0x170d1e; expo = 1.38; }
+  else { bg = 0x04050b; expo = 1.25; }
+  scene.background.setHex(bg);
+  scene.fog.color.setHex(bg);
+  renderer.toneMappingExposure = expo;
+}
+applyTimeTheme();
+
 const camera = new THREE.PerspectiveCamera(72, window.innerWidth / window.innerHeight, 0.1, 1800);
 const euler = new THREE.Euler(0, 0, 0, 'YXZ');
-const HOME_POS = new THREE.Vector3(0, 26, 152);
+// 当首页：默认视角收近，书卷从 ~11px 变成 ~19px；入场再从这个更远处缓缓推近
+const HOME_POS = new THREE.Vector3(0, 24, 110);
+const PUSH_START = new THREE.Vector3(0, 38, 215);
 camera.position.copy(HOME_POS);
 
 // ---------- 通用贴图工具 ----------
@@ -66,7 +94,7 @@ function clipText(s, n) {
 }
 // 文字贴图统一高倍超采样绘制，再以线性过滤采样（禁用 mipmap），
 // 避免 3D 中文字因贴图分辨率不足 / mipmap 缩糊而发虚。
-const ICON_SS = 1.5, TEXT_SS = 2, CARD_SS = 3;
+const ICON_SS = LOW_END ? 1 : 1.5, TEXT_SS = LOW_END ? 1.5 : 2, CARD_SS = LOW_END ? 2 : 3;
 function finishTex(c, aspect) {
   const t = new THREE.CanvasTexture(c);
   t.colorSpace = THREE.SRGBColorSpace;
@@ -301,7 +329,7 @@ function makeIconTexture(ch, color) {
   return t;
 }
 // 悬停名牌：默认只一个字，悬停后全名 + 简介 + 操作提示都展开
-function makeCardTexture(title, desc, hex, hint) {
+function makeCardTexture(title, desc, hex, hint, cat) {
   // 玉简式名牌：细边、左侧一道暖金指示线，文字左对齐、操作提示右对齐
   const fsT = 40, fsD = 23, fsH = 19, padV = 16, gap = 8, padL = 32, padR = 18;
   const ttl = clipText(title || '未命名', 22);
@@ -312,7 +340,10 @@ function makeCardTexture(title, desc, hex, hint) {
   m.font = fsD + 'px ' + CN;
   const dw = dtxt ? Math.min(m.measureText(dtxt).width, 700) : 0;
   m.font = fsH + 'px ' + CN;
-  const hw = Math.min(m.measureText(hint).width, 700);
+  const hintW = m.measureText(hint).width;
+  m.font = (fsH - 2) + 'px ' + CN;
+  const catW = m.measureText(cat || '').width;
+  const hw = Math.min(hintW + catW + 28, 700);
   const w = Math.ceil(Math.max(tw, dw, hw, 190) + padL + padR);
   let y = padV, descY = 0;
   const titleY = y + fsT / 2; y += fsT;
@@ -323,9 +354,9 @@ function makeCardTexture(title, desc, hex, hint) {
   const c = document.createElement('canvas'); c.width = w * CARD_SS; c.height = h * CARD_SS;
   const g = c.getContext('2d');
   g.scale(CARD_SS, CARD_SS);
-  g.fillStyle = 'rgba(8,10,22,0.80)';
+  g.fillStyle = 'rgba(8,10,22,0.62)';
   roundRect(g, 2, 2, w - 4, h - 4, 8); g.fill();
-  g.strokeStyle = hex; g.lineWidth = 1.5; g.shadowColor = hex; g.shadowBlur = 12 * CARD_SS;
+  g.strokeStyle = hex; g.lineWidth = 1.2; g.shadowColor = hex; g.shadowBlur = 10 * CARD_SS;
   roundRect(g, 2, 2, w - 4, h - 4, 8); g.stroke(); g.shadowBlur = 0;
   // 左侧细指示线
   g.fillStyle = 'rgba(255,214,140,0.9)';
@@ -341,6 +372,10 @@ function makeCardTexture(title, desc, hex, hint) {
     g.fillStyle = 'rgba(233,220,195,0.8)'; g.font = fsD + 'px ' + CN;
     g.fillText(dtxt, padL, descY);
   }
+  // 底行左侧标出分类归属，右侧是操作提示
+  g.textAlign = 'left';
+  g.fillStyle = 'rgba(233,220,195,0.55)'; g.font = (fsH - 2) + 'px ' + CN;
+  g.fillText(cat || '', padL, hintY);
   g.textAlign = 'right';
   g.fillStyle = 'rgba(255,214,140,0.92)'; g.font = fsH + 'px ' + CN;
   g.fillText(hint, w - padR, hintY);
@@ -457,7 +492,7 @@ function updateBursts(dt) {
   }
 }
 const cardBase = new THREE.Vector2(1, 1);
-const CARD_OFFSET = 3.2;
+const CARD_OFFSET = 3.6;
 const cardDown = new THREE.Vector3();
 // 沿「相机屏幕下方」偏移，而不是世界 Y：俯视/仰视时名牌也稳定在书卷下方，不遮住书卷
 function placeCard(bp) {
@@ -470,7 +505,7 @@ let cardAlpha = 0, cardShown = false, cardKey = '';
 let bookSprites = [], bookData = [], bookColor = [], bookCluster = [], clusterInfo = [], searchIndex = [];
 let hoveredIdx = -1, pendingOpen = -1;
 const driftData = [];
-const baseScale = new THREE.Vector2(2.7, 2.7);
+const baseScale = new THREE.Vector2(2.9, 2.9);
 const HOVER_SCALE = 1.45;
 const OPEN_DIST = 15;
 
@@ -516,12 +551,6 @@ function buildCategoryAt(cat, ci, n) {
     const cy = Math.sin(ci * 1.3) * 10;
     const center = new THREE.Vector3(cx, cy, cz);
     const col = catColor(ci, n);
-
-    const tt = makeTitleTexture('「' + cat.category + '」');
-    const titleSpr = new THREE.Sprite(new THREE.SpriteMaterial({ map: tt, transparent: true, depthWrite: false, fog: false }));
-    titleSpr.scale.set(15, 15 / tt.aspect, 1);
-    titleSpr.position.copy(center).add(new THREE.Vector3(0, 14, 0));
-    scene.add(titleSpr);
 
     const entries = collectItems(cat);
     const k = entries.length;
@@ -574,7 +603,7 @@ function buildCategoryAt(cat, ci, n) {
     scene.add(new THREE.LineSegments(lg, new THREE.LineBasicMaterial({
       color: col, transparent: true, opacity: 0.16, depthWrite: false, fog: false
     })));
-    clusterInfo.push({ name: cat.category, center: center.clone(), titleSpr });
+    clusterInfo.push({ name: cat.category, center: center.clone(), titleSpr: null, count: entries.length });
 }
 
 function finishSky() {
@@ -604,6 +633,20 @@ function finishSky() {
     if (d && d.url) searchIndex.push({ type: 'item', title: d.title, desc: d.desc, sub: d.sub, url: d.url, inst: i });
   });
   buildFlow();
+  // 分类锚点卡：全景时给出「分类名 · 站点数」，点一下直飞，补足首页的目录感
+  clusterInfo.forEach((c, ci) => {
+    if (ci >= clusterInfo.length - urlClusters.length) return;
+    const el = document.createElement('button');
+    el.type = 'button';
+    el.className = 'anchor';
+    el.innerHTML = escHtml(c.name) + ' <b>' + (c.count || 0) + '</b>';
+    el.style.opacity = '0';
+    el.style.pointerEvents = 'none';
+    el.style.animationDelay = (0.05 * ci) + 's';
+    el.addEventListener('click', (e) => { e.stopPropagation(); teleportToCluster(ci, true); });
+    anchorsEl.appendChild(el);
+    c.anchorEl = el;
+  });
 }
 
 // ---------- 最近访问 / 我的收藏（与 2D 站共用 URL 数组）----------
@@ -709,7 +752,9 @@ let hintTimer = 0;
 const STEP = 10, WALK_CLAMP = 50, MOVE_SPEED = 11.0, MAX_R = 520;
 const POS_LERP = 8.5, ANG_LERP = 6.0;
 let mouseNDC = new THREE.Vector2(0, 0);
+let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
 let pointerActive = false, dragMoved = false, downX = 0, downY = 0;
+let introPush = 0, entered = false, focusAlpha = 1, focusCi = -1;
 
 function onKey(e, down) {
   const k = e.code;
@@ -748,9 +793,10 @@ canvas.addEventListener('pointerdown', (e) => {
 window.addEventListener('pointermove', (e) => {
   mouseNDC.x = (e.clientX / window.innerWidth) * 2 - 1;
   mouseNDC.y = -(e.clientY / window.innerHeight) * 2 + 1;
-  // 准星跟随光标：拾取本就按鼠标位置，别再让中心准星误导
-  reticle.style.left = e.clientX + 'px';
-  reticle.style.top = e.clientY + 'px';
+  mouseX = e.clientX; mouseY = e.clientY;
+  // 准星默认跟随光标；命中书卷后由 updateReticle 磁吸到书卷中心
+  reticle.style.left = mouseX + 'px';
+  reticle.style.top = mouseY + 'px';
   if (!pointerActive || searchOpen || helpOpen) return;
   if (Math.hypot(e.clientX - downX, e.clientY - downY) > 6) dragMoved = true;
   yaw   -= (e.movementX || 0) * 0.0024;
@@ -766,7 +812,7 @@ window.addEventListener('pointerup', () => {
   if (hoveredIdx >= 0) {
     const bp = bookSprites[hoveredIdx].position;
     if (camera.position.distanceTo(bp) <= OPEN_DIST) openBook(hoveredIdx);
-    else teleportToBook(hoveredIdx);
+    else teleportToBook(hoveredIdx, true);
   } else {
     walkRemaining = Math.max(-WALK_CLAMP, Math.min(WALK_CLAMP, walkRemaining + STEP));
   }
@@ -794,7 +840,41 @@ function glideTo(pos, lookAt) {
   tPitch = Math.max(-1.4, Math.min(1.4, a.pitch));
   gliding = true;
 }
+// ---------- hash 路由：刷新保持、前进后退、可分享 ----------
+let routing = false;
+function setHash(h, push) {
+  if (routing) return;
+  try {
+    const url = h || (location.pathname + location.search);
+    if (push) history.pushState(null, '', url);
+    else history.replaceState(null, '', url);
+  } catch (e) {}
+}
+// 书卷用 URL 编码做稳定标识：nav.json 顺序变化或空槽位增减都不会让分享链接失效
+function bookHashOf(inst) {
+  const u = bookData[inst] && bookData[inst].url;
+  return u ? '#site-' + encodeURIComponent(u) : '';
+}
+function applyHash() {
+  const hash = location.hash;
+  const cat = /^#cat-(\d+)$/.exec(hash);
+  const site = hash.indexOf('#site-') === 0 ? hash.slice(6) : '';
+  const legacy = /^#book-(\d+)$/.exec(hash);   // 兼容旧链接
+  if (!cat && !site && !legacy) return;
+  routing = true;
+  if (cat && clusterInfo[+cat[1]]) teleportToCluster(+cat[1]);
+  else if (site) {
+    let url = site;
+    try { url = decodeURIComponent(site); } catch (e) {}
+    const idx = bookData.findIndex((d) => d && d.url === url);
+    if (idx >= 0 && bookSprites[idx] && bookSprites[idx].visible) teleportToBook(idx);
+  } else if (legacy && bookSprites[+legacy[1]]) teleportToBook(+legacy[1]);
+  routing = false;
+}
+window.addEventListener('popstate', applyHash);
+
 function goHome() {
+  setHash('');
   blip(300, 0.2, 0.035);
   pendingOpen = -1;
   glideTo(HOME_POS.clone(), new THREE.Vector3(0, 4, 0));
@@ -803,9 +883,12 @@ function goHome() {
   cardShown = false;
 }
 
-enterBtn.addEventListener('click', () => {
-  if (!started) return;
-  introOv.classList.add('hidden');
+function enterNow() {
+  if (!started || entered) return;
+  entered = true;
+  introOv.style.transition = 'opacity .6s ease';
+  introOv.style.opacity = '0';
+  setTimeout(() => introOv.classList.add('hidden'), 620);
   muteBtn.style.display = 'block';
   searchBtn.style.display = 'block';
   reticle.classList.add('active');
@@ -813,10 +896,13 @@ enterBtn.addEventListener('click', () => {
   reticle.style.top = (window.innerHeight / 2) + 'px';
   catrailEl.classList.add('show');
   whereEl.classList.add('show');
+  overviewEl.classList.add('show');
+  anchorsEl.style.display = 'block';
   startAudio();
   hintTimer = 0;
   updateHint();
-});
+}
+enterBtn.addEventListener('click', enterNow);
 
 // ---------- 拾取 ----------
 const raycaster = new THREE.Raycaster();
@@ -850,7 +936,8 @@ function updatePick() {
       const desc = (d.sub ? '「' + d.sub + '」 ' : '') + d.desc;
       const hint = (twoStep ? '再次单击 · 展卷' : '单击 · 展卷') +
         (isFav ? '  ·  ★ 已收藏 (F 取消)' : '  ·  F 收藏');
-      const t = makeCardTexture(d.title, desc, '#' + col.getHexString(), hint);
+      const cat = clusterInfo[bookCluster[hoveredIdx]] ? clusterInfo[bookCluster[hoveredIdx]].name : '';
+      const t = makeCardTexture(d.title, desc, '#' + col.getHexString(), hint, cat);
       if (cardSprite.material.map) cardSprite.material.map.dispose();
       cardSprite.material.map = t;
       cardSprite.material.needsUpdate = true;
@@ -912,6 +999,11 @@ function startAudio() {
     audioOn = true;
   } catch (e) {}
 }
+// 自动进入时 AudioContext 可能处于 suspended，首次真实交互再唤醒
+document.addEventListener('pointerdown', () => {
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+});
+
 muteBtn.addEventListener('click', (e) => {
   e.stopPropagation();
   if (!audioCtx) return;
@@ -936,7 +1028,7 @@ function buildCatRail() {
       b.classList.add('empty');
       b.title = '暂无记录，点此可看看';
     }
-    b.addEventListener('click', (e) => { e.stopPropagation(); teleportToCluster(ci); });
+    b.addEventListener('click', (e) => { e.stopPropagation(); teleportToCluster(ci, true); });
     catrailEl.appendChild(b);
   });
 }
@@ -1036,11 +1128,11 @@ function renderSearch() {
   }
 }
 function goToResult(r) {
-  if (r.type === 'cat') teleportToCluster(r.cluster);
-  else teleportToBook(r.inst);
+  if (r.type === 'cat') teleportToCluster(r.cluster, true);
+  else teleportToBook(r.inst, true);
   closeSearch();
 }
-function teleportToCluster(ci) {
+function teleportToCluster(ci, push) {
   const c = clusterInfo[ci];
   const dir = c.center.clone();
   if (dir.lengthSq() < 1) dir.set(0, 0, 1);
@@ -1048,12 +1140,13 @@ function teleportToCluster(ci) {
   const pos = c.center.clone().addScaledVector(dir, 24);
   pos.y += 5;
   glideTo(pos, c.center);
+  setHash('#cat-' + ci, push);
   pendingOpen = -1;
   mouseNDC.set(0, 0);
   hoveredIdx = -1;
   cardShown = false;
 }
-function teleportToBook(inst) {
+function teleportToBook(inst, push) {
   const ci = bookCluster[inst];
   const c = clusterInfo[ci];
   const bp = bookSprites[inst].position.clone();
@@ -1067,6 +1160,7 @@ function teleportToBook(inst) {
   const pos = bp.clone().addScaledVector(out, 10);
   pos.y += 1.5;
   glideTo(pos, bp);
+  setHash(bookHashOf(inst), push);
   mouseNDC.set(0, 0);
   pendingOpen = inst;
   hoveredIdx = -1;
@@ -1075,6 +1169,55 @@ function teleportToBook(inst) {
 searchBtn.addEventListener('click', openSearch);
 searchClose.addEventListener('click', closeSearch);
 searchInput.addEventListener('input', renderSearch);
+
+// ---------- 常驻快捷搜索（首页高频动作，不必按 / 调出全屏） ----------
+function renderQuick() {
+  const q = quickInput.value.trim().toLowerCase();
+  if (!q) { quickResEl.classList.remove('show'); quickResEl.innerHTML = ''; return; }
+  const list = searchIndex.filter((r) => {
+    const name = r.name || '', title = r.title || '';
+    return name.toLowerCase().includes(q) || title.toLowerCase().includes(q) ||
+      (r.desc && r.desc.toLowerCase().includes(q)) ||
+      (r.url && r.url.toLowerCase().includes(q)) ||
+      (name && (py(name).includes(q) || pyInitials(name).includes(q))) ||
+      (title && (py(title).includes(q) || pyInitials(title).includes(q)));
+  }).slice(0, 8);
+  quickResEl.innerHTML = '';
+  if (!list.length) {
+    quickResEl.innerHTML = '<div class="qres" style="opacity:.5">无匹配 · 按 / 全屏搜索</div>';
+    quickResEl.classList.add('show');
+    return;
+  }
+  for (const r of list) {
+    const div = document.createElement('div');
+    div.className = 'qres';
+    div.innerHTML = escHtml(r.type === 'cat' ? r.name : r.title) +
+      '<span class="qk">' + (r.type === 'cat' ? '分类' : '网站') + '</span>';
+    div.addEventListener('click', () => {
+      if (r.type === 'cat') teleportToCluster(r.cluster, true);
+      else teleportToBook(r.inst, true);
+      quickInput.value = '';
+      quickResEl.classList.remove('show');
+      quickInput.blur();
+    });
+    quickResEl.appendChild(div);
+  }
+  quickResEl.classList.add('show');
+}
+quickInput.addEventListener('input', renderQuick);
+quickInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    e.stopPropagation();
+    quickInput.value = ''; quickResEl.classList.remove('show'); quickInput.blur();
+  } else if (e.key === 'Enter') {
+    e.preventDefault(); e.stopPropagation();
+    const first = quickResEl.querySelector('.qres');
+    if (first) first.click();
+  }
+});
+document.addEventListener('pointerdown', (e) => {
+  if (!e.target.closest || !e.target.closest('#quickWrap')) quickResEl.classList.remove('show');
+});
 let keyboardIdx = -1;
 function focusNextBook(dir) {
   if (!bookData.length) return;
@@ -1100,7 +1243,7 @@ document.addEventListener('keydown', (e) => {
     return;
   }
   if (helpOpen) return;
-  if (e.key === '/' && started && !searchOpen) { e.preventDefault(); openSearch(); }
+  if (e.key === '/' && started && !searchOpen && document.activeElement !== quickInput) { e.preventDefault(); openSearch(); }
   else if (e.key === 'Tab' && started && !searchOpen) { e.preventDefault(); focusNextBook(e.shiftKey ? -1 : 1); }
   else if (e.key === 'Enter' && started && !searchOpen) {
     e.preventDefault();
@@ -1163,7 +1306,9 @@ function animate() {
   }
 
   // 阻尼相机：位置追随 + 自动转向
-  camera.position.lerp(camTarget, 1 - Math.exp(-POS_LERP * dt));
+  const pushK = introPush > 0 ? 1.6 : POS_LERP;
+  camera.position.lerp(camTarget, 1 - Math.exp(-pushK * dt));
+  if (introPush > 0) introPush = Math.max(0, introPush - dt / 1.8);
   if (gliding) {
     const a = 1 - Math.exp(-ANG_LERP * dt);
     yaw   += (tYaw - yaw) * a;
@@ -1176,15 +1321,34 @@ function animate() {
   camera.quaternion.setFromEuler(euler);
 
   // 书卷漂浮 + 微光呼吸
+  // 聚焦：靠近某星团时其他星团淡出、当前星团略微散开，避免拉近后互相混淆
+  focusCi = -1;
+  let bestD = Infinity, bestCi = -1;
+  for (let ci = 0; ci < clusterInfo.length; ci++) {
+    const dd = camera.position.distanceTo(clusterInfo[ci].center);
+    if (dd < bestD) { bestD = dd; bestCi = ci; }
+  }
+  if (bestD < 36) focusCi = bestCi;
+  focusAlpha += ((hoveredIdx >= 0 ? 0.3 : 1) - focusAlpha) * Math.min(1, dt * 8);
+  const focusDim = focusCi >= 0 ? 0.42 : 1;
   for (let i = 0; i < bookSprites.length; i++) {
     const d = driftData[i];
+    const c = clusterInfo[bookCluster[i]];
+    let bx = d.base.x, by = d.base.y, bz = d.base.z;
+    if (c && focusCi >= 0 && bookCluster[i] === focusCi) {
+      const s = 1.16;
+      bx = c.center.x + (bx - c.center.x) * s;
+      by = c.center.y + (by - c.center.y) * s;
+      bz = c.center.z + (bz - c.center.z) * s;
+    }
     bookSprites[i].position.set(
-      d.base.x + Math.sin(t * d.speed + d.phase) * d.amp,
-      d.base.y + Math.cos(t * d.speed * 0.8 + d.phase) * d.amp,
-      d.base.z + Math.sin(t * d.speed * 1.1 + d.phase) * d.amp * 0.6
+      bx + Math.sin(t * d.speed + d.phase) * d.amp,
+      by + Math.cos(t * d.speed * 0.8 + d.phase) * d.amp,
+      bz + Math.sin(t * d.speed * 1.1 + d.phase) * d.amp * 0.6
     );
     if (i !== hoveredIdx) {
-      bookSprites[i].material.opacity = 0.9 + 0.1 * Math.sin(t * 1.5 + d.phase);
+      const dim = Math.min(focusAlpha, (focusCi >= 0 && bookCluster[i] !== focusCi) ? focusDim : 1);
+      bookSprites[i].material.opacity = (0.9 + 0.1 * Math.sin(t * 1.5 + d.phase)) * dim;
       bookSprites[i].scale.set(baseScale.x, baseScale.y, 1);
     }
   }
@@ -1230,6 +1394,10 @@ function animate() {
     const d = camera.position.distanceTo(c.center);
     c.titleSpr.material.opacity = Math.max(0, Math.min(1, (d - 20) / 26));
   }
+  // 空态提示属于无关信息，全景时收起，只对靠近该星团的人显示
+  for (const cl of urlClusters) {
+    if (cl.emptySpr) cl.emptySpr.visible = cl.count === 0 && focusCi === cl.ci;
+  }
 
   // 星海呼吸与缓转
   starsFar.material.opacity  = 0.80 + 0.18 * Math.sin(t * 1.2);
@@ -1242,6 +1410,52 @@ function animate() {
   updateWhere(dt);
 
   renderer.render(scene, camera);
+  updateReticle();
+  updateAnchors();
+}
+
+// 分类锚点卡随 3D 投影移动；飞近后自动隐藏，避免与近景内容打架
+const anchorProj = new THREE.Vector3();
+function updateAnchors() {
+  if (!entered) return;
+  // 全景显示目录锚点；一旦聚焦到某个星团就收起，避免与近景内容打架
+  const show = focusCi < 0 && !searchOpen && !helpOpen;
+  for (let ci = 0; ci < clusterInfo.length; ci++) {
+    const c = clusterInfo[ci];
+    if (!c.anchorEl) continue;
+    let ok = show;
+    let x = 0, y = 0, clamped = false;
+    if (ok) {
+      anchorProj.copy(c.center);
+      anchorProj.y += 18;
+      anchorProj.project(camera);
+      x = (anchorProj.x * 0.5 + 0.5) * window.innerWidth;
+      y = (-anchorProj.y * 0.5 + 0.5) * window.innerHeight;
+      ok = anchorProj.z <= 1;
+      if (ok) {
+        // 透视下边缘分类会跑出视野：收拢到屏幕内并淡化，保证 12 类都可见可点
+        if (x < 62) { x = 62; clamped = true; }
+        if (x > window.innerWidth - 62) { x = window.innerWidth - 62; clamped = true; }
+        if (y < 92) { y = 92; clamped = true; }
+        if (y > window.innerHeight - 92) { y = window.innerHeight - 92; clamped = true; }
+      }
+    }
+    c.anchorEl.style.opacity = ok ? (clamped ? '0.32' : '0.72') : '0';
+    c.anchorEl.style.pointerEvents = ok ? 'auto' : 'none';
+    if (ok) { c.anchorEl.style.left = x + 'px'; c.anchorEl.style.top = y + 'px'; }
+  }
+}
+
+// 命中的书卷会把准星「吸」到自己的屏幕中心，明确点的是哪一本
+function updateReticle() {
+  if (hoveredIdx >= 0 && bookSprites[hoveredIdx]) {
+    const p = bookSprites[hoveredIdx].position.clone().project(camera);
+    reticle.style.left = ((p.x * 0.5 + 0.5) * window.innerWidth) + 'px';
+    reticle.style.top = ((-p.y * 0.5 + 0.5) * window.innerHeight) + 'px';
+  } else {
+    reticle.style.left = mouseX + 'px';
+    reticle.style.top = mouseY + 'px';
+  }
 }
 
 window.addEventListener('resize', () => {
@@ -1269,6 +1483,10 @@ async function boot() {
     const a = faceFromTo(HOME_POS, new THREE.Vector3(0, 4, 0));
     yaw = tYaw = a.yaw; pitch = tPitch = a.pitch;
     camera.quaternion.setFromEuler(euler.set(pitch, yaw, 0, 'YXZ'));
+    // 入场推镜：星海在遮罩后就从远处缓缓推近
+    camera.position.copy(PUSH_START);
+    camTarget.copy(HOME_POS);
+    introPush = 1;
     animate();                       // 星空先动起来，不等书卷
     for (let i = 0; i < nav.length; i++) {
       buildCategoryAt(nav[i], i, nav.length);
@@ -1277,9 +1495,15 @@ async function boot() {
     }
     finishSky();
     buildCatRail();
+    applyHash();               // 支持 #cat-N / #site-<URL> 直达（兼容旧 #book-N）
+    const totalText = (clusterInfo.length - urlClusters.length) + ' 类 · ' + bookByUrl.size + ' 站点';
+    if (introTotal) introTotal.textContent = '集思阁 · ' + totalText;
+    overviewEl.textContent = totalText;
     loadingEl.textContent = '星海已列';
     enterBtn.disabled = false;
     started = true;
+    // 当首页：星海列毕后自动入阁，不必多点一次
+    setTimeout(enterNow, 1200);
   } catch (err) {
     console.error(err);
     loadingEl.textContent = '天书未显：' + err.message;
