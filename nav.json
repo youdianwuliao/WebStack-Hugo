@@ -1618,6 +1618,12 @@
           "icon": "/assets/images/logos/opencut.png",
           "url": "https://opencut.app/",
           "description": "浏览器内运行的开源视频编辑器"
+        },
+        {
+          "title": "Concat",
+          "icon": "/assets/images/logos/concat.png",
+          "url": "https://concat.standalones.org/",
+          "description": "开源视频编辑器，自动字幕、去背景、4K 导出，本地运行无水印"
         }
       ]
     },
