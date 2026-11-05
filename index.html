@@ -268,7 +268,6 @@
 
     /* SVG 图标适配（替代 FontAwesome） */
     .action-btn svg { width: 16px; height: 16px; }
-    .footer-icon { vertical-align: -1px; }
 
     /* 站内搜索下拉 */
     .search-wrapper { position: relative; }
@@ -658,7 +657,7 @@
   <footer>
     <div class="container">
       <p class="footer-about">集天下巧思，纳百工之技。搜罗实用工具，汇于一阁之中。</p>
-      <p>Copyright © 2026 我是汉人有点无聊. All rights reserved. 访客 <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> <span id="visitor-count">-</span></p>
+      <p>Copyright © 2026 我是汉人有点无聊. All rights reserved.</p>
       <p>本站资源全部来源于网络，仅供学习研究，请于下载后24小时内删除，如有侵犯您的权益请致邮409304201#qq.com(#替换成@)撤下.</p>
       <p><a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener">冀ICP备2021020841号-2</a></p>
       <div class="seo-links">
@@ -1561,10 +1560,7 @@
         if (sessionStorage.getItem('jgCounter')) return;
         sessionStorage.setItem('jgCounter', '1');
       } catch (e) {}
-      fetch('https://counter.justgame.top/api/counter', { method: 'POST' })
-        .then(r => r.json())
-        .then(d => { const el = document.getElementById('visitor-count'); if (el) el.textContent = d.count; })
-        .catch(() => {});
+      fetch('https://counter.justgame.top/api/counter', { method: 'POST' }).catch(() => {});
     });
   </script>
   <script>

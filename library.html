@@ -259,11 +259,7 @@
           if (!sessionStorage.getItem('jgCounter')) {
             sessionStorage.setItem('jgCounter', '1');
             fetch('https://counter.justgame.top/api/counter', { method: 'POST' })
-              .then(function (r) { return r.json(); })
-              .then(function (d) {
-                var el = document.getElementById('visitor-count');
-                if (el) el.textContent = d.count;
-              }).catch(function () {});
+              .catch(function () {});
           }
         } catch (e) {}
         if (window.requestIdleCallback) requestIdleCallback(injectLA, { timeout: 2000 });
