@@ -1102,6 +1102,7 @@
       const keys = Core.bindKeys(input, {
         results: results, itemSel: '.sr-item',
         isOpen: () => results.classList.contains('show'),
+        enterDefaultFirst: true,        // 有站内结果时 Enter 直接开第一条（与 3D 一致）
         onActivate: (el) => { el.click(); results.classList.remove('show'); },
         onEscape: () => { results.classList.remove('show'); },
         onEmptyEnter: () => { externalFn(); }

@@ -294,12 +294,21 @@ function makeTitleTexture(name, w, h, fs) {
   g.fillText(name, w / 2, h / 2 + 2);
   return finishTex(c, w / h);
 }
-// 中枢地标：抬到顶部空档，别压在正好落在画面中上方的分类星团上
+// 中枢地标：贴在屏幕中上方的固定位置。相机怎么环顾/平移/拉远都不飘，
+// 也不会再压到正好落在画面中上方的分类星团。
 const hubTex = makeTitleTexture('集思阁 · 天书', 760, 150, 66);
 const hub = new THREE.Sprite(new THREE.SpriteMaterial({ map: hubTex, transparent: true, depthWrite: false, fog: false }));
-hub.position.set(0, 94, 0);
 hub.scale.set(42, 42 / hubTex.aspect, 1);
 scene.add(hub);
+const HUB_NDC_Y = 0.64, HUB_DIST = 130;
+const _hubDir = new THREE.Vector3();
+function updateHub() {
+  // 把固定的屏幕 NDC 点反投影成视线，再沿它放到定距处；仍是 3D sprite，
+  // 但屏幕位置与大小都恒定，不随视角漂移
+  camera.updateMatrixWorld();
+  _hubDir.set(0, HUB_NDC_Y, 0.5).unproject(camera).sub(camera.position).normalize();
+  hub.position.copy(camera.position).addScaledVector(_hubDir, HUB_DIST);
+}
 
 // ---------- 书卷贴图 ----------
 const iconTexCache = new Map();
@@ -487,38 +496,55 @@ scene.add(netMesh);
 
 let clusterMembers = [];       // ci -> [书卷索引]
 let flowNext = null;            // 每本书在网里的下一跳，供流光沿边流动
-function updateNet() {
-  if (!flowNext) return;
-  let v = 0;
-  flowNext.fill(-1);
-  for (let ci = 0; ci < clusterMembers.length; ci++) {
+
+// 星座网按 3D 真实最近邻连，不再用「索引差 8 / 13」这种平面圆盘时代的假设。
+// 书卷每帧只小幅漂移/自转，邻居关系变化慢，故每 8 帧重算一次；中间帧沿用连接、
+// 端点仍逐帧刷新，自转 / 漂浮 / 拖动都跟得住。
+let netNb = [], netTick = 0;
+function rebuildNetNb() {
+  netNb = new Array(bookSprites.length);
+  for (const mem of clusterMembers) {
     const vis = [];
-    for (const idx of clusterMembers[ci]) {
+    for (const idx of mem) {
       if (bookSprites[idx] && bookSprites[idx].visible && bookData[idx] && bookData[idx].url) vis.push(idx);
     }
-    const k = vis.length;
-    if (k < 2) continue;
-    // 按 j+1 连会得到 137° 跨度的长线、把画面糊成乱麻；螺旋里索引差 8 / 13
-    // 的点角度几乎重合，连它们才是真正的近邻短边，形成清爽的星座网。
-    const step = k >= 14 ? 8 : 1;
-    for (let j = 0; j < k; j++) {
-      const a = vis[j];
-      const b = vis[(j + step < k) ? j + step : (j + 1) % k];
-      const pa = bookSprites[a].position, pb = bookSprites[b].position;
+    if (vis.length < 2) continue;
+    for (const i of vis) {
+      const p = bookSprites[i].position;
+      let n1 = -1, d1 = Infinity, n2 = -1, d2 = Infinity;
+      for (const j of vis) {
+        if (j === i) continue;
+        const d = p.distanceToSquared(bookSprites[j].position);
+        if (d < d1) { d2 = d1; n2 = n1; d1 = d; n1 = j; }
+        else if (d < d2) { d2 = d; n2 = j; }
+      }
+      netNb[i] = n1 < 0 ? [] : (n2 < 0 ? [n1] : [n1, n2]);
+    }
+  }
+}
+function updateNet() {
+  if (!flowNext) return;
+  if (--netTick <= 0) { rebuildNetNb(); netTick = 8; }
+  let v = 0;
+  flowNext.fill(-1);
+  const seen = new Set();
+  for (let i = 0; i < bookSprites.length; i++) {
+    const nb = netNb[i];
+    if (!nb || !nb.length || !bookSprites[i].visible || !bookData[i] || !bookData[i].url) continue;
+    const pa = bookSprites[i].position;
+    for (const j of nb) {
+      if (!bookSprites[j].visible || !bookData[j].url) continue;
+      const pb = bookSprites[j].position;
       if (pa.distanceToSquared(pb) > MAX_EDGE2) continue;
-      flowNext[a] = b;
-      if (v < MAX_NET_EDGES) {
-        netPos[v * 6]     = pa.x; netPos[v * 6 + 1] = pa.y; netPos[v * 6 + 2] = pa.z;
-        netPos[v * 6 + 3] = pb.x; netPos[v * 6 + 4] = pb.y; netPos[v * 6 + 5] = pb.z;
-        v++;
-      }
-      if (k >= 22 && j + 13 < k && v < MAX_NET_EDGES) {
-        const d = vis[j + 13], pd = bookSprites[d].position;
-        if (pa.distanceToSquared(pd) > MAX_EDGE2) continue;
-        netPos[v * 6]     = pa.x; netPos[v * 6 + 1] = pa.y; netPos[v * 6 + 2] = pa.z;
-        netPos[v * 6 + 3] = pd.x; netPos[v * 6 + 4] = pd.y; netPos[v * 6 + 5] = pd.z;
-        v++;
-      }
+      if (flowNext[i] < 0) flowNext[i] = j;
+      const lo = i < j ? i : j, hi = i < j ? j : i;
+      const key = lo * bookSprites.length + hi;
+      if (seen.has(key)) continue;      // 互为近邻时只画一次
+      seen.add(key);
+      if (v >= MAX_NET_EDGES) break;
+      netPos[v * 6]     = pa.x; netPos[v * 6 + 1] = pa.y; netPos[v * 6 + 2] = pa.z;
+      netPos[v * 6 + 3] = pb.x; netPos[v * 6 + 4] = pb.y; netPos[v * 6 + 5] = pb.z;
+      v++;
     }
   }
   netGeo.setDrawRange(0, v * 2);
@@ -578,9 +604,22 @@ function applyCollisions(activeCi) {
         nodeOffset[i].lengthSq() > 0.04) act.push(i);
   }
   if (!act.length) return;
+  // 粗筛：先用团中心 + 球壳半径挑出可能挨着的分类，只遍历这些团的成员。
+  // 原来每颗移动的书卷都要扫全场 280 本（一串 58 颗 × 6 子步 ≈ 1.6 万次/帧）。
+  const cand = [];
   for (const i of act) {
     _nodeA.copy(nodeBase[i]).add(nodeOffset[i]);
-    for (let j = 0; j < bookSprites.length; j++) {
+    cand.length = 0;
+    for (let ci = 0; ci < clusterInfo.length; ci++) {
+      if (ci === activeCi) continue;
+      const c = clusterInfo[ci], mem = clusterMembers[ci];
+      if (!mem || !mem.length) continue;
+      const dx = c.center.x - _nodeA.x, dy = c.center.y - _nodeA.y, dz = c.center.z - _nodeA.z;
+      const rr = (c.radius || 20) + 28;    // 余量覆盖成员被碰开的位移与碰撞半径
+      if (dx * dx + dy * dy + dz * dz > rr * rr) continue;
+      for (const j of mem) cand.push(j);
+    }
+    for (const j of cand) {
       if (bookCluster[j] === activeCi || !bookSprites[j].visible || !bookData[j].url) continue;
       _nodeB.copy(nodeBase[j]).add(nodeOffset[j]);
       const dx = _nodeB.x - _nodeA.x, dy = _nodeB.y - _nodeA.y, dz = _nodeB.z - _nodeA.z;
@@ -1721,6 +1760,7 @@ function animate() {
   }
   euler.set(pitch, yaw, 0, 'YXZ');
   camera.quaternion.setFromEuler(euler);
+  updateHub();                       // 中枢题字贴屏：位置在相机姿态定下来之后再算
 
   // 书卷漂浮 + 微光呼吸：所有球始终同亮度常驻，不再折叠 / 压暗其他团
   focusCi = -1;
