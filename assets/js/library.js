@@ -472,7 +472,7 @@ function makeShell(ci, color, radius) {
 
 // 动态星座网：每帧按书卷当前位置重连，自转 / 漂浮 / 拖动都跟得住
 const MAX_NET_EDGES = 2600;
-const MAX_EDGE2 = 80 * 80;      // 一串被拉变形的边照常连着，只有拉得过长的才断，免得横跨天空
+const MAX_EDGE2 = 52 * 52;      // 正常近邻边都 <30；拖长过头的才断，免得留一根横跨天空的长线
 const netPos = new Float32Array(MAX_NET_EDGES * 6);
 const netGeo = new THREE.BufferGeometry();
 netGeo.setAttribute('position', new THREE.BufferAttribute(netPos, 3).setUsage(THREE.DynamicDrawUsage));
@@ -845,7 +845,8 @@ function buildCategoryAt(cat, ci, n) {
   const k = entries.length;
   const golden = Math.PI * (3 - Math.sqrt(5));
   const pts = [];
-  const R0 = 11 + Math.min(12, Math.sqrt(k) * 1.5);
+  // 按站点数放宽半径：58 本的大团别和 7 本的小团挤成一样大
+  const R0 = 8 + Math.min(20, Math.sqrt(k) * 2.6);
   for (let j = 0; j < k; j++) {
     const yy = 1 - 2 * (j + 0.5) / k;
     const rad = Math.sqrt(Math.max(0, 1 - yy * yy));
@@ -969,7 +970,7 @@ function finishSky() {
     const el = document.createElement('button');
     el.type = 'button';
     el.className = 'anchor';
-    el.innerHTML = escHtml(c.name) + ' <b>' + (c.count || 0) + '</b>';
+    el.innerHTML = Core.escapeHtml(c.name) + ' <b>' + (c.count || 0) + '</b>';
     el.style.opacity = '0';
     el.style.pointerEvents = 'none';
     el.style.animationDelay = (0.05 * ci) + 's';
@@ -1474,9 +1475,6 @@ PINYIN_PROMISE.then(() => {
   if (searchOpen) renderSearch();
   if (quickInput.value.trim()) renderQuick();
 });
-function escHtml(s) {
-  return (s || '').replace(/[&<>^"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-}
 // 两个搜索框共用同一个键盘内核：↑↓ 选择、Enter 打开、Esc 收起
 const searchKeys = Core.bindKeys(searchInput, {
   results: searchResults, itemSel: '.res',
@@ -1528,7 +1526,7 @@ function renderSearch() {
         '<div class="rd">' + n + ' 个站点 · 飞至此分类星团</div>';
     } else {
       div.innerHTML = '<div class="rt">' + Core.highlight(r.title, q) + '<span class="rk">网站</span></div>' +
-        '<div class="rd">' + (r.sub ? '「' + escHtml(r.sub) + '」 ' : '') + Core.highlight(r.desc || '', q) + '</div>';
+        '<div class="rd">' + (r.sub ? '「' + Core.escapeHtml(r.sub) + '」 ' : '') + Core.highlight(r.desc || '', q) + '</div>';
     }
     div.addEventListener('click', () => goToResult(r));
     searchResults.appendChild(div);
