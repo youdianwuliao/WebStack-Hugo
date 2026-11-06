@@ -703,6 +703,7 @@
     </div>
   </footer>
 
+  <script src="assets/js/search-core.js?v=113"></script>
   <script>
     // 凭据模式需与 <link rel="preload" as="fetch" crossorigin> 一致，
     // 否则浏览器认为两次请求不匹配，nav.json 会被重复下载。
@@ -1016,15 +1017,10 @@
 
     /* ===== 站内搜索 ===== */
     const searchIndex = [];
-    function getPY() { return window.PINYIN_MAP || {}; }
-    function toPinyin(text) {
-      const PY = getPY();
-      return String(text || '').split('').map(ch => PY[ch] || ch).join('').toLowerCase();
-    }
-    function toInitials(text) {
-      const PY = getPY();
-      return String(text || '').split('').map(ch => (PY[ch] ? PY[ch][0] : ch)).join('').toLowerCase();
-    }
+    // 拼音 / 首字母 / 评分口径与 3D 天书共用 assets/js/search-core.js
+    const Core = window.SiteSearchCore;
+    function toPinyin(text) { return Core.toPinyin(text); }
+    function toInitials(text) { return Core.toInitials(text); }
     function loadScript(src) {
       return new Promise((resolve, reject) => {
         const s = document.createElement('script');
@@ -1055,17 +1051,13 @@
         const add = items => (items || []).forEach(it => {
           const t = it.title || '';
           const d = it.description || '';
-          searchIndex.push({
+          searchIndex.push(Core.decorate({
             it,
             t: t.toLowerCase(),
             d: d.toLowerCase(),
             u: (it.url || '').toLowerCase(),
-            py: toPinyin(t),
-            pi: toInitials(t),
-            dpy: toPinyin(d),
-            dpi: toInitials(d),
             cat: cat.category
-          });
+          }));
           if (!urlIndex.has(it.url)) urlIndex.set(it.url, it);
         });
         add(cat.items);
@@ -1074,41 +1066,12 @@
     }
 
     function searchLocal(q) {
-      const kw = q.toLowerCase();
-      const qpy = toPinyin(kw);
-      const qpi = toInitials(kw);
-      return searchIndex.map(e => {
-        let score = 0;
-        if (e.t === kw) score = 100;
-        else if (e.t.startsWith(kw)) score = 85;
-        else if (e.t.includes(kw)) score = 65;
-        else if (e.d.includes(kw)) score = 35;
-        else if (e.u.includes(kw)) score = 18;
-        if (qpy && qpy.length >= 2) {
-          if (e.py === qpy) score = Math.max(score, 90);
-          else if (e.py.startsWith(qpy)) score = Math.max(score, 80);
-          else if (e.py.includes(qpy)) score = Math.max(score, 60);
-          if (e.dpy.includes(qpy)) score = Math.max(score, 30);
-        }
-        if (qpi && qpi.length >= 2) {
-          if (e.pi === qpi) score = Math.max(score, 88);
-          else if (e.pi.startsWith(qpi)) score = Math.max(score, 78);
-          else if (e.pi.includes(qpi)) score = Math.max(score, 58);
-          else if (e.dpi.includes(qpi)) score = Math.max(score, 28);
-        }
-        return score ? { it: e.it, cat: e.cat, score } : null;
-      }).filter(Boolean).sort((a, b) => b.score - a.score).slice(0, 7)
+      return Core.search(searchIndex, q).slice(0, 7)
         // 不能直接写 x.it.cat：it 是 navData 里的原对象，会污染共享数据
         .map(x => ({ ...x.it, cat: x.cat }));
     }
 
-    function highlight(text, q) {
-      const s = escapeHtml(String(text));
-      if (!q) return s;
-      const i = s.toLowerCase().indexOf(q.toLowerCase());
-      if (i < 0) return s;
-      return s.slice(0, i) + '<mark>' + s.slice(i, i + q.length) + '</mark>' + s.slice(i + q.length);
-    }
+    function highlight(text, q) { return Core.highlight(text, q); }
 
     function renderSiteResults(items, q, resultsEl, engineId) {
       let html = '';
@@ -1134,54 +1097,38 @@
     function setupSiteSearch(inputId, resultsId, engineId, externalFn) {
       const input = document.getElementById(inputId);
       const results = document.getElementById(resultsId);
-      let timer = null, active = -1;
+      let timer = null;
+      // 键盘手感与 3D 天书共用同一份实现：↑↓ 选择、Enter 打开、Esc 收起
+      const keys = Core.bindKeys(input, {
+        results: results, itemSel: '.sr-item',
+        isOpen: () => results.classList.contains('show'),
+        onActivate: (el) => { el.click(); results.classList.remove('show'); },
+        onEscape: () => { results.classList.remove('show'); },
+        onEmptyEnter: () => { externalFn(); }
+      });
 
       input.addEventListener('input', () => {
         clearTimeout(timer);
         const q = input.value.trim();
-        if (!q) { results.classList.remove('show'); active = -1; return; }
+        if (!q) { results.classList.remove('show'); return; }
         timer = setTimeout(() => {
           renderSiteResults(searchLocal(q), q, results, engineId);
-          active = -1;
+          keys.reset();
           if (!searchIndexHasPinyin) {
             ensurePinyinIndex().then(() => {
               if (input.value.trim() === q) {
                 renderSiteResults(searchLocal(q), q, results, engineId);
-                active = -1;
+                keys.reset();
               }
             });
           }
         }, 150);
       });
 
-      input.addEventListener('keydown', (e) => {
-        const items = results.querySelectorAll('.sr-item');
-        const shown = results.classList.contains('show');
-        if (e.key === 'ArrowDown' && shown) {
-          e.preventDefault();
-          active = Math.min(active + 1, items.length - 1);
-          items.forEach((el, i) => el.classList.toggle('active', i === active));
-        } else if (e.key === 'ArrowUp' && shown) {
-          e.preventDefault();
-          active = Math.max(active - 1, -1);
-          items.forEach((el, i) => el.classList.toggle('active', i === active));
-        } else if (e.key === 'Enter') {
-          if (shown && active >= 0 && items[active]) {
-            e.preventDefault();
-            items[active].click();
-            results.classList.remove('show');
-          } else {
-            externalFn();
-          }
-        } else if (e.key === 'Escape') {
-          results.classList.remove('show');
-        }
-      });
-
       input.addEventListener('focus', () => {
         if (!searchIndexHasPinyin) ensurePinyinIndex();
         const q = input.value.trim();
-        if (q) { renderSiteResults(searchLocal(q), q, results, engineId); active = -1; }
+        if (q) { renderSiteResults(searchLocal(q), q, results, engineId); keys.reset(); }
       });
 
       document.addEventListener('click', (e) => {

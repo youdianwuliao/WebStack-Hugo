@@ -42,8 +42,9 @@
   .qres { padding: 6px 10px; font-size: 11px; color: var(--ink); cursor: pointer;
     border-bottom: 1px solid rgba(233,220,195,.07); text-align: left; }
   .qres:last-child { border-bottom: none; }
-  .qres:hover { background: rgba(255,184,107,.1); color: var(--warm); }
+  .qres:hover, .qres.active { background: rgba(255,184,107,.1); color: var(--warm); }
   .qres .qk { font-size: 10px; opacity: .45; margin-left: 8px; }
+  .qres-empty { padding: 6px 10px; font-size: 11px; color: var(--ink); opacity: .5; }
 
   /* 首屏总览行 */
   #overview { position: fixed; top: 72px; left: 50%; transform: translateX(-50%); z-index: 6;
@@ -102,7 +103,8 @@
   #hint { position: fixed; left: 50%; bottom: 14%; transform: translateX(-50%); z-index: 5;
     font-size: 11px; letter-spacing: .16em; color: rgba(233,220,195,.5); opacity: 0;
     padding: 2px 0; background: none; border: none; border-bottom: 1px solid rgba(233,220,195,.12);
-    border-radius: 0; pointer-events: none; transition: opacity .4s; text-shadow: 0 2px 10px #000; }
+    border-radius: 0; pointer-events: none; transition: opacity .4s; text-shadow: 0 2px 10px #000;
+    white-space: nowrap; }
 
   /* 顶部按钮 */
   .topbtn { position: fixed; top: 16px; z-index: 6; padding: 3px 2px; font-size: 11px; letter-spacing: .16em;
@@ -153,10 +155,20 @@
   #searchResults { max-height: 46vh; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
   .res { padding: 12px 16px; border: 1px solid rgba(233,220,195,.14); border-radius: 10px; cursor: pointer;
     background: rgba(30,22,14,.5); transition: .15s; text-align: left; }
-  .res:hover { border-color: var(--warm); background: rgba(60,44,26,.7); }
+  .res:hover, .res.active { border-color: var(--warm); background: rgba(60,44,26,.7); }
   .res .rt { font-size: 15px; color: var(--warm); letter-spacing: .08em; }
   .res .rd { font-size: 12px; opacity: .7; margin-top: 4px; line-height: 1.5; }
   .res .rk { font-size: 11px; opacity: .5; margin-left: 8px; }
+  .res mark, .qres mark { background: none; color: #ffe1a8; font-weight: 700; }
+  /* 结果计数与键盘提示：纯文字一行，不加底色边框 */
+  .search-meta { display: flex; justify-content: space-between; gap: 12px; padding: 0 4px;
+    font-size: 11px; letter-spacing: .12em; color: rgba(233,220,195,.42); }
+  .search-meta .kb { flex-shrink: 0; }
+  /* 暗色主题里的细滚动条，别用系统白条 */
+  #searchResults, #quickResults { scrollbar-width: thin; scrollbar-color: rgba(233,220,195,.25) transparent; }
+  #searchResults::-webkit-scrollbar, #quickResults::-webkit-scrollbar { width: 5px; }
+  #searchResults::-webkit-scrollbar-thumb, #quickResults::-webkit-scrollbar-thumb {
+    background: rgba(233,220,195,.25); border-radius: 3px; }
 </style>
 </head>
 <body>
@@ -176,7 +188,7 @@
   <div id="overview"></div>
   <div id="catrail"></div>
 
-  <div id="hint">拖拽空地环顾 · Shift 拖拽平移天空 · 拖一卷、同分类跟着走 · 单击展卷 · 滚轮远近 · 悬停显全名 · F 收藏 · Esc 指南</div>
+  <div id="hint">拖拽空地环顾 · Shift 拖拽平移 · 拖一卷、同类跟着走 · 双击分类名归位 · 单击展卷 · 滚轮远近 · 悬停显全名 · F 收藏 · Esc 指南</div>
 
   <!-- 进入遮罩 -->
   <div id="overlay-intro" class="overlay">
@@ -205,7 +217,7 @@
       <div><b>单击</b> 展卷（远者先拉近）</div><div><b>悬停</b> 显全名与简介</div>
       <div><b>F</b> 加入 / 移出收藏</div><div><b>Tab</b> 依次选中书卷</div>
       <div><b>Enter</b> 展卷当前书卷</div><div><b>WASD</b> 飞行（Shift 加速）</div>
-      <div><b>H / Home</b> 归位星图</div><div><b>/</b> 搜索</div>
+      <div><b>双击分类名</b> 归位该团</div><div><b>/</b> 搜索</div>
       <div><b>下方分类</b> 直达星团</div><div><b>Esc</b> 关闭本页</div>
     </div>
     <div id="helpStat" class="sub"></div>
@@ -215,12 +227,14 @@
   <!-- 搜索遮罩 -->
   <div id="searchOv" class="overlay hidden">
     <div class="searchbox">
-      <input id="searchInput" type="text" placeholder="搜分类或网站名、简介…   (按 / 打开)" autocomplete="off" spellcheck="false" />
+      <input id="searchInput" type="text" placeholder="搜分类或网站 · 拼音首字母亦可   (按 / 打开)" autocomplete="off" spellcheck="false" />
+      <div class="search-meta"><span id="searchCount">输入即搜 · 支持拼音首字母</span><span class="kb">↑↓ 选择 · Enter 打开 · Esc 关闭</span></div>
       <div id="searchResults"></div>
     </div>
     <button id="searchClose" class="enter" type="button">关 闭 (Esc)</button>
   </div>
 
+  <script src="assets/js/search-core.js?v=113"></script>
   <script>
     // 触屏 / 低配 / 无 WebGL 一律回落到完整 2D 目录，不再只给静态导览
     // ?force=3d 可强制查看 3D（备用）
@@ -271,7 +285,7 @@
       }
       // /assets/* 是 7 天长缓存且同名覆盖不会让 CDN 失效，主模块必须带版本号做 cache busting
       var s = document.createElement('script');
-      s.type = 'module'; s.src = 'assets/js/library.js?v=111';
+      s.type = 'module'; s.src = 'assets/js/library.js?v=113';
       document.body.appendChild(s);
     })();
   </script>

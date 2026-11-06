@@ -1,4 +1,4 @@
-const CACHE = 'navsite-v111';
+const CACHE = 'navsite-v113';
 // 安装时只预缓存首页冷启动路径。拼音/金句按需加载；子站 HTML / 题库 / jsqr
 // 仍由下方 fetch 在首次访问时写入同一 CACHE，访问过的页面离线可用。
 const CORE = [
@@ -9,7 +9,8 @@ const CORE = [
   './nav.json',
   './404.html',
   './manifest.webmanifest',
-  './assets/favicon.svg'
+  './assets/favicon.svg',
+  './assets/js/search-core.js?v=113'
 ];
 
 self.addEventListener('install', (e) => {

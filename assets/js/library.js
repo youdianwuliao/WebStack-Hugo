@@ -41,6 +41,13 @@ const introTotal  = $('introTotal');
 
 canvas.style.touchAction = 'none';
 
+// 站内搜索内核与 2D 首页共用同一份（拼音 / 首字母 / 相关度 / 键盘手感）
+const Core = window.SiteSearchCore;
+function isTyping() {
+  const a = document.activeElement;
+  return !!a && (a.tagName === 'INPUT' || a.tagName === 'TEXTAREA');
+}
+
 // 与 2D 站一致：尽早发起 nav.json 请求，复用 HTTP / SW 缓存（不禁用缓存）
 const NAV_PROMISE = fetch(NAV_URL).then((r) => r.json());
 
@@ -588,15 +595,44 @@ function applyCollisions(activeCi) {
   }
 }
 
+// 双击分类名：被拖散的那一团依次收回初始的有序形状
+const resettingCi = new Set();
+function resetClusterLayout(ci) {
+  const mem = clusterMembers[ci];
+  if (!mem || !mem.length) return;
+  resettingCi.add(ci);
+  blip(560, 0.14, 0.03);
+}
+
 function nodePhysicsStep(dt) {
   const dragging = dragIdx >= 0 && dragMoved && dragTargetSet;
   if (!dragging) {
-    // 松手后保持拖到的位置：快速收住残余速度，停在哪就在哪，不回位也不继续飘
+    // 松手后保持拖到的位置；只有被双击归位的分类才平滑收回初始形状
     const damp = Math.exp(-10.0 * dt);
+    const homeDamp = [];
+    for (let m = 0; m < 6; m++) homeDamp[m] = Math.exp(-(4.6 + m * 0.6) * dt);
     for (let i = 0; i < bookSprites.length; i++) {
       if (!bookSprites[i].visible || !bookData[i].url) continue;
+      if (resettingCi.has(bookCluster[i])) {
+        // 按索引错开快慢，像星星一颗颗归位，而不是整团瞬间平移回去
+        nodeVel[i].set(0, 0, 0);
+        nodeOffset[i].multiplyScalar(homeDamp[i % 6]);
+        continue;
+      }
       nodeVel[i].multiplyScalar(damp);
       nodeOffset[i].addScaledVector(nodeVel[i], dt);
+    }
+    if (resettingCi.size) {
+      for (const ci of Array.from(resettingCi)) {
+        let done = true;
+        for (const i of clusterMembers[ci] || []) {
+          if (nodeOffset[i] && nodeOffset[i].lengthSq() > 0.25) { done = false; break; }
+        }
+        if (done) {
+          for (const i of clusterMembers[ci] || []) if (nodeOffset[i]) nodeOffset[i].set(0, 0, 0);
+          resettingCi.delete(ci);
+        }
+      }
     }
     return;
   }
@@ -865,6 +901,31 @@ function buildCategoryAt(cat, ci, n) {
       shell: sh.shell, pick: sh.pick, glow: 0 });
 }
 
+// 索引字段与 2D 首页共用：标题 / 描述 / URL 的小写原文 + 全拼 / 首字母。
+// 拼音表异步加载完会再调一次，让首字母匹配即时生效。
+let searchIndexBuilt = false;
+function buildSearchIndex() {
+  searchIndex = [];
+  clusterInfo.forEach((c, ci) => {
+    const name = c.name || '';
+    searchIndex.push(Core.decorate({
+      type: 'cat', name: name, cluster: ci,
+      t: name.toLowerCase(), d: '', u: ''
+    }));
+  });
+  bookData.forEach((d, i) => {
+    if (!d || !d.url) return;
+    const title = d.title || '';
+    const desc = (d.sub ? d.sub + ' ' : '') + (d.desc || '');
+    searchIndex.push(Core.decorate({
+      type: 'item', title: title, desc: d.desc || '', sub: d.sub || '',
+      url: d.url, inst: i,
+      t: title.toLowerCase(), d: desc.toLowerCase(), u: d.url.toLowerCase()
+    }));
+  });
+  searchIndexBuilt = true;
+}
+
 function finishSky() {
   urlClusters.forEach((cl) => {
     cl.ci = clusterInfo.length;
@@ -891,11 +952,7 @@ function finishSky() {
   refreshCluster(recents);
   refreshCluster(favs);
 
-  searchIndex = [];
-  clusterInfo.forEach((c, ci) => searchIndex.push({ type: 'cat', name: c.name, cluster: ci }));
-  bookData.forEach((d, i) => {
-    if (d && d.url) searchIndex.push({ type: 'item', title: d.title, desc: d.desc, sub: d.sub, url: d.url, inst: i });
-  });
+  buildSearchIndex();
   buildFlow();
   // 建立「团 -> 成员」索引与流光下一跳，星座网每帧据此动态重连
   clusterMembers = [];
@@ -904,7 +961,9 @@ function finishSky() {
     if (clusterMembers[bookCluster[i]]) clusterMembers[bookCluster[i]].push(i);
   }
   flowNext = new Int32Array(bookSprites.length).fill(-1);
-  // 分类锚点卡：全景时给出「分类名 · 站点数」，点一下直飞，补足首页的目录感
+  // 分类锚点卡：点一下直飞，双击把拖散的书卷收回有序形状
+  // 单击延迟一瞬，好让双击能取消飞行、只做归位，视角不突然跳走
+  let anchorClickTimer = 0;
   clusterInfo.forEach((c, ci) => {
     if (ci >= clusterInfo.length - urlClusters.length) return;
     const el = document.createElement('button');
@@ -914,7 +973,18 @@ function finishSky() {
     el.style.opacity = '0';
     el.style.pointerEvents = 'none';
     el.style.animationDelay = (0.05 * ci) + 's';
-    el.addEventListener('click', (e) => { e.stopPropagation(); teleportToCluster(ci, true); });
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (e.detail > 1) return;      // 双击的第二下别再飞一次
+      clearTimeout(anchorClickTimer);
+      anchorClickTimer = setTimeout(() => teleportToCluster(ci, true), 230);
+    });
+    // 双击分类名：把拖散的书卷收回初始的有序形状
+    el.addEventListener('dblclick', (e) => {
+      e.stopPropagation();
+      clearTimeout(anchorClickTimer);
+      resetClusterLayout(ci);
+    });
     anchorsEl.appendChild(el);
     c.anchorEl = el;
   });
@@ -1034,7 +1104,7 @@ function onKey(e, down) {
   if (['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
     'ShiftLeft', 'ShiftRight'].includes(k)) keys[k] = down;
 }
-document.addEventListener('keydown', (e) => { if (!searchOpen && !helpOpen) onKey(e, true); });
+document.addEventListener('keydown', (e) => { if (!searchOpen && !helpOpen && !isTyping()) onKey(e, true); });
 document.addEventListener('keyup', (e) => onKey(e, false));
 
 function updateHint() {
@@ -1065,6 +1135,7 @@ canvas.addEventListener('pointerdown', (e) => {
   // 抓单个节点：优先指着的那本；没指到就抓球内屏幕最近的一本
   dragIdx = pickNodeAt(e.clientX, e.clientY);
   if (dragIdx >= 0) {
+    resettingCi.delete(bookCluster[dragIdx]);   // 手动接管这一团，取消它的归位
     camera.getWorldDirection(dragNormal);
     dragPlane.setFromNormalAndCoplanarPoint(dragNormal, bookSprites[dragIdx].position);
     const ndc = new THREE.Vector2(
@@ -1388,24 +1459,32 @@ const searchOv = $('searchOv');
 const searchInput = $('searchInput');
 const searchResults = $('searchResults');
 const searchClose = $('searchClose');
-// 拼音表与 2D 站共用同一份构建产物；异步加载，未就绪时自动退化为纯文本匹配
+const searchCount = $('searchCount');
+// 拼音表与 2D 站共用同一份构建产物；加载完成后重建索引并重渲染，首字母才不会漏
 const PINYIN_PROMISE = new Promise((resolve) => {
+  if (window.PINYIN_MAP) { resolve(); return; }
   const s = document.createElement('script');
   s.src = 'assets/js/pinyin-map.js'; s.async = true;
   s.onload = resolve; s.onerror = resolve;
   document.head.appendChild(s);
 });
-function py(text) {
-  const M = window.PINYIN_MAP || {};
-  return String(text || '').split('').map((ch) => M[ch] || ch).join('').toLowerCase();
-}
-function pyInitials(text) {
-  const M = window.PINYIN_MAP || {};
-  return String(text || '').split('').map((ch) => M[ch] ? M[ch][0] : ch).join('').toLowerCase();
-}
+PINYIN_PROMISE.then(() => {
+  if (!searchIndexBuilt) return;        // 索引还没建，finishSky 会直接用已就绪的拼音表
+  buildSearchIndex();
+  if (searchOpen) renderSearch();
+  if (quickInput.value.trim()) renderQuick();
+});
 function escHtml(s) {
   return (s || '').replace(/[&<>^"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 }
+// 两个搜索框共用同一个键盘内核：↑↓ 选择、Enter 打开、Esc 收起
+const searchKeys = Core.bindKeys(searchInput, {
+  results: searchResults, itemSel: '.res',
+  isOpen: () => searchOpen,
+  enterDefaultFirst: true,
+  onActivate: (el) => el.click(),
+  onEscape: (e) => { e.stopPropagation(); closeSearch(); }
+});
 function openSearch() {
   if (!started) return;
   if (helpOpen) closeHelp();
@@ -1413,7 +1492,9 @@ function openSearch() {
   hoveredIdx = -1; cardShown = false;
   searchOv.classList.remove('hidden');
   updateHint();
-  searchInput.value = '';
+  // 常驻搜索框里已经打了字，就顺手带进全屏搜索，不必重敲一遍
+  searchInput.value = quickInput.value.trim();
+  quickResEl.classList.remove('show');
   renderSearch();
   setTimeout(() => searchInput.focus(), 30);
 }
@@ -1423,34 +1504,36 @@ function closeSearch() {
   updateHint();
 }
 function renderSearch() {
-  const q = searchInput.value.trim().toLowerCase();
-  let list = searchIndex;
-  if (q) {
-    list = searchIndex.filter((r) => {
-      const name = r.name || '', title = r.title || '';
-      return (name.toLowerCase().includes(q)) ||
-        (title.toLowerCase().includes(q)) ||
-        (r.desc && r.desc.toLowerCase().includes(q)) ||
-        (r.sub && r.sub.toLowerCase().includes(q)) ||
-        (r.url && r.url.toLowerCase().includes(q)) ||
-        (name && (py(name).includes(q) || pyInitials(name).includes(q))) ||
-        (title && (py(title).includes(q) || pyInitials(title).includes(q)));
-    });
-  }
-  list = list.slice(0, 40);
+  const q = searchInput.value.trim();
+  const all = Core.search(searchIndex, q);
+  const list = all.slice(0, 40);
   searchResults.innerHTML = '';
-  if (!list.length) { searchResults.innerHTML = '<div class="rd" style="opacity:.5">无匹配</div>'; return; }
+  searchCount.textContent = q
+    ? (all.length
+        ? '匹配 ' + all.length + ' 项' + (all.length > 40 ? ' · 显示前 40' : '') + ' · 支持拼音首字母'
+        : '无匹配 · 试试拼音首字母')
+    : '输入即搜 · 支持拼音首字母';
+  if (!list.length) {
+    searchResults.innerHTML = '<div class="rd" style="opacity:.5">' +
+      (q ? '无匹配 · 试试拼音首字母，或换个关键词' : '输入关键词开始搜索') + '</div>';
+    searchKeys.reset();
+    return;
+  }
   for (const r of list) {
     const div = document.createElement('div');
     div.className = 'res';
     if (r.type === 'cat') {
-      div.innerHTML = '<div class="rt">' + escHtml(r.name) + '<span class="rk">分类</span></div><div class="rd">飞至此分类星团</div>';
+      const n = clusterInfo[r.cluster] ? clusterInfo[r.cluster].count : 0;
+      div.innerHTML = '<div class="rt">' + Core.highlight(r.name, q) + '<span class="rk">分类</span></div>' +
+        '<div class="rd">' + n + ' 个站点 · 飞至此分类星团</div>';
     } else {
-      div.innerHTML = '<div class="rt">' + escHtml(r.title) + '<span class="rk">网站</span></div><div class="rd">' + escHtml(r.desc || '') + '</div>';
+      div.innerHTML = '<div class="rt">' + Core.highlight(r.title, q) + '<span class="rk">网站</span></div>' +
+        '<div class="rd">' + (r.sub ? '「' + escHtml(r.sub) + '」 ' : '') + Core.highlight(r.desc || '', q) + '</div>';
     }
     div.addEventListener('click', () => goToResult(r));
     searchResults.appendChild(div);
   }
+  searchKeys.reset();
 }
 function goToResult(r) {
   if (r.type === 'cat') teleportToCluster(r.cluster, true);
@@ -1496,27 +1579,31 @@ searchClose.addEventListener('click', closeSearch);
 searchInput.addEventListener('input', renderSearch);
 
 // ---------- 常驻快捷搜索（首页高频动作，不必按 / 调出全屏） ----------
+const quickKeys = Core.bindKeys(quickInput, {
+  results: quickResEl, itemSel: '.qres',
+  isOpen: () => quickResEl.classList.contains('show'),
+  enterDefaultFirst: true,
+  onActivate: (el) => el.click(),
+  onEscape: (e) => {
+    e.stopPropagation();
+    quickInput.value = ''; quickResEl.classList.remove('show'); quickInput.blur();
+  }
+});
 function renderQuick() {
-  const q = quickInput.value.trim().toLowerCase();
+  const q = quickInput.value.trim();
   if (!q) { quickResEl.classList.remove('show'); quickResEl.innerHTML = ''; return; }
-  const list = searchIndex.filter((r) => {
-    const name = r.name || '', title = r.title || '';
-    return name.toLowerCase().includes(q) || title.toLowerCase().includes(q) ||
-      (r.desc && r.desc.toLowerCase().includes(q)) ||
-      (r.url && r.url.toLowerCase().includes(q)) ||
-      (name && (py(name).includes(q) || pyInitials(name).includes(q))) ||
-      (title && (py(title).includes(q) || pyInitials(title).includes(q)));
-  }).slice(0, 8);
+  const list = Core.search(searchIndex, q).slice(0, 8);
   quickResEl.innerHTML = '';
   if (!list.length) {
-    quickResEl.innerHTML = '<div class="qres" style="opacity:.5">无匹配 · 按 / 全屏搜索</div>';
+    quickResEl.innerHTML = '<div class="qres-empty">无匹配 · 试试拼音首字母</div>';
     quickResEl.classList.add('show');
+    quickKeys.reset();
     return;
   }
   for (const r of list) {
     const div = document.createElement('div');
     div.className = 'qres';
-    div.innerHTML = escHtml(r.type === 'cat' ? r.name : r.title) +
+    div.innerHTML = Core.highlight(r.type === 'cat' ? r.name : r.title, q) +
       '<span class="qk">' + (r.type === 'cat' ? '分类' : '网站') + '</span>';
     div.addEventListener('click', () => {
       if (r.type === 'cat') teleportToCluster(r.cluster, true);
@@ -1528,18 +1615,9 @@ function renderQuick() {
     quickResEl.appendChild(div);
   }
   quickResEl.classList.add('show');
+  quickKeys.reset();
 }
 quickInput.addEventListener('input', renderQuick);
-quickInput.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
-    e.stopPropagation();
-    quickInput.value = ''; quickResEl.classList.remove('show'); quickInput.blur();
-  } else if (e.key === 'Enter') {
-    e.preventDefault(); e.stopPropagation();
-    const first = quickResEl.querySelector('.qres');
-    if (first) first.click();
-  }
-});
 document.addEventListener('pointerdown', (e) => {
   if (!e.target.closest || !e.target.closest('#quickWrap')) quickResEl.classList.remove('show');
 });
@@ -1567,7 +1645,7 @@ document.addEventListener('keydown', (e) => {
     else openHelp();
     return;
   }
-  if (helpOpen) return;
+  if (helpOpen || isTyping()) return;   // 在搜索框里打字时，别触发 3D 的飞行 / 展卷快捷键
   if (e.key === '/' && started && !searchOpen && document.activeElement !== quickInput) { e.preventDefault(); openSearch(); }
   else if (e.key === 'Tab' && started && !searchOpen) { e.preventDefault(); focusNextBook(e.shiftKey ? -1 : 1); }
   else if (e.key === 'Enter' && started && !searchOpen) {
