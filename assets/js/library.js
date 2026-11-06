@@ -827,8 +827,15 @@ function collectItems(cat) {
   return out;
 }
 
+// 分类配色：不绕整圈发牌，收在青蓝→靛紫的冷色域里成簇过渡，
+// 只留两颗暖金作点缀；饱和度与明度也轻微错落，像星系而非色卡。
+const CAT_HUES = [0.48, 0.51, 0.085, 0.54, 0.57, 0.60,
+                  0.63, 0.045, 0.66, 0.69, 0.72, 0.75];
 function catColor(i, n) {
-  return new THREE.Color().setHSL((i * 0.13 + 0.05) % 1, 0.65, 0.62);
+  const h = CAT_HUES[i % CAT_HUES.length];
+  const s = 0.58 + ((i * 3) % 5) * 0.018;
+  const l = 0.61 + ((i * 5) % 4) * 0.015;
+  return new THREE.Color().setHSL(h, s, l);
 }
 
 // 初始布局：星团在三维空间里自然散布，不排成同一平面的规整方阵。
