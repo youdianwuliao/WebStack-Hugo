@@ -16,8 +16,8 @@ const RECENT_KEY = 'navRecents';   // 与 2D 站共用（URL 数组）
 const FAV_KEY = 'navFavs';         // 与 2D 站共用（URL 数组）
 const OLD_RECENT_KEY = 'tianshuRecents';
 const CLUSTER_SLOTS = 12;
-const RECENTS_CENTER = new THREE.Vector3(190, 16, 0);
-const FAVS_CENTER = new THREE.Vector3(-190, 16, 0);
+const RECENTS_CENTER = new THREE.Vector3(265, 55, -80);
+const FAVS_CENTER = new THREE.Vector3(-265, 55, -80);
 
 // ---------- DOM ----------
 const $ = (id) => document.getElementById(id);
@@ -287,11 +287,11 @@ function makeTitleTexture(name, w, h, fs) {
   g.fillText(name, w / 2, h / 2 + 2);
   return finishTex(c, w / h);
 }
-// 中枢地标
+// 中枢地标：抬到顶部空档，别压在正好落在画面中上方的分类星团上
 const hubTex = makeTitleTexture('集思阁 · 天书', 760, 150, 66);
 const hub = new THREE.Sprite(new THREE.SpriteMaterial({ map: hubTex, transparent: true, depthWrite: false, fog: false }));
-hub.position.set(0, 52, 0);
-hub.scale.set(46, 46 / hubTex.aspect, 1);
+hub.position.set(0, 94, 0);
+hub.scale.set(42, 42 / hubTex.aspect, 1);
 scene.add(hub);
 
 // ---------- 书卷贴图 ----------
@@ -465,7 +465,7 @@ function makeShell(ci, color, radius) {
 
 // 动态星座网：每帧按书卷当前位置重连，自转 / 漂浮 / 拖动都跟得住
 const MAX_NET_EDGES = 2600;
-const MAX_EDGE2 = 52 * 52;      // 书卷被拖出星团后不再连线，免得拖一根长「牵扯」线横跨天空
+const MAX_EDGE2 = 80 * 80;      // 一串被拉变形的边照常连着，只有拉得过长的才断，免得横跨天空
 const netPos = new Float32Array(MAX_NET_EDGES * 6);
 const netGeo = new THREE.BufferGeometry();
 netGeo.setAttribute('position', new THREE.BufferAttribute(netPos, 3).setUsage(THREE.DynamicDrawUsage));
@@ -533,9 +533,9 @@ function pickClusterAt(clientX, clientY) {
   const hits = _pickRay.intersectObjects(pickMeshes, false);
   return hits.length ? hits[0].object.userData.ci : -1;
 }
-// ---------- 节点级自由拖动 ----------
-// 拖的是单个书卷：只有它自己跟鼠标，其余书卷 / 分类块完全独立、零牵引；
-// 只在被拖的那本「路过」并真正相撞时，把对方轻碰让开一点。球壳不参与拖动。
+// ---------- 节点级黏性物理（粘粘世界式，牵连只限同一分类内） ----------
+// 拖一个书卷，同分类其余按距离衰减地跟过来，各自带散落 / 垂落 / 响应快慢差；
+// 别的分类零牵引，只有真正被这一串「路过」撞上时才轻碰让开一点。
 let dragIdx = -1;
 const dragTarget = new THREE.Vector3();
 let dragTargetSet = false;
@@ -561,23 +561,30 @@ function pickNodeAt(clientX, clientY) {
   return best;
 }
 
-function applyCollisions(activeIdx) {
-  // 只有被拖的那本真正「路过」并撞上别的书时，才把对方轻碰让开一点；
-  // 没有任何引力 / 弹性牵连，分类块之间彼此完全独立
-  if (activeIdx < 0) return;
+function applyCollisions(activeCi) {
+  // 跟着被拎起那颗一起动的同分类书卷，路过别的分类时只把对方轻碰让开；
+  // 同分类内部靠弹性相连，互不推挤；别的分类绝不被吸过来
   const R = 4.4, R2 = R * R;
-  _nodeA.copy(nodeBase[activeIdx]).add(nodeOffset[activeIdx]);
-  for (let j = 0; j < bookSprites.length; j++) {
-    if (j === activeIdx || !bookSprites[j].visible || !bookData[j].url) continue;
-    _nodeB.copy(nodeBase[j]).add(nodeOffset[j]);
-    const dx = _nodeB.x - _nodeA.x, dy = _nodeB.y - _nodeA.y, dz = _nodeB.z - _nodeA.z;
-    const d2 = dx * dx + dy * dy + dz * dz;
-    if (d2 >= R2 || d2 < 1e-6) continue;
-    const d = Math.sqrt(d2), push = (R - d) * 0.6 / d;
-    const s = nodeScatter[j], jitter = (1 - d / R) * 0.12;
-    nodeOffset[j].x += dx * push + s.x * jitter;
-    nodeOffset[j].y += dy * push + s.y * jitter;
-    nodeOffset[j].z += dz * push + s.z * jitter;
+  const act = [];
+  for (let i = 0; i < bookSprites.length; i++) {
+    if (bookCluster[i] === activeCi && bookSprites[i].visible && bookData[i].url &&
+        nodeOffset[i].lengthSq() > 0.04) act.push(i);
+  }
+  if (!act.length) return;
+  for (const i of act) {
+    _nodeA.copy(nodeBase[i]).add(nodeOffset[i]);
+    for (let j = 0; j < bookSprites.length; j++) {
+      if (bookCluster[j] === activeCi || !bookSprites[j].visible || !bookData[j].url) continue;
+      _nodeB.copy(nodeBase[j]).add(nodeOffset[j]);
+      const dx = _nodeB.x - _nodeA.x, dy = _nodeB.y - _nodeA.y, dz = _nodeB.z - _nodeA.z;
+      const d2 = dx * dx + dy * dy + dz * dz;
+      if (d2 >= R2 || d2 < 1e-6) continue;
+      const d = Math.sqrt(d2), push = (R - d) * 0.6 / d;
+      const s = nodeScatter[j], jitter = (1 - d / R) * 0.12;
+      nodeOffset[j].x += dx * push + s.x * jitter;
+      nodeOffset[j].y += dy * push + s.y * jitter;
+      nodeOffset[j].z += dz * push + s.z * jitter;
+    }
   }
 }
 
@@ -593,21 +600,42 @@ function nodePhysicsStep(dt) {
     }
     return;
   }
-  // 只驱动被抓的那一颗跟鼠标；其余全部原地不动，零牵引、零回复力
+  const activeCi = bookCluster[dragIdx];
   const damp = Math.exp(-3.0 * dt);
-  _dragDelta.copy(dragTarget).sub(nodeBase[dragIdx]);
-  nodeVel[dragIdx].x = (nodeVel[dragIdx].x + (_dragDelta.x - nodeOffset[dragIdx].x) * 24.0 * dt) * damp;
-  nodeVel[dragIdx].y = (nodeVel[dragIdx].y + (_dragDelta.y - nodeOffset[dragIdx].y) * 24.0 * dt) * damp;
-  nodeVel[dragIdx].z = (nodeVel[dragIdx].z + (_dragDelta.z - nodeOffset[dragIdx].z) * 24.0 * dt) * damp;
-  if (nodeVel[dragIdx].lengthSq() > 300 * 300) nodeVel[dragIdx].setLength(300);
-  nodeOffset[dragIdx].addScaledVector(nodeVel[dragIdx], dt);
   const still = Math.exp(-8.0 * dt);
+  _dragDelta.copy(dragTarget).sub(nodeBase[dragIdx]);
+  const dl = _dragDelta.length();
+  const scatterAmt = Math.min(4.5, dl * 0.075);
+  const sagAmt = Math.min(3.5, dl * 0.05);
   for (let i = 0; i < bookSprites.length; i++) {
-    if (i === dragIdx || !bookSprites[i].visible || !bookData[i].url) continue;
-    nodeVel[i].multiplyScalar(still);
+    if (!bookSprites[i].visible || !bookData[i].url) continue;
+    if (i !== dragIdx && bookCluster[i] !== activeCi) {
+      // 其他分类零牵引：只收住残余速度，停在哪就在哪，不回位也不被吸过来
+      nodeVel[i].multiplyScalar(still);
+      nodeOffset[i].addScaledVector(nodeVel[i], dt);
+      continue;
+    }
+    let tx, ty, tz, k;
+    if (i === dragIdx) {
+      tx = _dragDelta.x; ty = _dragDelta.y; tz = _dragDelta.z; k = 24.0;
+    } else {
+      // 一串珠子：按离被拎起那颗的距离衰减，各自带固定散落、越远越垂落，
+      // 响应速度略有差异，不是刚性等幅平移
+      const d = nodeBase[i].distanceTo(nodeBase[dragIdx]);
+      const w = 0.9 / (1 + (d * d) / (26 * 26));
+      const s = nodeScatter[i];
+      tx = _dragDelta.x * w + s.x * scatterAmt;
+      ty = _dragDelta.y * w + s.y * scatterAmt - sagAmt * (1 - w);
+      tz = _dragDelta.z * w + s.z * scatterAmt;
+      k = 7.0 + (i % 5) * 1.0;
+    }
+    nodeVel[i].x = (nodeVel[i].x + (tx - nodeOffset[i].x) * k * dt) * damp;
+    nodeVel[i].y = (nodeVel[i].y + (ty - nodeOffset[i].y) * k * dt) * damp;
+    nodeVel[i].z = (nodeVel[i].z + (tz - nodeOffset[i].z) * k * dt) * damp;
+    if (nodeVel[i].lengthSq() > 300 * 300) nodeVel[i].setLength(300);
     nodeOffset[i].addScaledVector(nodeVel[i], dt);
   }
-  applyCollisions(dragIdx);
+  applyCollisions(activeCi);
 }
 // 按真实经过时间推进并拆成小子步：低帧率下也按真实时间收敛
 function updateNodePhysics(dt) {
@@ -728,34 +756,69 @@ function catColor(i, n) {
   return new THREE.Color().setHSL((i * 0.13 + 0.05) % 1, 0.65, 0.62);
 }
 
+// 初始布局：星团在三维空间里自然散布，不排成同一平面的规整方阵。
+// 黄金角螺旋给低差异的均匀底子，再叠确定性扰动与 3D 最小间距松弛，
+// 前后 / 高低 / 疏密都有变化，像一片星系而不是等距排开的柜台。
+let clusterCenters = [];
+function computeClusterCenters(n) {
+  const pts = [];
+  const golden = Math.PI * (3 - Math.sqrt(5));
+  for (let i = 0; i < n; i++) {
+    const u = (i + 0.5) / n;
+    const yy = 1 - 2 * u;
+    const rad = Math.sqrt(Math.max(0, 1 - yy * yy));
+    const a = golden * i;
+    const jr = 0.82 + 0.18 * Math.abs(Math.sin(i * 12.9898));
+    pts.push(new THREE.Vector3(
+      Math.cos(a) * rad * 190 * jr + Math.sin(i * 7.13) * 12,
+      yy * 115 * jr + Math.sin(i * 3.71) * 10,
+      Math.sin(a) * rad * 78 * jr - 50 + Math.sin(i * 5.19) * 12
+    ));
+  }
+  // 松弛分两笔：屏幕上看到的是 x-y，这两轴必须拉开，否则前后两团会叠成一坨、
+  // 分类名也糊在一起；z 只留较松的真实间距，纵深感照旧保留。
+  for (let iter = 0; iter < 90; iter++) {
+    for (let a = 0; a < n; a++) {
+      for (let b = a + 1; b < n; b++) {
+        const pa = pts[a], pb = pts[b];
+        const dx = pa.x - pb.x, dy = pa.y - pb.y, dz = pa.z - pb.z;
+        const dxy = Math.hypot(dx, dy);
+        if (dxy < 100 && dxy > 1e-4) {
+          const push = (100 - dxy) * 0.5 / dxy;
+          pa.x += dx * push; pa.y += dy * push;
+          pb.x -= dx * push; pb.y -= dy * push;
+        }
+        const d3 = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        if (d3 < 62 && d3 > 1e-4) {
+          const push = (62 - d3) * 0.5 / d3;
+          pa.z += dz * push; pb.z -= dz * push;
+        }
+      }
+    }
+  }
+  return pts;
+}
+
 // 逐批构建：星空先动起来，书卷分批浮现，避免 280 个 sprite 一次性同步创建卡住首屏
 function buildCategoryAt(cat, ci, n) {
-  const perRow = Math.ceil(Math.sqrt(n));
-  // 星团铺满整片天幕：X-Y 面成阵（横竖都撑开），Z 只作轻微前后错落；
-  // 不再挤成地面上的一条横带，各团离相机远近也接近，近大远小不失衡。
-  const spacingX = 86, spacingY = 52;
-  const rows = Math.ceil(n / perRow);
-  const cx = (ci % perRow - (perRow - 1) / 2) * spacingX;
-  const cy = (Math.floor(ci / perRow) - (rows - 1) / 2) * spacingY + Math.sin(ci * 1.3) * 6;
-  const cz = Math.sin(ci * 2.7) * 18;
-  const center = new THREE.Vector3(cx, cy, cz);
+  const center = clusterCenters[ci].clone();
   const col = catColor(ci, n);
 
-  // 圆盘分布：在正对相机的 x-y 平面均匀铺开，z 只留薄层。
-  // 前后几乎不重叠，深度差也小，近大远小不会失衡。
+  // 书卷在三维椭球里自然散布，不再压成一整片平面圆盘；仍有最小间距松弛防叠字
   const entries = collectItems(cat);
   const k = entries.length;
   const golden = Math.PI * (3 - Math.sqrt(5));
   const pts = [];
   const R0 = 11 + Math.min(12, Math.sqrt(k) * 1.5);
   for (let j = 0; j < k; j++) {
-    const rr = Math.sqrt((j + 0.5) / Math.max(1, k));
+    const yy = 1 - 2 * (j + 0.5) / k;
+    const rad = Math.sqrt(Math.max(0, 1 - yy * yy));
     const theta = golden * j;
-    const R = R0 * (0.78 + Math.random() * 0.22);
+    const R = R0 * (0.8 + Math.random() * 0.2);
     const dir = new THREE.Vector3(
-      Math.cos(theta) * rr,
-      Math.sin(theta) * rr * 0.62,
-      (Math.random() - 0.5) * 0.34
+      Math.cos(theta) * rad,
+      yy * 0.72,
+      Math.sin(theta) * rad * 0.72
     );
     pts.push(center.clone().add(dir.multiplyScalar(R)));
   }
@@ -1608,9 +1671,7 @@ function animate() {
       if (mem) {
         let n = 0;
         for (const i of mem) {
-          // 早已被拖出星团的书卷不再算进平均，球壳只跟着还留在团里的成员
-          if (bookSprites[i] && bookSprites[i].visible && bookData[i] && bookData[i].url &&
-              nodeOffset[i] && nodeOffset[i].lengthSq() < 36) {
+          if (bookSprites[i] && bookSprites[i].visible && bookData[i] && bookData[i].url && nodeOffset[i]) {
             _shellOff.add(nodeOffset[i]); n++;
           }
         }
@@ -1657,8 +1718,8 @@ function animate() {
       bookSprites[i].scale.set(baseScale.x, baseScale.y, 1);
     }
   }
-  updateNodePhysics(Math.min(rawDt, 0.12));   // 节点自由物理：先出最终位置
-  updateNet();      // 再按最终位置重连星座网（被拖走的书卷自动断线）
+  updateNodePhysics(Math.min(rawDt, 0.12));   // 节点黏性物理：先出最终位置
+  updateNet();      // 再按最终位置重连星座网（拖一个节点，一串线跟着变形）
 
   // 悬停：放大 + 光晕 + 名牌
   if (hoveredIdx >= 0 && bookSprites[hoveredIdx]) {
@@ -1794,6 +1855,7 @@ async function boot() {
     camTarget.copy(HOME_POS);
     introPush = 1;
     animate();                       // 星空先动起来，不等书卷
+    clusterCenters = computeClusterCenters(nav.length);
     for (let i = 0; i < nav.length; i++) {
       buildCategoryAt(nav[i], i, nav.length);
       loadingEl.textContent = '正在铺展星海… ' + (i + 1) + '/' + nav.length;
