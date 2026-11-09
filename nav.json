@@ -1624,6 +1624,12 @@
           "icon": "/assets/images/logos/concat.png",
           "url": "https://concat.standalones.org/",
           "description": "开源视频编辑器，自动字幕、去背景、4K 导出，本地运行无水印"
+        },
+        {
+          "title": "看看鸭",
+          "icon": "/assets/images/logos/kankanya.svg",
+          "url": "https://kankanya.vip/",
+          "description": "免费在线影视聚合，电影、剧集、动漫、综艺多线路播放"
         }
       ]
     },

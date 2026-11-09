@@ -26,7 +26,5 @@ items=[json.dumps(h,ensure_ascii=False)+':'+json.dumps(py) for h,py in full.item
 for i in range(0,len(items),20):
     lines.append('  '+','.join(items[i:i+20])+',')
 lines.append('};')
-open('assets/js/pinyin-map.js','w',encoding='utf-8').write('
-'.join(lines)+'
-')
+open('assets/js/pinyin-map.js','w',encoding='utf-8').write('\n'.join(lines)+'\n')
 print('generated assets/js/pinyin-map.js, %d chars'%len(full))
