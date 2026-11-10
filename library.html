@@ -106,6 +106,15 @@
     border-radius: 0; pointer-events: none; transition: opacity .4s; text-shadow: 0 2px 10px #000;
     white-space: nowrap; }
 
+  /* 寻一卷彩蛋：一道极淡的字，默认不出现，不抢星空 */
+  #quest { position: fixed; left: 50%; bottom: 46px; transform: translateX(-50%); z-index: 6;
+    max-width: 90vw; font-size: 12px; letter-spacing: .14em; line-height: 1.7;
+    color: rgba(233,220,195,.5); pointer-events: none; text-shadow: 0 2px 10px #000;
+    opacity: 0; transition: opacity .5s, color .3s;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #quest.show { opacity: 1; }
+  #quest.lit { color: rgba(255,214,140,.7); }
+
   /* 顶部按钮 */
   .topbtn { position: fixed; top: 16px; z-index: 6; padding: 3px 2px; font-size: 11px; letter-spacing: .16em;
     color: rgba(233,220,195,.5); background: none; border: none;
@@ -187,6 +196,7 @@
   <div id="where"></div>
   <div id="overview"></div>
   <div id="catrail"></div>
+  <div id="quest" aria-live="polite"></div>
 
   <div id="hint">拖拽空地环顾 · Shift 拖拽平移 · 拖一卷、同类跟着走 · 双击分类名归位 · 单击展卷 · 滚轮远近 · 悬停显全名 · F 收藏 · Esc 指南</div>
 
@@ -219,6 +229,7 @@
       <div><b>Enter</b> 展卷当前书卷</div><div><b>WASD</b> 飞行（Shift 加速）</div>
       <div><b>双击分类名</b> 归位该团</div><div><b>/</b> 搜索</div>
       <div><b>下方分类</b> 直达星团</div><div><b>Esc</b> 关闭本页</div>
+      <div style="grid-column:1 / -1; text-align:center; opacity:.7"><b>G</b> 抽一签 · 随机逛一类，六秒后自行隐去</div>
     </div>
     <div id="helpStat" class="sub"></div>
     <button id="resume" class="enter" type="button">继 续 游 览</button>
@@ -235,6 +246,7 @@
   </div>
 
   <script src="assets/js/search-core.js?v=113"></script>
+  <script src="assets/js/quest.js?v=2"></script>
   <script>
     // 触屏 / 低配 / 无 WebGL 一律回落到完整 2D 目录，不再只给静态导览
     // ?force=3d 可强制查看 3D（备用）
@@ -285,7 +297,7 @@
       }
       // /assets/* 是 7 天长缓存且同名覆盖不会让 CDN 失效，主模块必须带版本号做 cache busting
       var s = document.createElement('script');
-      s.type = 'module'; s.src = 'assets/js/library.js?v=116';
+      s.type = 'module'; s.src = 'assets/js/library.js?v=121';
       document.body.appendChild(s);
     })();
   </script>

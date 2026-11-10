@@ -594,6 +594,68 @@ function pickNodeAt(clientX, clientY) {
   return best;
 }
 
+// ---------- 碰撞显影：给原本只有位移的「轻碰」补一点极轻的光与声 ----------
+// 固定光圈池循环复用，不新建 Sprite、不产生 GC 压力；物理参数（R / push / jitter）一律不动。
+const HIT_FX_MAX = 6;
+const hitRings = [];
+for (let k = 0; k < HIT_FX_MAX; k++) {
+  const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map: burstTex, transparent: true,
+    blending: THREE.AdditiveBlending, depthWrite: false, fog: false, opacity: 0 }));
+  spr.renderOrder = 890; spr.visible = false;
+  scene.add(spr);
+  hitRings.push({ spr, age: 0, life: 0, alpha0: 0, scale: 1 });
+}
+let hitRingCursor = 0;
+const hitStamp = [];        // 书卷索引 -> 上次反馈时刻(ms)，同一本 120ms 内只响一次
+const hitQueue = [];        // 本帧待反馈，复用对象
+let hitQueueCount = 0;
+let lastHitSound = 0;
+
+function queueHit(j, pos, force) {
+  const now = performance.now();
+  if (hitStamp[j] && now - hitStamp[j] < 120) return;
+  hitStamp[j] = now;
+  if (hitQueueCount >= HIT_FX_MAX) return;
+  const h = hitQueue[hitQueueCount] || (hitQueue[hitQueueCount] = { j: 0, p: new THREE.Vector3(), f: 0 });
+  h.j = j; h.p.copy(pos); h.f = force;
+  hitQueueCount++;
+}
+function flushHits() {
+  if (!hitQueueCount) return;
+  let loud = 0;
+  for (let k = 0; k < hitQueueCount; k++) {
+    const h = hitQueue[k];
+    const f = Math.min(1, Math.max(0, h.f));
+    const r = hitRings[hitRingCursor];
+    hitRingCursor = (hitRingCursor + 1) % HIT_FX_MAX;
+    r.spr.position.copy(h.p);
+    r.spr.material.color.copy(bookColor[h.j]);
+    r.alpha0 = 0.26 + f * 0.16;        // 极轻：最亮也只有 0.42
+    r.spr.material.opacity = r.alpha0;
+    r.age = 0; r.life = 0.20 + f * 0.10;
+    r.scale = 2.0 + f * 1.8;
+    r.spr.scale.set(1, 1, 1);
+    r.spr.visible = true;
+    if (f > loud) loud = f;
+  }
+  const now = performance.now();
+  if (now - lastHitSound >= 50) {
+    lastHitSound = now;
+    blip(500 + loud * 240, 0.055, 0.010 + loud * 0.007);
+  }
+}
+function updateHitGlow(dt) {
+  for (const r of hitRings) {
+    if (!r.spr.visible) continue;
+    r.age += dt;
+    const p = r.age / r.life;
+    if (p >= 1) { r.spr.visible = false; r.spr.material.opacity = 0; continue; }
+    const s = 1 + r.scale * p;
+    r.spr.scale.set(s, s, 1);
+    r.spr.material.opacity = r.alpha0 * (1 - p) * (1 - p);
+  }
+}
+
 function applyCollisions(activeCi) {
   // 跟着被拎起那颗一起动的同分类书卷，路过别的分类时只把对方轻碰让开；
   // 同分类内部靠弹性相连，互不推挤；别的分类绝不被吸过来
@@ -630,6 +692,7 @@ function applyCollisions(activeCi) {
       nodeOffset[j].x += dx * push + s.x * jitter;
       nodeOffset[j].y += dy * push + s.y * jitter;
       nodeOffset[j].z += dz * push + s.z * jitter;
+      queueHit(j, _nodeB, 1 - d / R);   // 显影：力度取接近程度，物理位移不变
     }
   }
 }
@@ -680,8 +743,8 @@ function nodePhysicsStep(dt) {
   const still = Math.exp(-8.0 * dt);
   _dragDelta.copy(dragTarget).sub(nodeBase[dragIdx]);
   const dl = _dragDelta.length();
-  const scatterAmt = Math.min(4.5, dl * 0.075);
-  const sagAmt = Math.min(3.5, dl * 0.05);
+  const scatterAmt = Math.min(0.7, dl * 0.012);
+  const sagAmt = Math.min(0.5, dl * 0.008);
   for (let i = 0; i < bookSprites.length; i++) {
     if (!bookSprites[i].visible || !bookData[i].url) continue;
     if (i !== dragIdx && bookCluster[i] !== activeCi) {
@@ -697,12 +760,12 @@ function nodePhysicsStep(dt) {
       // 一串珠子：按离被拎起那颗的距离衰减，各自带固定散落、越远越垂落，
       // 响应速度略有差异，不是刚性等幅平移
       const d = nodeBase[i].distanceTo(nodeBase[dragIdx]);
-      const w = 0.9 / (1 + (d * d) / (26 * 26));
+      const w = 0.97 / (1 + (d * d) / (64 * 64));
       const s = nodeScatter[i];
       tx = _dragDelta.x * w + s.x * scatterAmt;
       ty = _dragDelta.y * w + s.y * scatterAmt - sagAmt * (1 - w);
       tz = _dragDelta.z * w + s.z * scatterAmt;
-      k = 7.0 + (i % 5) * 1.0;
+      k = 9.0 + (i % 5) * 0.6;
     }
     nodeVel[i].x = (nodeVel[i].x + (tx - nodeOffset[i].x) * k * dt) * damp;
     nodeVel[i].y = (nodeVel[i].y + (ty - nodeOffset[i].y) * k * dt) * damp;
@@ -715,6 +778,7 @@ function nodePhysicsStep(dt) {
 // 按真实经过时间推进并拆成小子步：低帧率下也按真实时间收敛
 function updateNodePhysics(dt) {
   if (!nodeOffset.length) return;
+  hitQueueCount = 0;                 // 每帧只结算一批，子步里重复撞到同一本会被去重
   const n = Math.min(6, Math.max(1, Math.ceil(dt / 0.03)));
   const h = dt / n;
   for (let s = 0; s < n; s++) nodePhysicsStep(h);
@@ -723,6 +787,7 @@ function updateNodePhysics(dt) {
     if (bookSprites[i].visible && bookData[i].url)
       bookSprites[i].position.copy(nodeBase[i]).add(nodeOffset[i]);
   }
+  flushHits();
 }
 
 let flowGeo = null, flowPos = null, flowCol = null, flowPhase = null;
@@ -1705,6 +1770,12 @@ document.addEventListener('keydown', (e) => {
     const d = bookData[hoveredIdx];
     if (d && d.url) toggleFavUrl(d.url);
   }
+  else if ((e.key === 'g' || e.key === 'G') && started && !searchOpen) {
+    if (window.SiteQuest) {
+      const ci = window.SiteQuest.draw();
+      if (ci >= 0) teleportToCluster(ci, false);
+    }
+  }
 });
 
 // ---------- 主循环 ----------
@@ -1868,6 +1939,7 @@ function animate() {
   hoverRing.visible = hoverRing.material.opacity > 0.02;
 
   updateBursts(dt);
+  updateHitGlow(dt);
   updateFlow(dt);
   cardAlpha += ((cardShown ? 1 : 0) - cardAlpha) * Math.min(1, dt * 12);
   if (cardAlpha < 0.02) cardSprite.visible = false;
@@ -1985,6 +2057,7 @@ async function boot() {
       if (i % 2 === 1) await new Promise((r) => setTimeout(r, 0));
     }
     finishSky();
+    if (window.SiteQuest) window.SiteQuest.setClusters(nav.map((c) => c.category));
     buildCatRail();
     applyHash();               // 支持 #cat-N / #site-<URL> 直达（兼容旧 #book-N）
     const totalText = (clusterInfo.length - urlClusters.length) + ' 类 · ' + bookByUrl.size + ' 站点';
