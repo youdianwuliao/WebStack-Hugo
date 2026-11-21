@@ -488,6 +488,12 @@
               "icon": "/assets/images/logos/nanomuse.svg",
               "url": "https://nanomuse.cn/",
               "description": "开源个人智能体，覆盖手机与电脑，免费可自托管"
+            },
+            {
+              "title": "OpenClaw",
+              "icon": "/assets/images/logos/openclaw-ai.png",
+              "url": "https://openclaw.ai/",
+              "description": "开源个人 AI 助手，本地运行，可通过 WhatsApp、Telegram 等聊天软件使用"
             }
           ]
         }
@@ -966,7 +972,7 @@
           "description": "先进的 AI 驱动渗透测试平台"
         },
         {
-          "title": "OpenClaw",
+          "title": "OpenClaw Exposure Watchboard",
           "icon": "/assets/images/logos/openclaw.png",
           "url": "https://openclaw.allegro.earth/",
           "description": "OpenClaw 暴露监控面板，追踪公开暴露的 AI 代理实例"
