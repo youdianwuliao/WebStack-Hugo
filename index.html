@@ -1227,12 +1227,21 @@
         e.preventDefault();
         showSearch();
       }
+      const active = document.activeElement;
+      const tag = active ? active.tagName : '';
+      const typing = tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA' || (active && active.isContentEditable);
       if (e.key === '/' && !e.ctrlKey && !e.metaKey && !e.altKey) {
-        const tag = document.activeElement.tagName;
-        if (tag !== 'INPUT' && tag !== 'SELECT' && tag !== 'TEXTAREA') {
+        if (!typing) {
           e.preventDefault();
           document.getElementById('searchInput').focus();
         }
+      } else if (e.key === 'Enter' && !e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey && !typing) {
+        // 焦点在链接/按钮上时，Enter 保留其本来的打开/点击行为
+        if (active && (tag === 'A' || tag === 'BUTTON' || (active.closest && active.closest('a, button, [role="button"]')))) return;
+        // 开场动画尚在时，Enter 交给开场的关闭逻辑
+        if (document.getElementById('intro')) return;
+        e.preventDefault();
+        document.getElementById('searchInput').focus();
       }
       if (e.key === 'Escape') hideSearch();
     });
