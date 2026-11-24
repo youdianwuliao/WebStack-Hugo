@@ -874,6 +874,12 @@
           "icon": "/assets/images/logos/daidai.png",
           "url": "https://q4250203q.github.io/ding2026daidai/",
           "description": "轻量现代的定时任务管理面板，Docker 一键部署"
+        },
+        {
+          "title": "RackNerd",
+          "icon": "/assets/images/logos/racknerd.png",
+          "url": "https://www.racknerd.com/",
+          "description": "海外 VPS、独立服务器与 AI 基础设施服务商"
         }
       ]
     },
