@@ -880,6 +880,18 @@
           "icon": "/assets/images/logos/racknerd.png",
           "url": "https://www.racknerd.com/",
           "description": "海外 VPS、独立服务器与 AI 基础设施服务商"
+        },
+        {
+          "title": "奶爸建站笔记",
+          "icon": "/assets/images/logos/naibabiji.png",
+          "url": "https://blog.naibabiji.com/",
+          "description": "WordPress 建站教程与 VPS 主机推荐"
+        },
+        {
+          "title": "VPS排行",
+          "icon": "/assets/images/logos/vpspaihang.png",
+          "url": "https://www.vpspaihang.com/",
+          "description": "海外 VPS 推荐与主机测评排行"
         }
       ]
     },
