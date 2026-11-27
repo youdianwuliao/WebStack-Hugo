@@ -105,6 +105,12 @@
           "icon": "/assets/images/logos/feishu.png",
           "url": "https://feishu.cn/messages",
           "description": "飞书消息中心"
+        },
+        {
+          "title": "X",
+          "icon": "/assets/images/logos/x.png",
+          "url": "https://x.com/",
+          "description": "X（原 Twitter）社交平台"
         }
       ]
     },
