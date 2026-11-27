@@ -898,6 +898,12 @@
           "icon": "/assets/images/logos/vpspaihang.png",
           "url": "https://www.vpspaihang.com/",
           "description": "海外 VPS 推荐与主机测评排行"
+        },
+        {
+          "title": "VPSCost",
+          "icon": "/assets/images/logos/vpscost.png",
+          "url": "https://vpscost.com/",
+          "description": "VPS 主机对比评测与实时价格监控"
         }
       ]
     },
