@@ -1834,6 +1834,12 @@
           "icon": "/assets/images/logos/vju.png",
           "url": "https://file.vju.cc/",
           "description": "比亚迪车机软件资源不限速下载"
+        },
+        {
+          "title": "海搜",
+          "icon": "/assets/images/logos/haisou.png",
+          "url": "https://haisou.cc/",
+          "description": "云盘资源搜索，自动检测链接有效性"
         }
       ]
     }
